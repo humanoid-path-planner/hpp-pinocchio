@@ -95,18 +95,18 @@ namespace hpp {
       static DevicePtr_t createCopyConst (const DeviceConstPtr_t& device);
 
       /// Set pinocchio model.
-      void model( ModelPtr_t modelPtr );
+      void model( ModelPtr_t modelPtr ) { model_ = modelPtr; }
       /// Access to pinocchio model
-      ModelConstPtr_t model() const; 
+      ModelConstPtr_t model() const { return model_; }
       /// Access to pinocchio model
-      ModelPtr_t model(); 
+      ModelPtr_t model() { return model_; }
 
       /// Set Pinocchio data corresponding to model
-      void data( DataPtr_t dataPtr );
+      void data( DataPtr_t dataPtr ) { data_ = dataPtr; resizeState(); }
       /// Access to Pinocchio data/
-      DataConstPtr_t data() const;
+      DataConstPtr_t data() const { return data_; }
       /// Access to Pinocchio data/
-      DataPtr_t data();
+      DataPtr_t data() { return data_; }
       /// Create Pinocchio data from model.
       void createData();
 
@@ -163,9 +163,7 @@ namespace hpp {
       /// the configuration vector. For instance, when planning motions in
       /// state space using roadmap based methods, the velocity of the robot
       /// is stored in the nodes of the roadmap.
-      ExtraConfigSpace& extraConfigSpace () {
-	return extraConfigSpace_;
-      }
+      ExtraConfigSpace& extraConfigSpace () { return extraConfigSpace_; }
 
       /// Get degrees of freedom to store internal values in configurations
       ///
@@ -173,15 +171,13 @@ namespace hpp {
       /// the configuration vector. For instance, when planning motions in
       /// state space using roadmap based methods, the velocity of the robot
       /// is stored in the nodes of the roadmap.
-      const ExtraConfigSpace& extraConfigSpace () const {
-	return extraConfigSpace_;
-      }
+      const ExtraConfigSpace& extraConfigSpace () const { return extraConfigSpace_; }
 
       /// Set dimension of extra configuration space
       virtual void setDimensionExtraConfigSpace (const size_type& dimension)
       {
 	extraConfigSpace_.setDimension (dimension);
-	resizeState (0x0);
+	resizeState ();
       }
 
       /// \}
@@ -197,15 +193,8 @@ namespace hpp {
       /// Set current configuration
       /// \return True if the current configuration was modified and false if
       ///         the current configuration did not change.
-      virtual bool currentConfiguration (ConfigurationIn_t configuration)
-      {
-	if (configuration != currentConfiguration_) {
-	  upToDate_ = false;
-	  currentConfiguration_ = configuration;
-          return true;
-	}
-        return false;
-      }
+      virtual bool currentConfiguration (ConfigurationIn_t configuration);
+
       /// Get the neutral configuration
       Configuration_t neutralConfiguration () const;
 
@@ -243,7 +232,7 @@ namespace hpp {
       const value_type& mass () const;
 
       /// Get position of center of mass
-      const vector3_t& positionCenterOfMass () const;
+      vector3_t positionCenterOfMass () const;
 
       /// Get Jacobian of center of mass with respect to configuration
       const ComJacobian_t& jacobianCenterOfMass () const;
@@ -350,15 +339,12 @@ namespace hpp {
       /// \brief Constructor
       Device(const std::string& name);
 
-      ///
-      /// \brief Initialization.
-      ///
-      void init(const DeviceWkPtr_t& weakPtr);
-
-      ///
-      /// \brief Initialization of of a clone device.
-      ///
-      void initCopy(const DeviceWkPtr_t& weakPtr, const Device& model);
+      //DEPREC /// \brief Initialization.
+      //DEPREC ///
+      //DEPREC void init(const DeviceWkPtr_t& weakPtr);
+      //DEPREC /// \brief Initialization of of a clone device.
+      //DEPREC ///
+      //DEPREC void initCopy(const DeviceWkPtr_t& weakPtr, const Device& model);
 
       /// Recompute number of distance pairs
       void updateDistances ();
@@ -373,7 +359,9 @@ namespace hpp {
       void computeMass ();
       void computePositionCenterOfMass ();
       void computeJacobianCenterOfMass ();
-      void resizeState (const JointPtr_t& joint);
+
+      /// Resize configuration when changing data or extra-config.
+      void resizeState ();
       void resizeJacobians ();
 
     protected:

@@ -1,10 +1,32 @@
+//
+// Copyright (c) 2016 CNRS
+// Author: NMansard
+//
+//
+// This file is part of hpp-pinocchio
+// hpp-pinocchio is free software: you can redistribute it
+// and/or modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation, either version
+// 3 of the License, or (at your option) any later version.
+//
+// hpp-pinocchio is distributed in the hope that it will be
+// useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Lesser Public License for more details.  You should have
+// received a copy of the GNU Lesser General Public License along with
+// hpp-pinocchio  If not, see
+// <http://www.gnu.org/licenses/>.
+
 #include <Eigen/Core>
 #include <hpp/pinocchio/fwd.hh>
 #include <hpp/pinocchio/distance-result.hh>
 #include <hpp/pinocchio/extra-config-space.hh>
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/device.hh>
-
+#include <pinocchio/algorithm/center-of-mass.hpp>
+#include <pinocchio/algorithm/jacobian.hpp>
+#include <pinocchio/algorithm/kinematics.hpp>
+#include <boost/foreach.hpp>
 
 namespace hpp {
   namespace pinocchio {
@@ -51,257 +73,179 @@ namespace hpp {
     createData()
     {
       data_ = DataPtr_t( new se3::Data(*model_) );
+      resizeState();
     }
     
+    /* ---------------------------------------------------------------------- */
+    /* --- JOINT ------------------------------------------------------------ */
+    /* ---------------------------------------------------------------------- */
+
     JointPtr_t Device::
     rootJoint () const
     {
       return JointPtr_t( new Joint(weakPtr_,0) );
     }
-    /*
+
     JointPtr_t Device::
     getJointAtConfigRank (const size_type& r) const
     {
-      
+      assert(model_);
+      BOOST_FOREACH( se3::JointModelAccessor & j, model_->joints)
+        {
+          if( j.idx_q() == r ) return JointPtr_t( new Joint(weakPtr_,j.id()) );
+        }
+      assert(false && "The joint at config rank has not been found");
+      return JointPtr_t();
     }
 
     JointPtr_t Device::
     getJointAtVelocityRank (const size_type& r) const
-    {}
+    {
+      assert(model_);
+      BOOST_FOREACH( se3::JointModelAccessor & j, model_->joints)
+        {
+          if( j.idx_v() == r ) return JointPtr_t( new Joint(weakPtr_,j.id()) );
+        }
+      assert(false && "The joint at velocity rank has not been found");
+      return JointPtr_t();
+    }
 
     JointPtr_t Device::
     getJointByName (const std::string& name) const
-    {}
+    {
+      assert(model_);
+      se3::Index id = model_->getJointId(name);
+      return JointPtr_t( new Joint(weakPtr_,id) );
+    }
 
     JointPtr_t Device::
     getJointByBodyName (const std::string& name) const
-    {}
+    {
+      assert(model_);
+      assert(model_->existFrame(name));
+      se3::Model::FrameIndex bodyId = model_->getFrameId(name);
+      assert(model_->frames[bodyId].type == se3::BODY);
+      se3::Model::JointIndex jointId = model_->frames[bodyId].parent;
+      //assert(jointId>=0);
+      assert((int)jointId<model_->njoint);
+      return JointPtr_t( new Joint(weakPtr_,jointId) );
+    }
 
     size_type Device::
     configSize () const
-    {}
+    {
+      assert(model_);
+      return model_->nq+extraConfigSpace_.dimension();
+    }
 
     size_type Device::
     numberDof () const
-    */
+    {
+      assert(model_);
+      return model_->nv;
+    }
 
-    /*
-      ExtraConfigSpace& Device::
-    extraConfigSpace () {
-	return extraConfigSpace_;
-      }
+    /* ---------------------------------------------------------------------- */
+    /* --- CONF ------------------------------------------------------------- */
+    /* ---------------------------------------------------------------------- */
 
+    /* Previous implementation of resizeState in hpp::model:: was setting the
+     * new part of the configuration to neutral configuration. This is not
+     * working but for empty extra-config. The former behavior is therefore not
+     * propagated here. The configuration is resized without setting the new
+     * memory.
+     */
+    void Device::
+    resizeState()
+    {
+      currentConfiguration_.resize(configSize());
+      currentVelocity_.resize(numberDof());
+    }
 
-
-
-
-
-
-      const ExtraConfigSpace& Device::
-    extraConfigSpace () const {
-	return extraConfigSpace_;
-      }
-
-
-      virtual void Device::
-    setDimensionExtraConfigSpace (const size_type& dimension)
-      {
-	extraConfigSpace_.setDimension (dimension);
-	resizeState (0x0);
-      }
-
-
-
-
-
-
-
-      const Configuration_t& Device::
-    currentConfiguration () const
-      {
-	return currentConfiguration_;
-      }
-
-
-
-      virtual bool Device::
+    bool Device::
     currentConfiguration (ConfigurationIn_t configuration)
-      {
-	if (configuration != currentConfiguration_) {
-	  upToDate_ = false;
-	  currentConfiguration_ = configuration;
+    {
+      if (configuration != currentConfiguration_)
+        {
+          upToDate_ = false;
+          currentConfiguration_ = configuration;
           return true;
 	}
-        return false;
-      }
-
-      Configuration_t Device::
-    neutralConfiguration () const;
-
-
-      const vector_t& Device::
-    currentVelocity () const
-      {
-	return currentVelocity_;
-      }
-
-
-      void Device::
-    currentVelocity (vectorIn_t velocity)
-      {
-	upToDate_ = false;
-	currentVelocity_ = velocity;
-      }
-
-
-      const vector_t& currentAcceleration () const
-      {
-	return currentAcceleration_;
-      }
-
-
-      void currentAcceleration (vectorIn_t acceleration)
-      {
-	upToDate_ = false;
-	currentAcceleration_ = acceleration;
-      }
-
-
-
-
-
-
-      const value_type& Device::
-    mass () const;
-
-
-      const vector3_t& Device::
-    positionCenterOfMass () const;
-
-
-      const ComJacobian_t& Device::
-    jacobianCenterOfMass () const;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      void Device::
-    controlComputation (const Computation_t& flag)
-      {
-	computationFlag_ = flag;
-	upToDate_ = false;
-      }
-
-      Computation_t Device::
-    computationFlag () const
-      {
-	return computationFlag_;
-      }
-
-      virtual void Device::
-    computeForwardKinematics ();
-
-
-
-
-      virtual std::ostream& Device::
-    print (std::ostream& os) const;
-
-
-
-
-
-
-      void Device::
-    init(const DeviceWkPtr_t& weakPtr);
-
-
-
-
-      void Device::
-    initCopy(const DeviceWkPtr_t& weakPtr, const Device& model);
-
-
-      void Device::
-    updateDistances ();
-    */
+      return false;
+    }
+
+    const value_type& Device::
+    mass () const 
+    { 
+      assert(data_);
+      return data_->mass[0];
+    }
+    
+    vector3_t Device::
+    positionCenterOfMass () const
+    {
+      assert(data_);
+      return data_->com[0];
+    }
+    
+    const ComJacobian_t& Device::
+    jacobianCenterOfMass () const
+    {
+      assert(data_);
+      return data_->Jcom;
+    }
+
+    void Device::
+    computeForwardKinematics ()
+    {
+      if(upToDate_) return;
+
+      assert(model_);
+      assert(data_);
+      // a IMPLIES b === (b || ~a)
+      // velocity IMPLIES position
+      assert( (computationFlag_|JOINT_POSITION) || (!(computationFlag_|VELOCITY)) );
+      // acceleration IMPLIES velocity
+      assert( (computationFlag_|VELOCITY) || (!(computationFlag_|ACCELERATION)) );
+      // com IMPLIES position
+      assert( (computationFlag_|JOINT_POSITION) || (!(computationFlag_|COM)) );
+      // jacobian IMPLIES position
+      assert( (computationFlag_|JOINT_POSITION) || (!(computationFlag_|JACOBIAN)) );
+
+      if (computationFlag_ | ACCELERATION )
+        se3::forwardKinematics(*model_,*data_,currentConfiguration_,
+                               currentVelocity_,currentAcceleration_);
+      else if (computationFlag_ | VELOCITY )
+        se3::forwardKinematics(*model_,*data_,currentConfiguration_,
+                               currentVelocity_);
+      else if (computationFlag_ | JOINT_POSITION )
+        se3::forwardKinematics(*model_,*data_,currentConfiguration_);
+
+      if (computationFlag_|COM)
+        {
+          if (computationFlag_|JACOBIAN) 
+            // TODO: Jcom should not recompute the kinematics (\sa pinocchio issue #219)
+            se3::jacobianCenterOfMass(*model_,*data_,currentConfiguration_,true);
+          else 
+            se3::centerOfMass(*model_,*data_,currentConfiguration_,true,false);
+        }
+
+      if(computationFlag_|JACOBIAN)
+        se3::computeJacobians(*model_,*data_,currentConfiguration_);
+    }
+
+    std::ostream& Device::
+    print (std::ostream& os) const
+    {
+//NOTYET
+      return os;
+    }
+
+    void Device::
+    updateDistances ()
+    {
+//NOTYET
+    }
 
   } // namespace pinocchio
 } // namespace hpp

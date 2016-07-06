@@ -1,6 +1,6 @@
 //
-// Copyright (c) 2013, 2014 CNRS
-// Author: Florent Lamiraux
+// Copyright (c) 2016 CNRS
+// Author: NMansard from Florent Lamiraux
 //
 //
 // This file is part of hpp-pinocchio
@@ -111,7 +111,7 @@ namespace hpp {
       //DEPREC void computeJacobian ();
 
       /// Get neutral configuration of joint
-      vector_t neutralConfiguration () const;
+//NOTYET      vector_t neutralConfiguration () const;
 
       ///\}
       // -----------------------------------------------------------------------
@@ -119,13 +119,13 @@ namespace hpp {
       ///\}
 
       /// Return number of degrees of freedom
-      const size_type& numberDof () const;
+      size_type numberDof () const;
 
       /// Return number of degrees of freedom
-      const size_type& configSize () const;
+      size_type configSize () const;
 
       /// Return rank of the joint in the configuration vector
-      const size_type& rankInConfiguration () const;
+      size_type rankInConfiguration () const;
 
       /// Return rank of the joint in the velocity vector
       size_type rankInVelocity () const;
@@ -190,7 +190,7 @@ namespace hpp {
       /// \li \f$\mathbf{q}_{joint}\f$ is any joint configuration,
       /// \li \f$\mathbf{\dot{q}}_{joint}\f$ is the joint velocity, and
       /// \li \f$\mathbf{v} = J(\mathbf{q})*\mathbf{\dot{q}} \f$ is the linear velocity of the joint frame.
-      value_type upperBoundLinearVelocity () const;
+//NOTYET      value_type upperBoundLinearVelocity () const;
 
       /// Get upper bound on angular velocity of the joint frame
       /// \return coefficient \f$\lambda\f$ such that
@@ -201,12 +201,12 @@ namespace hpp {
       /// \li \f$\mathbf{q}_{joint}\f$ is any joint configuration,
       /// \li \f$\mathbf{\dot{q}}_{joint}\f$ is the joint velocity, and
       /// \li \f$\omega = J(\mathbf{q})*\mathbf{\dot{q}}\f$ is the angular velocity of the joint frame.
-      value_type upperBoundAngularVelocity () const;
+//NOTYET      value_type upperBoundAngularVelocity () const;
 
       /// Maximal distance of joint origin to parent origin
-      const value_type& maximalDistanceToParent () const;
+//NOTYET      const value_type& maximalDistanceToParent () const;
       /// Compute the maximal distance. \sa maximalDistanceToParent
-      void computeMaximalDistanceToParent ();
+//NOTYET      void computeMaximalDistanceToParent ();
 
       /// \}
       // -----------------------------------------------------------------------
@@ -214,10 +214,10 @@ namespace hpp {
       /// \{
 
       /// Get const reference to Jacobian
-      const JointJacobian_t& jacobian () const;
+//NOTYET      const JointJacobian_t& jacobian () const;
 
       /// Get non const reference to Jacobian
-      JointJacobian_t& jacobian ();
+//NOTYET      JointJacobian_t& jacobian ();
 
       /// \}
       // -----------------------------------------------------------------------
@@ -228,15 +228,15 @@ namespace hpp {
       //DEPREC void robot (const DeviceWkPtr_t& device) {robot_ = device;}
 
       /// Access robot owning the object
-      DeviceConstPtr_t robot () const { return robot_.lock ();}
+      DeviceConstPtr_t robot () const { assert(robot_.lock());  return robot_.lock ();}
       /// Access robot owning the object
-      DevicePtr_t robot () { return robot_.lock ();}
+      DevicePtr_t robot () { assert(robot_.lock()); return robot_.lock ();}
 
       /// \name Body linked to the joint
       /// \{
 
       /// Get linked body
-      BodyPtr_t linkedBody () const;
+//NOTYET      BodyPtr_t linkedBody () const;
 
       //DEPREC /// Set linked body
       //DEPREC void setLinkedBody (const BodyPtr_t& body);
@@ -270,16 +270,22 @@ namespace hpp {
       vector_t neutralConfiguration_;
       DeviceWkPtr_t robot_;
       JointJacobian_t jacobian_;
+      Index id;
+      std::vector<Index> children;
+
+      /// Store list of childrens.
+      void setChildList();
+      ModelPtr_t       model() ;      
+      ModelConstPtr_t  model() const ;
+      DataPtr_t        data()  ;      
+      DataConstPtr_t   data()  const ;
 
       friend class Device;
     }; // class Joint
 
-    std::ostream& operator<< (std::ostream& os, const hpp::pinocchio::Joint& joint);
+    inline std::ostream& operator<< (std::ostream& os, const Joint& joint) { return joint.display(os); }
 
   } // namespace pinocchio
 } // namespace hpp
 
-namespace fcl {
-  std::ostream& operator<< (std::ostream& os , const fcl::Transform3f& trans);
-}
 #endif // HPP_PINOCCHIO_JOINT_HH

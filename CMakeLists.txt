@@ -68,6 +68,7 @@ ENDIF()
 # Set header files.
 SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/device.hh
+  include/hpp/pinocchio/joint.hh
   )
 
 INSTALL(FILES ${${PROJECT_NAME}_HEADERS}
@@ -75,7 +76,7 @@ INSTALL(FILES ${${PROJECT_NAME}_HEADERS}
   )
 
 ADD_SUBDIRECTORY(src)
-#ADD_SUBDIRECTORY(tests)
+ADD_SUBDIRECTORY(tests)
 
 PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})
 
