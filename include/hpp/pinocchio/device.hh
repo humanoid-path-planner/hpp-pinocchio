@@ -30,6 +30,7 @@
 # include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/distance-result.hh>
 # include <hpp/pinocchio/extra-config-space.hh>
+# include <hpp/pinocchio/joint.hh>
 # include <pinocchio/multibody/model.hpp>
 
 namespace hpp {
@@ -125,8 +126,8 @@ namespace hpp {
 
       //DEPREC /// Register joint in internal containers
       //DEPREC void registerJoint (const JointPtr_t& joint);
-      //DEPREC /// Get vector of joints
-      //DEPREC const JointVector_t& getJointVector () const;
+      /// Get vector of joints
+      inline const JointVector& getJointVector () const { return jointVector_; }
 
       /// Get the joint at configuration rank r
       JointPtr_t getJointAtConfigRank (const size_type& r) const;
@@ -354,11 +355,11 @@ namespace hpp {
       Device(const Device& device);
 
     private:
-      void computeJointPositions ();
-      void computeJointJacobians ();
-      void computeMass ();
-      void computePositionCenterOfMass ();
-      void computeJacobianCenterOfMass ();
+      //DEPREC void computeJointPositions ();
+      //DEPREC void computeJointJacobians ();
+      //DEPREC void computeMass ();
+      //DEPREC void computePositionCenterOfMass ();
+      //DEPREC void computeJacobianCenterOfMass ();
 
       /// Resize configuration when changing data or extra-config.
       void resizeState ();
@@ -372,7 +373,7 @@ namespace hpp {
       std::string name_;
 //NOTYET      DistanceResults_t distances_;
       //DEPREC JointByName_t jointByName_;
-      //DEPREC JointVector_t jointVector_;
+      JointVector jointVector_; // fake container with iterator mimicking hpp::model::JointVector_t
       //DEPREC JointVector_t jointByConfigRank_;
       //DEPREC JointVector_t jointByVelocityRank_;
       //DEPREC JointPtr_t rootJoint_;

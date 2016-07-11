@@ -58,6 +58,8 @@ namespace hpp {
     typedef se3::Data::Matrix3x ComJacobian_t;
     typedef Eigen::Block <JointJacobian_t, 3, Eigen::Dynamic> HalfJointJacobian_t;
 
+    struct JointVector;
+    typedef JointVector JointVector_t;
     typedef Body* BodyPtr_t;
     typedef std::vector<Body*> BodyVector_t;
     typedef boost::shared_ptr <CollisionObject> CollisionObjectPtr_t;

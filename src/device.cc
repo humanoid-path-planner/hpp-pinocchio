@@ -36,6 +36,7 @@ namespace hpp {
       : model_()
       , data_ ()
       , name_ (name)
+      , jointVector_()
       , weakPtr_()
     {}
 
@@ -45,6 +46,7 @@ namespace hpp {
     {
       DevicePtr_t res = DevicePtr_t(new Device(name)); // init shared ptr
       res->weakPtr_ = res;
+      res->jointVector_ = JointVector(res);
       return res;
     }
     
@@ -83,15 +85,18 @@ namespace hpp {
     JointPtr_t Device::
     rootJoint () const
     {
-      return JointPtr_t( new Joint(weakPtr_,0) );
+      return JointPtr_t( new Joint(weakPtr_,1) );
     }
 
     JointPtr_t Device::
     getJointAtConfigRank (const size_type& r) const
     {
       assert(model_);
-      BOOST_FOREACH( se3::JointModelAccessor & j, model_->joints)
+      //BOOST_FOREACH( const se3::JointModel & j, // Skip "universe" joint
+      //std::make_pair(model_->joints.begin()+1,model_->joints.end()) )
+      BOOST_FOREACH( const se3::JointModel & j, model_->joints )
         {
+          if( j.id()==0 ) continue; // Skip "universe" joint
           if( j.idx_q() == r ) return JointPtr_t( new Joint(weakPtr_,j.id()) );
         }
       assert(false && "The joint at config rank has not been found");
@@ -102,8 +107,9 @@ namespace hpp {
     getJointAtVelocityRank (const size_type& r) const
     {
       assert(model_);
-      BOOST_FOREACH( se3::JointModelAccessor & j, model_->joints)
+      BOOST_FOREACH( const se3::JointModel & j,model_->joints )
         {
+          if( j.id()==0 ) continue; // Skip "universe" joint
           if( j.idx_v() == r ) return JointPtr_t( new Joint(weakPtr_,j.id()) );
         }
       assert(false && "The joint at velocity rank has not been found");
@@ -114,6 +120,10 @@ namespace hpp {
     getJointByName (const std::string& name) const
     {
       assert(model_);
+      if(! model_->existJointName(name))
+	throw std::runtime_error ("Device " + name_ +
+				  " does not have any joint named "
+				  + name);
       se3::Index id = model_->getJointId(name);
       return JointPtr_t( new Joint(weakPtr_,id) );
     }
@@ -160,6 +170,7 @@ namespace hpp {
     {
       currentConfiguration_.resize(configSize());
       currentVelocity_.resize(numberDof());
+      currentAcceleration_.resize(numberDof());
     }
 
     bool Device::

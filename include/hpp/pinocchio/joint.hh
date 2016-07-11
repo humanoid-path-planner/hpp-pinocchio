@@ -285,6 +285,66 @@ namespace hpp {
 
     inline std::ostream& operator<< (std::ostream& os, const Joint& joint) { return joint.display(os); }
 
+    /** Fake std::vector<Joint>, used to comply with the actual structure of hpp::model.
+     *
+     * You can use it for the following loop:
+     *       for (JointVector_t::const_iterator it = jv.begin (); 
+     *               it != jv.end (); ++it) 
+     *          cout << (*it)->name;
+     */
+    struct JointVector
+    {
+      DevicePtr_t device;
+      JointVector( DevicePtr_t device ) : device(device) {}
+      JointVector() : device() {}
+
+      struct iterator
+      {
+        JointVector & ref;
+        size_type idx;
+        
+        iterator(JointVector & ref,size_type idx) : ref(ref),idx(idx) {}
+
+        iterator&  operator++ (); 
+        iterator   operator++ (int); 
+        iterator&  operator-- (); 
+        iterator   operator-- (int); 
+        JointPtr_t operator*  (); 
+        bool       operator== (const iterator & i2); 
+        bool       operator!= (const iterator & i2); 
+      };
+
+      struct const_iterator
+      {
+        const JointVector & ref;
+        size_type idx;
+        
+        const_iterator(const JointVector & ref,size_type idx) : ref(ref),idx(idx) {}
+        const_iterator(const iterator & it) : ref(it.ref),idx(it.idx) {}
+
+        const_iterator&  operator++ (); 
+        const_iterator   operator++ (int); 
+        const_iterator&  operator-- (); 
+        const_iterator   operator-- (int); 
+        JointPtr_t operator*  (); 
+        bool       operator== (const const_iterator & i2); 
+        bool       operator!= (const const_iterator & i2); 
+      };
+
+      iterator        begin();
+      iterator        end();
+      iterator       rbegin();
+      iterator       rend();
+      const_iterator  begin() const;
+      const_iterator  end() const;
+      const_iterator rbegin() const;
+      const_iterator rend() const;
+
+      JointPtr_t      operator[](const int idx);
+      const Joint*    operator[](const int idx) const;
+    };
+
+
   } // namespace pinocchio
 } // namespace hpp
 
