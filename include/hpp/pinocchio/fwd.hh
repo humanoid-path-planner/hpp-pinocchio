@@ -29,6 +29,14 @@
 # include <hpp/fcl/math/matrix_3f.h>
 # include <pinocchio/multibody/model.hpp>
 
+namespace se3
+{
+  struct Model;
+  struct Data;
+  struct GeometryModel;
+  struct GeometryData;
+}
+
 namespace hpp {
   namespace pinocchio {
     HPP_PREDEF_CLASS (Body);
@@ -62,8 +70,9 @@ namespace hpp {
     typedef JointVector JointVector_t;
     typedef Body* BodyPtr_t;
     typedef std::vector<Body*> BodyVector_t;
-    typedef boost::shared_ptr <CollisionObject> CollisionObjectPtr_t;
-    typedef std::list <CollisionObjectPtr_t> ObjectVector_t;
+    typedef fcl::CollisionObject * fclCollisionObjectPtr_t;
+    typedef const fcl::CollisionObject * fclConstCollisionObjectPtr_t;
+    //DEPREC typedef std::list <CollisionObjectPtr_t> ObjectVector_t;
     typedef boost::shared_ptr <Device> DevicePtr_t;
     typedef boost::shared_ptr <const Device> DeviceConstPtr_t;
     typedef std::vector <DistanceResult> DistanceResults_t;
@@ -78,6 +87,11 @@ namespace hpp {
     typedef boost::shared_ptr<const se3::Model>         ModelConstPtr_t;
     typedef boost::shared_ptr<se3::Data>                DataPtr_t;
     typedef boost::shared_ptr<const se3::Data>          DataConstPtr_t;
+
+    typedef boost::shared_ptr<se3::GeometryModel>       GeomModelPtr_t;
+    typedef boost::shared_ptr<const se3::GeometryModel> GeomModelConstPtr_t;
+    typedef boost::shared_ptr<se3::GeometryData>        GeomDataPtr_t;
+    typedef boost::shared_ptr<const se3::GeometryData>  GeomDataConstPtr_t;
 
   } // namespace pinocchio
 } // namespace hpp

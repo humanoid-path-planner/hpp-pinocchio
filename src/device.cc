@@ -19,7 +19,7 @@
 
 #include <Eigen/Core>
 #include <hpp/pinocchio/fwd.hh>
-#include <hpp/pinocchio/distance-result.hh>
+//#include <hpp/pinocchio/distance-result.hh>
 #include <hpp/pinocchio/extra-config-space.hh>
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/device.hh>

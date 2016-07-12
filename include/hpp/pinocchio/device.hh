@@ -28,7 +28,7 @@
 # include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/config.hh>
-# include <hpp/pinocchio/distance-result.hh>
+//# include <hpp/pinocchio/distance-result.hh>
 # include <hpp/pinocchio/extra-config-space.hh>
 # include <hpp/pinocchio/joint.hh>
 # include <pinocchio/multibody/model.hpp>
@@ -102,6 +102,13 @@ namespace hpp {
       /// Access to pinocchio model
       ModelPtr_t model() { return model_; }
 
+      /// Set pinocchio geom.
+      void geomModel( GeomModelPtr_t geomModelPtr ) { geomModel_ = geomModelPtr; }
+      /// Access to pinocchio geomModel
+      GeomModelConstPtr_t geomModel() const { return geomModel_; }
+      /// Access to pinocchio geomModel
+      GeomModelPtr_t geomModel() { return geomModel_; }
+
       /// Set Pinocchio data corresponding to model
       void data( DataPtr_t dataPtr ) { data_ = dataPtr; resizeState(); }
       /// Access to Pinocchio data/
@@ -110,6 +117,15 @@ namespace hpp {
       DataPtr_t data() { return data_; }
       /// Create Pinocchio data from model.
       void createData();
+
+      /// Set Pinocchio geomData corresponding to model
+      void geomData( GeomDataPtr_t geomDataPtr ) { geomData_ = geomDataPtr; resizeState(); }
+      /// Access to Pinocchio geomData/
+      GeomDataConstPtr_t geomData() const { return geomData_; }
+      /// Access to Pinocchio geomData/
+      GeomDataPtr_t geomData() { return geomData_; }
+      /// Create Pinocchio geomData from model.
+      void createGeomData();
 
       /// \}
       // -----------------------------------------------------------------------
@@ -369,6 +385,8 @@ namespace hpp {
       // Pinocchio objects
       ModelPtr_t model_; 
       DataPtr_t data_;
+      GeomModelPtr_t geomModel_;
+      GeomDataPtr_t geomData_;
 
       std::string name_;
 //NOTYET      DistanceResults_t distances_;
