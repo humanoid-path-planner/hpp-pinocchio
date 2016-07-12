@@ -39,9 +39,9 @@ namespace hpp {
       virtual size_type ibegin() const { return 0; }
       virtual size_type iend  () const { return size(); }
 
-      DevicePtr_t device;
-      FakeContainer( DevicePtr_t device ) : device(device) {}
-      FakeContainer() : device() {}
+      DevicePtr_t devicePtr;
+      FakeContainer( DevicePtr_t device ) : devicePtr(device) {}
+      FakeContainer() : devicePtr() {}
 
       struct iterator
       {
@@ -76,15 +76,15 @@ namespace hpp {
         bool             operator!= (const const_iterator & i2){ return idx!=i2.idx; }
       };
 
-      iterator        begin()       { assert(device); return iterator      (*this,ibegin()  ); }
-      iterator        end()         { assert(device); return iterator      (*this,iend()    ); }
-      iterator       rbegin()       { assert(device); return iterator      (*this,iend()-1  ); }
-      iterator       rend()         { assert(device); return iterator      (*this,ibegin()-1); }
+      iterator        begin()       { assert(devicePtr); return iterator      (*this,ibegin()  ); }
+      iterator        end()         { assert(devicePtr); return iterator      (*this,iend()    ); }
+      iterator       rbegin()       { assert(devicePtr); return iterator      (*this,iend()-1  ); }
+      iterator       rend()         { assert(devicePtr); return iterator      (*this,ibegin()-1); }
 
-      const_iterator  begin() const { assert(device); return const_iterator(*this,ibegin()  ); }
-      const_iterator  end()   const { assert(device); return const_iterator(*this,iend()    ); }
-      const_iterator rbegin() const { assert(device); return const_iterator(*this,iend()-1  ); }
-      const_iterator rend()   const { assert(device); return const_iterator(*this,ibegin()-1); }
+      const_iterator  begin() const { assert(devicePtr); return const_iterator(*this,ibegin()  ); }
+      const_iterator  end()   const { assert(devicePtr); return const_iterator(*this,iend()    ); }
+      const_iterator rbegin() const { assert(devicePtr); return const_iterator(*this,iend()-1  ); }
+      const_iterator rend()   const { assert(devicePtr); return const_iterator(*this,ibegin()-1); }
 
       T               operator[](const int idx)       { return at(idx); }
       Tconst          operator[](const int idx) const { return at(idx); }

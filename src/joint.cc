@@ -160,45 +160,26 @@ namespace hpp {
     }
 
     /* --- ITERATOR --------------------------------------------------------- */
+    
+    /* Access to pinocchio index + 1 because pinocchio first joint is the universe. */
+    Joint* JointVector::at(const size_type i) 
+    { selfAssert(i); return new Joint(devicePtr,i+1); }
+    
+    /* Access to pinocchio index + 1 because pinocchio first joint is the universe. */
+    const Joint* JointVector::at(const size_type i) const 
+    { selfAssert(i); return new Joint(devicePtr,i+1); }
 
-    typedef JointVector::iterator iterator;
-    iterator&  iterator::operator++() { ++idx; return *this; }
-    iterator   iterator::operator++(int) { iterator copy = *this; idx++; return copy; }
-    iterator&  iterator::operator--() { --idx; return *this; }
-    iterator   iterator::operator--(int) { iterator copy = *this; idx--; return copy; }
-    JointPtr_t iterator::operator* () { assert(ref.device); return JointPtr_t (new Joint(ref.device,idx)); }
-    bool       iterator::operator==(const iterator & i2) { return idx==i2.idx; }
-    bool       iterator::operator!=(const iterator & i2) { return idx!=i2.idx; }
+    size_type JointVector::size() const 
+    { return devicePtr->model()->njoint; }
 
-    iterator JointVector::begin() { assert(device); return iterator(*this,1); }
-    iterator JointVector::end()   { assert(device); return iterator(*this,device->model()->njoint); }
-    iterator JointVector::rbegin(){ assert(device); return iterator(*this,device->model()->njoint-1); }
-    iterator JointVector::rend()  { assert(device); return iterator(*this,0); }
+    size_type JointVector::iend() const 
+    { return size()-1; }
 
-    typedef JointVector::const_iterator const_iterator;
-    const_iterator&  const_iterator::operator++() { ++idx; return *this; }
-    const_iterator   const_iterator::operator++(int) { const_iterator copy = *this; idx++; return copy; }
-    const_iterator&  const_iterator::operator--() { --idx; return *this; }
-    const_iterator   const_iterator::operator--(int) { const_iterator copy = *this; idx--; return copy; }
-    JointPtr_t       const_iterator::operator* () { return JointPtr_t (new Joint(ref.device,idx)); }
-    bool             const_iterator::operator==(const const_iterator & i2) { return idx==i2.idx; }
-    bool             const_iterator::operator!=(const const_iterator & i2) { return idx!=i2.idx; }
-
-    const_iterator JointVector::begin() const { assert(device); return const_iterator(*this,1); }
-    const_iterator JointVector::end()   const { assert(device); return const_iterator(*this,device->model()->njoint); }
-    const_iterator JointVector::rbegin()const { assert(device); return const_iterator(*this,device->model()->njoint-1); }
-    const_iterator JointVector::rend()  const { assert(device); return const_iterator(*this,0); }
-
-    JointPtr_t     JointVector::operator[](const int idx) 
+    void JointVector::selfAssert(size_type i) const
     {
-      assert(device); 
-      return JointPtr_t( new Joint(device,idx+1) ); 
-    }
-
-    const Joint*    JointVector::operator[](const int idx) const
-    {
-      assert(device); 
-      return new Joint(device,idx+1); 
+      assert(devicePtr);
+      assert(i>=ibegin());
+      assert(i<iend());
     }
 
   } // namespace pinocchio

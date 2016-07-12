@@ -24,6 +24,7 @@
 # include <hpp/fcl/math/transform.h>
 # include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/fwd.hh>
+# include <hpp/pinocchio/fake-container.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -293,57 +294,19 @@ namespace hpp {
      *          cout << (*it)->name;
      */
     struct JointVector
+      : public FakeContainer<Joint *,const Joint *>
     {
-      DevicePtr_t device;
-      JointVector( DevicePtr_t device ) : device(device) {}
-      JointVector() : device() {}
+      JointVector(DevicePtr_t device) : FakeContainer<Joint*,const Joint*>(device) {}
+      JointVector() {}
+      virtual ~JointVector() {}
 
-      struct iterator
-      {
-        JointVector & ref;
-        size_type idx;
-        
-        iterator(JointVector & ref,size_type idx) : ref(ref),idx(idx) {}
+      virtual Joint* at(const size_type i) ;
+      virtual const Joint* at(const size_type i) const ;
+      virtual size_type size() const ;
+      virtual size_type iend() const ;
 
-        iterator&  operator++ (); 
-        iterator   operator++ (int); 
-        iterator&  operator-- (); 
-        iterator   operator-- (int); 
-        JointPtr_t operator*  (); 
-        bool       operator== (const iterator & i2); 
-        bool       operator!= (const iterator & i2); 
-      };
-
-      struct const_iterator
-      {
-        const JointVector & ref;
-        size_type idx;
-        
-        const_iterator(const JointVector & ref,size_type idx) : ref(ref),idx(idx) {}
-        const_iterator(const iterator & it) : ref(it.ref),idx(it.idx) {}
-
-        const_iterator&  operator++ (); 
-        const_iterator   operator++ (int); 
-        const_iterator&  operator-- (); 
-        const_iterator   operator-- (int); 
-        JointPtr_t operator*  (); 
-        bool       operator== (const const_iterator & i2); 
-        bool       operator!= (const const_iterator & i2); 
-      };
-
-      iterator        begin();
-      iterator        end();
-      iterator       rbegin();
-      iterator       rend();
-      const_iterator  begin() const;
-      const_iterator  end() const;
-      const_iterator rbegin() const;
-      const_iterator rend() const;
-
-      JointPtr_t      operator[](const int idx);
-      const Joint*    operator[](const int idx) const;
+      void selfAssert(size_type i = 0) const;
     };
-
 
   } // namespace pinocchio
 } // namespace hpp
