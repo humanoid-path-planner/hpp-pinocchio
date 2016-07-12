@@ -57,6 +57,7 @@ SEARCH_FOR_BOOST()
 # Search for dependecies.
 ADD_REQUIRED_DEPENDENCY("assimp")
 ADD_REQUIRED_DEPENDENCY("hpp-util >= 3")
+ADD_REQUIRED_DEPENDENCY("hpp-fcl >= 0.4.2")
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.1")
 ADD_OPTIONAL_DEPENDENCY("hpp-model >= 3")
 ADD_OPTIONAL_DEPENDENCY("hpp-model-urdf >= 3")
@@ -65,10 +66,16 @@ IF (${TEST_WITH_ROMEO} STREQUAL ON)
   ADD_REQUIRED_DEPENDENCY ("romeo_description")
 ENDIF()
 
+ADD_DEFINITIONS(-DWITH_URDFDOM)
+ADD_DEFINITIONS(-DWITH_HPP_FCL)
+
+
 # Set header files.
 SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/device.hh
   include/hpp/pinocchio/joint.hh
+  include/hpp/pinocchio/body.hh
+  include/hpp/pinocchio/fake-container.hh
   )
 
 INSTALL(FILES ${${PROJECT_NAME}_HEADERS}

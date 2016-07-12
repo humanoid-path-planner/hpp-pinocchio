@@ -53,4 +53,5 @@ ENDMACRO(ADD_TESTCASE)
 # Generated test.
 #IF(TEST_WITH_ROMEO)
 ADD_TESTCASE(tdevice FALSE)
+ADD_TESTCASE(tfakecontainer FALSE)
 #ENDIF()
