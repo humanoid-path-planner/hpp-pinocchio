@@ -23,12 +23,14 @@
 # include <hpp/util/pointer.hh>
 # include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/fwd.hh>
-# include <pinocchio/spatial/inertia.hpp>
+# include <hpp/pinocchio/collision-object.hh>
+
 # include <pinocchio/multibody/fwd.hpp>
 
 namespace hpp {
   namespace pinocchio {
     //DEPREC using fcl::Transform3f;
+
 
     /// Geometry associated to a Joint
     ///
@@ -104,7 +106,8 @@ namespace hpp {
 
       /// Access to inner objects
       /// \param type Collision or distance
-//NOTYET      const ObjectVector_t& innerObjects (Request_t type) const;
+      const ObjectVector_t& innerObjects () const { return innerObjects_; }
+      //DEPREC const ObjectVector_t& innerObjects (Request_t type) const;
 
       /// Get radius
       ///
@@ -141,21 +144,20 @@ namespace hpp {
 
       /// Access to outer objects
       /// \param type Collision or distance
-//NOTYET      const ObjectVector_t& outerObjects (Request_t type) const;
+      const ObjectVector_t& outerObjects () const { return outerObjects_; }
+      //DEPREC const ObjectVector_t& outerObjects (Request_t type) const;
       /// \}
 
-      /// \name Collision and distance computation
-      /// @{
+      //DEPREC /// \name Collision and distance computation
+      //DEPREC /// @{
+      //DEPREC /// Test for collision
+      //DEPREC /// \return true if collision, false if no collision
+      //DEPREC       bool collisionTest () const;
+      //DEPREC /// Compute distances between pairs of objects stored in bodies
+      //DEPREC void computeDistances (DistanceResults_t& results,
+      //DEPREC 			     DistanceResults_t::size_type& offset);
 
-      /// Test for collision
-      /// \return true if collision, false if no collision
-//NOTYET      bool collisionTest () const;
-
-      /// Compute distances between pairs of objects stored in bodies
-//NOTYET      void computeDistances (DistanceResults_t& results,
-//NOTYET			     DistanceResults_t::size_type& offset);
-
-      /// @}
+      //DEPREC /// @}
       /// \name Inertial information
       /// @{
       /// Get position of center of mass in joint local reference frame.
@@ -186,14 +188,16 @@ namespace hpp {
       se3::Frame &       frame() ;
 
 //NOTYET      void updateRadius (const CollisionObjectPtr_t& object);
-//NOTYET      ObjectVector_t collisionInnerObjects_;
-//NOTYET      ObjectVector_t collisionOuterObjects_;
-//NOTYET      ObjectVector_t distanceInnerObjects_;
-//NOTYET      ObjectVector_t distanceOuterObjects_;
+      //DEPREC ObjectVector_t collisionInnerObjects_;
+      //DEPREC ObjectVector_t collisionOuterObjects_;
+      //DEPREC ObjectVector_t distanceInnerObjects_;
+      //DEPREC ObjectVector_t distanceOuterObjects_;
       DevicePtr_t devicePtr;
       JointIndex jointIndex;
       mutable FrameIndex frameIndex; // In pinocchio, bodies are stored as frames of type BODY.
       mutable bool       frameIndexSet;
+      ObjectVector innerObjects_,outerObjects_;
+      
 
       //DEPREC JointPtr_t joint_;
       //DEPREC std::string name_;

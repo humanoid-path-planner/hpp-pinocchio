@@ -29,6 +29,7 @@
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/config.hh>
 //# include <hpp/pinocchio/distance-result.hh>
+# include <hpp/pinocchio/collision-object.hh>
 # include <hpp/pinocchio/extra-config-space.hh>
 # include <hpp/pinocchio/joint.hh>
 # include <pinocchio/multibody/model.hpp>
@@ -277,56 +278,57 @@ namespace hpp {
 //NOTYET
 //NOTYET      /// \}
       // -----------------------------------------------------------------------
-//NOTYET      /// \name Collision and distance computation
-//NOTYET      /// \{
-//NOTYET
-//NOTYET      /// Get list of obstacles
-//NOTYET      /// \param type collision or distance.
-//NOTYET      const ObjectVector_t& obstacles (Request_t type) const;
-//NOTYET
-//NOTYET      /// Add collision pairs between objects attached to two joints
-//NOTYET      ///
-//NOTYET      /// \param joint1 first joint
-//NOTYET      /// \param joint2 second joint
-//NOTYET      /// \param type collision or distance.
-//NOTYET      ///
-//NOTYET      /// Define collision pair between each object of joint 1 body and
-//NOTYET      /// each object of joint2 body.
-//NOTYET      virtual void addCollisionPairs (const JointPtr_t& joint1,
-//NOTYET				      const JointPtr_t& joint2,
-//NOTYET				      Request_t type);
-//NOTYET
-//NOTYET      /// Remove collision pairs between objects attached to two joints
-//NOTYET      ///
-//NOTYET      /// \param joint1 first joint
-//NOTYET      /// \param joint2 second joint
-//NOTYET      /// \param type collision or distance.
-//NOTYET      ///
-//NOTYET      /// remove collision between each object of joint 1 body and
-//NOTYET      /// each object of joint2 body
-//NOTYET      virtual void removeCollisionPairs(const JointPtr_t& joint1,
-//NOTYET                                        const JointPtr_t& joint2,
-//NOTYET				        Request_t type);
-//NOTYET
-//NOTYET      /// Get list of collision or distance pairs
-//NOTYET      /// \param type collision or distance.
+      /// \name Collision and distance computation
+      /// \{
+
+      /// Get list of obstacles
+      /// \param type collision or distance.
+      const ObjectVector_t& obstacles (Request_t type) const;
+
+      //DEPREC /// Add collision pairs between objects attached to two joints
+      //DEPREC ///
+      //DEPREC /// \param joint1 first joint
+      //DEPREC /// \param joint2 second joint
+      //DEPREC /// \param type collision or distance.
+      //DEPREC ///
+      //DEPREC /// Define collision pair between each object of joint 1 body and
+      //DEPREC /// each object of joint2 body.
+      //DEPREC virtual void addCollisionPairs (const JointPtr_t& joint1,
+      //DEPREC 				      const JointPtr_t& joint2,
+      //DEPREC 				      Request_t type);
+
+      //DEPREC /// Remove collision pairs between objects attached to two joints
+      //DEPREC ///
+      //DEPREC /// \param joint1 first joint
+      //DEPREC /// \param joint2 second joint
+      //DEPREC /// \param type collision or distance.
+      //DEPREC ///
+      //DEPREC /// remove collision between each object of joint 1 body and
+      //DEPREC /// each object of joint2 body
+      //DEPREC virtual void removeCollisionPairs(const JointPtr_t& joint1,
+      //DEPREC                                   const JointPtr_t& joint2,
+      //DEPREC 				        Request_t type);
+
+      /// Get list of collision or distance pairs
+      /// \param type collision or distance.
 //NOTYET      const CollisionPairs_t& collisionPairs (Request_t type) const;
-//NOTYET
-//NOTYET      /// Iterator over inner objects of the device
-//NOTYET      /// \param type Collision or distance
-//NOTYET      ObjectIterator objectIterator (Request_t type);
-//NOTYET
-//NOTYET      /// Test collision of current configuration
-//NOTYET      /// \warning Users should call computeForwardKinematics first.
-//NOTYET      bool collisionTest () const;
-//NOTYET
-//NOTYET      /// Compute distances between pairs of objects stored in bodies
-//NOTYET      void computeDistances ();
-//NOTYET
-//NOTYET      /// Get result of distance computations
-//NOTYET      const DistanceResults_t&
-//NOTYET	distanceResults () const {return distances_;};
-//NOTYET      /// \}
+
+      /// Iterator over inner objects of the device
+      /// \param type Collision or distance
+//NOTYET       ObjectIterator objectIterator (Request_t type);
+
+      /// Test collision of current configuration
+      /// \param stopAtFirstCollision act as named
+      /// \warning Users should call computeForwardKinematics first.
+      bool collisionTest (const bool stopAtFirstCollision=true);
+
+      /// Compute distances between pairs of objects stored in bodies
+      /// \warning Users should call computeForwardKinematics first.
+      void computeDistances ();
+
+      /// Get result of distance computations
+      const DistanceResults_t& distanceResults () const;
+      /// \}
       // -----------------------------------------------------------------------
       /// \name Forward kinematics
       /// \{
@@ -363,8 +365,8 @@ namespace hpp {
       //DEPREC ///
       //DEPREC void initCopy(const DeviceWkPtr_t& weakPtr, const Device& model);
 
-      /// Recompute number of distance pairs
-      void updateDistances ();
+      //DEPREC /// Recompute the number of distance pairs and resize the vector of distance results.
+      //DEPREC void updateDistances ();
 
     private:
       /// \brief Copy Constructor
@@ -389,7 +391,7 @@ namespace hpp {
       GeomDataPtr_t geomData_;
 
       std::string name_;
-//NOTYET      DistanceResults_t distances_;
+//DEPREC      DistanceResults_t distances_;
       //DEPREC JointByName_t jointByName_;
       JointVector jointVector_; // fake container with iterator mimicking hpp::model::JointVector_t
       //DEPREC JointVector_t jointByConfigRank_;
@@ -409,6 +411,7 @@ namespace hpp {
 //NOTYET      CollisionPairs_t collisionPairs_;
 //NOTYET      CollisionPairs_t distancePairs_;
       //DEPREC // Obstacles
+      ObjectVector_t obstacles_;
       //DEPREC ObjectVector_t collisionObstacles_;
       //DEPREC ObjectVector_t distanceObstacles_;
 //NOTYET      // Grippers
@@ -416,6 +419,7 @@ namespace hpp {
       // Extra configuration space
       ExtraConfigSpace extraConfigSpace_;
       DeviceWkPtr_t weakPtr_;
+
     }; // class Device
 
     std::ostream& operator<< (std::ostream& os, const hpp::pinocchio::Device& device);

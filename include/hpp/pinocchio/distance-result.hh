@@ -17,36 +17,8 @@
 // hpp-pinocchio  If not, see
 // <http://www.gnu.org/licenses/>.
 
-#ifndef HPP_PINOCCHIO_DISTANCE_RESULT_HH
-# define HPP_PINOCCHIO_DISTANCE_RESULT_HH
-
-# include <hpp/fcl/collision_data.h>
-# include <hpp/pinocchio/config.hh>
-# include <hpp/pinocchio/fwd.hh>
-
 namespace hpp {
   namespace pinocchio {
-    /// Result of distance computation between two CollisionObject.
-    struct HPP_PINOCCHIO_DLLAPI DistanceResult {
-      /// Get distance between objects
-      const value_type& distance () const
-      {
-	return fcl.min_distance;
-      }
-      /// Get closest point on inner object in global frame,
-      const fcl::Vec3f& closestPointInner () const
-      {
-	return fcl.nearest_points [0];
-      }
-      /// Get closest point on outer object in global frame,
-      const fcl::Vec3f& closestPointOuter () const
-      {
-	return fcl.nearest_points [1];
-      }
-      fcl::DistanceResult fcl;
-      CollisionObjectPtr_t innerObject;
-      CollisionObjectPtr_t outerObject;
-    }; // struct DistanceResult
-  } // namespace pinocchio
+    //DEPREC struct DistanceResult;
+  } //namespace pinocchio
 } // namespace hpp
-#endif // HPP_PINOCCHIO_DISTANCE_RESULT_HH

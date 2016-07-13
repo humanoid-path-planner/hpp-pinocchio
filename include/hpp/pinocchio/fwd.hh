@@ -35,6 +35,7 @@ namespace se3
   struct Data;
   struct GeometryModel;
   struct GeometryData;
+  struct DistanceResult;
 }
 
 namespace hpp {
@@ -42,7 +43,7 @@ namespace hpp {
     HPP_PREDEF_CLASS (Body);
     HPP_PREDEF_CLASS (CollisionObject);
     HPP_PREDEF_CLASS (Device);
-    HPP_PREDEF_CLASS (DistanceResult);
+    //DEPREC HPP_PREDEF_CLASS (DistanceResult);
     HPP_PREDEF_CLASS (HumanoidRobot);
     HPP_PREDEF_CLASS (Joint);
     HPP_PREDEF_CLASS (JointConfiguration);
@@ -68,16 +69,18 @@ namespace hpp {
 
     struct JointVector;
     typedef JointVector JointVector_t;
-    typedef Body* BodyPtr_t;
-    typedef std::vector<Body*> BodyVector_t;
+    typedef boost::shared_ptr<Body> BodyPtr_t;
+    typedef boost::shared_ptr<const Body> BodyConstPtr_t;
+    //typedef std::vector<BodyPtr_t> BodyVector_t;
     typedef fcl::CollisionObject * fclCollisionObjectPtr_t;
     typedef const fcl::CollisionObject * fclConstCollisionObjectPtr_t;
     //DEPREC typedef std::list <CollisionObjectPtr_t> ObjectVector_t;
     typedef boost::shared_ptr <Device> DevicePtr_t;
     typedef boost::shared_ptr <const Device> DeviceConstPtr_t;
-    typedef std::vector <DistanceResult> DistanceResults_t;
+    typedef std::vector <se3::DistanceResult> DistanceResults_t;
     typedef boost::shared_ptr <HumanoidRobot> HumanoidRobotPtr_t;
-    typedef Joint* JointPtr_t;
+    typedef boost::shared_ptr<Joint> JointPtr_t;
+    typedef boost::shared_ptr<const Joint> JointConstPtr_t;
     typedef boost::shared_ptr <Gripper> GripperPtr_t;
     typedef std::vector <GripperPtr_t> Grippers_t;
     //DEPREC typedef fcl::Transform3f Transform3f;

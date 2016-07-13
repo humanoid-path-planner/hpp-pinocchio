@@ -19,15 +19,16 @@
 
 # include <hpp/pinocchio/joint.hh>
 # include <hpp/pinocchio/device.hh>
+# include <hpp/pinocchio/body.hh>
 
 namespace hpp {
   namespace pinocchio {
-    Joint::Joint (DeviceWkPtr_t device, Index indexInJointList ) 
-      :robot_(device)
-      ,id(indexInJointList)
+    Joint::Joint (DevicePtr_t device, Index indexInJointList ) 
+      :devicePtr(device)
+      ,jointIndex(indexInJointList)
     {
       assert (model());
-      assert (int(id)<model()->njoint);
+      assert (int(jointIndex)<model()->njoint);
       setChildList();
     }
 
@@ -35,50 +36,57 @@ namespace hpp {
     {
       assert(model()); assert(data());
       children.clear();
-      for( se3::Index child=id+1;int(child)<=data()->lastChild[id];++child )
-        if( model()->parents[child]==id ) children.push_back (child) ;
+      for( se3::Index child=jointIndex+1;int(child)<=data()->lastChild[jointIndex];++child )
+        if( model()->parents[child]==jointIndex ) children.push_back (child) ;
+    }
+
+    void Joint::selfAssert() const 
+    {
+      assert(devicePtr);
+      assert(model()); assert(data());
+      assert(devicePtr->model()->njoint>int(jointIndex));
     }
 
     ModelPtr_t       Joint::model()       { DevicePtr_t r = robot(); return r->model(); }
-    ModelConstPtr_t  Joint::model() const { return robot()->model(); }
-    DataPtr_t        Joint::data()        { return robot()->data (); }
-    DataConstPtr_t   Joint::data()  const { return robot()->data (); }
+    ModelConstPtr_t  Joint::model() const { return devicePtr->model(); }
+    DataPtr_t        Joint::data()        { return devicePtr->data (); }
+    DataConstPtr_t   Joint::data()  const { return devicePtr->data (); }
 
     const std::string&  Joint::name() const 
     {
-      assert (model());
-      return model()->names[id];
+      selfAssert();
+      return model()->names[jointIndex];
     }
 
     const Transform3f&  Joint::currentTransformation () const 
     {
-      assert(data());
-      return data()->oMi[id];
+      selfAssert();
+      return data()->oMi[jointIndex];
     }
 
 //NOTYET    vector_t  Joint::neutralConfiguration () const {}
 
     size_type  Joint::numberDof () const 
     {
-      assert(model());
-      return model()->joints[id].nv();
+      selfAssert();
+      return model()->joints[jointIndex].nv();
     }
     size_type  Joint::configSize () const
     {
-      assert (model());
-      return model()->joints[id].nq();
+      selfAssert();
+      return model()->joints[jointIndex].nq();
     }
 
     size_type  Joint::rankInConfiguration () const
     {
-      assert (model());
-      return model()->joints[id].idx_q();
+      selfAssert();
+      return model()->joints[jointIndex].idx_q();
     }
 
     size_type  Joint::rankInVelocity () const
     {
-      assert (model());
-      return model()->joints[id].idx_v();
+      selfAssert();
+      return model()->joints[jointIndex].idx_v();
     }
 
     std::size_t  Joint::numberChildJoints () const
@@ -88,14 +96,15 @@ namespace hpp {
 
     JointPtr_t  Joint::childJoint (std::size_t rank) const
     {
-      assert (model()); assert(rank<children.size());
-      return JointPtr_t (new Joint(robot_,children[rank]) );
+      selfAssert();
+      assert(rank<children.size());
+      return JointPtr_t (new Joint(devicePtr,children[rank]) );
     }
 
     const Transform3f&  Joint::positionInParentFrame () const
     {
-      assert(model());
-      return model()->jointPlacements[id];
+      selfAssert();
+      return model()->jointPlacements[jointIndex];
     }
 
 //NOTYET    value_type  Joint::upperBoundLinearVelocity () const {}
@@ -105,11 +114,15 @@ namespace hpp {
 //NOTYET    const JointJacobian_t&  Joint::jacobian () const {}
 
 //NOTYET    JointJacobian_t&  Joint::jacobian () {}
-//NOTYET    BodyPtr_t  Joint::linkedBody () const {}
+
+    BodyPtr_t  Joint::linkedBody () const 
+    {
+      return BodyPtr_t( new Body(devicePtr,jointIndex) );
+    }
 
     std::ostream& Joint::display (std::ostream& os) const 
     {
-      os << "Joint " << id 
+      os << "Joint " << jointIndex 
          << "(nq=" << configSize() << ",nv=" << numberDof() << ")" << std::endl;
 
       os << "\"" << name () << "\"" << "[shape=box label=\"" << name ()
@@ -162,12 +175,12 @@ namespace hpp {
     /* --- ITERATOR --------------------------------------------------------- */
     
     /* Access to pinocchio index + 1 because pinocchio first joint is the universe. */
-    Joint* JointVector::at(const size_type i) 
-    { selfAssert(i); return new Joint(devicePtr,i+1); }
+    JointPtr_t JointVector::at(const size_type i) 
+    { selfAssert(i); return JointPtr_t(new Joint(devicePtr,i+1)); }
     
     /* Access to pinocchio index + 1 because pinocchio first joint is the universe. */
-    const Joint* JointVector::at(const size_type i) const 
-    { selfAssert(i); return new Joint(devicePtr,i+1); }
+    JointConstPtr_t JointVector::at(const size_type i) const 
+    { selfAssert(i); return JointConstPtr_t(new Joint(devicePtr,i+1)); }
 
     size_type JointVector::size() const 
     { return devicePtr->model()->njoint; }

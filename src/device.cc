@@ -26,6 +26,7 @@
 #include <pinocchio/algorithm/center-of-mass.hpp>
 #include <pinocchio/algorithm/jacobian.hpp>
 #include <pinocchio/algorithm/kinematics.hpp>
+#include <pinocchio/algorithm/collisions.hpp>
 #include <boost/foreach.hpp>
 
 namespace hpp {
@@ -37,6 +38,7 @@ namespace hpp {
       , data_ ()
       , name_ (name)
       , jointVector_()
+      , obstacles_()
       , weakPtr_()
     {}
 
@@ -47,6 +49,7 @@ namespace hpp {
       DevicePtr_t res = DevicePtr_t(new Device(name)); // init shared ptr
       res->weakPtr_ = res;
       res->jointVector_ = JointVector(res);
+      res->obstacles_ = ObjectVector(res,0,CollisionObject::INNER);
       return res;
     }
     
@@ -85,7 +88,7 @@ namespace hpp {
     JointPtr_t Device::
     rootJoint () const
     {
-      return JointPtr_t( new Joint(weakPtr_,1) );
+      return JointPtr_t( new Joint(weakPtr_.lock(),1) );
     }
 
     JointPtr_t Device::
@@ -97,7 +100,7 @@ namespace hpp {
       BOOST_FOREACH( const se3::JointModel & j, model_->joints )
         {
           if( j.id()==0 ) continue; // Skip "universe" joint
-          if( j.idx_q() == r ) return JointPtr_t( new Joint(weakPtr_,j.id()) );
+          if( j.idx_q() == r ) return JointPtr_t( new Joint(weakPtr_.lock(),j.id()) );
         }
       assert(false && "The joint at config rank has not been found");
       return JointPtr_t();
@@ -110,7 +113,7 @@ namespace hpp {
       BOOST_FOREACH( const se3::JointModel & j,model_->joints )
         {
           if( j.id()==0 ) continue; // Skip "universe" joint
-          if( j.idx_v() == r ) return JointPtr_t( new Joint(weakPtr_,j.id()) );
+          if( j.idx_v() == r ) return JointPtr_t( new Joint(weakPtr_.lock(),j.id()) );
         }
       assert(false && "The joint at velocity rank has not been found");
       return JointPtr_t();
@@ -125,7 +128,7 @@ namespace hpp {
 				  " does not have any joint named "
 				  + name);
       se3::Index id = model_->getJointId(name);
-      return JointPtr_t( new Joint(weakPtr_,id) );
+      return JointPtr_t( new Joint(weakPtr_.lock(),id) );
     }
 
     JointPtr_t Device::
@@ -138,7 +141,7 @@ namespace hpp {
       se3::Model::JointIndex jointId = model_->frames[bodyId].parent;
       //assert(jointId>=0);
       assert((int)jointId<model_->njoint);
-      return JointPtr_t( new Joint(weakPtr_,jointId) );
+      return JointPtr_t( new Joint(weakPtr_.lock(),jointId) );
     }
 
     size_type Device::
@@ -156,7 +159,7 @@ namespace hpp {
     }
 
     /* ---------------------------------------------------------------------- */
-    /* --- CONF ------------------------------------------------------------- */
+    /* --- CONFIG ----------------------------------------------------------- */
     /* ---------------------------------------------------------------------- */
 
     /* Previous implementation of resizeState in hpp::model:: was setting the
@@ -252,11 +255,31 @@ namespace hpp {
       return os;
     }
 
-    void Device::
-    updateDistances ()
+    /* ---------------------------------------------------------------------- */
+    /* --- COLLISIONS ------------------------------------------------------- */
+    /* ---------------------------------------------------------------------- */
+
+    bool Device::collisionTest (const bool stopAtFirstCollision)
     {
-//NOTYET
+      /* Following hpp::model API, the forward kinematics (joint placement) is
+       * supposed to have already been computed. */
+      se3::updateGeometryPlacements(*model(),*data(),*geomModel(),*geomData());
+      return se3::computeCollisions(*geomData(),stopAtFirstCollision);
     }
+
+    void Device::computeDistances ()
+    {
+      /* Following hpp::model API, the forward kinematics (joint placement) is
+       * supposed to have already been computed. */
+      se3::updateGeometryPlacements(*model(),*data(),*geomModel(),*geomData());
+      se3::computeDistances (*geomData());
+    }
+
+    const DistanceResults_t& Device::distanceResults () const
+    {
+      return geomData()->distance_results;
+    }
+
 
   } // namespace pinocchio
 } // namespace hpp

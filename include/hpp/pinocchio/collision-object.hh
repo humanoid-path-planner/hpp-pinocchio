@@ -23,6 +23,7 @@
 # include <hpp/fcl/collision_object.h>
 # include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/fwd.hh>
+# include <hpp/pinocchio/fake-container.hh>
 # include <pinocchio/multibody/fwd.hpp>
 
 namespace se3
@@ -45,7 +46,10 @@ namespace hpp {
 
       typedef se3::JointIndex JointIndex;
       typedef se3::GeomIndex GeomIndex;
-      
+      enum InOutType { INNER, OUTER };
+
+      typedef std::vector<GeomIndex> GeomIndexList;
+      typedef std::map < se3::JointIndex, GeomIndexList > ObjectVec_t;
 
       //DREPEC /// Create collision object and return shared pointer
       //DREPEC static CollisionObjectPtr_t create (fcl::CollisionObjectPtr_t object,
@@ -59,7 +63,8 @@ namespace hpp {
 
       CollisionObject( DevicePtr_t device, 
                        const JointIndex joint,
-                       const GeomIndex geom );
+                       const GeomIndex geom,
+                       const InOutType inout = INNER );
 
       const std::string& name () const;
 
@@ -98,7 +103,11 @@ namespace hpp {
 
       /// Assert that the members of the struct are valid (no null pointer, etc).
       void selfAssert() const;
-      
+
+      /// Get the reference to INNER|OUTER object container.
+      ObjectVec_t &       objectVec();
+      const ObjectVec_t & objectVec() const;
+
       //DEPREC /// \name Construction, destruction and copy
       //DEPREC /// \{
       //DEPREC 
@@ -138,8 +147,9 @@ namespace hpp {
     private:
       DevicePtr_t devicePtr;
       JointIndex jointIndex;
-      GeomIndex geomInJointIndex; // Index in joint list
-      GeomIndex geomInModelIndex;        // Index in global model list
+      GeomIndex geomInJointIndex;  // Index in joint list.
+      GeomIndex geomInModelIndex;  // Index in global model list.
+      InOutType inOutType;         // Object in Inner or Outer object list.
 
       //DEPREC fcl::CollisionObjectPtr_t object_;
       //DEPREC fcl::Transform3f positionInJointFrame_;
@@ -147,6 +157,35 @@ namespace hpp {
       //DEPREC std::string name_;
       //DEPREC CollisionObjectWkPtr_t weakPtr_;
     }; // class CollisionObject
+
+
+    typedef boost::shared_ptr<CollisionObject> CollisionObjectPtr_t;
+    typedef boost::shared_ptr<const CollisionObject> CollisionObjectConstPtr_t;
+
+    /* --- CONTAINER -------------------------------------------------------- */
+    struct ObjectVector 
+      : public FakeContainer<CollisionObjectPtr_t,CollisionObjectConstPtr_t>
+    {
+      typedef se3::JointIndex JointIndex;
+      typedef CollisionObject::InOutType InOutType;
+
+      JointIndex jointIndex;
+      InOutType inOutType;
+
+      ObjectVector(DevicePtr_t device,const JointIndex i,CollisionObject::InOutType inout)
+        : FakeContainer<CollisionObjectPtr_t,CollisionObjectConstPtr_t>(device)
+        , jointIndex(i), inOutType(inout) {}
+      ObjectVector() {}
+
+      virtual CollisionObjectPtr_t at(const size_type i) ;
+      virtual CollisionObjectConstPtr_t at(const size_type i) const ;
+      virtual size_type size() const ;
+
+      void selfAssert(size_type i = 0) const;
+    };
+
+    typedef ObjectVector ObjectVector_t;
+
   } // namespace pinocchio
 } // namespace hpp
 

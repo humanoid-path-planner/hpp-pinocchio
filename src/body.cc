@@ -30,6 +30,8 @@ namespace hpp {
     Body::
     Body (DevicePtr_t device, JointIndex joint) 
       : devicePtr(device),jointIndex(joint) ,frameIndexSet(false)
+      , innerObjects_(device,joint,CollisionObject::INNER)
+      , outerObjects_(device,joint,CollisionObject::OUTER)
     {
       selfAssert();
     }
@@ -78,7 +80,7 @@ namespace hpp {
     JointPtr_t Body::joint () const
     {
       selfAssert();
-      return new Joint( DeviceWkPtr_t(devicePtr),jointIndex );
+      return JointPtr_t( new Joint(devicePtr,jointIndex) );
     }
 
 

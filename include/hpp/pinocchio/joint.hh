@@ -56,7 +56,7 @@ namespace hpp {
       /// Constructor
       /// \param device pointer on the device the joint is belonging to.
       /// \param indexInJointList index of the joint, i.e. joint = device.model.joints[index]
-      Joint (DeviceWkPtr_t device, Index indexInJointList );
+      Joint (DevicePtr_t device, Index indexInJointList );
 
       //DEPREC /// Constructor
       //DEPREC /// \param initialPosition position of the joint before being inserted
@@ -229,15 +229,15 @@ namespace hpp {
       //DEPREC void robot (const DeviceWkPtr_t& device) {robot_ = device;}
 
       /// Access robot owning the object
-      DeviceConstPtr_t robot () const { assert(robot_.lock());  return robot_.lock ();}
+      DeviceConstPtr_t robot () const { selfAssert();  return devicePtr;}
       /// Access robot owning the object
-      DevicePtr_t robot () { assert(robot_.lock()); return robot_.lock ();}
+      DevicePtr_t robot () { selfAssert(); return devicePtr;}
 
       /// \name Body linked to the joint
       /// \{
 
       /// Get linked body
-//NOTYET      BodyPtr_t linkedBody () const;
+      BodyPtr_t linkedBody () const;
 
       //DEPREC /// Set linked body
       //DEPREC void setLinkedBody (const BodyPtr_t& body);
@@ -269,9 +269,9 @@ namespace hpp {
     protected:
       value_type maximalDistanceToParent_;
       vector_t neutralConfiguration_;
-      DeviceWkPtr_t robot_;
+      DevicePtr_t devicePtr;
       JointJacobian_t jacobian_;
-      Index id;
+      Index jointIndex;
       std::vector<Index> children;
 
       /// Store list of childrens.
@@ -280,6 +280,9 @@ namespace hpp {
       ModelConstPtr_t  model() const ;
       DataPtr_t        data()  ;      
       DataConstPtr_t   data()  const ;
+
+      /// Assert that the members of the struct are valid (no null pointer, etc).
+      void selfAssert() const;
 
       friend class Device;
     }; // class Joint
@@ -294,14 +297,14 @@ namespace hpp {
      *          cout << (*it)->name;
      */
     struct JointVector
-      : public FakeContainer<Joint *,const Joint *>
+      : public FakeContainer<JointPtr_t,JointConstPtr_t>
     {
-      JointVector(DevicePtr_t device) : FakeContainer<Joint*,const Joint*>(device) {}
+      JointVector(DevicePtr_t device) : FakeContainer<JointPtr_t,JointConstPtr_t>(device) {}
       JointVector() {}
       virtual ~JointVector() {}
 
-      virtual Joint* at(const size_type i) ;
-      virtual const Joint* at(const size_type i) const ;
+      virtual JointPtr_t at(const size_type i) ;
+      virtual JointConstPtr_t at(const size_type i) const ;
       virtual size_type size() const ;
       virtual size_type iend() const ;
 
