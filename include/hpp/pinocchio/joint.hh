@@ -215,10 +215,18 @@ namespace hpp {
       /// \{
 
       /// Get const reference to Jacobian
-//NOTYET      const JointJacobian_t& jacobian () const;
+      /// \param localFrame if true, compute the jacobian (6d) in the local frame, 
+      /// whose linear part corresponds to the velocity of the center of the frame.
+      /// If false, the jacobian is expressed in the global frame and its linear part
+      /// corresponds to the value of the velocity vector field at the center of the world.
+      const JointJacobian_t& jacobian (const bool localFrame=true) const;
 
       /// Get non const reference to Jacobian
-//NOTYET      JointJacobian_t& jacobian ();
+      /// \param localFrame if true, compute the jacobian (6d) in the local frame, 
+      /// whose linear part corresponds to the velocity of the center of the frame.
+      /// If false, the jacobian is expressed in the global frame and its linear part
+      /// corresponds to the value of the velocity vector field at the center of the world.
+      JointJacobian_t& jacobian (const bool localFrame=true);
 
       /// \}
       // -----------------------------------------------------------------------
@@ -270,7 +278,7 @@ namespace hpp {
       value_type maximalDistanceToParent_;
       vector_t neutralConfiguration_;
       DevicePtr_t devicePtr;
-      JointJacobian_t jacobian_;
+      mutable JointJacobian_t jacobian_;
       Index jointIndex;
       std::vector<Index> children;
 

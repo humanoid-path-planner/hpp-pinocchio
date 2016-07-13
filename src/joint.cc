@@ -20,6 +20,7 @@
 # include <hpp/pinocchio/joint.hh>
 # include <hpp/pinocchio/device.hh>
 # include <hpp/pinocchio/body.hh>
+# include <pinocchio/algorithm/jacobian.hpp>
 
 namespace hpp {
   namespace pinocchio {
@@ -111,9 +112,22 @@ namespace hpp {
 //NOTYET    value_type  Joint::upperBoundAngularVelocity () const {}
 //NOTYET    const value_type& m Joint::aximalDistanceToParent () const {}
 //NOTYET    void  Joint::computeMaximalDistanceToParent () {}
-//NOTYET    const JointJacobian_t&  Joint::jacobian () const {}
 
-//NOTYET    JointJacobian_t&  Joint::jacobian () {}
+    const JointJacobian_t&  Joint::jacobian (const bool local) const
+    {
+      selfAssert(); assert(robot()->computationFlag()|Device::JACOBIAN);
+      if(local) se3::getJacobian<true> (*model(),*data(),jointIndex,jacobian_);
+      else      se3::getJacobian<false>(*model(),*data(),jointIndex,jacobian_);
+      return jacobian_;
+    }
+
+    JointJacobian_t&  Joint::jacobian (const bool local)
+    {
+      selfAssert(); assert(robot()->computationFlag()|Device::JACOBIAN);
+      if(local) se3::getJacobian<true> (*model(),*data(),jointIndex,jacobian_);
+      else      se3::getJacobian<false>(*model(),*data(),jointIndex,jacobian_);
+      return jacobian_;
+    }
 
     BodyPtr_t  Joint::linkedBody () const 
     {
