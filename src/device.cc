@@ -78,7 +78,14 @@ namespace hpp {
     createData()
     {
       data_ = DataPtr_t( new se3::Data(*model_) );
-      resizeState();
+      // We assume that model is now complete and state can be resized.
+      resizeState(); 
+    }
+
+    void Device::
+    createGeomData()
+    {
+      geomData_ = GeomDataPtr_t( new se3::GeometryData(*geomModel_) );
     }
     
     /* ---------------------------------------------------------------------- */

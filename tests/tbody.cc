@@ -22,14 +22,13 @@
 #include <boost/test/unit_test.hpp>
 
 #include <hpp/model/device.hh>
+#include <hpp/model/collision-object.hh>
 #include <hpp/model/urdf/util.hh>
 
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/body.hh>
 #include <pinocchio/multibody/geometry.hpp>
-#include <pinocchio/multibody/parser/urdf.hpp>
-#include <pinocchio/multibody/parser/urdf-with-geometry.hpp>
 #include "../tests/utils.hh"
 
 static bool verbose = false;
@@ -119,16 +118,27 @@ BOOST_AUTO_TEST_CASE(body)
       const Eigen::Vector3d cm (oRi_m*bm->localCenterOfMass());
       BOOST_CHECK( cp.isApprox (cm) );
 
-      // const Eigen::Matrix3d Ip (oRi_p*bp->inertiaMatrix()*oRi_p.transpose());
-      // const Eigen::Matrix3d Im (oRi_m*bm->inertiaMatrix()*oRi_m.transpose());
       // There is a problem in the following comparison. I think it is because
       // Im is not properly parsed, resulting in incorrect order of the columns
       // of Im (in particular, main components not on the diagonal, not symmetric).
       // ... => Skip this test
-      //BOOST_CHECK( std::abs(Ip.mean()-Im.mean())<1e-6 );
+      // const Eigen::Matrix3d Ip (oRi_p*bp->inertiaMatrix()*oRi_p.transpose());
+      // const Eigen::Matrix3d Im (oRi_m*bm->inertiaMatrix()*oRi_m.transpose());
+      // BOOST_CHECK( std::abs(Ip.mean()-Im.mean())<1e-6 );
     }     
 }
 /* -------------------------------------------------------------------------- */
+
+struct IsCollisionObjectNamed
+{
+  std::string request;
+  IsCollisionObjectNamed( const std::string & request ) : request(request) {}
+  bool operator() ( hpp::model::CollisionObjectPtr_t bm ) 
+  {
+    //std::cout << "\t\t" << "Requesting " << request << " \tchecking\t " << bm->name() << std::endl;
+    return bm->name() == request; 
+  }
+};
 
 BOOST_AUTO_TEST_CASE(geoms)
 {
@@ -137,25 +147,45 @@ BOOST_AUTO_TEST_CASE(geoms)
   hpp::model::DevicePtr_t     model     = hppModel();
   hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio();
 
-  hpp::pinocchio::JointConstPtr_t jp5 = pinocchio->getJointVector()[5];
-  hpp::pinocchio::BodyPtr_t  bp5 = jp5->linkedBody();
-
   std::vector<std::string> baseDirs; baseDirs.push_back("/");
-  hpp::pinocchio::GeomModelPtr_t geom( new se3::GeometryModel(*pinocchio->model()) );
+  hpp::pinocchio::GeomModelPtr_t geom( new se3::GeometryModel() );
   se3::GeometryModel & geomRef = *geom;
-
-  //geomRef = 
-  se3::GeometryModel geomtmp = se3::urdf::buildGeom(*pinocchio->model(),pinocchio->name(),baseDirs);
-  se3::GeometryModel geom2(*pinocchio->model());
-  geom2 = geomtmp;
-  //geomRef = geomtmp;
+  geomRef = se3::urdf::buildGeom(*pinocchio->model(),pinocchio->name(),baseDirs,se3::COLLISION);
 
   pinocchio->geomModel(geom);
   pinocchio->createGeomData();
 
-  for( hpp::pinocchio::ObjectVector::const_iterator it = bp5->innerObjects().begin();
-       it!=bp5->innerObjects().end();++it )
+  for (hpp::pinocchio::JointVector::const_iterator it = ++pinocchio->getJointVector().begin ();
+       it != pinocchio->getJointVector().end (); ++it) 
     {
-      std::cout << (*it)->name() << std::endl;
-    }
+      hpp::pinocchio::JointConstPtr_t jp = *it;
+      hpp::model    ::JointConstPtr_t jm = model->getJointByName(jp->name());
+      assert( jm );
+      assert( jp->name() == jm->name() );
+
+      hpp::pinocchio::BodyPtr_t bp = jp->linkedBody();
+      hpp::model    ::BodyPtr_t bm = jm->linkedBody();
+      assert ( bp->name() == bm->name() );
+      
+      assert (bp->innerObjects().size() == int(bm->innerObjects(hpp::model::COLLISION).size()));
+      for (hpp::pinocchio::ObjectVector::const_iterator itcoll = bp->innerObjects().begin();
+           itcoll!=bp->innerObjects().end() ; ++ itcoll)
+        {
+          hpp::model::ObjectVector_t::const_iterator itcollm = 
+            std::find_if( bm->innerObjects(hpp::model::COLLISION).begin(),
+                          bm->innerObjects(hpp::model::COLLISION).end(),
+                          IsCollisionObjectNamed(bp->name()+std::string("_0")) );
+          // Check that a body of the same name exists in both hpp::model and pinocchio.
+          BOOST_CHECK( itcollm != bm->innerObjects(hpp::model::COLLISION).end() );
+          if (itcollm != bm->innerObjects(hpp::model::COLLISION).end())
+            {
+              BOOST_CHECK( (*itcollm)->name() == (*itcoll)->name()+std::string("_0") );
+            }
+          else if (verbose)
+            {
+              std::cout << "\t\t** Error when looking for body " << bp->name() 
+                        << ", object " << (*itcoll)->name() << std::endl;
+            }
+        } // for each collision object
+    } // for each joint 
 }

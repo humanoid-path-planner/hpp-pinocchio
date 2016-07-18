@@ -26,7 +26,6 @@
 
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/joint.hh>
-#include <pinocchio/multibody/parser/urdf.hpp>
 #include "../tests/utils.hh"
 
 static bool verbose = false;

@@ -107,9 +107,9 @@ namespace hpp {
     size_type ObjectVector::size() const
     {
       if( inOutType==CollisionObject::INNER )
-        return size_type(devicePtr->geomModel()->innerObjects.size());
+        return size_type(devicePtr->geomModel()->innerObjects[jointIndex].size());
       else
-        return size_type(devicePtr->geomModel()->outerObjects.size());
+        return size_type(devicePtr->geomModel()->outerObjects[jointIndex].size());
     }
     
     void ObjectVector::selfAssert(size_type i) const
