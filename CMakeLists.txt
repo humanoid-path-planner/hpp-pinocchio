@@ -70,7 +70,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/joint.hh
   include/hpp/pinocchio/body.hh
   include/hpp/pinocchio/fake-container.hh
-  include/hpp/pinocchio/object-iterator.hh
+  include/hpp/pinocchio/device-object-vector.hh
   )
 
 INSTALL(FILES ${${PROJECT_NAME}_HEADERS}

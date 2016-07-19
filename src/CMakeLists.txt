@@ -23,7 +23,7 @@ ADD_LIBRARY(${LIBRARY_NAME}
   joint.cc
   collision-object.cc
   body.cc
-  object-iterator.cc
+  device-object-vector.cc
   )
 
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} assimp)

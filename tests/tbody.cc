@@ -235,8 +235,8 @@ BOOST_AUTO_TEST_CASE(collisionObject)
 
   hpp::model::ObjectIterator _mObj = model->objectIterator(hpp::model::COLLISION);
 
-  for( hpp::pinocchio::ObjectIterator::iterator _pObj = pinocchio->objectIterator().begin();
-       _pObj != pinocchio->objectIterator().end(); ++ _pObj )
+  for( hpp::pinocchio::DeviceObjectVector::iterator _pObj = pinocchio->objectVector().begin();
+       _pObj != pinocchio->objectVector().end(); ++ _pObj )
     {
       BOOST_CHECK(!_mObj.isEnd());
       if (verbose) {
