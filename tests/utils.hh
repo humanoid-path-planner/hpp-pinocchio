@@ -170,12 +170,29 @@ hpp::model::DevicePtr_t hppModel( const std::string urdfFilename = urdfDefaultFi
 { return hpp::model::robotFromUrdf(urdfFilename); }
 
 /* Build a hpp::pinocchio::Device from urdf path. */
-hpp::pinocchio::DevicePtr_t hppPinocchio( const std::string urdfFilename = urdfDefaultFilename )
+hpp::pinocchio::DevicePtr_t hppPinocchio( bool withGeoms = false,
+                                          const std::string urdfFilename = urdfDefaultFilename)
 {
   hpp::pinocchio::DevicePtr_t pinocchio = hpp::pinocchio::Device::create(urdfFilename);
   hpp::pinocchio::ModelPtr_t model( new se3::Model() );
   *model = se3::urdf::buildModel(urdfFilename,se3::JointModelFreeFlyer());
   pinocchio->model(model);
   pinocchio->createData();
+
+#ifdef __se3_geom_hpp__
+  if( withGeoms )
+    {
+      std::vector<std::string> baseDirs; baseDirs.push_back(ROMEO_MODEL_DIR);
+      hpp::pinocchio::GeomModelPtr_t geom( new se3::GeometryModel() );
+      se3::GeometryModel & geomRef = *geom;
+      geomRef = se3::urdf::buildGeom(*pinocchio->model(),pinocchio->name(),baseDirs,se3::COLLISION);
+
+      pinocchio->geomModel(geom);
+      pinocchio->createGeomData();
+    }
+#endif // __se3_geom_hpp__
+
   return pinocchio;
 }
+
+

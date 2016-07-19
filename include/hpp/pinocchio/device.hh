@@ -32,6 +32,7 @@
 # include <hpp/pinocchio/collision-object.hh>
 # include <hpp/pinocchio/extra-config-space.hh>
 # include <hpp/pinocchio/joint.hh>
+# include <hpp/pinocchio/object-iterator.hh>
 # include <pinocchio/multibody/model.hpp>
 
 namespace hpp {
@@ -315,7 +316,8 @@ namespace hpp {
 
       /// Iterator over inner objects of the device
       /// \param type Collision or distance
-//NOTYET       ObjectIterator objectIterator (Request_t type);
+      ObjectIterator& objectIterator () {return objectIterator_; }
+      const ObjectIterator& objectIterator () const { return objectIterator_; }
 
       /// Test collision of current configuration
       /// \param stopAtFirstCollision act as named
@@ -414,6 +416,7 @@ namespace hpp {
       ObjectVector_t obstacles_;
       //DEPREC ObjectVector_t collisionObstacles_;
       //DEPREC ObjectVector_t distanceObstacles_;
+      ObjectIterator objectIterator_;
 //NOTYET      // Grippers
 //NOTYET      Grippers_t grippers_;
       // Extra configuration space

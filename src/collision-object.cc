@@ -32,12 +32,25 @@ namespace hpp {
                      const GeomIndex geom,
                      const InOutType inout ) 
       : devicePtr(device),jointIndex(joint)
-      , geomInJointIndex(geom),geomInModelIndex(0)
+      , geomInJointIndex(geom),geomInJointIndexSet(true),
+        geomInModelIndex(0)
       , inOutType(inout)
     {
       selfAssert(); 
       geomInModelIndex = objectVec().at(jointIndex)[geomInJointIndex];
       selfAssert(); 
+    }
+
+    CollisionObject::
+    CollisionObject( DevicePtr_t device, 
+                     const GeomIndex geomInModel )
+      : devicePtr(device),jointIndex(0)
+      , geomInJointIndex(0),geomInJointIndexSet(false),
+        geomInModelIndex(geomInModel)
+      , inOutType(INNER)
+    {
+      jointIndex = pinocchio().parent;
+      selfAssert();
     }
 
     CollisionObject::ObjectVec_t & 
@@ -89,7 +102,8 @@ namespace hpp {
     { 
       assert(devicePtr);
       assert(devicePtr->model()->njoint>int(jointIndex));
-      assert(objectVec().at(jointIndex).size()>geomInJointIndex);
+      if(geomInJointIndexSet)
+        assert(objectVec().at(jointIndex).size()>geomInJointIndex);
       assert(devicePtr->geomModel()->geometryObjects.size()>geomInModelIndex);
     }
 

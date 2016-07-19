@@ -61,10 +61,18 @@ namespace hpp {
       //DREPEC /// Clone object and attach to given joint.
       //DREPEC CollisionObjectPtr_t clone (const JointPtr_t& joint) const;
 
+      /// Construction from inner/outer list, using a joint index as reference.
+      /// \param geom: index of the object in either inner or outer objects of joint <joint>.
       CollisionObject( DevicePtr_t device, 
                        const JointIndex joint,
                        const GeomIndex geom,
                        const InOutType inout = INNER );
+
+      /// Construction from global collision-object list. The joint ID is recovered from
+      /// the collision object in Pinocchio and InOut is set to INNER. The geomIndexInJoint
+      /// is not defined (geomIndexInJointSet = false)
+      CollisionObject( DevicePtr_t device, 
+                       const GeomIndex geom );
 
       const std::string& name () const;
 
@@ -146,10 +154,11 @@ namespace hpp {
 
     private:
       DevicePtr_t devicePtr;
-      JointIndex jointIndex;
-      GeomIndex geomInJointIndex;  // Index in joint list.
-      GeomIndex geomInModelIndex;  // Index in global model list.
-      InOutType inOutType;         // Object in Inner or Outer object list.
+      JointIndex  jointIndex;
+      GeomIndex   geomInJointIndex;     // Index in joint list.
+      bool        geomInJointIndexSet;  // True if geomInJointIndex is set.
+      GeomIndex   geomInModelIndex;     // Index in global model list.
+      InOutType   inOutType;            // Object in Inner or Outer object list.
 
       //DEPREC fcl::CollisionObjectPtr_t object_;
       //DEPREC fcl::Transform3f positionInJointFrame_;
