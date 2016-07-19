@@ -206,7 +206,7 @@ namespace hpp {
       return data_->mass[0];
     }
     
-    vector3_t Device::
+    const vector3_t& Device::
     positionCenterOfMass () const
     {
       assert(data_);

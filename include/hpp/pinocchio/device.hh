@@ -251,7 +251,7 @@ namespace hpp {
       const value_type& mass () const;
 
       /// Get position of center of mass
-      vector3_t positionCenterOfMass () const;
+      const vector3_t& positionCenterOfMass () const;
 
       /// Get Jacobian of center of mass with respect to configuration
       const ComJacobian_t& jacobianCenterOfMass () const;
