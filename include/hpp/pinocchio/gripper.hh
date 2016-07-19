@@ -50,10 +50,16 @@ namespace hpp {
           return shPtr;
         }
 
-        /// Get joint that grip
+        /// Get joint to which the gripper is attached
         const JointPtr_t& joint () const
         {
           return joint_;
+        }
+
+        /// Get the frame Id of the gripper in the vector of frame of the Model
+        const se3::FrameIndex& frameId () const
+        {
+          return fid_;
         }
 
         /// Get handle position in the the Grippering joint
