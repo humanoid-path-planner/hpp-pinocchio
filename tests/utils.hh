@@ -163,7 +163,7 @@ namespace hpp {
 
 /* Default path of the urdf file describing the robot to parse. */
 static const std::string urdfDefaultFilename =
-  "/home/nmansard/src/pinocchio/hpp/hpp-model-urdf/romeo.urdf";
+       ROMEO_MODEL_DIR "/romeo_description/urdf/romeo_small.urdf";
 
 /* Build a hpp::model::Device from urdf path. */  
 hpp::model::DevicePtr_t hppModel( const std::string urdfFilename = urdfDefaultFilename )

@@ -39,9 +39,6 @@ IF (HPP_BENCHMARK)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHPP_ENABLE_BENCHMARK")
 ENDIF()
 
-SET(TEST_WITH_ROMEO OFF CACHE BOOL
-  "Enable test with Romeo model: trigger dependency to romeo package.")
-
 # Profiling flags when building with DEBUG
 #-----------------------------------------
 IF(CMAKE_BUILD_TYPE MATCHES "DEBUG")
@@ -61,10 +58,7 @@ ADD_REQUIRED_DEPENDENCY("hpp-fcl >= 0.4.2")
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.1")
 ADD_OPTIONAL_DEPENDENCY("hpp-model >= 3")
 ADD_OPTIONAL_DEPENDENCY("hpp-model-urdf >= 3")
-
-IF (${TEST_WITH_ROMEO} STREQUAL ON)
-  ADD_REQUIRED_DEPENDENCY ("romeo_description")
-ENDIF()
+ADD_OPTIONAL_DEPENDENCY("romeo_description >= 0.2")
 
 ADD_DEFINITIONS(-DWITH_URDFDOM)
 ADD_DEFINITIONS(-DWITH_HPP_FCL)

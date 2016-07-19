@@ -236,11 +236,12 @@ BOOST_AUTO_TEST_CASE(jointAccess)
   BOOST_CHECK( pinocchio->getJointByName (jm->name())->name() == jm->name() );
 
   // Weak test: the first joint is free flyer, with different names in pinocchio and model
-  // The second joint of model is an anchor, so not added inside Pinocchio
-  // So we check pinocchio[1] (hip) against model[3] (hip as well).
+  // The second joint of model is an anchor, so not added inside Pinocchio. Next are anchor 
+  // joints (ImuTorsoAccelerometer_joint, ImuTorsoGyrometer_joint).
+  // So we check pinocchio[1] (hip) against model[5] (hip as well).
   if(verbose)
     std::cout << pinocchio->getJointVector()[1]->name() << " -- " 
-              << model->getJointVector()[3]->name() << std::endl;
+              << model->getJointVector()[5]->name() << std::endl;
   BOOST_CHECK( pinocchio->getJointVector()[1]->name() == 
-               model->getJointVector()[3]->name() );
+               model->getJointVector()[5]->name() );
 }

@@ -50,10 +50,27 @@ MACRO(ADD_TESTCASE NAME GENERATED)
   PKG_CONFIG_USE_DEPENDENCY(${NAME} pinocchio)
 ENDMACRO(ADD_TESTCASE)
 
-# Generated test.
-#IF(TEST_WITH_ROMEO)
-ADD_TESTCASE(tdevice FALSE)
-ADD_TESTCASE(tjoint FALSE)
-ADD_TESTCASE(tbody FALSE)
-ADD_TESTCASE(tfakecontainer FALSE)
-#ENDIF()
+MACRO(ADD_TESTCASE_CFLAGS target flag)
+  SET_PROPERTY(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS " ${flag}")
+ENDMACRO(ADD_TEST_CFLAGS)
+
+# --- LIST OF TESTS ------------------------------------------------------------
+# --- LIST OF TESTS ------------------------------------------------------------
+# --- LIST OF TESTS ------------------------------------------------------------
+IF(ROMEO_DESCRIPTION_FOUND)
+  MESSAGE(STATUS "=== Tests with romeo" ${ROMEO_DESCRIPTION_DATAROOTDIR})
+  ADD_TESTCASE(tfakecontainer FALSE)
+
+  ADD_TESTCASE(tdevice FALSE)
+  ADD_TESTCASE_CFLAGS(tdevice 
+    '-DROMEO_MODEL_DIR=\\\"${ROMEO_DESCRIPTION_DATAROOTDIR}\\\"')
+
+  ADD_TESTCASE(tjoint FALSE)
+  ADD_TESTCASE_CFLAGS(tjoint
+    '-DROMEO_MODEL_DIR=\\\"${ROMEO_DESCRIPTION_DATAROOTDIR}\\\"')
+
+  ADD_TESTCASE(tbody FALSE)
+  ADD_TESTCASE_CFLAGS(tbody
+    '-DROMEO_MODEL_DIR=\\\"${ROMEO_DESCRIPTION_DATAROOTDIR}\\\"')
+
+ENDIF(ROMEO_DESCRIPTION_FOUND)

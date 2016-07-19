@@ -167,12 +167,12 @@ BOOST_AUTO_TEST_CASE (joint)
    * we can confidently assume that they are properly aligned. */
   BOOST_CHECK( isApproxPermutation( model    ->getJointByName("waist")->positionInParentFrame(),
                                     pinocchio->getJointByName("waist")->positionInParentFrame() ) );
+  /* The first two children are IMU spots. The hip is in rank=2 in hpp::model.  
+   * So check model.child(2) against pinocchio.child(0). */
   BOOST_CHECK( isApproxPermutation( model    ->getJointByName("waist")
-                                    ->childJoint(0)->positionInParentFrame(),
+                                    ->childJoint(2)->positionInParentFrame(),
                                     pinocchio->getJointByName("waist")
                                     ->childJoint(0)->positionInParentFrame() ) );
-
-  
 }
 
 /* -------------------------------------------------------------------------- */

@@ -147,7 +147,7 @@ BOOST_AUTO_TEST_CASE(geoms)
   hpp::model::DevicePtr_t     model     = hppModel();
   hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio();
 
-  std::vector<std::string> baseDirs; baseDirs.push_back("/");
+  std::vector<std::string> baseDirs; baseDirs.push_back(ROMEO_MODEL_DIR);
   hpp::pinocchio::GeomModelPtr_t geom( new se3::GeometryModel() );
   se3::GeometryModel & geomRef = *geom;
   geomRef = se3::urdf::buildGeom(*pinocchio->model(),pinocchio->name(),baseDirs,se3::COLLISION);
