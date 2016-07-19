@@ -108,7 +108,7 @@ namespace hpp {
         {
           if( j.id()==0 ) continue; // Skip "universe" joint
           const size_type iq = j.idx_q() - r;
-          if( 0 <= iq && iq < j.nq() ) return JointPtr_t( new Joint(weakPtr_,j.id()) );
+          if( 0 <= iq && iq < j.nq() ) return JointPtr_t( new Joint(weakPtr_.lock(),j.id()) );
         }
       assert(false && "The joint at config rank has not been found");
       return JointPtr_t();
@@ -122,7 +122,7 @@ namespace hpp {
         {
           if( j.id()==0 ) continue; // Skip "universe" joint
           const size_type iv = j.idx_v() - r;
-          if( 0 <= iv && iv < j.nv() ) return JointPtr_t( new Joint(weakPtr_,j.id()) );
+          if( 0 <= iv && iv < j.nv() ) return JointPtr_t( new Joint(weakPtr_.lock(),j.id()) );
         }
       assert(false && "The joint at velocity rank has not been found");
       return JointPtr_t();

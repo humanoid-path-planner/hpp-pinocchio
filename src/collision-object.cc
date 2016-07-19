@@ -56,9 +56,9 @@ namespace hpp {
     const std::string& CollisionObject::name () const { return pinocchio().name; }
 
     const se3::GeometryObject & CollisionObject::pinocchio () const
-    { return devicePtr->geomModel()->geometry_objects[geomInModelIndex]; }
+    { return devicePtr->geomModel()->geometryObjects[geomInModelIndex]; }
     se3::GeometryObject & CollisionObject::pinocchio ()
-    { return devicePtr->geomModel()->geometry_objects[geomInModelIndex]; }
+    { return devicePtr->geomModel()->geometryObjects[geomInModelIndex]; }
 
     fclCollisionObjectPtr_t CollisionObject::fcl ()
     { return & pinocchio().collision_object; }
@@ -71,16 +71,16 @@ namespace hpp {
     positionInJointFrame () const { return pinocchio().placement; }
 
     const fcl::Transform3f& CollisionObject::getFclTransform () const
-    { return devicePtr->geomData()->oMg_fcl_geometries[geomInModelIndex]; }
+    { return devicePtr->geomData()->oMg_fcl[geomInModelIndex]; }
     const Transform3f& CollisionObject::getTransform () const
-    { return devicePtr->geomData()->oMg_geometries[geomInModelIndex];  }
+    { return devicePtr->geomData()->oMg[geomInModelIndex];  }
 
     void CollisionObject::move (const Transform3f& position)
     { 
       // move does not work but for object attached to the universe (joint 0)
       assert( jointIndex==0 ); 
-      devicePtr->geomData()->oMg_geometries[geomInModelIndex] = position;
-      devicePtr->geomData()->oMg_fcl_geometries[geomInModelIndex]
+      devicePtr->geomData()->oMg[geomInModelIndex] = position;
+      devicePtr->geomData()->oMg_fcl[geomInModelIndex]
         = toFclTransform3f(position);
       pinocchio().placement = position;
     }
@@ -90,7 +90,7 @@ namespace hpp {
       assert(devicePtr);
       assert(devicePtr->model()->njoint>int(jointIndex));
       assert(objectVec().at(jointIndex).size()>geomInJointIndex);
-      assert(devicePtr->geomModel()->geometry_objects.size()>geomInModelIndex);
+      assert(devicePtr->geomModel()->geometryObjects.size()>geomInModelIndex);
     }
 
     /* --- ITERATOR --------------------------------------------------------- */
