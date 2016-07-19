@@ -233,10 +233,21 @@ BOOST_AUTO_TEST_CASE(collisionObject)
   hpp::model::DevicePtr_t     model     = hppModel();
   hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio(true);
 
-  for( hpp::pinocchio::ObjectIterator::iterator it = pinocchio->objectIterator().begin();
-       it != pinocchio->objectIterator().end(); ++ it )
+  hpp::model::ObjectIterator _mObj = model->objectIterator(hpp::model::COLLISION);
+
+  for( hpp::pinocchio::ObjectIterator::iterator _pObj = pinocchio->objectIterator().begin();
+       _pObj != pinocchio->objectIterator().end(); ++ _pObj )
     {
-      std::cout << (*it)->name() << std::endl;
+      BOOST_CHECK(!_mObj.isEnd());
+      if (verbose) {
+        std::cout
+          << (*_mObj)->name() << " -- "
+          << (*_pObj)->name() << std::endl;
+      }
+      // FIXME: "_0" is very ugly.
+      BOOST_CHECK((*_mObj)->name() == (*_pObj)->name() + "_0");
+      ++_mObj;
     }
 
+  BOOST_CHECK(_mObj.isEnd());
 }
