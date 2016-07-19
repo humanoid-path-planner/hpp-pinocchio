@@ -20,11 +20,11 @@
 #ifndef HPP_PINOCCHIO_GRIPPER_HH
 # define HPP_PINOCCHIO_GRIPPER_HH
 
-# include <hpp/model/fwd.hh>
-# include <hpp/model/joint.hh>
+# include <hpp/pinocchio/fwd.hh>
+# include <hpp/pinocchio/joint.hh>
 
 namespace hpp {
-  namespace model {
+  namespace pinocchio {
     /// Definition of a robot gripper
     ///
     /// This class represent a robot gripper as a frame attached to the joint
@@ -34,7 +34,7 @@ namespace hpp {
     ///
     /// To graps a box-shaped object with small lengths along x and y, the
     /// gripper frame should coincide with the object frame.
-    class HPP_MODEL_DLLAPI Gripper
+    class HPP_PINOCCHIO_DLLAPI Gripper
     {
       public:
         /// Return a shared pointer to new instance
@@ -42,7 +42,7 @@ namespace hpp {
         /// \param objectPositionInJoint object position in the the grasping
         ///        joint.
         static GripperPtr_t create (const std::string& name,
-            const DevicePtr_t& device);
+            const DevicePtr_t& device)
         {
           Gripper* ptr = new Gripper (name, device);
           GripperPtr_t shPtr (ptr);
@@ -63,10 +63,8 @@ namespace hpp {
         }
 
         /// Get handle position in the the Grippering joint
-        const Transform3f& objectPositionInJoint () const
-        {
-          return device_->model()->getFramePlacement(fid_);
-        }
+        const Transform3f& objectPositionInJoint () const;
+
         ///get name
         const std::string& name () const
         {
@@ -101,15 +99,7 @@ namespace hpp {
         /// \param device
         /// \todo device should be of type DeviceConstPtr_t but the constructor of
         /// JointPtr_t needs a DevicePtr_t.
-        Gripper (const std::string& name, const DevicePtr_t& device) :
-          name_ (name),
-          device_ (device),
-          clearance_ (0)
-        {
-          fid_ = device->model()->getFrameId (name);
-          joint_ = JointPtr_t (
-              new Joint(device, device->model()->getFrameParent (fid)));
-        }
+        Gripper (const std::string& name, const DevicePtr_t& device);
 
         void init (GripperWkPtr_t weakPtr)
         {
@@ -118,7 +108,7 @@ namespace hpp {
 
       private:
         std::string name_;
-        DeviceConstPtr_t device_;
+        DevicePtr_t device_;
         /// Joint of the robot that holds handles.
         JointPtr_t joint_;
         se3::FrameIndex fid_;
@@ -128,7 +118,7 @@ namespace hpp {
         GripperWkPtr_t weakPtr_;
     }; // class Gripper
     std::ostream& operator<< (std::ostream& os, const Gripper& gripper);
-  } // namespace model
+  } // namespace pinocchio
 } // namespace hpp
 
 #endif // HPP_PINOCCHIO_GRIPPER_HH

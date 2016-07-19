@@ -17,15 +17,30 @@
 // hpp-model. If not, see
 // <http://www.gnu.org/licenses/>.
 
-#include <hpp/model/gripper.hh>
+#include <hpp/pinocchio/gripper.hh>
+
+#include <hpp/pinocchio/device.hh>
 
 namespace hpp {
-  namespace model {
+  namespace pinocchio {
+    Gripper::Gripper (const std::string& name, const DevicePtr_t& device) :
+      name_ (name),
+      device_ (device),
+      clearance_ (0)
+    {
+      fid_ = device->model()->getFrameId (name);
+      joint_ = JointPtr_t (
+          new Joint(device, device->model()->getFrameParent (fid_)));
+    }
+    const Transform3f& Gripper::objectPositionInJoint () const
+    {
+      return device_->model()->getFramePlacement(fid_);
+    }
+
     GripperPtr_t Gripper::clone () const
     {
       GripperPtr_t self = weakPtr_.lock ();
-      return Gripper::create (self->name (),self->joint (),
-          self->objectPositionInJoint ());
+      return Gripper::create (name_, device_);
     }
 
     std::ostream& Gripper::print (std::ostream& os) const
@@ -42,5 +57,5 @@ namespace hpp {
       return gripper.print (os);
     }
 
-  } // namespace model
+  } // namespace pinocchio
 } // namespace hpp
