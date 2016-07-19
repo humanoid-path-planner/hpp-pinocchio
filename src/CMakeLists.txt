@@ -24,6 +24,7 @@ ADD_LIBRARY(${LIBRARY_NAME}
   collision-object.cc
   body.cc
   device-object-vector.cc
+  gripper.cc
   )
 
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} assimp)
