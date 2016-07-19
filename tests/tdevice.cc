@@ -254,7 +254,9 @@ BOOST_AUTO_TEST_CASE(jointAccess)
         << jvp[idP]->name() << " -- "
         << jvm[idM]->name() << std::endl;
     se3::JointIndex jidP = jvp[idP]->index();
-    std::cout << pinocchio->model()->joints[jidP].shortname() << std::endl;
+    BOOST_CHECK(jidP == idP + 1);
+    if (verbose)
+      std::cout << pinocchio->model()->joints[jidP].shortname() << std::endl;
 
     if (pinocchio->model()->joints[jidP].shortname() == "JointModelFreeFlyer") {
       // The root joint have different names in model and pinocchio
