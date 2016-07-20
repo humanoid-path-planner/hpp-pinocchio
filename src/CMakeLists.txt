@@ -17,13 +17,22 @@
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
-ADD_LIBRARY(${LIBRARY_NAME}
-  SHARED
+SET(LIBRARY_SOURCES
   device.cc
   joint.cc
   collision-object.cc
   body.cc
   device-object-vector.cc
+  )
+
+#Adding headers to sources for visibility in IDE
+FOREACH(infileName ${${PROJECT_NAME}_HEADERS})
+    LIST(APPEND LIBRARY_SOURCES ${PROJECT_SOURCE_DIR}/${infileName})
+ENDFOREACH(infileName)
+
+ADD_LIBRARY(${LIBRARY_NAME}
+  SHARED
+  ${LIBRARY_SOURCES}
   )
 
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} assimp)
