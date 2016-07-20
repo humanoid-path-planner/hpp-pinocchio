@@ -258,26 +258,28 @@ namespace hpp {
 
       /// \}
       // -----------------------------------------------------------------------
-//NOTYET      /// \name Grippers
-//NOTYET      /// \{
-//NOTYET
-//NOTYET      /// Add a gripper to the Device
-//NOTYET      void addGripper (const GripperPtr_t& gripper)
-//NOTYET      {
-//NOTYET	grippers_.push_back (gripper);
-//NOTYET      }
-//NOTYET      /// Return list of grippers of the Device
-//NOTYET      Grippers_t& grippers ()
-//NOTYET      {
-//NOTYET	return grippers_;
-//NOTYET      }
-//NOTYET      /// Return list of grippers of the Device
-//NOTYET      const Grippers_t& grippers () const
-//NOTYET      {
-//NOTYET	return grippers_;
-//NOTYET      }
-//NOTYET
-//NOTYET      /// \}
+      /// \name Grippers
+      /// \{
+
+      /// Add a gripper to the Device
+      void addGripper (const GripperPtr_t& gripper)
+      {
+	grippers_.push_back (gripper);
+      }
+
+      /// Return list of grippers of the Device
+      Grippers_t& grippers ()
+      {
+	return grippers_;
+      }
+
+      /// Return list of grippers of the Device
+      const Grippers_t& grippers () const
+      {
+	return grippers_;
+      }
+
+      /// \}
       // -----------------------------------------------------------------------
       /// \name Collision and distance computation
       /// \{
@@ -417,8 +419,8 @@ namespace hpp {
       //DEPREC ObjectVector_t collisionObstacles_;
       //DEPREC ObjectVector_t distanceObstacles_;
       DeviceObjectVector objectVector_;
-//NOTYET      // Grippers
-//NOTYET      Grippers_t grippers_;
+      // Grippers
+      Grippers_t grippers_;
       // Extra configuration space
       ExtraConfigSpace extraConfigSpace_;
       DeviceWkPtr_t weakPtr_;
