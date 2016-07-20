@@ -20,12 +20,11 @@
 #ifndef HPP_MODEL_CONFIGURATION_HH
 # define HPP_MODEL_CONFIGURATION_HH
 
-# include <hpp/model/device.hh>
-# include <hpp/model/joint.hh>
-# include <hpp/model/joint-configuration.hh>
+# include <hpp/pinocchio/device.hh>
+# include <pinocchio/algorithm/joint-configuration.hpp>
 
 namespace hpp {
-  namespace model {
+  namespace pinocchio {
     /// Integrate a constant velocity during unit time.
     ///
     /// \param robot robot that describes the kinematic chain
@@ -44,15 +43,7 @@ namespace hpp {
 			    ConfigurationIn_t configuration,
 			    vectorIn_t velocity, ConfigurationOut_t result)
     {
-      const JointVector_t& jv (robot->getJointVector ());
-      for (model::JointVector_t::const_iterator itJoint = jv.begin ();
-	   itJoint != jv.end (); itJoint++) {
-	size_type indexConfig = (*itJoint)->rankInConfiguration ();
-	size_type indexVelocity = (*itJoint)->rankInVelocity ();
-	(*itJoint)->configuration ()->integrate (configuration, velocity,
-						 indexConfig, indexVelocity,
-						 result);
-      }
+      result = se3::integrate(*robot->model(), configuration, velocity);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = configuration.tail (dim) + velocity.tail (dim);
     }
@@ -69,13 +60,7 @@ namespace hpp {
                               const value_type& u,
                               ConfigurationOut_t result)
     {
-      const JointVector_t& jv (robot->getJointVector ());
-      for (model::JointVector_t::const_iterator itJoint = jv.begin ();
-          itJoint != jv.end (); itJoint++) {
-        size_type indexConfig = (*itJoint)->rankInConfiguration ();
-        (*itJoint)->configuration ()->interpolate
-          (q0, q1, u, indexConfig, result);
-      }
+      result = se3::interpolate(*robot->model(), q0, q1, u);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = u * q1.tail (dim) + (1-u) * q0.tail (dim);
     }
@@ -93,14 +78,7 @@ namespace hpp {
     void inline difference (const DevicePtr_t& robot, ConfigurationIn_t q1,
 			    ConfigurationIn_t q2, vectorOut_t result)
     {
-      const JointVector_t& jv (robot->getJointVector ());
-      for (model::JointVector_t::const_iterator itJoint = jv.begin ();
-	   itJoint != jv.end (); itJoint++) {
-	size_type indexConfig = (*itJoint)->rankInConfiguration ();
-	size_type indexVelocity = (*itJoint)->rankInVelocity ();
-	(*itJoint)->configuration ()->difference (q1, q2, indexConfig,
-						  indexVelocity, result);
-      }
+      result = se3::differentiate(*robot->model(), q2, q1);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = q1.tail (dim) - q2.tail (dim);
     }
@@ -113,16 +91,10 @@ namespace hpp {
     inline value_type distance (const DevicePtr_t& robot, ConfigurationIn_t q1,
 			  ConfigurationIn_t q2)
     {
-      value_type result = 0;
-      const JointVector_t& jv (robot->getJointVector ());
-      for (model::JointVector_t::const_iterator itJoint = jv.begin ();
-	   itJoint != jv.end (); itJoint++) {
-	size_type iC = (*itJoint)->rankInConfiguration ();
-        result += (*itJoint)->configuration ()->squaredDistance (q1, q2, iC);
-      }
+      vector_t dist = se3::distance(*robot->model(), q1, q2);
       const size_type& dim = robot->extraConfigSpace().dimension();
-      result += (q2.tail (dim) - q1.tail (dim)).squaredNorm ();
-      return sqrt (result);
+      if (dim == 0) return dist.norm();
+      else return sqrt (dist.squaredNorm() + (q2.tail (dim) - q1.tail (dim)).squaredNorm ());
     }
 
     /// Normalize configuration
@@ -131,15 +103,20 @@ namespace hpp {
     /// space. Normalization consists in projecting a vector on this
     /// sub-manifold. It mostly consists in normalizing quaternions for 
     /// SO3 joints and 2D-vectors for unbounded rotations.
+    inline void normalize (const DevicePtr_t& robot, Configuration_t& q)
+    {
+      se3::normalize(*robot->model(), q);
+    }
+
+    /// For backward compatibility.
+    /// See normalize normalize (const DevicePtr_t&, Configuration_t&)
     inline void normalize (const DevicePtr_t& robot, ConfigurationOut_t q)
     {
-      const JointVector_t& jv (robot->getJointVector ());
-      for (model::JointVector_t::const_iterator itJoint = jv.begin ();
-	   itJoint != jv.end (); itJoint++) {
-	size_type indexConfig = (*itJoint)->rankInConfiguration ();
-	(*itJoint)->configuration ()->normalize (indexConfig, q);
-      }
+      Configuration_t qq = q;
+      normalize(robot, qq);
+      q = qq;
     }
+
     /// Write configuration in a string
     inline std::string displayConfig (ConfigurationIn_t q)
     {
@@ -149,8 +126,6 @@ namespace hpp {
       }
       return oss.str ();
     }
-
-
   } // namespace model
 } // namespace hpp
 #endif // HPP_MODEL_CONFIGURATION_HH

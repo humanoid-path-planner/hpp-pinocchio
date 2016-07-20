@@ -84,15 +84,15 @@ namespace hpp {
     }
 
 
-    vector3_t Body::localCenterOfMass () const
+    const vector3_t& Body::localCenterOfMass () const
     {
       selfAssert();
-      return se3::toFclVec3f(model()->inertias[jointIndex].lever());
+      return model()->inertias[jointIndex].lever();
     }
     matrix3_t Body::inertiaMatrix() const
     {
       selfAssert();
-      return se3::toFclMatrix3f(model()->inertias[jointIndex].inertia());
+      return model()->inertias[jointIndex].inertia();
     }
     value_type Body::mass() const
     {

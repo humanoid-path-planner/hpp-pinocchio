@@ -161,7 +161,7 @@ namespace hpp {
       /// \name Inertial information
       /// @{
       /// Get position of center of mass in joint local reference frame.
-      vector3_t localCenterOfMass () const;
+      const vector3_t& localCenterOfMass () const;
       /// Get Intertia matrix expressed in joint local reference frame.
       matrix3_t inertiaMatrix() const;
       /// Get mass.

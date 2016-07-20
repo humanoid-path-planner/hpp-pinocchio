@@ -1,19 +1,19 @@
-# Copyright 2012, 2013, 2014 CNRS-LAAS
+# Copyright 2016 CNRS-LAAS
 #
-# Author: Antonio El Khoury
+# Author: Joseph Mirabel, Nicolas Mansard from Antonio El Khoury
 #
-# This file is part of hpp-model-urdf.
-# hpp-model-urdf is free software: you can redistribute it and/or modify
+# This file is part of hpp-pinocchio.
+# hpp-pinocchio is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# hpp-model-urdf is distributed in the hope that it will be useful,
+# hpp-pinocchio is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Lesser Public License for more details.
 # You should have received a copy of the GNU Lesser General Public License
-# along with hpp-model-urdf.  If not, see <http://www.gnu.org/licenses/>.
+# along with hpp-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
 
 CMAKE_MINIMUM_REQUIRED(VERSION 0.1)
 
@@ -72,6 +72,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/fake-container.hh
   include/hpp/pinocchio/device-object-vector.hh
   include/hpp/pinocchio/gripper.hh
+  include/hpp/pinocchio/configuration.hh
   )
 
 INSTALL(FILES ${${PROJECT_NAME}_HEADERS}
