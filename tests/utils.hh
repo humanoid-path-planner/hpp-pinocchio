@@ -25,6 +25,7 @@ struct m2p
   {
     Eigen::MatrixXd oRb; // Orientation of the base in the world frame.
     Xq(const Eigen::MatrixXd & R) : oRb(R) {}
+    Xq(const se3::SE3 & M)        : oRb(M.rotation()) {}
 
     // vq in hpp::model is expressed in world frame. Convert it to base frame.
     Eigen::VectorXd operator* (const Eigen::VectorXd & vq)
@@ -41,6 +42,31 @@ struct m2p
       Jout.leftCols<3>() = J.leftCols<3>()*x.oRb.transpose();
       Jout.middleCols<3>(3) = J.middleCols<3>(3)*x.oRb.transpose();
       return Jout;
+    }
+  };
+
+  /* Convert velocities in cartesian space. 
+   * Use it with:
+   *    v_pinocchio = X(oRe)*v_model
+   *    J_pinocchio = X(oRe)*J_model
+   */
+  struct X
+  {
+    Eigen::MatrixXd oRe; // Orientation of the operational frame in the world frame.
+    X(const Eigen::MatrixXd & R) : oRe(R) {}
+    X(const se3::SE3 & M)        : oRe(M.rotation()) {}
+
+    // v6 in hpp::pinocchio is expressed in local frame (at the center of the
+    // frame). Convert it to world frame.
+    template<typename D>
+    Eigen::Matrix<double,D::RowsAtCompileTime,D::ColsAtCompileTime>
+    operator* (const Eigen::MatrixBase<D> & M6)
+    {
+      assert(M6.rows()==6);
+      Eigen::Matrix<double,D::RowsAtCompileTime,D::ColsAtCompileTime> Mout = M6;
+      Mout.template topRows   <3>() = oRe.transpose()*M6.template topRows   <3>();
+      Mout.template bottomRows<3>() = oRe.transpose()*M6.template bottomRows<3>();
+      return Mout;
     }
   };
 
@@ -72,6 +98,7 @@ struct p2m
   {
     Eigen::MatrixXd oRb; // Orientation of the base in the world frame.
     Xq(const Eigen::MatrixXd & R) : oRb(R) {}
+    Xq(const se3::SE3 & M)        : oRb(M.rotation()) {}
 
     // vq in hpp::pinocchio is expressed in base frame. Convert it to world frame.
     Eigen::VectorXd operator* (const Eigen::VectorXd & vq)
@@ -90,6 +117,31 @@ struct p2m
       return Jout;
     }
 
+  };
+
+  /* Convert velocities in cartesian space. 
+   * Use it with:
+   *    v_model = X(oRe)*v_pinocchio
+   *    J_model = X(oRe)*J_pinocchio
+   */
+  struct X
+  {
+    Eigen::MatrixXd oRe; // Orientation of the operational frame in the world frame.
+    X(const Eigen::MatrixXd & R) : oRe(R) {}
+    X(const se3::SE3 & M)        : oRe(M.rotation()) {}
+
+    // v6 in hpp::pinocchio is expressed in local frame (at the center of the
+    // frame). Convert it to world frame.
+    template<typename D>
+    Eigen::Matrix<double,D::RowsAtCompileTime,D::ColsAtCompileTime>
+    operator* (const Eigen::MatrixBase<D> & M6)
+    {
+      assert(M6.rows()==6);
+      Eigen::Matrix<double,D::RowsAtCompileTime,D::ColsAtCompileTime> Mout = M6;
+      Mout.template topRows   <3>() = oRe*M6.template topRows   <3>();
+      Mout.template bottomRows<3>() = oRe*M6.template bottomRows<3>();
+      return Mout;
+    }
   };
 
   static hpp::model::Transform3f 

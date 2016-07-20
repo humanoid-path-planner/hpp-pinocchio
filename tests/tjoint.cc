@@ -48,7 +48,7 @@ static bool verbose = false;
 //NOTCHECKED      value_type upperBoundAngularVelocity () const;
 //NOTCHECKED      const value_type& maximalDistanceToParent () const;
 //NOTCHECKED      void computeMaximalDistanceToParent ();
-//NOTCHECKED      const JointJacobian_t& jacobian () const;
+//      const JointJacobian_t& jacobian () const;
 //NOTCHECKED      JointJacobian_t& jacobian ();
 //      DeviceConstPtr_t robot () const { assert(robot_.lock());  return robot_.lock ();}
 //      DevicePtr_t robot () { assert(robot_.lock()); return robot_.lock ();}
@@ -158,8 +158,21 @@ BOOST_AUTO_TEST_CASE (joint)
       BOOST_CHECK( jp->robot() == pinocchio );
       BOOST_CHECK( jm->robot() == model );
       
-      //std::cout << *jm << std::endl;
-      //std::cout << *jp << std::endl;
+      Eigen::MatrixXd Jm = jm->jacobian();
+      Eigen::MatrixXd Jp = jp->jacobian();
+      se3::SE3 oMb = pinocchio->data()->oMi[1];
+      se3::SE3 oMe = jp->currentTransformation();
+
+      if(i==8)
+        {
+          std::cout << "Jm  = [ " << Jm.leftCols(9)                 << "] ;" << std::endl;
+          std::cout << "Jp  = [ " << Jp.leftCols(9)                 << "] ;" << std::endl;
+          std::cout << "oMb = [ " << oMb.toHomogeneousMatrix()      << "] ;" << std::endl;
+          std::cout << "oMe = [ " << oMe.toHomogeneousMatrix()      << "] ;" << std::endl;
+        }
+
+      BOOST_CHECK( (p2m::X(oMe)*Jp*m2p::Xq(oMb)).isApprox(Jm) );
+      BOOST_CHECK( (m2p::X(oMe)*Jm*p2m::Xq(oMb)).isApprox(Jp) );
     }
 
   /* Checking positionInParentFrame is difficult because of the modification of revolute

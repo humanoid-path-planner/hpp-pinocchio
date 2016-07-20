@@ -116,6 +116,7 @@ namespace hpp {
     const JointJacobian_t&  Joint::jacobian (const bool local) const
     {
       selfAssert(); assert(robot()->computationFlag()|Device::JACOBIAN);
+      if( jacobian_.cols()!=model()->nv)  jacobian_ = JointJacobian_t::Zero(6,model()->nv);
       if(local) se3::getJacobian<true> (*model(),*data(),jointIndex,jacobian_);
       else      se3::getJacobian<false>(*model(),*data(),jointIndex,jacobian_);
       return jacobian_;
@@ -124,6 +125,7 @@ namespace hpp {
     JointJacobian_t&  Joint::jacobian (const bool local)
     {
       selfAssert(); assert(robot()->computationFlag()|Device::JACOBIAN);
+      if( jacobian_.cols()!=model()->nv)  jacobian_ = JointJacobian_t::Zero(6,model()->nv);
       if(local) se3::getJacobian<true> (*model(),*data(),jointIndex,jacobian_);
       else      se3::getJacobian<false>(*model(),*data(),jointIndex,jacobian_);
       return jacobian_;
