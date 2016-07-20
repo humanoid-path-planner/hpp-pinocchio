@@ -18,8 +18,6 @@
 # Add Boost path to include directories.
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/)
-
 # Make Boost.Test generates the main function in test cases.
 ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK -DBOOST_TEST_MAIN)
 
@@ -52,7 +50,7 @@ ENDMACRO(ADD_TESTCASE)
 
 MACRO(ADD_TESTCASE_CFLAGS target flag)
   SET_PROPERTY(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS " ${flag}")
-ENDMACRO(ADD_TEST_CFLAGS)
+ENDMACRO(ADD_TESTCASE_CFLAGS)
 
 # --- LIST OF TESTS ------------------------------------------------------------
 # --- LIST OF TESTS ------------------------------------------------------------
@@ -62,7 +60,7 @@ IF(ROMEO_DESCRIPTION_FOUND)
   ADD_TESTCASE(tfakecontainer FALSE)
 
   ADD_TESTCASE(tdevice FALSE)
-  ADD_TESTCASE_CFLAGS(tdevice 
+  ADD_TESTCASE_CFLAGS(tdevice
     '-DROMEO_MODEL_DIR=\\\"${ROMEO_DESCRIPTION_DATAROOTDIR}\\\"')
 
   ADD_TESTCASE(tjoint FALSE)
