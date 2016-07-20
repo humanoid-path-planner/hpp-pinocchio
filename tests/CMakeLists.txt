@@ -1,19 +1,19 @@
-# Copyright 2012, 2013, 2014 CNRS-LAAS
+# Copyright 2016 CNRS-LAAS
 #
-# Author: Antonio El Khoury
+# Author: Joseph Mirabel, Nicolas Mansard from Antonio El Khoury
 #
-# This file is part of hpp-model-urdf.
-# hpp-model-urdf is free software: you can redistribute it and/or modify
+# This file is part of hpp-pinocchio.
+# hpp-pinocchio is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# hpp-model-urdf is distributed in the hope that it will be useful,
+# hpp-pinocchio is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Lesser Public License for more details.
 # You should have received a copy of the GNU Lesser General Public License
-# along with hpp-model-urdf.  If not, see <http://www.gnu.org/licenses/>.
+# along with hpp-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
 
 # Add Boost path to include directories.
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
@@ -73,6 +73,10 @@ IF(ROMEO_DESCRIPTION_FOUND)
 
   ADD_TESTCASE(tgripper FALSE)
   ADD_TESTCASE_CFLAGS(tgripper
+    '-DROMEO_MODEL_DIR=\\\"${ROMEO_DESCRIPTION_DATAROOTDIR}\\\"')
+
+  ADD_TESTCASE(tconfiguration FALSE)
+  ADD_TESTCASE_CFLAGS(tconfiguration
     '-DROMEO_MODEL_DIR=\\\"${ROMEO_DESCRIPTION_DATAROOTDIR}\\\"')
 
 ENDIF(ROMEO_DESCRIPTION_FOUND)
