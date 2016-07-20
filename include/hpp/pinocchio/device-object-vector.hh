@@ -17,34 +17,32 @@
 // hpp-pinocchio  If not, see
 // <http://www.gnu.org/licenses/>.
 
-# include <hpp/pinocchio/object-iterator.hh>
-# include <hpp/pinocchio/collision-object.hh>
-# include <hpp/pinocchio/device.hh>
-# include <pinocchio/multibody/geometry.hpp>
+#ifndef HPP_PINOCCHIO_OBJECT_ITERATOR_HH
+#define HPP_PINOCCHIO_OBJECT_ITERATOR_HH
+
+# include <vector>
+# include <hpp/pinocchio/config.hh>
+# include <hpp/pinocchio/fwd.hh>
+# include <hpp/pinocchio/fake-container.hh>
 
 namespace hpp {
   namespace pinocchio {
 
-    CollisionObjectPtr_t ObjectIterator::at(const size_type i)
-    { 
-      selfAssert();
-      return CollisionObjectPtr_t (new CollisionObject(devicePtr,i)); 
-    }
-
-    CollisionObjectConstPtr_t ObjectIterator::at(const size_type i) const
-    { 
-      selfAssert();
-      return CollisionObjectConstPtr_t (new CollisionObject(devicePtr,i)); 
-    }
-
-    size_type ObjectIterator::size() const
-    { return devicePtr->geomModel()->ngeoms; }
-    
-    void ObjectIterator::selfAssert(size_type i) const
+    /// Iterator over all inner objects of a Device.
+    struct  DeviceObjectVector
+      : public FakeContainer<CollisionObjectPtr_t,CollisionObjectConstPtr_t>
     {
-      assert(devicePtr);
-      assert(i<size());
-    }
+      DeviceObjectVector(DevicePtr_t device)
+      : FakeContainer<CollisionObjectPtr_t,CollisionObjectConstPtr_t>(device) {}
+      DeviceObjectVector() {}
 
+      virtual CollisionObjectPtr_t at(const size_type i) ;
+      virtual CollisionObjectConstPtr_t at(const size_type i) const ;
+      virtual size_type size() const ;
+
+      void selfAssert(size_type i = 0) const;
+    }; // struct DeviceObjectVector
   } // namespace pinocchio
 } // namespace hpp
+
+#endif // HPP_PINOCCHIO_OBJECT_ITERATOR_HH
