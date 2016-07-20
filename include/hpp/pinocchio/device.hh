@@ -283,8 +283,17 @@ namespace hpp {
       /// \{
 
       /// Get list of obstacles
-      /// \param type collision or distance.
-      const ObjectVector_t& obstacles (Request_t type) const;
+      const ObjectVector_t& obstacles () const
+      {
+        return obstacles_;
+      }
+
+      /// Get list of obstacles
+      /// \deprecated Use Device::obstacles() const
+      const ObjectVector_t& obstacles (Request_t /*type*/) const HPP_PINOCCHIO_DEPRECATED
+      {
+        return obstacles();
+      }
 
       //DEPREC /// Add collision pairs between objects attached to two joints
       //DEPREC ///
