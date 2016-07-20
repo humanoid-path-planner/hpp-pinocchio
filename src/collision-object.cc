@@ -78,7 +78,10 @@ namespace hpp {
     fclConstCollisionObjectPtr_t CollisionObject::fcl () const 
     { return & pinocchio().collision_object; }
 
-    JointPtr_t CollisionObject::joint () { return JointPtr_t(new Joint(devicePtr,jointIndex)); }
+    JointPtr_t      CollisionObject::joint ()
+    { return JointPtr_t     (new Joint(devicePtr,jointIndex)); }
+    JointConstPtr_t CollisionObject::joint () const
+    { return JointConstPtr_t(new Joint(devicePtr,jointIndex)); }
 
     const Transform3f& CollisionObject::
     positionInJointFrame () const { return pinocchio().placement; }

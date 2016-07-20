@@ -86,6 +86,7 @@ namespace hpp {
 
       /// Get joint
       JointPtr_t joint () ;
+      JointConstPtr_t joint () const;
 
       //DEPREC /// Set joint
       //DEPREC void joint (const JointPtr_t joint);
@@ -112,7 +113,7 @@ namespace hpp {
       /// Assert that the members of the struct are valid (no null pointer, etc).
       void selfAssert() const;
 
-      /// Get the reference to INNER|OUTER object container.
+      /// Get the reference to INNER|OUTER object container (marginally used).
       ObjectVec_t &       objectVec();
       const ObjectVec_t & objectVec() const;
 

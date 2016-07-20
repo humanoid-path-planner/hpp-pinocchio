@@ -133,6 +133,11 @@ struct IsCollisionObjectNamed
     //std::cout << "\t\t" << "Requesting " << request << " \tchecking\t " << bm->name() << std::endl;
     return bm->name() == request; 
   }
+  bool operator() ( hpp::pinocchio::CollisionObjectConstPtr_t bp ) 
+  {
+    //std::cout << "\t\t" << "Requesting " << request << " \tchecking\t " << bm->name() << std::endl;
+    return bp->name() == request; 
+  }
 };
 
 BOOST_AUTO_TEST_CASE(geomsAccess)
@@ -203,51 +208,82 @@ BOOST_AUTO_TEST_CASE(geomsAccess)
 /* --- COLLISION OBJECT API ------------------------------------------------ */
 /* --- COLLISION OBJECT API ------------------------------------------------ */
 
-//NOTCHECKED      typedef se3::JointIndex JointIndex;
-//NOTCHECKED      typedef se3::GeomIndex GeomIndex;
-//NOTCHECKED      enum InOutType { INNER, OUTER };
-//NOTCHECKED      typedef std::vector<GeomIndex> GeomIndexList;
-//NOTCHECKED      typedef std::map < se3::JointIndex, GeomIndexList > ObjectVec_t;
-//NOTCHECKED      CollisionObject( DevicePtr_t,const JointIndex,const GeomIndex,const InOutType);
-//NOTCHECKED      const std::string& name () const;
-//NOTCHECKED      const se3::GeometryObject & pinocchio () const;
-//NOTCHECKED      se3::GeometryObject &       pinocchio ();
-//NOTCHECKED      fclConstCollisionObjectPtr_t fcl () const ;
-//NOTCHECKED      fclCollisionObjectPtr_t fcl () ;
-//NOTCHECKED      JointPtr_t joint () ;
-//NOTCHECKED      const Transform3f& positionInJointFrame () const;
-//NOTCHECKED      const fcl::Transform3f& getFclTransform () const;
-//NOTCHECKED      const Transform3f&      getTransform () const;
-//NOTCHECKED      void move (const Transform3f& position);
+//      CollisionObject( DevicePtr_t,const JointIndex,const GeomIndex,const InOutType);
+//      const std::string& name () const;
+//      const se3::GeometryObject & pinocchio () const;
+//      se3::GeometryObject &       pinocchio ();
+//      fclConstCollisionObjectPtr_t fcl () const ;
+//      fclCollisionObjectPtr_t fcl () ;
+//      JointPtr_t joint () ;
+//      const Transform3f& positionInJointFrame () const;
+//      const fcl::Transform3f& getFclTransform () const;
+//      const Transform3f&      getTransform () const;
+//      void move (const Transform3f& position);
 //    protected:
-//NOTCHECKED      void selfAssert() const;
-//NOTCHECKED      ObjectVec_t &       objectVec();
-//NOTCHECKED      const ObjectVec_t & objectVec() const;
-//    private:
-//NOTCHECKED      DevicePtr_t devicePtr;
-//NOTCHECKED      JointIndex jointIndex;
-//NOTCHECKED      GeomIndex geomInJointIndex;      GeomIndex geomInModelIndex;      InOutType inOutType;
+//      void selfAssert() const;
+//      ObjectVec_t &       objectVec();
+//      const ObjectVec_t & objectVec() const;
 
 BOOST_AUTO_TEST_CASE(collisionObject)
 {
   hpp::model::DevicePtr_t     model     = hppModel();
   hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio(true);
 
-  hpp::model::ObjectIterator _mObj = model->objectIterator(hpp::model::COLLISION);
+  pinocchio->model()->names[1] = "waist";
 
-  for( hpp::pinocchio::DeviceObjectVector::iterator _pObj = pinocchio->objectVector().begin();
-       _pObj != pinocchio->objectVector().end(); ++ _pObj )
+  /* Set model configuration. */
+  Eigen::VectorXd q = Eigen::VectorXd::Random( model->configSize() );
+  // Normalize quaternion
+  q[3] += 1.0;
+  q.segment<4>(3) /= q.segment<4>(3).norm();
+
+  model    ->currentConfiguration(q);
+  model    ->controlComputation (hpp::model::Device::ALL);
+  model    ->computeForwardKinematics();
+
+  pinocchio->currentConfiguration(m2p::q(q));
+  pinocchio->controlComputation (hpp::pinocchio::Device::ALL);
+  pinocchio->computeForwardKinematics();
+
+  model    ->collisionTest();
+  pinocchio->collisionTest();
+
+  for( hpp::model::ObjectIterator _mObj = model->objectIterator(hpp::model::COLLISION);
+       !_mObj.isEnd(); ++_mObj )
     {
-      BOOST_CHECK(!_mObj.isEnd());
-      if (verbose) {
-        std::cout
-          << (*_mObj)->name() << " -- "
-          << (*_pObj)->name() << std::endl;
-      }
+      hpp::model    ::CollisionObjectPtr_t om = *_mObj;
+
+      // Search for object in Pinocchio.
+      hpp::pinocchio::DeviceObjectVector::const_iterator _pObj = pinocchio->objectVector().begin();
+      for ( ; _pObj != pinocchio->objectVector().end(); ++ _pObj )
+        // FIXME: removing the 2 characters "_0" is very ugly.
+        if( IsCollisionObjectNamed(om->name().substr(0,om->name().length()-2))(*_pObj) )
+          break;
+      assert( _pObj!=pinocchio->objectVector().end() ); // body exists in pinocchio
+      hpp::pinocchio::CollisionObjectConstPtr_t op = *_pObj;
+
+      if (verbose)
+        { std::cout << om->name() << " -- " << op->name() << std::endl; }
+
       // FIXME: "_0" is very ugly.
-      BOOST_CHECK((*_mObj)->name() == (*_pObj)->name() + "_0");
-      ++_mObj;
+      BOOST_CHECK(om->name() == op->name() + "_0");
+      BOOST_CHECK(op->name() == op->pinocchio().name );
+      BOOST_CHECK(op->fcl()->getObjectType() == om->fcl()->getObjectType() );      
+      BOOST_CHECK( isApproxPermutation( om->positionInJointFrame(),
+                                        op->positionInJointFrame() ));
+      BOOST_CHECK( om->getTransform().getRotation()
+                   .isApprox(op->getFclTransform().getRotation()) );
+      BOOST_CHECK( om->getTransform().getTranslation()
+                   .isApprox(op->getFclTransform().getTranslation()) );
+      BOOST_CHECK( op->getFclTransform().getRotation()
+                   .isApprox( op->getTransform().rotation() ));
+      BOOST_CHECK( op->joint()->name() == om->joint()->name() );
     }
 
-  BOOST_CHECK(_mObj.isEnd());
+  // Add fixed obstacle at the root of the model.
+  pinocchio->geomModel()->addGeometryObject( 0,pinocchio->geomModel()->geometryObjects[0].collision_object,
+                                             se3::SE3::Identity(),std::string("fixedObs1"),
+                                             std::string("//") );
+  hpp::pinocchio::CollisionObject obs(pinocchio,0,0,hpp::pinocchio::CollisionObject::INNER);
+  obs.move(se3::SE3::Random()); // self asserted.
 }
