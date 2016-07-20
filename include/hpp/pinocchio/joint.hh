@@ -274,6 +274,16 @@ namespace hpp {
       /// Display joint
       virtual std::ostream& display (std::ostream& os) const;
 
+      /// \name Pinocchio API
+      /// \{
+
+      const Index& index () const
+      {
+        return jointIndex;
+      }
+
+      /// \}
+
     protected:
       value_type maximalDistanceToParent_;
       vector_t neutralConfiguration_;

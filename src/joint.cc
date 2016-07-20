@@ -197,10 +197,10 @@ namespace hpp {
     { selfAssert(i); return JointConstPtr_t(new Joint(devicePtr,i+1)); }
 
     size_type JointVector::size() const 
-    { return devicePtr->model()->njoint; }
+    { return devicePtr->model()->njoint - 1; }
 
     size_type JointVector::iend() const 
-    { return size()-1; }
+    { return size(); }
 
     void JointVector::selfAssert(size_type i) const
     {

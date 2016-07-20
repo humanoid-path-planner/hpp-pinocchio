@@ -235,13 +235,47 @@ BOOST_AUTO_TEST_CASE(jointAccess)
   hpp::model::JointPtr_t jm = model->getJointVector()[5];
   BOOST_CHECK( pinocchio->getJointByName (jm->name())->name() == jm->name() );
 
-  // Weak test: the first joint is free flyer, with different names in pinocchio and model
-  // The second joint of model is an anchor, so not added inside Pinocchio. Next are anchor 
-  // joints (ImuTorsoAccelerometer_joint, ImuTorsoGyrometer_joint).
-  // So we check pinocchio[1] (hip) against model[5] (hip as well).
-  if(verbose)
-    std::cout << pinocchio->getJointVector()[1]->name() << " -- " 
-              << model->getJointVector()[5]->name() << std::endl;
-  BOOST_CHECK( pinocchio->getJointVector()[1]->name() == 
-               model->getJointVector()[5]->name() );
+  // Compare the joint vector
+  if (verbose)
+    std::cout << "\n\nComparing joint vectors\n\n";
+
+  hpp::model::size_type idM = 0;
+  hpp::model    ::JointVector_t jvm = model    ->getJointVector();
+  hpp::pinocchio::JointVector_t jvp = pinocchio->getJointVector();
+  for (int idP=0;idP<jvp.size();++idP)
+  {
+    // Skip anchor joints for hpp-model
+    while(idM < jvm.size() &&
+        dynamic_cast<hpp::model::JointAnchor*>(jvm[idM]) != NULL) {
+      idM++;
+    }
+    if(verbose)
+      std::cout
+        << jvp[idP]->name() << " -- "
+        << jvm[idM]->name() << std::endl;
+    se3::JointIndex jidP = jvp[idP]->index();
+    BOOST_CHECK(jidP == idP + 1);
+    if (verbose)
+      std::cout << pinocchio->model()->joints[jidP].shortname() << std::endl;
+
+    if (pinocchio->model()->joints[jidP].shortname() == "JointModelFreeFlyer") {
+      // The root joint have different names in model and pinocchio
+      if (idP == 0) { idM += 2; continue; }
+      // Joint is a freeflyer
+      std::string nameP = jvp[idP]->name();
+      BOOST_CHECK( jvm[idM]->name().compare(0, nameP.length(), nameP) == 0);
+      idM++;
+      BOOST_CHECK( jvm[idM]->name().compare(0, nameP.length(), nameP) == 0);
+      idM++;
+    } else {
+      // Joint is a neither an anchor nor a freeflyer
+      BOOST_CHECK(jvp[idP]->name() == jvm[idM]->name());
+      idM++;
+    }
+  }
+  // Check that all the remainings joint of hpp-model are anchor joints.
+  while(idM != jvm.size()) {
+    BOOST_CHECK(dynamic_cast<hpp::model::JointAnchor*>(jvm[idM]) != NULL);
+    idM++;
+  }
 }
