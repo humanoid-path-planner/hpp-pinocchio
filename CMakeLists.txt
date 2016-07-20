@@ -71,6 +71,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/body.hh
   include/hpp/pinocchio/fake-container.hh
   include/hpp/pinocchio/device-object-vector.hh
+  include/hpp/pinocchio/gripper.hh
   )
 
 INSTALL(FILES ${${PROJECT_NAME}_HEADERS}

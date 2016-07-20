@@ -23,6 +23,7 @@ SET(LIBRARY_SOURCES
   collision-object.cc
   body.cc
   device-object-vector.cc
+  gripper.cc
   )
 
 #Adding headers to sources for visibility in IDE
