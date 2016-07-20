@@ -29,6 +29,8 @@
 # include <hpp/fcl/math/matrix_3f.h>
 # include <pinocchio/multibody/model.hpp>
 
+# include <hpp/pinocchio/deprecated.hh>
+
 namespace se3
 {
   struct Model;
@@ -55,7 +57,7 @@ namespace hpp {
     HPP_PREDEF_CLASS (Joint);
     HPP_PREDEF_CLASS (JointConfiguration);
     HPP_PREDEF_CLASS (Gripper);
-    enum Request_t {COLLISION, DISTANCE};
+    enum Request_t {COLLISION, DISTANCE} HPP_PINOCCHIO_DEPRECATED;
 
     typedef double value_type;
     typedef Eigen::Matrix <value_type, Eigen::Dynamic, 1> vector_t;
