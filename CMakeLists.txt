@@ -66,6 +66,7 @@ ADD_DEFINITIONS(-DWITH_HPP_FCL)
 
 # Set header files.
 SET(${PROJECT_NAME}_HEADERS
+  include/hpp/pinocchio/fwd.hh
   include/hpp/pinocchio/device.hh
   include/hpp/pinocchio/joint.hh
   include/hpp/pinocchio/body.hh
@@ -73,10 +74,8 @@ SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/device-object-vector.hh
   include/hpp/pinocchio/gripper.hh
   include/hpp/pinocchio/configuration.hh
-  )
-
-INSTALL(FILES ${${PROJECT_NAME}_HEADERS}
-  DESTINATION include/hpp/pinocchio
+  include/hpp/pinocchio/collision-object.hh
+  include/hpp/pinocchio/extra-config-space.hh
   )
 
 ADD_SUBDIRECTORY(src)
