@@ -159,14 +159,14 @@ namespace hpp {
     configSize () const
     {
       assert(model_);
-      return model_->nq+extraConfigSpace_.dimension();
+      return model_->nq + extraConfigSpace_.dimension();
     }
 
     size_type Device::
     numberDof () const
     {
       assert(model_);
-      return model_->nv;
+      return model_->nv + extraConfigSpace_.dimension();
     }
 
     /* ---------------------------------------------------------------------- */
