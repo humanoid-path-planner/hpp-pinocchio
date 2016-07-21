@@ -199,6 +199,10 @@ namespace hpp {
       return false;
     }
 
+    const Configuration_t & Device::
+    neutralConfiguration () const
+    { return model()->neutralConfiguration; }
+
     const value_type& Device::
     mass () const 
     { 

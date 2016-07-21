@@ -57,7 +57,7 @@ static bool verbose = false;
 //NOTCHECKED      virtual void setDimensionExtraConfigSpace (const size_type& dimension)
 //      const Configuration_t& currentConfiguration () const
 //      virtual bool currentConfiguration (ConfigurationIn_t configuration);
-//NOTCHECKED      Configuration_t neutralConfiguration () const;
+//      Configuration_t neutralConfiguration () const;
 //      const vector_t& currentVelocity () const
 //      void currentVelocity (vectorIn_t velocity)
 //      const vector_t& currentAcceleration () const
@@ -146,6 +146,11 @@ BOOST_AUTO_TEST_CASE (easyGetter)
     q = qcopy;
     pinocchio->currentConfiguration(q);
     BOOST_CHECK( pinocchio->currentConfiguration() == qcopy );
+
+    std::cout << pinocchio->neutralConfiguration().transpose() << std::endl;
+    std::cout << model->neutralConfiguration().transpose() << std::endl;
+    BOOST_CHECK( pinocchio->neutralConfiguration().isApprox( model->neutralConfiguration() ) );
+
   }
 
   /* --- Check vel acc */

@@ -215,7 +215,7 @@ namespace hpp {
       virtual bool currentConfiguration (ConfigurationIn_t configuration);
 
       /// Get the neutral configuration
-      Configuration_t neutralConfiguration () const;
+      const Configuration_t & neutralConfiguration () const;
 
       /// Get current velocity
       const vector_t& currentVelocity () const
