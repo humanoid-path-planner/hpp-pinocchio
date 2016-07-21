@@ -208,6 +208,17 @@ BOOST_AUTO_TEST_CASE (compute)
   BOOST_CHECK( (Jpinocchio*m2p::Xq(oRb)).isApprox(Jmodel) );
 }
 
+void checkJointBound(const hpp::model::JointPtr_t& jm, const hpp::pinocchio::JointPtr_t& jp)
+{
+  BOOST_CHECK(jp->configSize() == jm->configSize());
+  for (int rk = 0; rk < jm->configSize(); ++rk) {
+    BOOST_CHECK(jp->isBounded(rk) == jm->isBounded(rk));
+    if (jm->isBounded(rk)) {
+      BOOST_CHECK(jp->lowerBound(rk) == jm->lowerBound(rk));
+      BOOST_CHECK(jp->upperBound(rk) == jm->upperBound(rk));
+    }
+  }
+}
 
 BOOST_AUTO_TEST_CASE(jointAccess)
 {
@@ -270,6 +281,8 @@ BOOST_AUTO_TEST_CASE(jointAccess)
     } else {
       // Joint is a neither an anchor nor a freeflyer
       BOOST_CHECK(jvp[idP]->name() == jvm[idM]->name());
+      // Check joint bound
+      checkJointBound (jvm[idM], jvp[idP]);
       idM++;
     }
   }

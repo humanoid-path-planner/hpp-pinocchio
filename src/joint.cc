@@ -108,6 +108,53 @@ namespace hpp {
       return model()->jointPlacements[jointIndex];
     }
 
+    void Joint::isBounded (size_type rank, bool bounded)
+    {
+      const size_type idx = model()->joints[jointIndex].idx_q() + rank;
+      assert(rank < configSize());
+      if (!bounded) {
+        const value_type& inf = std::numeric_limits<value_type>::infinity();
+        model()->lowerPositionLimit[idx] = -inf;
+        model()->upperPositionLimit[idx] =  inf;
+      } else {
+        assert(false && "This function can only unset bounds. "
+           "Use lowerBound and upperBound to set the bounds.");
+      }
+    }
+    bool Joint::isBounded (size_type rank) const
+    {
+      const size_type idx = model()->joints[jointIndex].idx_q() + rank;
+      const value_type& inf = std::numeric_limits<value_type>::infinity();
+      assert(rank < configSize());
+      return !( model()->lowerPositionLimit[idx] == -inf)
+        ||   !( model()->upperPositionLimit[idx] ==  inf);
+    }
+    value_type Joint::lowerBound (size_type rank) const
+    {
+      const size_type idx = model()->joints[jointIndex].idx_q() + rank;
+      assert(rank < configSize());
+      return model()->lowerPositionLimit[idx];
+    }
+    value_type Joint::upperBound (size_type rank) const
+    {
+      const size_type idx = model()->joints[jointIndex].idx_q() + rank;
+      assert(rank < configSize());
+      return model()->upperPositionLimit[idx];
+    }
+    void Joint::lowerBound (size_type rank, value_type lowerBound)
+    {
+      const size_type idx = model()->joints[jointIndex].idx_q() + rank;
+      assert(rank < configSize());
+      model()->lowerPositionLimit[idx] = lowerBound;
+    }
+    void Joint::upperBound (size_type rank, value_type upperBound)
+    {
+      const size_type idx = model()->joints[jointIndex].idx_q() + rank;
+      assert(rank < configSize());
+      model()->upperPositionLimit[idx] = upperBound;
+    }
+
+
 //NOTYET    value_type  Joint::upperBoundLinearVelocity () const {}
 //NOTYET    value_type  Joint::upperBoundAngularVelocity () const {}
 //NOTYET    const value_type& m Joint::aximalDistanceToParent () const {}

@@ -169,18 +169,20 @@ namespace hpp {
       /// \name Bounds
       /// \{
 
-      //DEPREC /// Set whether given degree of freedom is bounded
-      //DEPREC void isBounded (size_type rank, bool bounded);
-      //DEPREC /// Get whether given degree of freedom is bounded
-      //DEPREC bool isBounded (size_type rank) const;
-      //DEPREC /// Get lower bound of given degree of freedom
-      //DEPREC value_type lowerBound (size_type rank) const;
-      //DEPREC /// Get upper bound of given degree of freedom
-      //DEPREC value_type upperBound (size_type rank) const;
-      //DEPREC /// Set lower bound of given degree of freedom
-      //DEPREC void lowerBound (size_type rank, value_type lowerBound);
-      //DEPREC /// Set upper bound of given degree of freedom
-      //DEPREC void upperBound (size_type rank, value_type upperBound);
+      /// Set whether given degree of freedom is bounded
+      /// \warning Joint always has bounds. When `bounded == false`,
+      /// the bounds are `-infinity` and `infinity`.
+      void isBounded (size_type rank, bool bounded);
+      /// Get whether given degree of freedom is bounded
+      bool isBounded (size_type rank) const;
+      /// Get lower bound of given degree of freedom
+      value_type lowerBound (size_type rank) const;
+      /// Get upper bound of given degree of freedom
+      value_type upperBound (size_type rank) const;
+      /// Set lower bound of given degree of freedom
+      void lowerBound (size_type rank, value_type lowerBound);
+      /// Set upper bound of given degree of freedom
+      void upperBound (size_type rank, value_type upperBound);
 
       /// Get upper bound on linear velocity of the joint frame
       /// \return coefficient \f$\lambda\f$ such that
