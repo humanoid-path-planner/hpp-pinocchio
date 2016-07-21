@@ -26,6 +26,10 @@ SET(LIBRARY_SOURCES
   gripper.cc
   )
 
+IF(HPP_MODEL_FOUND)
+  LIST(APPEND LIBRARY_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/hpp-model/model-loader.cc)
+ENDIF(HPP_MODEL_FOUND)
+
 #Adding headers to sources for visibility in IDE
 FOREACH(infileName ${${PROJECT_NAME}_HEADERS})
     LIST(APPEND LIBRARY_SOURCES ${PROJECT_SOURCE_DIR}/${infileName})

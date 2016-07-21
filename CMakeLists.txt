@@ -78,6 +78,15 @@ SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/extra-config-space.hh
   )
 
+IF(HPP_MODEL_FOUND)
+  LIST(APPEND ${PROJECT_NAME}_HEADERS
+    include/hpp/pinocchio/hpp-model/conversions.hh
+    include/hpp/pinocchio/hpp-model/model-loader.hh
+    )
+
+  config_files(src/hpp-model/model-loader.cc)
+ENDIF(HPP_MODEL_FOUND)
+
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(tests)
 
