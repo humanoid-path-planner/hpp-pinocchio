@@ -122,6 +122,9 @@ BOOST_AUTO_TEST_CASE (easyGetter)
   hpp::model::DevicePtr_t model = hppModel();
   hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio();
 
+  model->setDimensionExtraConfigSpace(2);
+  pinocchio->setDimensionExtraConfigSpace(2);
+
   /* --- Check NQ NV */
   if(verbose) 
     {
