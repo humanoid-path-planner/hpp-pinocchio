@@ -53,11 +53,11 @@ namespace hpp {
       /// computeForwardKinematics can be selected by calling method
       /// controlComputation.
       enum Computation_t {
-	JOINT_POSITION = 0x0,
-	JACOBIAN = 0x1,
-	VELOCITY = 0x2,
-	ACCELERATION = 0x4,
-	COM = 0x8,
+	JOINT_POSITION = 0x1,
+	JACOBIAN = 0x2,
+	VELOCITY = 0x4,
+	ACCELERATION = 0x8,
+	COM = 0x10,
 	ALL = 0Xffff
       };
 
