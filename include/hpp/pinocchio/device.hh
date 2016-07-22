@@ -370,9 +370,9 @@ namespace hpp {
       /// \brief Constructor
       Device(const std::string& name);
 
-      //DEPREC /// \brief Initialization.
-      //DEPREC ///
-      //DEPREC void init(const DeviceWkPtr_t& weakPtr);
+      /// \brief Initialization.
+      ///
+      void init(const DeviceWkPtr_t& weakPtr);
       //DEPREC /// \brief Initialization of of a clone device.
       //DEPREC ///
       //DEPREC void initCopy(const DeviceWkPtr_t& weakPtr, const Device& model);

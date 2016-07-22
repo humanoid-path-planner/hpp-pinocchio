@@ -19,6 +19,7 @@ SET(LIBRARY_NAME ${PROJECT_NAME})
 
 SET(LIBRARY_SOURCES
   device.cc
+  humanoid-robot.cc
   joint.cc
   collision-object.cc
   body.cc

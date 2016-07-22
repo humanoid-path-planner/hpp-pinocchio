@@ -48,6 +48,7 @@ namespace hpp {
     create (const std::string & name)
     {
       DevicePtr_t res = DevicePtr_t(new Device(name)); // init shared ptr
+      res->init (res);
       res->weakPtr_ = res;
       res->jointVector_ = JointVector(res);
       res->obstacles_ = ObjectVector(res,0,CollisionObject::INNER);
@@ -74,6 +75,11 @@ namespace hpp {
       /* We need this feature to finish the implementation of this method. */
       assert( false && "TODO: createCopyConst is not implemented yet." );
       return res;
+    }
+
+    void Device::init(const DeviceWkPtr_t& weakPtr)
+    {
+      weakPtr_ = weakPtr;
     }
 
     void Device::
