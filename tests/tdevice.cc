@@ -188,6 +188,22 @@ BOOST_AUTO_TEST_CASE (compute)
   pinocchio->currentConfiguration(m2p::q(q));
   pinocchio->controlComputation (hpp::pinocchio::Device::ALL);
   pinocchio->computeForwardKinematics();
+
+  // Skip root joint because the name is not the same.
+  for (int i=2;i<pinocchio->model()->njoint;++i)
+    {
+      const std::string& name = pinocchio->model()->names[i];
+      hpp::model    ::JointPtr_t jm = model    ->getJointByName (name);
+      hpp::pinocchio::JointPtr_t jp = pinocchio->getJointByName (name);
+
+      hpp::model    ::Transform3f tfm = jm->currentTransformation();
+      hpp::pinocchio::Transform3f tfp = jp->currentTransformation();
+
+      // The center of the joint frames should be the same.
+      BOOST_CHECK( tfm.getTranslation().isApprox(tfp.translation()) );
+      // The rotations may be permuted because HPP only has a rotation around X.
+      // To be checked using urdf link position (see hpp-constraints/pmdiff/tvalue.cc
+    }
   
   if( verbose )
     {
