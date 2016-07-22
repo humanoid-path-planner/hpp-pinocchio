@@ -79,6 +79,8 @@ namespace hpp {
 
     struct JointVector;
     typedef JointVector JointVector_t;
+    struct ObjectVector;
+    typedef ObjectVector ObjectVector_t;
     typedef boost::shared_ptr<Body> BodyPtr_t;
     typedef boost::shared_ptr<const Body> BodyConstPtr_t;
     //typedef std::vector<BodyPtr_t> BodyVector_t;

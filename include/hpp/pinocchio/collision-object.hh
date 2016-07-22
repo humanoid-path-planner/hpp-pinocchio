@@ -193,9 +193,6 @@ namespace hpp {
 
       void selfAssert(size_type i = 0) const;
     };
-
-    typedef ObjectVector ObjectVector_t;
-
   } // namespace pinocchio
 } // namespace hpp
 
