@@ -206,9 +206,14 @@ namespace hpp {
       return false;
     }
 
-    const Configuration_t & Device::
+    Configuration_t Device::
     neutralConfiguration () const
-    { return model()->neutralConfiguration; }
+    {
+      Configuration_t n (configSize);
+      n.head(model_->nv) = model()->neutralConfiguration;
+      n.tail(extraConfigSpace_.dimension()).setZero();
+      return n;
+    }
 
     const value_type& Device::
     mass () const 
