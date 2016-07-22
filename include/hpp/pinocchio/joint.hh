@@ -111,8 +111,8 @@ namespace hpp {
       //DEPREC /// Compute jacobian matrix of joint and all its descendents.
       //DEPREC void computeJacobian ();
 
-      /// Get neutral configuration of joint
-//NOTYET      vector_t neutralConfiguration () const;
+      //DEPREC /// Get neutral configuration of joint
+      //DEPREC vector_t neutralConfiguration () const;
 
       ///\}
       // -----------------------------------------------------------------------

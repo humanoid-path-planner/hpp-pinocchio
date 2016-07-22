@@ -100,6 +100,14 @@ namespace hpp {
       return model()->inertias[jointIndex].mass();
     }
 
+    value_type Body::radius () const
+    {
+      selfAssert();
+      assert(devicePtr->geomData());
+      assert(int(devicePtr->geomData()->radius.size())==model()->njoint);
+      return devicePtr->geomData()->radius[jointIndex]; 
+    }
+
   } // namespace pinocchio
 } // namespace hpp
 

@@ -46,7 +46,6 @@ namespace hpp {
     /// http://www.boost.org/libs/smart_ptr/smart_ptr.htm
     class HPP_PINOCCHIO_DLLAPI Device
     {
-//NOTYET      friend class Body;
       friend class Joint;
     public:
       /// Flags to select computation
@@ -215,7 +214,7 @@ namespace hpp {
       virtual bool currentConfiguration (ConfigurationIn_t configuration);
 
       /// Get the neutral configuration
-      Configuration_t neutralConfiguration () const;
+      const Configuration_t & neutralConfiguration () const;
 
       /// Get current velocity
       const vector_t& currentVelocity () const

@@ -113,7 +113,8 @@ namespace hpp {
       ///
       /// Radius is defined as an upper-bound to the distance of all points of
       /// the body to the origin of the joint that holds the body.
-//NOTYET      value_type radius () const
+      value_type radius () const;
+
       /// \}
 
       //DEPREC /// \name Outer objects
@@ -187,7 +188,6 @@ namespace hpp {
       const se3::Frame & frame() const ;
       se3::Frame &       frame() ;
 
-//NOTYET      void updateRadius (const CollisionObjectPtr_t& object);
       //DEPREC ObjectVector_t collisionInnerObjects_;
       //DEPREC ObjectVector_t collisionOuterObjects_;
       //DEPREC ObjectVector_t distanceInnerObjects_;
@@ -198,14 +198,13 @@ namespace hpp {
       mutable bool       frameIndexSet;
       ObjectVector innerObjects_,outerObjects_;
       
-
       //DEPREC JointPtr_t joint_;
       //DEPREC std::string name_;
       //DEPREC /// Inertial information
       //DEPREC fcl::Vec3f localCom_;
       //DEPREC matrix3_t inertiaMatrix_;
       //DEPREC value_type mass_;
-//NOTYET      value_type radius_;
+      //DEPREC value_type radius_;
     }; // class Body
   } // namespace pinocchio
 } // namespace hpp

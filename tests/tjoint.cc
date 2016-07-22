@@ -49,10 +49,10 @@ static bool verbose = false;
 //NOTCHECKED      const value_type& maximalDistanceToParent () const;
 //NOTCHECKED      void computeMaximalDistanceToParent ();
 //      const JointJacobian_t& jacobian () const;
-//NOTCHECKED      JointJacobian_t& jacobian ();
+//      JointJacobian_t& jacobian ();
 //      DeviceConstPtr_t robot () const { assert(robot_.lock());  return robot_.lock ();}
 //      DevicePtr_t robot () { assert(robot_.lock()); return robot_.lock ();}
-//NOTCHECKED      BodyPtr_t linkedBody () const;
+//      BodyPtr_t linkedBody () const;
 //NOTCHECKED      virtual std::ostream& display (std::ostream& os) const;
 //    protected:
 //NOTCHECKED      value_type maximalDistanceToParent_;

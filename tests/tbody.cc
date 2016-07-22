@@ -38,7 +38,7 @@ static bool verbose = false;
 //       const std::string & name () const;
 //       JointPtr_t joint () const;
 //       const ObjectVector_t& innerObjects () const { return innerObjects_; }
-//NOCHECKED       value_type radius () const
+//       value_type radius () const
 //       const ObjectVector_t& outerObjects () const { return outerObjects_; }
 //       vector3_t localCenterOfMass () const;
 //       matrix3_t inertiaMatrix() const;
@@ -50,7 +50,6 @@ static bool verbose = false;
 //       ModelPtr_t         model() ;
 //       const se3::Frame & frame() const ;
 //       se3::Frame &       frame() ;
-//NOCHECKED       void updateRadius (const CollisionObjectPtr_t& object);
 
 /* --- UNIT TESTS ----------------------------------------------------------- */
 /* --- UNIT TESTS ----------------------------------------------------------- */
@@ -59,7 +58,7 @@ static bool verbose = false;
 BOOST_AUTO_TEST_CASE(body)
 {
   hpp::model::DevicePtr_t     model     = hppModel();
-  hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio();
+  hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio(true);
 
   Eigen::VectorXd q = Eigen::VectorXd::Zero( model->configSize() ); // would be better with neutral
   q[3] += 1.0;
@@ -101,6 +100,7 @@ BOOST_AUTO_TEST_CASE(body)
       BOOST_CHECK( bp->name()              == bm->name() );
       BOOST_CHECK( jp->name()              == bp->joint()->name() );
       BOOST_CHECK( bp->mass()              == bm->mass() );
+      BOOST_CHECK( std::abs(bp->radius()-bm->radius())<1e-6 );
 
       /* COM and Inertia are expressed in local frames, which are not the same
        * in model and pinocchio because of the trick in model of having only
