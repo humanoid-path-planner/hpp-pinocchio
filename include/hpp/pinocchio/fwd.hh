@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2016 CNRS
-// Author: NMansard from Florent Lamiraux
+// Author: NMansard, Joseph Mirabel from Florent Lamiraux
 //
 //
 // This file is part of hpp-model
@@ -57,6 +57,7 @@ namespace hpp {
     HPP_PREDEF_CLASS (Joint);
     HPP_PREDEF_CLASS (JointConfiguration);
     HPP_PREDEF_CLASS (Gripper);
+    HPP_PREDEF_CLASS (CenterOfMassComputation);
     enum Request_t {COLLISION, DISTANCE};
 
     typedef double value_type;
@@ -90,6 +91,7 @@ namespace hpp {
     typedef boost::shared_ptr <const Device> DeviceConstPtr_t;
     typedef std::vector <se3::DistanceResult> DistanceResults_t;
     typedef boost::shared_ptr <HumanoidRobot> HumanoidRobotPtr_t;
+    typedef boost::shared_ptr <CenterOfMassComputation> CenterOfMassComputationPtr_t;
     typedef boost::shared_ptr<Joint> JointPtr_t;
     typedef boost::shared_ptr<const Joint> JointConstPtr_t;
     typedef boost::shared_ptr <Gripper> GripperPtr_t;

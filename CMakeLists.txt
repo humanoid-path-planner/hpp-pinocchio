@@ -77,6 +77,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/configuration.hh
   include/hpp/pinocchio/collision-object.hh
   include/hpp/pinocchio/extra-config-space.hh
+  include/hpp/pinocchio/center-of-mass-computation.hh
   )
 
 IF(HPP_MODEL_FOUND)

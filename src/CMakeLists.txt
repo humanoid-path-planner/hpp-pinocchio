@@ -25,6 +25,7 @@ SET(LIBRARY_SOURCES
   body.cc
   device-object-vector.cc
   gripper.cc
+  center-of-mass-computation.cc
   )
 
 IF(HPP_MODEL_FOUND)
