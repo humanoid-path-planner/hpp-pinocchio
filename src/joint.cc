@@ -65,8 +65,6 @@ namespace hpp {
       return data()->oMi[jointIndex];
     }
 
-//NOTYET    vector_t  Joint::neutralConfiguration () const {}
-
     size_type  Joint::numberDof () const 
     {
       selfAssert();
@@ -153,7 +151,6 @@ namespace hpp {
       assert(rank < configSize());
       model()->upperPositionLimit[idx] = upperBound;
     }
-
 
 //NOTYET    value_type  Joint::upperBoundLinearVelocity () const {}
 //NOTYET    value_type  Joint::upperBoundAngularVelocity () const {}

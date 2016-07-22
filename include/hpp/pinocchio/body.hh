@@ -188,7 +188,6 @@ namespace hpp {
       const se3::Frame & frame() const ;
       se3::Frame &       frame() ;
 
-//NOTYET      void updateRadius (const CollisionObjectPtr_t& object);
       //DEPREC ObjectVector_t collisionInnerObjects_;
       //DEPREC ObjectVector_t collisionOuterObjects_;
       //DEPREC ObjectVector_t distanceInnerObjects_;
@@ -199,7 +198,6 @@ namespace hpp {
       mutable bool       frameIndexSet;
       ObjectVector innerObjects_,outerObjects_;
       
-
       //DEPREC JointPtr_t joint_;
       //DEPREC std::string name_;
       //DEPREC /// Inertial information
