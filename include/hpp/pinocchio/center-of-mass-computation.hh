@@ -58,12 +58,10 @@ namespace hpp {
         CenterOfMassComputation (const DevicePtr_t& device);
 
       private:
-        // Keep a tree structure in order to compute a partial COM
-        struct JointSubtree_t;
-
-        typedef std::vector <JointSubtree_t> JointSubtrees_t;
-        // JointTreeElement_t s that have no parents
-        JointSubtrees_t jointSubtrees_;
+        typedef std::vector <se3::JointIndex> JointIndexes_t;
+        DevicePtr_t robot_;
+        // Root of the subtrees
+        JointIndexes_t joints_;
 
         value_type mass_;
         vector3_t com_;

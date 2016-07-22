@@ -18,82 +18,60 @@
 
 #include <algorithm>
 #include <queue>
+#include <pinocchio/algorithm/center-of-mass.hpp>
 
 #include "hpp/pinocchio/joint.hh"
 #include "hpp/pinocchio/device.hh"
 
 namespace hpp {
   namespace pinocchio {
-    struct CenterOfMassComputation::JointSubtree_t {
-      JointPtr_t j_;
-      value_type mass_;
-      JointSubtree_t (const JointPtr_t& joint) : j_ (joint) {}
-    };
-
     CenterOfMassComputationPtr_t CenterOfMassComputation::create (
         const DevicePtr_t& d)
     {
       return CenterOfMassComputationPtr_t (new CenterOfMassComputation (d));
     }
 
-    void CenterOfMassComputation::computeMass ()
-    {
-      mass_ = 0;
-      for (JointSubtrees_t::iterator _subtree = jointSubtrees_.begin ();
-          _subtree != jointSubtrees_.end (); ++_subtree) {
-        // TODO: Compute the mass of the subtree
-        // Its root joint is (JointPtr_t): _subtree->j_
-        //
-        // _subtree->mass_ = ???
-        mass_ += _subtree->mass_;
-      }
-      assert (mass_ > 0);
-    }
-
     void CenterOfMassComputation::compute (const Device::Computation_t& flag)
     {
       assert (mass_ > 0);
-      if (flag & Device::COM) {
+      const se3::Model& model = *robot_->model();
+      se3::Data& data = *robot_->data();
+      bool computeCOM = (flag & Device::COM);
+      bool computeJac = (flag & Device::JACOBIAN);
+      assert(computeCOM && "This does nothing");
+      assert (!(computeJac && !computeCOM)); // JACOBIAN => COM
+      if (computeJac) {
+        se3::jacobianCenterOfMass(model, data,
+            robot_->currentConfiguration(), true, false);
         com_.setZero();
-        for (JointSubtrees_t::iterator _subtree = jointSubtrees_.begin ();
-            _subtree != jointSubtrees_.end (); ++_subtree) {
-          vector3_t com;
-          assert(false && "Unimplemented");
-          // TODO: Compute com of subtree
-          // Its root joint is (JointPtr_t): _subtree->j_
-          //
-          // com = ???
-          com_ += _subtree->mass_ * com;
+        jacobianCom_.setZero ();
+        for (std::size_t i = 0; i < joints_.size(); ++i) {
+          com_ += data.mass[i] * data.oMi[i].act(data.com[i]);
+          // TODO: jacobianCom_ += model.mass[i] * model.Jcom[i]
+          assert(false && "Jacobian of COM of subtree is not accessible");
         }
         com_ /= mass_;
-      }
-      if (flag & Device::JACOBIAN) {
-        jacobianCom_.setZero ();
-        for (JointSubtrees_t::iterator _subtree = jointSubtrees_.begin ();
-            _subtree != jointSubtrees_.end (); ++_subtree) {
-          ComJacobian_t Jcom;
-          assert(false && "Unimplemented");
-          // TODO: Compute jacobian of subtree
-          // Its root joint is (JointPtr_t): _subtree->j_
-          //
-          // Jcom = ???
-          jacobianCom_ += _subtree->mass_ * Jcom;
-        }
         jacobianCom_ /= mass_;
+      } else if (computeCOM) {
+        com_.setZero();
+        se3::centerOfMass(model, data,
+            robot_->currentConfiguration(), true, false);
+        for (std::size_t i = 0; i < joints_.size(); ++i)
+          com_ += data.mass[i] * data.oMi[i].act(data.com[i]);
+        com_ /= mass_;
       }
     }
 
     CenterOfMassComputation::CenterOfMassComputation (const DevicePtr_t& d) :
-      jointSubtrees_ (), mass_ (-1), jacobianCom_ (3, d->numberDof ())
+      robot_(d), joints_ (), mass_ (0), jacobianCom_ (3, d->numberDof ())
     {}
 
     void CenterOfMassComputation::add (const JointPtr_t& j)
     {
       se3::JointIndex jid = j->index();
-      const se3::Model& m = *j->robot()->model();
-      for (JointSubtrees_t::iterator _subtree = jointSubtrees_.begin ();
-          _subtree != jointSubtrees_.end (); ++_subtree) {
-        se3::JointIndex sbId = _subtree->j_->index();
+      const se3::Model& m = *robot_->model();
+      for (std::size_t i = 0; i < joints_.size(); ++i) {
+        se3::JointIndex sbId = joints_[i];
         // Check that jid is not in the subtree
         for (se3::JointIndex id = jid; id != 0; id = m.parents[id])
           if (id == sbId) {
@@ -104,7 +82,18 @@ namespace hpp {
           }
       }
 
-      jointSubtrees_.push_back(JointSubtree_t(j));
+      joints_.push_back(jid);
+    }
+
+    void CenterOfMassComputation::computeMass ()
+    {
+      const se3::Model& model = *robot_->model();
+      se3::Data& data = *robot_->data();
+      se3::centerOfMass(model, data,
+          robot_->currentConfiguration(), true, false);
+      mass_ = 0;
+      for (std::size_t i = 0; i < joints_.size(); ++i)
+        mass_ += data.mass[i];
     }
 
     CenterOfMassComputation::~CenterOfMassComputation ()
