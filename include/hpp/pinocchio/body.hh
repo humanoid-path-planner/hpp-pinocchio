@@ -113,7 +113,8 @@ namespace hpp {
       ///
       /// Radius is defined as an upper-bound to the distance of all points of
       /// the body to the origin of the joint that holds the body.
-//NOTYET      value_type radius () const
+      value_type radius () const;
+
       /// \}
 
       //DEPREC /// \name Outer objects
@@ -205,7 +206,7 @@ namespace hpp {
       //DEPREC fcl::Vec3f localCom_;
       //DEPREC matrix3_t inertiaMatrix_;
       //DEPREC value_type mass_;
-//NOTYET      value_type radius_;
+      //DEPREC value_type radius_;
     }; // class Body
   } // namespace pinocchio
 } // namespace hpp

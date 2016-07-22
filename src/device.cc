@@ -26,7 +26,7 @@
 #include <pinocchio/algorithm/center-of-mass.hpp>
 #include <pinocchio/algorithm/jacobian.hpp>
 #include <pinocchio/algorithm/kinematics.hpp>
-#include <pinocchio/algorithm/collisions.hpp>
+#include <pinocchio/algorithm/geometry.hpp>
 #include <boost/foreach.hpp>
 
 namespace hpp {
@@ -88,6 +88,7 @@ namespace hpp {
     createGeomData()
     {
       geomData_ = GeomDataPtr_t( new se3::GeometryData(*geomModel_) );
+      se3::computeBodyRadius(*model_,*geomModel_,*geomData_);
     }
     
     /* ---------------------------------------------------------------------- */
