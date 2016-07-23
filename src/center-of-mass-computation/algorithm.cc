@@ -96,10 +96,10 @@ namespace se3
                               const SubtreeModel & stModel)
   {
     Model::JointIndex r = stModel.root;
-    // data.com[0].setZero ();
-    // data.mass[0] = 0;
+    assert (r == stModel.joints.back());
+    data.Jcom.setZero();
 
-    for(size_t j = 0; j < stModel.joints.size(); ++j)
+    for(std::size_t j = 0; j < stModel.joints.size(); ++j)
     {
       Model::JointIndex i = stModel.joints[j];
 
@@ -111,7 +111,7 @@ namespace se3
     }
 
     // Backward step
-    for(size_t j = 0; j < stModel.joints.size(); ++j)
+    for(std::size_t j = 0; j < stModel.joints.size(); ++j)
     {
       Model::JointIndex i = stModel.joints[j];
       SubtreeJacobianCenterOfMassBackwardStep
@@ -119,7 +119,6 @@ namespace se3
             SubtreeJacobianCenterOfMassBackwardStep::ArgsType(model,data, r));
     }
 
-    // data.com[root] /= data.mass[root];
     data.Jcom /=  data.mass[r];
 
     return data.Jcom;

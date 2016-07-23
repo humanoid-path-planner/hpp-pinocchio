@@ -43,14 +43,12 @@ namespace hpp {
       assert(computeCOM && "This does nothing");
       assert (!(computeJac && !computeCOM)); // JACOBIAN => COM
       if (computeJac) {
-        se3::jacobianCenterOfMass(model, data,
-            robot_->currentConfiguration(), true, false);
         com_.setZero();
         jacobianCom_.setZero ();
         for (std::size_t i = 0; i < joints_.size(); ++i) {
           se3::subtreeJacobianCenterOfMass(model, data, joints_[i]);
           se3::JointIndex j = joints_[i].root;
-          com_ += data.mass[j] * data.oMi[j].act(data.com[j]);
+          com_ += data.mass[j] * data.com[j];
           jacobianCom_ += data.mass[j] * data.Jcom;
         }
         com_ /= mass_;
