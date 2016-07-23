@@ -15,30 +15,11 @@
 // hpp-pinocchio. If not, see <http://www.gnu.org/licenses/>.
 
 #include <hpp/pinocchio/hpp-model/model-loader.hh>
-
-// namespace hpp {
-  // namespace model {
-    // DevicePtr_t
-    // robotFromUrdf( const std::string filename, const std::string rootType="freeflyer" )
-    // {
-      // // Create the robot object.
-      // DevicePtr_t robot  = hpp::model::Device::create(filename);
-      // // Build robot model from URDF.
-      // urdf::Parser urdfParser (rootType, robot);
-      // urdfParser.parse (std::string("file://")+filename);
-      // hppDout (notice, "Finished parsing URDF file.");
-      // return robot;
-    // }
-  // } // namespace hpp
-// } // namespace model
+#include <pinocchio/multibody/geometry.hpp>
 
 /* Default path of the urdf file describing the robot to parse. */
 const std::string urdfDefaultFilename =
        "@ROMEO_DESCRIPTION_DATAROOTDIR@/romeo_description/urdf/romeo_small.urdf";
-
-// /* Build a hpp::model::Device from urdf path. */  
-// hpp::model::DevicePtr_t hppModel( const std::string urdfFilename = urdfDefaultFilename )
-// { return hpp::model::robotFromUrdf(urdfFilename); }
 
 /* Build a hpp::pinocchio::Device from urdf path. */
 hpp::pinocchio::DevicePtr_t hppPinocchio( bool withGeoms, const std::string urdfFilename)
@@ -49,7 +30,6 @@ hpp::pinocchio::DevicePtr_t hppPinocchio( bool withGeoms, const std::string urdf
   pinocchio->model(model);
   pinocchio->createData();
 
-#ifdef __se3_geom_hpp__
   if( withGeoms )
     {
       std::vector<std::string> baseDirs; baseDirs.push_back("@ROMEO_DESCRIPTION_DATAROOTDIR@");
@@ -60,7 +40,6 @@ hpp::pinocchio::DevicePtr_t hppPinocchio( bool withGeoms, const std::string urdf
       pinocchio->geomModel(geom);
       pinocchio->createGeomData();
     }
-#endif // __se3_geom_hpp__
 
   return pinocchio;
 }
