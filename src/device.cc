@@ -245,26 +245,26 @@ namespace hpp {
       assert(data_);
       // a IMPLIES b === (b || ~a)
       // geometry IMPLIES position
-      assert( (computationFlag_|JOINT_POSITION) || (!(computationFlag_|GEOMETRY)) );
+      assert( (computationFlag_&JOINT_POSITION) || (!(computationFlag_&GEOMETRY)) );
       // velocity IMPLIES position
-      assert( (computationFlag_|JOINT_POSITION) || (!(computationFlag_|VELOCITY)) );
+      assert( (computationFlag_&JOINT_POSITION) || (!(computationFlag_&VELOCITY)) );
       // acceleration IMPLIES velocity
-      assert( (computationFlag_|VELOCITY) || (!(computationFlag_|ACCELERATION)) );
+      assert( (computationFlag_&VELOCITY) || (!(computationFlag_&ACCELERATION)) );
       // com IMPLIES position
-      assert( (computationFlag_|JOINT_POSITION) || (!(computationFlag_|COM)) );
+      assert( (computationFlag_&JOINT_POSITION) || (!(computationFlag_&COM)) );
       // jacobian IMPLIES position
-      assert( (computationFlag_|JOINT_POSITION) || (!(computationFlag_|JACOBIAN)) );
+      assert( (computationFlag_&JOINT_POSITION) || (!(computationFlag_&JACOBIAN)) );
 
-      if (computationFlag_ | ACCELERATION )
+      if (computationFlag_ & ACCELERATION )
         se3::forwardKinematics(*model_,*data_,currentConfiguration_,
                                currentVelocity_,currentAcceleration_);
-      else if (computationFlag_ | VELOCITY )
+      else if (computationFlag_ & VELOCITY )
         se3::forwardKinematics(*model_,*data_,currentConfiguration_,
                                currentVelocity_);
-      else if (computationFlag_ | JOINT_POSITION )
+      else if (computationFlag_ & JOINT_POSITION )
         se3::forwardKinematics(*model_,*data_,currentConfiguration_);
 
-      if (computationFlag_|COM)
+      if (computationFlag_&COM)
         {
           if (computationFlag_|JACOBIAN) 
             // TODO: Jcom should not recompute the kinematics (\sa pinocchio issue #219)
@@ -273,10 +273,10 @@ namespace hpp {
             se3::centerOfMass(*model_,*data_,currentConfiguration_,true,false);
         }
 
-      if(computationFlag_|JACOBIAN)
+      if(computationFlag_&JACOBIAN)
         se3::computeJacobians(*model_,*data_,currentConfiguration_);
 
-      if(computationFlag_|GEOMETRY)
+      if(computationFlag_&GEOMETRY)
         se3::updateGeometryPlacements(*model(),*data(),*geomModel(),*geomData());
     }
 
