@@ -54,11 +54,12 @@ namespace hpp {
       /// controlComputation.
       enum Computation_t {
 	JOINT_POSITION = 0x1,
-	JACOBIAN = 0x2,
-	VELOCITY = 0x4,
-	ACCELERATION = 0x8,
-	COM = 0x10,
-	ALL = 0Xffff
+	JACOBIAN       = 0x2,
+	VELOCITY       = 0x4,
+	ACCELERATION   = 0x8,
+	COM            = 0x10,
+        GEOMETRY       = 0x20,
+	ALL            = 0Xffff
       };
 
       /// Collision pairs between bodies
