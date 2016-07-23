@@ -23,6 +23,8 @@
 #include "hpp/pinocchio/joint.hh"
 #include "hpp/pinocchio/device.hh"
 
+#include "center-of-mass-computation/algorithm.cc"
+
 namespace hpp {
   namespace pinocchio {
     CenterOfMassComputationPtr_t CenterOfMassComputation::create (
@@ -46,9 +48,10 @@ namespace hpp {
         com_.setZero();
         jacobianCom_.setZero ();
         for (std::size_t i = 0; i < joints_.size(); ++i) {
-          com_ += data.mass[i] * data.oMi[i].act(data.com[i]);
-          // TODO: jacobianCom_ += model.mass[i] * model.Jcom[i]
-          assert(false && "Jacobian of COM of subtree is not accessible");
+          se3::subtreeJacobianCenterOfMass(model, data, joints_[i]);
+          se3::JointIndex j = joints_[i].root;
+          com_ += data.mass[j] * data.oMi[j].act(data.com[j]);
+          jacobianCom_ += data.mass[j] * data.Jcom;
         }
         com_ /= mass_;
         jacobianCom_ /= mass_;
@@ -56,8 +59,10 @@ namespace hpp {
         com_.setZero();
         se3::centerOfMass(model, data,
             robot_->currentConfiguration(), true, false);
-        for (std::size_t i = 0; i < joints_.size(); ++i)
-          com_ += data.mass[i] * data.oMi[i].act(data.com[i]);
+        for (std::size_t i = 0; i < joints_.size(); ++i) {
+          se3::JointIndex j = joints_[i].root;
+          com_ += data.mass[j] * data.oMi[j].act(data.com[j]);
+        }
         com_ /= mass_;
       }
     }
@@ -71,7 +76,7 @@ namespace hpp {
       se3::JointIndex jid = j->index();
       const se3::Model& m = *robot_->model();
       for (std::size_t i = 0; i < joints_.size(); ++i) {
-        se3::JointIndex sbId = joints_[i];
+        se3::JointIndex sbId = joints_[i].root;
         // Check that jid is not in the subtree
         for (se3::JointIndex id = jid; id != 0; id = m.parents[id])
           if (id == sbId) {
@@ -82,7 +87,9 @@ namespace hpp {
           }
       }
 
-      joints_.push_back(jid);
+      joints_.push_back(se3::SubtreeModel());
+      joints_.back().root = jid;
+      se3::subtreeIndexes(m, joints_.back());
     }
 
     void CenterOfMassComputation::computeMass ()

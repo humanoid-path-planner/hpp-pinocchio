@@ -22,6 +22,14 @@
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/device.hh>
 
+namespace se3 {
+  struct SubtreeModel
+  {
+    JointIndex root;
+    std::vector<JointIndex> joints; // Does not include root itself
+  };
+}
+
 namespace hpp {
   namespace pinocchio {
     class CenterOfMassComputation
@@ -58,7 +66,7 @@ namespace hpp {
         CenterOfMassComputation (const DevicePtr_t& device);
 
       private:
-        typedef std::vector <se3::JointIndex> JointIndexes_t;
+        typedef std::vector <se3::SubtreeModel> JointIndexes_t;
         DevicePtr_t robot_;
         // Root of the subtrees
         JointIndexes_t joints_;
