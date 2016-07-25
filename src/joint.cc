@@ -32,6 +32,7 @@ namespace hpp {
       assert (devicePtr->modelPtr());
       assert (int(jointIndex)<model().njoint);
       setChildList();
+      computeMaximalDistanceToParent();
     }
 
     void Joint::setChildList()
@@ -153,10 +154,123 @@ namespace hpp {
       model().upperPositionLimit[idx] = upperBound;
     }
 
+
+    /* --- JOINT TYPE BOUND --------------------------------------------------*/
+    /* --- JOINT TYPE BOUND --------------------------------------------------*/
+    /* --- JOINT TYPE BOUND --------------------------------------------------*/
+
+    template<typename Joint>
+    value_type computeMaximalDistanceToParent( const se3::Model & model,
+                                               const se3::JointModelBase<Joint> & ,
+                                               const se3::SE3 & jointPlacement )
+    {
+      assert (false 
+              && "The function <maximalDistance> as not been implemented for this class of joint");
+      return 0.0;
+    }
+
+    value_type computeMaximalDistanceToParent
+    ( const se3::Model & model, const se3::JointModelFreeFlyer& , const se3::SE3 & jointPlacement )
+    { return std::numeric_limits <value_type>::infinity (); }
+    // TODO (really?): handle the case where the FF is bounded.
+	  
+    template<int AXIS>
+    value_type computeMaximalDistanceToParent
+    ( const se3::Model & model, const se3::JointModelRevolute<AXIS> & , const se3::SE3 & jointPlacement )
+    { return jointPlacement.translation().norm(); }
+
+    value_type computeMaximalDistanceToParent
+    ( const se3::Model & model, const se3::JointModelRevoluteUnaligned &, const se3::SE3 & jointPlacement )
+    { return jointPlacement.translation().norm(); }
+
+    template<int AXIS>
+    value_type computeMaximalDistanceToParent
+    ( const se3::Model & model, const se3::JointModelRevoluteUnbounded<AXIS> & , 
+      const se3::SE3 & jointPlacement )
+    { return jointPlacement.translation().norm(); }
+
+    template<int AXIS>
+    value_type computeMaximalDistanceToParent
+    ( const se3::Model & model, const se3::JointModelPrismatic<AXIS> & jmodel, 
+      const se3::SE3 & jointPlacement )
+    {
+      
+      if( std::isinf (model.lowerPositionLimit[jmodel.nq()])
+          || std::isinf (model.upperPositionLimit[jmodel.nq()]) )
+        return std::numeric_limits <value_type>::infinity (); 
+
+      Eigen::Vector3d pmin = Eigen::Vector3d::Zero();
+      pmin[AXIS] = model.lowerPositionLimit[jmodel.nq()];
+
+      Eigen::Vector3d pmax = Eigen::Vector3d::Zero();
+      pmax[AXIS] = model.upperPositionLimit[jmodel.nq()];
+
+      return std::max ( jointPlacement.act(pmin).norm(),
+                        jointPlacement.act(pmax).norm() );
+    }
+
+    value_type computeMaximalDistanceToParent
+    ( const se3::Model & model, const se3::JointModelPrismaticUnaligned& jmodel, 
+      const se3::SE3 & jointPlacement )
+    {
+      if( std::isinf (model.lowerPositionLimit[jmodel.nq()])
+          || std::isinf (model.upperPositionLimit[jmodel.nq()]) )
+        return std::numeric_limits <value_type>::infinity (); 
+ 
+      Eigen::Vector3d pmin = jmodel.axis *  model.lowerPositionLimit[jmodel.nq()];
+      Eigen::Vector3d pmax = jmodel.axis *  model.upperPositionLimit[jmodel.nq()];
+
+      return std::max ( jointPlacement.act(pmin).norm(),
+                        jointPlacement.act(pmax).norm() );
+    }
+
+    value_type computeMaximalDistanceToParent
+    ( const se3::Model & model, const se3::JointModelSpherical& , const se3::SE3 & jointPlacement )
+    { return jointPlacement.translation().norm(); }
+
+    value_type computeMaximalDistanceToParent
+    ( const se3::Model & model, const se3::JointModelSphericalZYX& , const se3::SE3 & jointPlacement )
+    { return jointPlacement.translation().norm(); }
+
+    value_type computeMaximalDistanceToParent
+    ( const se3::Model & model, const se3::JointModelTranslation& , const se3::SE3 & jointPlacement )
+    {
+      return std::numeric_limits <value_type>::infinity (); 
+    }
+    // TODO (really?): handle the case where the translation is bounded.
+
+    value_type computeMaximalDistanceToParent
+    ( const se3::Model & model, const se3::JointModelPlanar& , const se3::SE3 & jointPlacement )
+    {
+      return std::numeric_limits <value_type>::infinity (); 
+    }
+    // TODO (really?): handle the case where the planar is bounded.
+
+    struct VisitMaximalDistanceToParent : public boost::static_visitor<value_type> 
+    {
+      const se3::Model & model;
+      const se3::SE3 & jointPlacement;
+      VisitMaximalDistanceToParent( const se3::Model & model, const se3::SE3 & jointPlacement )
+        : model(model), jointPlacement(jointPlacement) {}
+
+      template<typename Joint>
+      value_type operator() ( const se3::JointModelBase<Joint> & jmodel )
+      { return computeMaximalDistanceToParent(model,jmodel.derived(),jointPlacement) ; }
+    };
+
+
 //NOTYET    value_type  Joint::upperBoundLinearVelocity () const {}
 //NOTYET    value_type  Joint::upperBoundAngularVelocity () const {}
-//NOTYET    const value_type& m Joint::aximalDistanceToParent () const {}
-//NOTYET    void  Joint::computeMaximalDistanceToParent () {}
+//NOTYET    
+
+    void  Joint::computeMaximalDistanceToParent () 
+    {
+      VisitMaximalDistanceToParent visitor(model(),
+                                           model().jointPlacements[jointIndex]);
+      const se3::JointModelVariant & jmv = model().joints[jointIndex];
+      maximalDistanceToParent_ = 
+        boost::apply_visitor( visitor, jmv );
+    }
 
     const JointJacobian_t&  Joint::jacobian (const bool local) const
     {

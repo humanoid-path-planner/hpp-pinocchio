@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE (joint)
       se3::SE3 oMb = pinocchio->data().oMi[1];
       se3::SE3 oMe = jp->currentTransformation();
 
-      if(i==8)
+      if((i==8) && verbose)
         {
           std::cout << "Jm  = [ " << Jm.leftCols(9)                 << "] ;" << std::endl;
           std::cout << "Jp  = [ " << Jp.leftCols(9)                 << "] ;" << std::endl;
@@ -173,6 +173,9 @@ BOOST_AUTO_TEST_CASE (joint)
 
       BOOST_CHECK( (p2m::X(oMe)*Jp*m2p::Xq(oMb)).isApprox(Jm) );
       BOOST_CHECK( (m2p::X(oMe)*Jm*p2m::Xq(oMb)).isApprox(Jp) );
+
+      BOOST_CHECK( std::abs(jp->maximalDistanceToParent()-jm->maximalDistanceToParent())<1e-6 );
+
     }
 
   /* Checking positionInParentFrame is difficult because of the modification of revolute
