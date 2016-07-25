@@ -210,7 +210,7 @@ namespace hpp {
     neutralConfiguration () const
     {
       Configuration_t n (configSize());
-      n.head(model_->nv) = model()->neutralConfiguration;
+      n.head(model_->nq) = model()->neutralConfiguration;
       n.tail(extraConfigSpace_.dimension()).setZero();
       return n;
     }
@@ -244,8 +244,6 @@ namespace hpp {
       assert(model_);
       assert(data_);
       // a IMPLIES b === (b || ~a)
-      // geometry IMPLIES position
-      assert( (computationFlag_&JOINT_POSITION) || (!(computationFlag_&GEOMETRY)) );
       // velocity IMPLIES position
       assert( (computationFlag_&JOINT_POSITION) || (!(computationFlag_&VELOCITY)) );
       // acceleration IMPLIES velocity
@@ -275,9 +273,6 @@ namespace hpp {
 
       if(computationFlag_&JACOBIAN)
         se3::computeJacobians(*model_,*data_,currentConfiguration_);
-
-      if(computationFlag_&GEOMETRY)
-        se3::updateGeometryPlacements(*model(),*data(),*geomModel(),*geomData());
     }
 
     std::ostream& Device::
@@ -295,6 +290,7 @@ namespace hpp {
     {
       /* Following hpp::model API, the forward kinematics (joint placement) is
        * supposed to have already been computed. */
+      se3::updateGeometryPlacements(*model(),*data(),*geomModel(),*geomData());
       return se3::computeCollisions(*geomData(),stopAtFirstCollision);
     }
 
@@ -302,6 +298,7 @@ namespace hpp {
     {
       /* Following hpp::model API, the forward kinematics (joint placement) is
        * supposed to have already been computed. */
+      se3::updateGeometryPlacements(*model(),*data(),*geomModel(),*geomData());
       se3::computeDistances (*geomData());
     }
 

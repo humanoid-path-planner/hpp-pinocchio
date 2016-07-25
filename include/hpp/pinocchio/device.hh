@@ -58,7 +58,6 @@ namespace hpp {
 	VELOCITY       = 0x4,
 	ACCELERATION   = 0x8,
 	COM            = 0x10,
-        GEOMETRY       = 0x20,
 	ALL            = 0Xffff
       };
 
