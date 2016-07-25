@@ -165,12 +165,12 @@ BOOST_AUTO_TEST_CASE(geomsAccess)
           hpp::model::ObjectVector_t::const_iterator itcollm = 
             std::find_if( bm->innerObjects(hpp::model::COLLISION).begin(),
                           bm->innerObjects(hpp::model::COLLISION).end(),
-                          IsCollisionObjectNamed(bp->name()+std::string("_0")) );
+                          IsCollisionObjectNamed((*itcoll)->name()) );
           // Check that a body of the same name exists in both hpp::model and pinocchio.
           BOOST_CHECK( itcollm != bm->innerObjects(hpp::model::COLLISION).end() );
           if (itcollm != bm->innerObjects(hpp::model::COLLISION).end())
             {
-              BOOST_CHECK( (*itcollm)->name() == (*itcoll)->name()+std::string("_0") );
+              BOOST_CHECK( (*itcollm)->name() == (*itcoll)->name());
             }
           else if (verbose)
             {
@@ -187,12 +187,12 @@ BOOST_AUTO_TEST_CASE(geomsAccess)
           hpp::model::ObjectVector_t::const_iterator itcollm = 
             std::find_if( bm->outerObjects(hpp::model::COLLISION).begin(),
                           bm->outerObjects(hpp::model::COLLISION).end(),
-                          IsCollisionObjectNamed(bp->name()+std::string("_0")) );
+                          IsCollisionObjectNamed((*itcoll)->name()) );
           // Check that a body of the same name exists in both hpp::model and pinocchio.
           BOOST_CHECK( itcollm != bm->outerObjects(hpp::model::COLLISION).end() );
           if (itcollm != bm->outerObjects(hpp::model::COLLISION).end())
             {
-              BOOST_CHECK( (*itcollm)->name() == (*itcoll)->name()+std::string("_0") );
+              BOOST_CHECK( (*itcollm)->name() == (*itcoll)->name() );
             }
           else if (verbose)
             {
@@ -256,8 +256,7 @@ BOOST_AUTO_TEST_CASE(collisionObject)
       // Search for object in Pinocchio.
       hpp::pinocchio::DeviceObjectVector::const_iterator _pObj = pinocchio->objectVector().begin();
       for ( ; _pObj != pinocchio->objectVector().end(); ++ _pObj )
-        // FIXME: removing the 2 characters "_0" is very ugly.
-        if( IsCollisionObjectNamed(om->name().substr(0,om->name().length()-2))(*_pObj) )
+        if( IsCollisionObjectNamed(om->name())(*_pObj) )
           break;
       assert( _pObj!=pinocchio->objectVector().end() ); // body exists in pinocchio
       hpp::pinocchio::CollisionObjectConstPtr_t op = *_pObj;
@@ -265,8 +264,7 @@ BOOST_AUTO_TEST_CASE(collisionObject)
       if (verbose)
         { std::cout << om->name() << " -- " << op->name() << std::endl; }
 
-      // FIXME: "_0" is very ugly.
-      BOOST_CHECK(om->name() == op->name() + "_0");
+      BOOST_CHECK(om->name() == op->name() );
       BOOST_CHECK(op->name() == op->pinocchio().name );
       BOOST_CHECK(op->fcl()->getObjectType() == om->fcl()->getObjectType() );      
       BOOST_CHECK( isApproxPermutation( om->positionInJointFrame(),
