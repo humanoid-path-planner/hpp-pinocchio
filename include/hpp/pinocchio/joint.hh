@@ -284,6 +284,11 @@ namespace hpp {
         return jointIndex;
       }
 
+      se3::JointModel& jointModel()
+      {
+        return model()->joints[index()];
+      }
+
       /// \}
 
     protected:

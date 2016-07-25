@@ -102,6 +102,11 @@ namespace hpp {
       const fcl::Transform3f& getFclTransform () const;
       const Transform3f&      getTransform () const;
 
+      const GeomIndex& indexInModel () const
+      {
+        return geomInModelIndex;
+      }
+
       /// Move object to given position
       /// \note This method should only be executed on objects not attached
       /// to a robot body (ie attached to the "universe", joint 0). This statement
