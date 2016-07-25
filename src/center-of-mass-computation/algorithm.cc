@@ -66,11 +66,6 @@ namespace se3
       const Model::JointIndex & i      = (Model::JointIndex) jmodel.id();
       const Model::JointIndex & parent = model.parents[i];
 
-      if (i != r) {
-        data.com[parent]  += data.com[i];
-        data.mass[parent] += data.mass[i];
-      }
-
       typedef Data::Matrix6x Matrix6x;
       typedef typename SizeDepType<JointModel::NV>::template ColsReturn<Matrix6x>::Type ColBlock;
 
@@ -79,14 +74,12 @@ namespace se3
 
       if( JointModel::NV==1 )
         data.Jcom.col(jmodel.idx_v())
-        = data.mass[i] * Jcols.template topLeftCorner<3,1>()
-        - data.com[i].cross(Jcols.template bottomLeftCorner<3,1>());
+        = data.mass[r] * Jcols.template topLeftCorner<3,1>()
+        - data.com[r].cross(Jcols.template bottomLeftCorner<3,1>());
       else
         jmodel.jointCols(data.Jcom)
-        = data.mass[i] * Jcols.template topRows<3>()
-        - skew(data.com[i]) * Jcols.template bottomRows<3>();
-
-      data.com[i] /= data.mass[i];
+        = data.mass[r] * Jcols.template topRows<3>()
+        - skew(data.com[r]) * Jcols.template bottomRows<3>();
     }
 
   };
@@ -114,6 +107,13 @@ namespace se3
     for(std::size_t j = 0; j < stModel.joints.size(); ++j)
     {
       Model::JointIndex i = stModel.joints[j];
+      JacobianCenterOfMassBackwardStep
+      ::run(model.joints[i],data.joints[i],
+            JacobianCenterOfMassBackwardStep::ArgsType(model,data, true));
+    }
+
+    for (Model::JointIndex i = model.parents[r]; i != 0; i = model.parents[i])
+    {
       SubtreeJacobianCenterOfMassBackwardStep
       ::run(model.joints[i],data.joints[i],
             SubtreeJacobianCenterOfMassBackwardStep::ArgsType(model,data, r));
