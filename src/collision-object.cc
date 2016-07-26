@@ -56,22 +56,22 @@ namespace hpp {
     CollisionObject::ObjectVec_t & 
     CollisionObject::objectVec()
     {
-      if(inOutType==INNER) return devicePtr->geomModel()->innerObjects;
-      else                 return devicePtr->geomModel()->outerObjects;
+      if(inOutType==INNER) return devicePtr->geomModel().innerObjects;
+      else                 return devicePtr->geomModel().outerObjects;
     }
     const CollisionObject::ObjectVec_t & 
     CollisionObject::objectVec() const
     {
-      if(inOutType==INNER) return devicePtr->geomModel()->innerObjects;
-      else                 return devicePtr->geomModel()->outerObjects;
+      if(inOutType==INNER) return devicePtr->geomModel().innerObjects;
+      else                 return devicePtr->geomModel().outerObjects;
     }
     
     const std::string& CollisionObject::name () const { return pinocchio().name; }
 
     const se3::GeometryObject & CollisionObject::pinocchio () const
-    { return devicePtr->geomModel()->geometryObjects[geomInModelIndex]; }
+    { return devicePtr->geomModel().geometryObjects[geomInModelIndex]; }
     se3::GeometryObject & CollisionObject::pinocchio ()
-    { return devicePtr->geomModel()->geometryObjects[geomInModelIndex]; }
+    { return devicePtr->geomModel().geometryObjects[geomInModelIndex]; }
 
     fclCollisionObjectPtr_t CollisionObject::fcl ()
     { return & pinocchio().collision_object; }
@@ -87,16 +87,16 @@ namespace hpp {
     positionInJointFrame () const { return pinocchio().placement; }
 
     const fcl::Transform3f& CollisionObject::getFclTransform () const
-    { return devicePtr->geomData()->oMg_fcl[geomInModelIndex]; }
+    { return devicePtr->geomData().oMg_fcl[geomInModelIndex]; }
     const Transform3f& CollisionObject::getTransform () const
-    { return devicePtr->geomData()->oMg[geomInModelIndex];  }
+    { return devicePtr->geomData().oMg[geomInModelIndex];  }
 
     void CollisionObject::move (const Transform3f& position)
     { 
       // move does not work but for object attached to the universe (joint 0)
       assert( jointIndex==0 ); 
-      devicePtr->geomData()->oMg[geomInModelIndex] = position;
-      devicePtr->geomData()->oMg_fcl[geomInModelIndex]
+      devicePtr->geomData().oMg[geomInModelIndex] = position;
+      devicePtr->geomData().oMg_fcl[geomInModelIndex]
         = toFclTransform3f(position);
       pinocchio().placement = position;
     }
@@ -104,10 +104,10 @@ namespace hpp {
     void CollisionObject::selfAssert() const
     { 
       assert(devicePtr);
-      assert(devicePtr->model()->njoint>int(jointIndex));
+      assert(devicePtr->model().njoint>int(jointIndex));
       if(geomInJointIndexSet)
         assert(objectVec().at(jointIndex).size()>geomInJointIndex);
-      assert(devicePtr->geomModel()->geometryObjects.size()>geomInModelIndex);
+      assert(devicePtr->geomModel().geometryObjects.size()>geomInModelIndex);
     }
 
     /* --- ITERATOR --------------------------------------------------------- */
@@ -124,15 +124,15 @@ namespace hpp {
     size_type ObjectVector::size() const
     {
       if( inOutType==CollisionObject::INNER )
-        return size_type(devicePtr->geomModel()->innerObjects[jointIndex].size());
+        return size_type(devicePtr->geomModel().innerObjects[jointIndex].size());
       else
-        return size_type(devicePtr->geomModel()->outerObjects[jointIndex].size());
+        return size_type(devicePtr->geomModel().outerObjects[jointIndex].size());
     }
     
     void ObjectVector::selfAssert(size_type i) const
     {
       assert(devicePtr);
-      assert(int(jointIndex)<devicePtr->model()->njoint);
+      assert(int(jointIndex)<devicePtr->model().njoint);
       assert(i<size());
     }
 

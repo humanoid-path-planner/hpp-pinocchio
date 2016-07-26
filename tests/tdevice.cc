@@ -196,9 +196,9 @@ BOOST_AUTO_TEST_CASE (compute)
   pinocchio->computeForwardKinematics();
 
   // Skip root joint because the name is not the same.
-  for (int i=2;i<pinocchio->model()->njoint;++i)
+  for (int i=2;i<pinocchio->model().njoint;++i)
     {
-      const std::string& name = pinocchio->model()->names[i];
+      const std::string& name = pinocchio->model().names[i];
       hpp::model    ::JointPtr_t jm = model    ->getJointByName (name);
       hpp::pinocchio::JointPtr_t jp = pinocchio->getJointByName (name);
 
@@ -260,12 +260,12 @@ BOOST_AUTO_TEST_CASE(jointAccess)
 
   BOOST_CHECK (pinocchio->getJointAtVelocityRank(0)->name() == pinocchio->rootJoint()->name());
 
-  for (int i=1;i<pinocchio->model()->njoint;++i)
+  for (int i=1;i<pinocchio->model().njoint;++i)
     {
-      BOOST_CHECK( pinocchio->getJointAtConfigRank(pinocchio->model()->joints[i].idx_q())->name()
-                   == pinocchio->model()->names[i] );
-      BOOST_CHECK( pinocchio->getJointAtVelocityRank(pinocchio->model()->joints[i].idx_v())->name()
-                   == pinocchio->model()->names[i] );
+      BOOST_CHECK( pinocchio->getJointAtConfigRank(pinocchio->model().joints[i].idx_q())->name()
+                   == pinocchio->model().names[i] );
+      BOOST_CHECK( pinocchio->getJointAtVelocityRank(pinocchio->model().joints[i].idx_v())->name()
+                   == pinocchio->model().names[i] );
     }
   
   hpp::model::JointPtr_t jm = model->getJointVector()[5];
@@ -292,9 +292,9 @@ BOOST_AUTO_TEST_CASE(jointAccess)
     se3::JointIndex jidP = jvp[idP]->index();
     BOOST_CHECK(jidP == idP + 1);
     if (verbose)
-      std::cout << pinocchio->model()->joints[jidP].shortname() << std::endl;
+      std::cout << pinocchio->model().joints[jidP].shortname() << std::endl;
 
-    if (pinocchio->model()->joints[jidP].shortname() == "JointModelFreeFlyer") {
+    if (pinocchio->model().joints[jidP].shortname() == "JointModelFreeFlyer") {
       // The root joint have different names in model and pinocchio
       if (idP == 0) { idM += 2; continue; }
       // Joint is a freeflyer

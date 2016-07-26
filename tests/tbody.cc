@@ -142,6 +142,7 @@ struct IsCollisionObjectNamed
 
 BOOST_AUTO_TEST_CASE(geomsAccess)
 {
+  verbose = true;
   hpp::model::DevicePtr_t     model     = hppModel();
   hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio(true);
 
@@ -229,7 +230,7 @@ BOOST_AUTO_TEST_CASE(collisionObject)
   hpp::model::DevicePtr_t     model     = hppModel();
   hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio(true);
 
-  pinocchio->model()->names[1] = "waist";
+  pinocchio->model().names[1] = "waist";
 
   /* Set model configuration. */
   Eigen::VectorXd q = Eigen::VectorXd::Random( model->configSize() );
@@ -279,9 +280,9 @@ BOOST_AUTO_TEST_CASE(collisionObject)
     }
 
   // Add fixed obstacle at the root of the model.
-  pinocchio->geomModel()->addGeometryObject( 0,pinocchio->geomModel()->geometryObjects[0].collision_object,
-                                             se3::SE3::Identity(),std::string("fixedObs1"),
-                                             std::string("//") );
+  pinocchio->geomModel().addGeometryObject( 0,pinocchio->geomModel().geometryObjects[0].collision_object,
+                                            se3::SE3::Identity(),std::string("fixedObs1"),
+                                            std::string("//") );
   hpp::pinocchio::CollisionObject obs(pinocchio,0,0,hpp::pinocchio::CollisionObject::INNER);
   obs.move(se3::SE3::Random()); // self asserted.
 }

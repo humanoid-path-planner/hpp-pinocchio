@@ -46,8 +46,8 @@ BOOST_AUTO_TEST_CASE(gripper)
         hpp::model::JointVector_t());
 
   /// Create gripper with Pinocchio
-  pinocchio->model()->addFrame(gripperName,
-      pinocchio->model()->getJointId(jointName),
+  pinocchio->model().addFrame(gripperName,
+      pinocchio->model().getJointId(jointName),
       pT);
   hpp::pinocchio::GripperPtr_t pGripper =
     hpp::pinocchio::Gripper::create (gripperName, pinocchio);
@@ -66,8 +66,8 @@ BOOST_AUTO_TEST_CASE(gripper)
         hpp::model::JointVector_t());
 
   /// Create gripper with Pinocchio
-  pinocchio->model()->addFrame(gripperName,
-      pinocchio->model()->getJointId(jointName),
+  pinocchio->model().addFrame(gripperName,
+      pinocchio->model().getJointId(jointName),
       pT);
   pGripper = hpp::pinocchio::Gripper::create (gripperName, pinocchio);
 

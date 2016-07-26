@@ -39,29 +39,30 @@ namespace hpp {
     void Body::selfAssert() const 
     {
       assert(devicePtr);
-      assert(devicePtr->model()->njoint>int(jointIndex));
+      assert(devicePtr->modelPtr());
+      assert(devicePtr->model().njoint>int(jointIndex));
       if(frameIndexSet)
-        assert(devicePtr->model()->nFrames>int(frameIndex));
+        assert(devicePtr->model().nFrames>int(frameIndex));
     }
 
-    ModelConstPtr_t Body::model() const { return devicePtr->model(); }
-    ModelPtr_t      Body::model()       { return devicePtr->model(); }
-    se3::Frame &    Body::frame()
+    const se3::Model & Body::model() const { return devicePtr->model(); }
+    se3::Model &       Body::model()       { return devicePtr->model(); }
+    se3::Frame &       Body::frame()
     {
       searchFrameIndex();
-      return model()->frames[frameIndex];
+      return model().frames[frameIndex];
     }
     const se3::Frame & Body::frame() const
     {
       searchFrameIndex();
-      return model()->frames[frameIndex];
+      return model().frames[frameIndex];
     }
 
     void Body::searchFrameIndex() const
     {
       if(frameIndexSet) return;
       frameIndex = 0;
-      BOOST_FOREACH(const se3::Frame & frame,devicePtr->model()->frames)
+      BOOST_FOREACH(const se3::Frame & frame,devicePtr->model().frames)
         {
           if( (se3::BODY == frame.type) && (frame.parent == jointIndex) )
             break;
@@ -87,25 +88,25 @@ namespace hpp {
     const vector3_t& Body::localCenterOfMass () const
     {
       selfAssert();
-      return model()->inertias[jointIndex].lever();
+      return model().inertias[jointIndex].lever();
     }
     matrix3_t Body::inertiaMatrix() const
     {
       selfAssert();
-      return model()->inertias[jointIndex].inertia();
+      return model().inertias[jointIndex].inertia();
     }
     value_type Body::mass() const
     {
       selfAssert();
-      return model()->inertias[jointIndex].mass();
+      return model().inertias[jointIndex].mass();
     }
 
     value_type Body::radius () const
     {
       selfAssert();
-      assert(devicePtr->geomData());
-      assert(int(devicePtr->geomData()->radius.size())==model()->njoint);
-      return devicePtr->geomData()->radius[jointIndex]; 
+      assert(devicePtr->geomDataPtr());
+      assert(int(devicePtr->geomData().radius.size())==model().njoint);
+      return devicePtr->geomData().radius[jointIndex]; 
     }
 
   } // namespace pinocchio

@@ -286,7 +286,7 @@ namespace hpp {
 
       se3::JointModel& jointModel()
       {
-        return model()->joints[index()];
+        return model().joints[index()];
       }
 
       /// \}
@@ -301,10 +301,10 @@ namespace hpp {
 
       /// Store list of childrens.
       void setChildList();
-      ModelPtr_t       model() ;      
-      ModelConstPtr_t  model() const ;
-      DataPtr_t        data()  ;      
-      DataConstPtr_t   data()  const ;
+      se3::Model&        model() ;      
+      const se3::Model&  model() const ;
+      se3::Data &        data()  ;      
+      const se3::Data &  data()  const ;
 
       /// Assert that the members of the struct are valid (no null pointer, etc).
       void selfAssert() const;

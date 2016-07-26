@@ -37,7 +37,7 @@ namespace hpp {
 
     void CenterOfMassComputation::compute (const Device::Computation_t& flag)
     {
-      const se3::Model& model = *robot_->model();
+      const se3::Model& model = robot_->model();
 
       bool computeCOM = (flag & Device::COM);
       bool computeJac = (flag & Device::JACOBIAN);
@@ -45,7 +45,7 @@ namespace hpp {
       assert (!(computeJac && !computeCOM)); // JACOBIAN => COM
 
       // update kinematics
-      se3::copy<0>(model,*robot_->data(),data);
+      se3::copy<0>(model,robot_->data(),data);
 
       data.mass[0] = 0;
       if(computeCOM) data.com[0].setZero();
@@ -131,13 +131,13 @@ namespace hpp {
 
     CenterOfMassComputation::CenterOfMassComputation (const DevicePtr_t& d) :
       robot_(d), roots_ (), //mass_ (0), jacobianCom_ (3, d->numberDof ())
-      data(*d->model())
-    { assert (d->model()); }
+      data(d->model())
+    { assert (d->modelPtr()); }
 
     void CenterOfMassComputation::add (const JointPtr_t& j)
     {
       se3::JointIndex jid = j->index();
-      const se3::Model& model = *robot_->model();
+      const se3::Model& model = robot_->model();
       BOOST_FOREACH( const se3::JointIndex rootId,  roots_ )
         {
           assert (int(rootId)<model.njoint);

@@ -183,8 +183,8 @@ namespace hpp {
       /// If frameIndex==-1 (after init), search in pinocchio frame list the proper index.
       void searchFrameIndex() const; 
 
-      ModelConstPtr_t    model() const ;
-      ModelPtr_t         model() ;
+      const se3::Model&  model() const ;
+      se3::Model&        model() ;
       const se3::Frame & frame() const ;
       se3::Frame &       frame() ;
 

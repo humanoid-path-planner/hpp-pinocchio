@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE (nullmass)
   pinoc::CenterOfMassComputationPtr_t comP = pinoc::CenterOfMassComputation::create(rp);
   comP->add(rp->getJointAtVelocityRank(7));
 
-  nullifyMasses(*rp->model(),*rp->data(),comP->roots());
+  nullifyMasses(rp->model(),rp->data(),comP->roots());
 
   Eigen::VectorXd q = Eigen::VectorXd::Random( rp->configSize() );
   q[3] += 1.0;
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE (finiteDiff)
 
   comP->compute(pinoc::Device::ALL);
 
-  const int NV = rp->model()->nv;
+  const int NV = rp->model().nv;
   Eigen::MatrixXd Jcom = Eigen::MatrixXd::Zero(3,NV);
   Eigen::VectorXd dq = Eigen::VectorXd::Zero(NV);
   Eigen::VectorXd com = comP->com();
@@ -158,8 +158,8 @@ BOOST_AUTO_TEST_CASE (finiteDiff)
   for( int i=0;i<NV;++i )
     {
       dq[i] = EPS;
-      Eigen::VectorXd qdq = se3::integrate(*(rp->model()), q, dq);
-      se3::forwardKinematics(*(rp->model()),*(rp->data()),qdq);
+      Eigen::VectorXd qdq = se3::integrate(rp->model(), q, dq);
+      se3::forwardKinematics(rp->model(),rp->data(),qdq);
       comP->compute(pinoc::Device::COM);
       Jcom.col(i) = (comP->com()-com)/EPS;
 
