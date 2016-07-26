@@ -22,43 +22,27 @@
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/device.hh>
 
-namespace se3 {
-  struct SubtreeModel
-  {
-    JointIndex root;
-    std::vector<JointIndex> joints; // Does not include root itself
-  };
-}
-
 namespace hpp {
   namespace pinocchio {
     class CenterOfMassComputation
     {
       public:
+        typedef std::vector <se3::JointIndex> JointRootIndexes_t;
+
+      public:
 
         static CenterOfMassComputationPtr_t create (const DevicePtr_t& device);
 
-        void add (const JointPtr_t& joint);
+        void add (const JointPtr_t& rootOfSubtree);
 
         void compute (const Device::Computation_t& flag
             = Device::ALL);
 
-        const vector3_t& com () const
-        {
-          return com_;
-        }
-
-        const value_type& mass () const
-        {
-          return mass_;
-        }
-
-        void computeMass ();
-
-        const ComJacobian_t& jacobian () const
-        {
-          return jacobianCom_;
-        }
+        const vector3_t&     com         () const { return data.com [0]; }
+        const value_type&    mass        () const { return data.mass[0]; }
+        const ComJacobian_t& jacobian    () const { return data.Jcom   ; }
+        const JointRootIndexes_t & roots () const { return roots_; }
+        void computeMass ()  HPP_PINOCCHIO_DEPRECATED {}
 
         ~CenterOfMassComputation ();
 
@@ -66,14 +50,16 @@ namespace hpp {
         CenterOfMassComputation (const DevicePtr_t& device);
 
       private:
-        typedef std::vector <se3::SubtreeModel> JointIndexes_t;
         DevicePtr_t robot_;
         // Root of the subtrees
-        JointIndexes_t joints_;
+        JointRootIndexes_t roots_;
+        // Specific pinocchio Data to store the computation results
+        se3::Data data;
 
-        value_type mass_;
-        vector3_t com_;
-        ComJacobian_t jacobianCom_;
+        // value_type mass_;
+        // vector3_t com_;
+        // ComJacobian_t jacobianCom_;
+
     }; // class CenterOfMassComputation
   }  // namespace pinocchio
 }  // namespace hpp
