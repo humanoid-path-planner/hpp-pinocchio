@@ -17,8 +17,10 @@
 #include "hpp/pinocchio/center-of-mass-computation.hh"
 
 #include <algorithm>
-#include <queue>
+#include <boost/foreach.hpp>
+
 #include <pinocchio/algorithm/center-of-mass.hpp>
+#include <pinocchio/algorithm/copy.hpp>
 
 #include "hpp/pinocchio/joint.hh"
 #include "hpp/pinocchio/device.hh"
@@ -35,70 +37,118 @@ namespace hpp {
 
     void CenterOfMassComputation::compute (const Device::Computation_t& flag)
     {
-      assert (mass_ > 0);
       const se3::Model& model = *robot_->model();
-      se3::Data& data = *robot_->data();
+
       bool computeCOM = (flag & Device::COM);
       bool computeJac = (flag & Device::JACOBIAN);
       assert(computeCOM && "This does nothing");
       assert (!(computeJac && !computeCOM)); // JACOBIAN => COM
-      if (computeJac) {
-        com_.setZero();
-        jacobianCom_.setZero ();
-        for (std::size_t i = 0; i < joints_.size(); ++i) {
-          se3::subtreeJacobianCenterOfMass(model, data, joints_[i]);
-          se3::JointIndex j = joints_[i].root;
-          com_ += data.mass[j] * data.com[j];
-          jacobianCom_ += data.mass[j] * data.Jcom;
+
+      // update kinematics
+      se3::copy<0>(model,*robot_->data(),data);
+
+      data.mass[0] = 0;
+      if(computeCOM) data.com[0].setZero();
+      if(computeJac) data.Jcom.setZero();
+    
+      // Propagate COM initialization on all joints. 
+      // Could be done only on subtree, with minor gain (possibly loss because of 
+      // more difficult branch prediction). I dont recommend to implement it.
+      for(se3::Model::JointIndex jid=1;jid<se3::JointIndex(model.nbody);++jid)
+        {
+          const double &            mass  = model.inertias[jid].mass ();
+          data.mass[jid] = mass;
+          data.com [jid] = mass*data.oMi[jid].act (model.inertias[jid].lever());
         }
-        com_ /= mass_;
-        jacobianCom_ /= mass_;
-      } else if (computeCOM) {
-        com_.setZero();
-        se3::centerOfMass(model, data,
-            robot_->currentConfiguration(), true, false);
-        for (std::size_t i = 0; i < joints_.size(); ++i) {
-          se3::JointIndex j = joints_[i].root;
-          com_ += data.mass[j] * data.oMi[j].act(data.com[j]);
+
+      // Nullify non-subtree com and mass.
+      int root = 0;
+      for( se3::JointIndex jid=1; int(jid)<model.njoint; ++jid )
+        {
+          const se3::JointIndex& rootId = roots_[root];
+          if(jid == rootId)
+            {
+              jid = data.lastChild[rootId];
+              root ++;
+            }
+          else 
+            {
+              data.mass[jid] = 0;
+              data.com [jid] .setZero();
+            }
         }
-        com_ /= mass_;
-      }
+
+      // Assume root is sorted from smallest id.
+      // Nasty cast below, from (u-long) size_t to int.
+      for( int root=int(roots_.size()-1); root>=0; --root )
+      {
+        se3::JointIndex rootId = roots_[root];
+
+        // Backward loop on descendents of joint rootId.
+        for( se3::JointIndex jid = data.lastChild[rootId];jid>=rootId;--jid )
+          {
+            if(computeJac)
+              se3::JacobianCenterOfMassBackwardStep
+                ::run(model.joints[jid],data.joints[jid],
+                      se3::JacobianCenterOfMassBackwardStep::ArgsType(model,data,false));
+            else
+              {
+                assert(computeCOM);
+                const se3::JointIndex & parent = model.parents[jid];
+                data.com [parent] += data.com [jid];
+                data.mass[parent] += data.mass[jid];
+              }
+
+            //std::cout << data.oMi [jid] << std::endl;
+            //std::cout << data.mass[jid] << std::endl;
+            //std::cout << data.com [jid].transpose() << std::endl;
+          } // end for jid
+
+        // Backward loop on ancestors of joint rootId
+        se3::JointIndex jid = model.parents[rootId]; // loop variable
+        rootId = (root>0) ? roots_[root-1] : 0;      // root of previous subtree in roots_
+        while (jid>rootId)                           // stop when meeting the next subtree
+          {
+            const se3::JointIndex & parent = model.parents[jid];
+            if(computeJac)
+              se3::JacobianCenterOfMassBackwardStep
+                ::run(model.joints[jid],data.joints[jid],
+                      se3::JacobianCenterOfMassBackwardStep::ArgsType(model,data,false));
+            else
+              {
+                assert(computeCOM);
+                data.com [parent] += data.com [jid];
+                data.mass[parent] += data.mass[jid];
+              }
+            jid = parent;
+          } // end while
+
+      } // end for root in roots_
+      
+      if(computeCOM) data.com[0]  /= data.mass[0];
+      if(computeJac) data.Jcom    /= data.mass[0];
     }
 
     CenterOfMassComputation::CenterOfMassComputation (const DevicePtr_t& d) :
-      robot_(d), joints_ (), mass_ (0), jacobianCom_ (3, d->numberDof ())
-    {}
+      robot_(d), roots_ (), //mass_ (0), jacobianCom_ (3, d->numberDof ())
+      data(*d->model())
+    { assert (d->model()); }
 
     void CenterOfMassComputation::add (const JointPtr_t& j)
     {
       se3::JointIndex jid = j->index();
-      const se3::Model& m = *robot_->model();
-      for (std::size_t i = 0; i < joints_.size(); ++i) {
-        se3::JointIndex sbId = joints_[i].root;
-        // Check that jid is not in the subtree
-        for (se3::JointIndex id = jid; id != 0; id = m.parents[id])
-          if (id == sbId) {
+      const se3::Model& model = *robot_->model();
+      BOOST_FOREACH( const se3::JointIndex rootId,  roots_ )
+        {
+          assert (int(rootId)<model.njoint);
+          // Assert that the new root is not in already-recorded subtrees.
+          if( (jid<rootId) || (data.lastChild[rootId]<int(jid)) )
             // We are doing something stupid. Should we throw an error
             // or just return silently ?
             throw std::invalid_argument("This joint is already in a subtree");
-            // return;
-          }
-      }
+        }
 
-      joints_.push_back(se3::SubtreeModel());
-      joints_.back().root = jid;
-      se3::subtreeIndexes(m, joints_.back());
-    }
-
-    void CenterOfMassComputation::computeMass ()
-    {
-      const se3::Model& model = *robot_->model();
-      se3::Data& data = *robot_->data();
-      se3::centerOfMass(model, data,
-          robot_->currentConfiguration(), true, false);
-      mass_ = 0;
-      for (std::size_t i = 0; i < joints_.size(); ++i)
-        mass_ += data.mass[i];
+      roots_.push_back(jid);
     }
 
     CenterOfMassComputation::~CenterOfMassComputation ()
