@@ -28,13 +28,13 @@ namespace hpp {
       device_ (device),
       clearance_ (0)
     {
-      fid_ = device->model()->getFrameId (name);
+      fid_ = device->model().getFrameId (name);
       joint_ = JointPtr_t (
-          new Joint(device, device->model()->getFrameParent (fid_)));
+          new Joint(device, device->model().getFrameParent (fid_)));
     }
     const Transform3f& Gripper::objectPositionInJoint () const
     {
-      return device_->model()->getFramePlacement(fid_);
+      return device_->model().getFramePlacement(fid_);
     }
 
     GripperPtr_t Gripper::clone () const

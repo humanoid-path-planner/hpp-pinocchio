@@ -43,7 +43,7 @@ namespace hpp {
 			    ConfigurationIn_t configuration,
 			    vectorIn_t velocity, ConfigurationOut_t result)
     {
-      result = se3::integrate(*robot->model(), configuration, velocity);
+      result = se3::integrate(robot->model(), configuration, velocity);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = configuration.tail (dim) + velocity.tail (dim);
     }
@@ -60,7 +60,7 @@ namespace hpp {
                               const value_type& u,
                               ConfigurationOut_t result)
     {
-      result = se3::interpolate(*robot->model(), q0, q1, u);
+      result = se3::interpolate(robot->model(), q0, q1, u);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = u * q1.tail (dim) + (1-u) * q0.tail (dim);
     }
@@ -78,7 +78,7 @@ namespace hpp {
     void inline difference (const DevicePtr_t& robot, ConfigurationIn_t q1,
 			    ConfigurationIn_t q2, vectorOut_t result)
     {
-      result = se3::differentiate(*robot->model(), q2, q1);
+      result = se3::differentiate(robot->model(), q2, q1);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = q1.tail (dim) - q2.tail (dim);
     }
@@ -91,7 +91,7 @@ namespace hpp {
     inline value_type distance (const DevicePtr_t& robot, ConfigurationIn_t q1,
 			  ConfigurationIn_t q2)
     {
-      vector_t dist = se3::distance(*robot->model(), q1, q2);
+      vector_t dist = se3::distance(robot->model(), q1, q2);
       const size_type& dim = robot->extraConfigSpace().dimension();
       if (dim == 0) return dist.norm();
       else return sqrt (dist.squaredNorm() + (q2.tail (dim) - q1.tail (dim)).squaredNorm ());
@@ -105,7 +105,7 @@ namespace hpp {
     /// SO3 joints and 2D-vectors for unbounded rotations.
     inline void normalize (const DevicePtr_t& robot, Configuration_t& q)
     {
-      se3::normalize(*robot->model(), q);
+      se3::normalize(robot->model(), q);
     }
 
     /// For backward compatibility.

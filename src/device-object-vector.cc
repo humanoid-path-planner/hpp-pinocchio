@@ -39,7 +39,7 @@ namespace hpp {
     }
 
     size_type DeviceObjectVector::size() const
-    { return devicePtr->geomModel()->ngeoms; }
+    { return devicePtr->geomModel().ngeoms; }
     
     void DeviceObjectVector::selfAssert(size_type i) const
     {

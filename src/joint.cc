@@ -28,64 +28,65 @@ namespace hpp {
       :devicePtr(device)
       ,jointIndex(indexInJointList)
     {
-      assert (model());
-      assert (int(jointIndex)<model()->njoint);
+      assert (devicePtr);
+      assert (devicePtr->modelPtr());
+      assert (int(jointIndex)<model().njoint);
       setChildList();
     }
 
     void Joint::setChildList()
     {
-      assert(model()); assert(data());
+      assert(devicePtr->modelPtr()); assert(devicePtr->dataPtr());
       children.clear();
-      for( se3::Index child=jointIndex+1;int(child)<=data()->lastChild[jointIndex];++child )
-        if( model()->parents[child]==jointIndex ) children.push_back (child) ;
+      for( se3::Index child=jointIndex+1;int(child)<=data().lastChild[jointIndex];++child )
+        if( model().parents[child]==jointIndex ) children.push_back (child) ;
     }
 
     void Joint::selfAssert() const 
     {
       assert(devicePtr);
-      assert(model()); assert(data());
-      assert(devicePtr->model()->njoint>int(jointIndex));
+      assert(devicePtr->modelPtr()); assert(devicePtr->dataPtr());
+      assert(devicePtr->model().njoint>int(jointIndex));
     }
 
-    ModelPtr_t       Joint::model()       { DevicePtr_t r = robot(); return r->model(); }
-    ModelConstPtr_t  Joint::model() const { return devicePtr->model(); }
-    DataPtr_t        Joint::data()        { return devicePtr->data (); }
-    DataConstPtr_t   Joint::data()  const { return devicePtr->data (); }
-
+    se3::Model&        Joint::model()       { selfAssert(); return devicePtr->model(); }
+    const se3::Model&  Joint::model() const { selfAssert(); return devicePtr->model(); }
+    se3::Data &        Joint::data()        { selfAssert(); return devicePtr->data (); }
+    const se3::Data &  Joint::data()  const { selfAssert(); return devicePtr->data (); }
+    
     const std::string&  Joint::name() const 
     {
       selfAssert();
-      return model()->names[jointIndex];
+      return model().names[jointIndex];
     }
 
     const Transform3f&  Joint::currentTransformation () const 
     {
       selfAssert();
-      return data()->oMi[jointIndex];
+      return data().oMi[jointIndex];
     }
 
     size_type  Joint::numberDof () const 
     {
       selfAssert();
-      return model()->joints[jointIndex].nv();
+      return model().joints[jointIndex].nv();
     }
     size_type  Joint::configSize () const
     {
       selfAssert();
-      return model()->joints[jointIndex].nq();
+      return model().joints[jointIndex].nq();
     }
 
     size_type  Joint::rankInConfiguration () const
     {
       selfAssert();
-      return model()->joints[jointIndex].idx_q();
+      return model().joints[jointIndex].idx_q();
     }
 
     size_type  Joint::rankInVelocity () const
     {
       selfAssert();
-      return model()->joints[jointIndex].idx_v();
+      return model().joints[jointIndex].idx_v();
     }
 
     std::size_t  Joint::numberChildJoints () const
@@ -103,17 +104,17 @@ namespace hpp {
     const Transform3f&  Joint::positionInParentFrame () const
     {
       selfAssert();
-      return model()->jointPlacements[jointIndex];
+      return model().jointPlacements[jointIndex];
     }
 
     void Joint::isBounded (size_type rank, bool bounded)
     {
-      const size_type idx = model()->joints[jointIndex].idx_q() + rank;
+      const size_type idx = model().joints[jointIndex].idx_q() + rank;
       assert(rank < configSize());
       if (!bounded) {
         const value_type& inf = std::numeric_limits<value_type>::infinity();
-        model()->lowerPositionLimit[idx] = -inf;
-        model()->upperPositionLimit[idx] =  inf;
+        model().lowerPositionLimit[idx] = -inf;
+        model().upperPositionLimit[idx] =  inf;
       } else {
         assert(false && "This function can only unset bounds. "
            "Use lowerBound and upperBound to set the bounds.");
@@ -121,35 +122,35 @@ namespace hpp {
     }
     bool Joint::isBounded (size_type rank) const
     {
-      const size_type idx = model()->joints[jointIndex].idx_q() + rank;
+      const size_type idx = model().joints[jointIndex].idx_q() + rank;
       const value_type& inf = std::numeric_limits<value_type>::infinity();
       assert(rank < configSize());
-      return !( model()->lowerPositionLimit[idx] == -inf)
-        ||   !( model()->upperPositionLimit[idx] ==  inf);
+      return !( model().lowerPositionLimit[idx] == -inf)
+        ||   !( model().upperPositionLimit[idx] ==  inf);
     }
     value_type Joint::lowerBound (size_type rank) const
     {
-      const size_type idx = model()->joints[jointIndex].idx_q() + rank;
+      const size_type idx = model().joints[jointIndex].idx_q() + rank;
       assert(rank < configSize());
-      return model()->lowerPositionLimit[idx];
+      return model().lowerPositionLimit[idx];
     }
     value_type Joint::upperBound (size_type rank) const
     {
-      const size_type idx = model()->joints[jointIndex].idx_q() + rank;
+      const size_type idx = model().joints[jointIndex].idx_q() + rank;
       assert(rank < configSize());
-      return model()->upperPositionLimit[idx];
+      return model().upperPositionLimit[idx];
     }
     void Joint::lowerBound (size_type rank, value_type lowerBound)
     {
-      const size_type idx = model()->joints[jointIndex].idx_q() + rank;
+      const size_type idx = model().joints[jointIndex].idx_q() + rank;
       assert(rank < configSize());
-      model()->lowerPositionLimit[idx] = lowerBound;
+      model().lowerPositionLimit[idx] = lowerBound;
     }
     void Joint::upperBound (size_type rank, value_type upperBound)
     {
-      const size_type idx = model()->joints[jointIndex].idx_q() + rank;
+      const size_type idx = model().joints[jointIndex].idx_q() + rank;
       assert(rank < configSize());
-      model()->upperPositionLimit[idx] = upperBound;
+      model().upperPositionLimit[idx] = upperBound;
     }
 
 //NOTYET    value_type  Joint::upperBoundLinearVelocity () const {}
@@ -160,18 +161,18 @@ namespace hpp {
     const JointJacobian_t&  Joint::jacobian (const bool local) const
     {
       selfAssert(); assert(robot()->computationFlag()|Device::JACOBIAN);
-      if( jacobian_.cols()!=model()->nv)  jacobian_ = JointJacobian_t::Zero(6,model()->nv);
-      if(local) se3::getJacobian<true> (*model(),*data(),jointIndex,jacobian_);
-      else      se3::getJacobian<false>(*model(),*data(),jointIndex,jacobian_);
+      if( jacobian_.cols()!=model().nv)  jacobian_ = JointJacobian_t::Zero(6,model().nv);
+      if(local) se3::getJacobian<true> (model(),data(),jointIndex,jacobian_);
+      else      se3::getJacobian<false>(model(),data(),jointIndex,jacobian_);
       return jacobian_;
     }
 
     JointJacobian_t&  Joint::jacobian (const bool local)
     {
       selfAssert(); assert(robot()->computationFlag()|Device::JACOBIAN);
-      if( jacobian_.cols()!=model()->nv)  jacobian_ = JointJacobian_t::Zero(6,model()->nv);
-      if(local) se3::getJacobian<true> (*model(),*data(),jointIndex,jacobian_);
-      else      se3::getJacobian<false>(*model(),*data(),jointIndex,jacobian_);
+      if( jacobian_.cols()!=model().nv)  jacobian_ = JointJacobian_t::Zero(6,model().nv);
+      if(local) se3::getJacobian<true> (model(),data(),jointIndex,jacobian_);
+      else      se3::getJacobian<false>(model(),data(),jointIndex,jacobian_);
       return jacobian_;
     }
 
@@ -243,7 +244,7 @@ namespace hpp {
     { selfAssert(i); return JointConstPtr_t(new Joint(devicePtr,i+1)); }
 
     size_type JointVector::size() const 
-    { return devicePtr->model()->njoint - 1; }
+    { return devicePtr->model().njoint - 1; }
 
     size_type JointVector::iend() const 
     { return size(); }

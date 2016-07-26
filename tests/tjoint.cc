@@ -110,19 +110,19 @@ BOOST_AUTO_TEST_CASE (joint)
         {
           std::cout << " *************************************************** " << std::endl;
           std::cout << "model = " << model->getJointVector()[i+1]->name() << std::endl;
-          std::cout << "pino = " << pinocchio->model()->names[i] << std::endl;
-          std::cout << "type = " << pinocchio->model()->joints[i].shortname() << std::endl;
-          std::cout << typeid(*model->getJointVector()[i+1]).name() << std::endl;
+          std::cout << "pino = " << pinocchio->model().names[i] << std::endl;
+          std::cout << "type = " << pinocchio->model().joints[i].shortname() << std::endl;
+          std::cout << typeid(model->getJointVector()[i+1]).name() << std::endl;
           
           std::cout << "5M6n = " << model->getJointVector()[i+1]->positionInParentFrame() << std::endl;
-          std::cout << "5M6n = " << pinocchio->model()->jointPlacements[i] << std::endl;
+          std::cout << "5M6n = " << pinocchio->model().jointPlacements[i] << std::endl;
           
           std::cout << "oM6n = " << model->getJointVector()[i+1]->currentTransformation() << std::endl;
-          std::cout << "oM6n = " << pinocchio->data()->oMi[i] << std::endl;
+          std::cout << "oM6n = " << pinocchio->data().oMi[i] << std::endl;
         }
     }
 
-  pinocchio->model()->names[1] = "waist";
+  pinocchio->model().names[1] = "waist";
 
   for( unsigned int i=2;i<model->getJointVector().size();++i)
     {
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE (joint)
       
       Eigen::MatrixXd Jm = jm->jacobian();
       Eigen::MatrixXd Jp = jp->jacobian();
-      se3::SE3 oMb = pinocchio->data()->oMi[1];
+      se3::SE3 oMb = pinocchio->data().oMi[1];
       se3::SE3 oMe = jp->currentTransformation();
 
       if(i==8)

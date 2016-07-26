@@ -97,8 +97,8 @@ vector_t interpolation (hpp::pinocchio::DevicePtr_t robot, vectorIn_t q0, vector
 BOOST_AUTO_TEST_CASE(difference_and_integrate)
 {
   hpp::pinocchio::DevicePtr_t robot = hppPinocchio();
-  robot->model()->lowerPositionLimit.head<3>().setConstant(-1);
-  robot->model()->upperPositionLimit.head<3>().setOnes();
+  robot->model().lowerPositionLimit.head<3>().setConstant(-1);
+  robot->model().upperPositionLimit.head<3>().setOnes();
 
   Configuration_t q0; q0.resize (robot->configSize ());
   Configuration_t q1; q1.resize (robot->configSize ());
@@ -106,8 +106,8 @@ BOOST_AUTO_TEST_CASE(difference_and_integrate)
   vector_t q1_minus_q0; q1_minus_q0.resize (robot->numberDof ());
   const value_type eps_dist = robot->numberDof() * sqrt(Eigen::NumTraits<value_type>::epsilon());
   for (size_type i=0; i<10000; ++i) {
-    q0 = se3::randomConfiguration (*robot->model());
-    q1 = se3::randomConfiguration (*robot->model());
+    q0 = se3::randomConfiguration (robot->model());
+    q1 = se3::randomConfiguration (robot->model());
 
     hpp::pinocchio::difference (robot, q1, q0, q1_minus_q0);
     hpp::pinocchio::integrate (robot, q0, q1_minus_q0, q2);
@@ -136,8 +136,8 @@ BOOST_AUTO_TEST_CASE(difference_and_integrate)
 BOOST_AUTO_TEST_CASE(interpolate)
 {
   hpp::pinocchio::DevicePtr_t robot = hppPinocchio();
-  robot->model()->lowerPositionLimit.head<3>().setConstant(-1);
-  robot->model()->upperPositionLimit.head<3>().setOnes();
+  robot->model().lowerPositionLimit.head<3>().setConstant(-1);
+  robot->model().upperPositionLimit.head<3>().setOnes();
 
   Configuration_t q0; q0.resize (robot->configSize ());
   Configuration_t q1; q1.resize (robot->configSize ());
@@ -146,8 +146,8 @@ BOOST_AUTO_TEST_CASE(interpolate)
   const value_type eps_dist = robot->numberDof() * sqrt(Eigen::NumTraits<value_type>::epsilon());
   value_type distance;
   for (size_type i=0; i<10000; ++i) {
-    q0 = se3::randomConfiguration (*robot->model());
-    q1 = se3::randomConfiguration (*robot->model());
+    q0 = se3::randomConfiguration (robot->model());
+    q1 = se3::randomConfiguration (robot->model());
 
     hpp::pinocchio::interpolate (robot, q0, q1, 0, q2);
     distance = hpp::pinocchio::distance (robot, q0, q2);

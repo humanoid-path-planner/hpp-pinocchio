@@ -61,7 +61,7 @@ namespace hpp {
     createCopy (const DevicePtr_t& device)
     {
       DevicePtr_t res = Device::create(device->name()); // init shared ptr
-      res->model(device->model());  // Copy pointer to pinocchio model
+      res->model(device->modelPtr());  // Copy pointer to pinocchio model
       res->createData();    // Create a new data, dont copy the pointer.
       return res;
     }
@@ -210,7 +210,7 @@ namespace hpp {
     neutralConfiguration () const
     {
       Configuration_t n (configSize());
-      n.head(model_->nq) = model()->neutralConfiguration;
+      n.head(model_->nq) = model().neutralConfiguration;
       n.tail(extraConfigSpace_.dimension()).setZero();
       return n;
     }
@@ -290,21 +290,21 @@ namespace hpp {
     {
       /* Following hpp::model API, the forward kinematics (joint placement) is
        * supposed to have already been computed. */
-      se3::updateGeometryPlacements(*model(),*data(),*geomModel(),*geomData());
-      return se3::computeCollisions(*geomData(),stopAtFirstCollision);
+      se3::updateGeometryPlacements(model(),data(),geomModel(),geomData());
+      return se3::computeCollisions(geomData(),stopAtFirstCollision);
     }
 
     void Device::computeDistances ()
     {
       /* Following hpp::model API, the forward kinematics (joint placement) is
        * supposed to have already been computed. */
-      se3::updateGeometryPlacements(*model(),*data(),*geomModel(),*geomData());
-      se3::computeDistances (*geomData());
+      se3::updateGeometryPlacements(model(),data(),geomModel(),geomData());
+      se3::computeDistances (geomData());
     }
 
     const DistanceResults_t& Device::distanceResults () const
     {
-      return geomData()->distance_results;
+      return geomData().distance_results;
     }
 
 
