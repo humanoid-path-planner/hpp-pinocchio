@@ -69,8 +69,9 @@ BOOST_AUTO_TEST_CASE (CenterOfMassComputation)
   comM->compute(model::Device::COM);
   comP->compute(pinoc::Device::COM);
   BOOST_CHECK(comM->com().isApprox(comP->com()));
-  std::cout << comM->com() << " -- " 
-            << comP->com().transpose() << std::endl << std::endl;  
+  if (verbose)
+    std::cout << comM->com() << " -- "
+      << comP->com().transpose() << std::endl << std::endl;
 
   comM->compute(model::Device::ALL);
   comP->compute(pinoc::Device::ALL);
