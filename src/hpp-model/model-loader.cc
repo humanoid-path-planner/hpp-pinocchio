@@ -19,7 +19,7 @@
 
 /* Default path of the urdf file describing the robot to parse. */
 const std::string urdfDefaultFilename =
-       "@ROMEO_DESCRIPTION_DATAROOTDIR@/romeo_description/urdf/romeo_small.urdf";
+       ROMEO_MODEL_DIR "/romeo_description/urdf/romeo_small.urdf";
 
 /* Build a hpp::pinocchio::Device from urdf path. */
 hpp::pinocchio::DevicePtr_t hppPinocchio( bool withGeoms, const std::string urdfFilename)
@@ -35,7 +35,7 @@ hpp::pinocchio::DevicePtr_t hppPinocchio( bool withGeoms, const std::string urdf
       std::vector<std::string> baseDirs; baseDirs.push_back("@ROMEO_DESCRIPTION_DATAROOTDIR@");
       hpp::pinocchio::GeomModelPtr_t geom( new se3::GeometryModel() );
       se3::GeometryModel & geomRef = *geom;
-      geomRef = se3::urdf::buildGeom(*pinocchio->model(),pinocchio->name(),baseDirs,se3::COLLISION);
+      geomRef = se3::urdf::buildGeom(pinocchio->model(),pinocchio->name(),baseDirs,se3::COLLISION);
 
       pinocchio->geomModel(geom);
       pinocchio->createGeomData();

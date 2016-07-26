@@ -85,8 +85,6 @@ IF(HPP_MODEL_FOUND)
     include/hpp/pinocchio/hpp-model/conversions.hh
     include/hpp/pinocchio/hpp-model/model-loader.hh
     )
-
-  config_files(src/hpp-model/model-loader.cc)
 ENDIF(HPP_MODEL_FOUND)
 
 ADD_SUBDIRECTORY(src)
