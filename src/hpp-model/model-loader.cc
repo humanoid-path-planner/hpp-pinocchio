@@ -32,7 +32,7 @@ hpp::pinocchio::DevicePtr_t hppPinocchio( bool withGeoms, const std::string urdf
 
   if( withGeoms )
     {
-      std::vector<std::string> baseDirs; baseDirs.push_back("@ROMEO_DESCRIPTION_DATAROOTDIR@");
+      std::vector<std::string> baseDirs; baseDirs.push_back(ROMEO_MODEL_DIR);
       hpp::pinocchio::GeomModelPtr_t geom( new se3::GeometryModel() );
       se3::GeometryModel & geomRef = *geom;
       geomRef = se3::urdf::buildGeom(pinocchio->model(),pinocchio->name(),baseDirs,se3::COLLISION);
