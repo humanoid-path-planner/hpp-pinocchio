@@ -26,7 +26,7 @@ hpp::pinocchio::DevicePtr_t hppPinocchio( bool withGeoms, const std::string urdf
 {
   hpp::pinocchio::DevicePtr_t pinocchio = hpp::pinocchio::Device::create(urdfFilename);
   hpp::pinocchio::ModelPtr_t model( new se3::Model() );
-  *model = se3::urdf::buildModel(urdfFilename,se3::JointModelFreeFlyer());
+  se3::urdf::buildModel(urdfFilename,se3::JointModelFreeFlyer(),*model);
   pinocchio->model(model);
   pinocchio->createData();
 
@@ -34,8 +34,7 @@ hpp::pinocchio::DevicePtr_t hppPinocchio( bool withGeoms, const std::string urdf
     {
       std::vector<std::string> baseDirs; baseDirs.push_back(ROMEO_MODEL_DIR);
       hpp::pinocchio::GeomModelPtr_t geom( new se3::GeometryModel() );
-      se3::GeometryModel & geomRef = *geom;
-      geomRef = se3::urdf::buildGeom(pinocchio->model(),pinocchio->name(),baseDirs,se3::COLLISION);
+      se3::urdf::buildGeom(pinocchio->model(),pinocchio->name(),se3::COLLISION,*geom,baseDirs);
 
       pinocchio->geomModel(geom);
       pinocchio->createGeomData();
