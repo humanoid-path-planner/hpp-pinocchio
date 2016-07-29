@@ -161,6 +161,7 @@ namespace hpp {
       //DEPREC void registerJoint (const JointPtr_t& joint);
       /// Get vector of joints
       inline const JointVector& getJointVector () const { return jointVector_; }
+      inline JointVector& getJointVector () { return jointVector_; }
 
       /// Get the joint at configuration rank r
       JointPtr_t getJointAtConfigRank (const size_type& r) const;

@@ -55,6 +55,18 @@ namespace hpp {
     se3::Data &        Joint::data()        { selfAssert(); return devicePtr->data (); }
     const se3::Data &  Joint::data()  const { selfAssert(); return devicePtr->data (); }
     
+
+    JointPtr_t Joint::parentJoint () const{
+        Index idParent = model().parents[jointIndex];
+        if(idParent == 0)
+            return JointPtr_t();
+        else{
+            Joint* jPtr = new Joint(devicePtr,idParent);
+            return JointPtr_t(jPtr);
+        }
+    }
+
+
     const std::string&  Joint::name() const 
     {
       selfAssert();
