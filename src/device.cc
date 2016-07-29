@@ -278,7 +278,8 @@ namespace hpp {
     std::ostream& Device::
     print (std::ostream& os) const
     {
-//NOTYET
+      for (JointVector::const_iterator it = jointVector_.begin (); it != jointVector_.end (); ++it) 
+        (*it)->display(os);
       return os;
     }
 

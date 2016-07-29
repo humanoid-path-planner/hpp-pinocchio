@@ -338,7 +338,7 @@ namespace hpp {
 
       /// Get list of collision or distance pairs
       /// \param type collision or distance.
-//NOTYET      const CollisionPairs_t& collisionPairs (Request_t type) const;
+      //DEPREC const CollisionPairs_t& collisionPairs (Request_t type) const;
 
       /// Iterator over inner objects of the device
       /// \param type Collision or distance
@@ -419,7 +419,7 @@ namespace hpp {
       GeomDataPtr_t geomData_;
 
       std::string name_;
-//DEPREC      DistanceResults_t distances_;
+      //DEPREC DistanceResults_t distances_;
       //DEPREC JointByName_t jointByName_;
       JointVector jointVector_; // fake container with iterator mimicking hpp::model::JointVector_t
       //DEPREC JointVector_t jointByConfigRank_;
@@ -435,9 +435,9 @@ namespace hpp {
       //DEPREC value_type mass_;
       bool upToDate_;
       Computation_t computationFlag_;
-//NOTYET      // Collision pairs between bodies
-//NOTYET      CollisionPairs_t collisionPairs_;
-//NOTYET      CollisionPairs_t distancePairs_;
+      //DEPREC // Collision pairs between bodies
+      //DEPREC CollisionPairs_t collisionPairs_;
+      //DEPREC CollisionPairs_t distancePairs_;
       //DEPREC // Obstacles
       ObjectVector_t obstacles_;
       //DEPREC ObjectVector_t collisionObstacles_;

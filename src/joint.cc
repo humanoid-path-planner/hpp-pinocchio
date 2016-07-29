@@ -347,8 +347,6 @@ namespace hpp {
       //return boost::apply_visitor(visitor,jmv);
       return boost::apply_visitor(VisitUpperBoundAngularVelocity(),jmv);
     }
-//NOTYET    value_type  Joint::upperBoundAngularVelocity () const {}
-
 
     const JointJacobian_t&  Joint::jacobian (const bool local) const
     {
