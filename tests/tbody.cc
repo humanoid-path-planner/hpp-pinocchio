@@ -280,7 +280,7 @@ BOOST_AUTO_TEST_CASE(collisionObject)
     }
 
   // Add fixed obstacle at the root of the model.
-  pinocchio->geomModel().addGeometryObject( 0,pinocchio->geomModel().geometryObjects[0].collision_object,
+  pinocchio->geomModel().addGeometryObject( 0,pinocchio->geomModel().geometryObjects[0].collision_geometry,
                                             se3::SE3::Identity(),std::string("fixedObs1"),
                                             std::string("//") );
   hpp::pinocchio::CollisionObject obs(pinocchio,0,0,hpp::pinocchio::CollisionObject::INNER);

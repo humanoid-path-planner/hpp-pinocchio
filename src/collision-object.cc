@@ -68,15 +68,16 @@ namespace hpp {
     
     const std::string& CollisionObject::name () const { return pinocchio().name; }
 
+    // This function should rather return a shared_ptr<const>
     const se3::GeometryObject & CollisionObject::pinocchio () const
     { return devicePtr->geomModel().geometryObjects[geomInModelIndex]; }
     se3::GeometryObject & CollisionObject::pinocchio ()
     { return devicePtr->geomModel().geometryObjects[geomInModelIndex]; }
 
     fclCollisionObjectPtr_t CollisionObject::fcl ()
-    { return & pinocchio().collision_object; }
+    { return & devicePtr->geomData().collisionObjects[geomInModelIndex]; }
     fclConstCollisionObjectPtr_t CollisionObject::fcl () const 
-    { return & pinocchio().collision_object; }
+    { return & devicePtr->geomData().collisionObjects[geomInModelIndex]; }
 
     JointPtr_t      CollisionObject::joint ()
     { return JointPtr_t     (new Joint(devicePtr,jointIndex)); }
@@ -87,7 +88,7 @@ namespace hpp {
     positionInJointFrame () const { return pinocchio().placement; }
 
     const fcl::Transform3f& CollisionObject::getFclTransform () const
-    { return devicePtr->geomData().oMg_fcl[geomInModelIndex]; }
+    { return devicePtr->geomData().collisionObjects[geomInModelIndex].getTransform(); }
     const Transform3f& CollisionObject::getTransform () const
     { return devicePtr->geomData().oMg[geomInModelIndex];  }
 
@@ -96,8 +97,8 @@ namespace hpp {
       // move does not work but for object attached to the universe (joint 0)
       assert( jointIndex==0 ); 
       devicePtr->geomData().oMg[geomInModelIndex] = position;
-      devicePtr->geomData().oMg_fcl[geomInModelIndex]
-        = toFclTransform3f(position);
+      devicePtr->geomData().collisionObjects[geomInModelIndex]
+        .setTransform(toFclTransform3f(position));
       pinocchio().placement = position;
     }
 
