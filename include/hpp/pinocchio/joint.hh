@@ -295,7 +295,7 @@ namespace hpp {
 
     protected:
       value_type maximalDistanceToParent_;
-      vector_t neutralConfiguration_;
+      //DEPREC vector_t neutralConfiguration_;
       DevicePtr_t devicePtr;
       mutable JointJacobian_t jacobian_;
       Index jointIndex;

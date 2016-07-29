@@ -285,4 +285,5 @@ BOOST_AUTO_TEST_CASE(collisionObject)
                                             std::string("//") );
   hpp::pinocchio::CollisionObject obs(pinocchio,0,0,hpp::pinocchio::CollisionObject::INNER);
   obs.move(se3::SE3::Random()); // self asserted.
+  BOOST_CHECK( pinocchio->obstacles().size()==1);
 }

@@ -26,17 +26,18 @@
 
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/joint.hh>
+#include <hpp/pinocchio/body.hh>
 #include "../tests/utils.hh"
 
 static bool verbose = false;
 
 //      virtual ~Device() ;
-//NOTCHECKED      DevicePtr_t clone()
-//NOTCHECKED      DevicePtr_t cloneConst() const
-//NOTCHECKED      const std::string& name () const
+//      DevicePtr_t clone()
+//      DevicePtr_t cloneConst() const
+//      const std::string& name () const
 //      static DevicePtr_t create (const std::string & name);
-//NOTCHECKED      static DevicePtr_t createCopy (const DevicePtr_t& device);
-//NOTCHECKED      static DevicePtr_t createCopyConst (const DeviceConstPtr_t& device);
+//      static DevicePtr_t createCopy (const DevicePtr_t& device);
+//      static DevicePtr_t createCopyConst (const DeviceConstPtr_t& device);
 //      void model( ModelPtr_t modelPtr )
 //      ModelConstPtr_t model() const
 //      ModelPtr_t model()
@@ -49,7 +50,7 @@ static bool verbose = false;
 //      JointPtr_t getJointAtConfigRank (const size_type& r) const;
 //      JointPtr_t getJointAtVelocityRank (const size_type& r) const;
 //      JointPtr_t getJointByName (const std::string& name) const;
-//NOTCHECKED      JointPtr_t getJointByBodyName (const std::string& name) const;
+//      JointPtr_t getJointByBodyName (const std::string& name) const;
 //      size_type configSize () const;
 //      size_type numberDof () const;
 //NOTCHECKED      ExtraConfigSpace& extraConfigSpace ()
@@ -68,39 +69,15 @@ static bool verbose = false;
 //NOTCHECKED      void addGripper (const GripperPtr_t& gripper)
 //NOTCHECKED      Grippers_t& grippers ()
 //NOTCHECKED      const Grippers_t& grippers () const
-//NOTCHECKED      const ObjectVector_t& obstacles (Request_t type) const;
-//NOTCHECKED      virtual void addCollisionPairs ;
-//NOTCHECKED      virtual void removeCollisionPairs;
-//NOTCHECKED      const CollisionPairs_t& collisionPairs (Request_t type) const;
-//NOTCHECKED      ObjectIterator objectIterator (Request_t type);
-//NOTCHECKED      bool collisionTest () const;
-//NOTCHECKED      void computeDistances ();
-//NOTCHECKED      const DistanceResults_t& distanceResults () const ;
-//NOTCHECKED      void controlComputation (const Computation_t& flag)
-//NOTCHECKED      Computation_t computationFlag () const
-//NOTCHECKED      virtual void computeForwardKinematics ();
-//NOTCHECKED      virtual std::ostream& print (std::ostream& os) const;
-// protected:
-//      Device(const std::string& name);
-//NOTCHECKED      void updateDistances ();
-//NOTCHECKED      Device(const Device& device);
-//      void resizeState ();
-//NOTCHECKED      void resizeJacobians ();
-// protected:
-//NOTCHECKED      ModelPtr_t model_;
-//NOTCHECKED      DataPtr_t data_;
-//NOTCHECKED      std::string name_;
-//NOTCHECKED      DistanceResults_t distances_;
-//NOTCHECKED      Configuration_t currentConfiguration_;
-//NOTCHECKED      vector_t currentVelocity_;
-//NOTCHECKED      vector_t currentAcceleration_;
-//NOTCHECKED      bool upToDate_;
-//NOTCHECKED      Computation_t computationFlag_;
-//NOTCHECKED      CollisionPairs_t collisionPairs_;
-//NOTCHECKED      CollisionPairs_t distancePairs_;
-//NOTCHECKED      Grippers_t grippers_;
-//NOTCHECKED      ExtraConfigSpace extraConfigSpace_;
-//NOTCHECKED      DeviceWkPtr_t weakPtr_;
+//      const ObjectVector_t& obstacles (Request_t type) const;
+//      objectVector (Request_t type);
+//      bool collisionTest () const;
+//      void computeDistances ();
+//      const DistanceResults_t& distanceResults () const ;
+//      void controlComputation (const Computation_t& flag)
+//      Computation_t computationFlag () const
+//      virtual void computeForwardKinematics ();
+//      virtual std::ostream& print (std::ostream& os) const;
 
 /* --- UNIT TESTS ----------------------------------------------------------- */
 /* --- UNIT TESTS ----------------------------------------------------------- */
@@ -113,7 +90,8 @@ BOOST_AUTO_TEST_CASE (create)
   hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio();
 
   std::ofstream log ("./tdevice.log");
-  log << *(model.get ()) << std::endl;
+  log << * model     << std::endl;
+  log << * pinocchio << std::endl;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -146,12 +124,7 @@ BOOST_AUTO_TEST_CASE (easyGetter)
     q = qcopy;
     pinocchio->currentConfiguration(q);
     BOOST_CHECK( pinocchio->currentConfiguration() == qcopy );
-
-    std::cout << pinocchio->neutralConfiguration().transpose() << std::endl;
-    std::cout << model->neutralConfiguration().transpose() << std::endl;
-    // This does not work.
-    // BOOST_CHECK( pinocchio->neutralConfiguration().isApprox( m2p::q(model->neutralConfiguration()) ) );
-
+    BOOST_CHECK( pinocchio->neutralConfiguration().isApprox( m2p::q(model->neutralConfiguration()) ) );
   }
 
   /* --- Check vel acc */
@@ -194,6 +167,7 @@ BOOST_AUTO_TEST_CASE (compute)
   pinocchio->currentConfiguration(m2p::q(q));
   pinocchio->controlComputation (hpp::pinocchio::Device::ALL);
   pinocchio->computeForwardKinematics();
+  BOOST_CHECK( pinocchio->computationFlag()==hpp::pinocchio::Device::ALL);
 
   // Skip root joint because the name is not the same.
   for (int i=2;i<pinocchio->model().njoint;++i)
@@ -209,6 +183,12 @@ BOOST_AUTO_TEST_CASE (compute)
       BOOST_CHECK( tfm.getTranslation().isApprox(tfp.translation()) );
       // The rotations may be permuted because HPP only has a rotation around X.
       // To be checked using urdf link position (see hpp-constraints/pmdiff/tvalue.cc
+
+      const std::string& bodyName = jp->linkedBody()->name();
+      jm = model    ->getJointByBodyName (bodyName);
+      jp = pinocchio->getJointByBodyName (bodyName);
+      assert(jm->name() == name);
+      assert(jp->name() == name);
     }
   
   if( verbose )
@@ -316,4 +296,84 @@ BOOST_AUTO_TEST_CASE(jointAccess)
     BOOST_CHECK(dynamic_cast<hpp::model::JointAnchor*>(jvm[idM]) != NULL);
     idM++;
   }
+}
+
+/* -------------------------------------------------------------------------- */
+BOOST_AUTO_TEST_CASE (tclone)
+{
+  hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio(true);
+  hpp::pinocchio::DevicePtr_t clone     = hpp::pinocchio::Device::createCopy(pinocchio);
+  BOOST_CHECK( pinocchio->configSize() == clone->configSize() );
+
+  for( int i=0;i<pinocchio->getJointVector().size();++i)
+    {
+      hpp::pinocchio::JointConstPtr_t j1 = pinocchio->getJointVector()[i];
+      hpp::pinocchio::JointConstPtr_t j2 = clone    ->getJointVector()[i];
+      BOOST_CHECK(j1->name() == j2->name());
+      BOOST_CHECK(j1->positionInParentFrame().toHomogeneousMatrix()
+                  .isApprox(j2->positionInParentFrame().toHomogeneousMatrix()) );
+    }
+
+  Eigen::VectorXd q = Eigen::VectorXd::Random( pinocchio->configSize() );
+  q[3] += 1.0;
+  q.segment<4>(3) /= q.segment<4>(3).norm();
+
+  std::fill(clone->data().oMi.begin(),clone->data().oMi.end(),se3::SE3::Identity());
+
+  pinocchio->currentConfiguration(q);
+  pinocchio->controlComputation (hpp::pinocchio::Device::ALL);
+  pinocchio->computeForwardKinematics();
+
+  BOOST_CHECK( clone    ->data().oMi[1].translation().norm() == 0.0 );
+  BOOST_CHECK( pinocchio->data().oMi[1].translation().norm() != 0.0 );
+
+  clone    ->currentConfiguration(q);
+  clone    ->controlComputation (hpp::pinocchio::Device::ALL);
+  clone    ->computeForwardKinematics();
+
+  for( int i=0;i<pinocchio->getJointVector().size();++i)
+    {
+      hpp::pinocchio::JointConstPtr_t j1 = pinocchio->getJointVector()[i];
+      hpp::pinocchio::JointConstPtr_t j2 = clone    ->getJointVector()[i];
+      BOOST_CHECK(j1->currentTransformation().toHomogeneousMatrix()
+                  .isApprox(j2->currentTransformation().toHomogeneousMatrix()) );
+    }
+}
+/* -------------------------------------------------------------------------- */
+BOOST_AUTO_TEST_CASE (geom)
+{
+  hpp::model::DevicePtr_t model = hppModel();
+  hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio(true);
+
+#ifdef NDEBUG
+  for(int i=0;i<1000;++i)
+#endif
+    {
+      Eigen::VectorXd q = Eigen::VectorXd::Random( model->configSize() );
+      q[3] += 1.0;
+      q.segment<4>(3) /= q.segment<4>(3).norm();
+
+      model->currentConfiguration(q);
+      model->controlComputation (hpp::model::Device::ALL);
+      model->computeForwardKinematics();
+
+      pinocchio->currentConfiguration(m2p::q(q));
+      pinocchio->controlComputation (hpp::pinocchio::Device::ALL);
+      pinocchio->computeForwardKinematics();
+
+      BOOST_CHECK( model    ->collisionTest() == pinocchio->collisionTest() );
+    }
+
+  model    ->computeDistances();
+  pinocchio->computeDistances();
+
+  const hpp::model    ::DistanceResults_t & dm = model    ->distanceResults();
+  const hpp::pinocchio::DistanceResults_t & dp = pinocchio->distanceResults();
+  assert(dm.size() == dp.size());
+  for( int i=0;i<dm.size();++i )
+    {
+      BOOST_CHECK( std::abs(dm[i].distance() == dp[i].distance())<1e-6 );
+    }
+
+
 }

@@ -36,7 +36,6 @@ static bool verbose = false;
 //      ~Joint() {}
 //      const std::string& name() const;
 //      const Transform3f& currentTransformation () const;
-//NOTCHECKED      vector_t neutralConfiguration () const;
 //      size_type numberDof () const;
 //      size_type configSize () const;
 //      size_type rankInConfiguration () const;
@@ -44,28 +43,16 @@ static bool verbose = false;
 //      std::size_t numberChildJoints () const;
 //      JointPtr_t childJoint (std::size_t rank) const;
 //      const Transform3f& positionInParentFrame () const;
-//NOTCHECKED      value_type upperBoundLinearVelocity () const;
-//NOTCHECKED      value_type upperBoundAngularVelocity () const;
-//NOTCHECKED      const value_type& maximalDistanceToParent () const;
-//NOTCHECKED      void computeMaximalDistanceToParent ();
+//      value_type upperBoundLinearVelocity () const;
+//      value_type upperBoundAngularVelocity () const;
+//      const value_type& maximalDistanceToParent () const;
+//      void computeMaximalDistanceToParent ();
 //      const JointJacobian_t& jacobian () const;
 //      JointJacobian_t& jacobian ();
 //      DeviceConstPtr_t robot () const { assert(robot_.lock());  return robot_.lock ();}
 //      DevicePtr_t robot () { assert(robot_.lock()); return robot_.lock ();}
 //      BodyPtr_t linkedBody () const;
-//NOTCHECKED      virtual std::ostream& display (std::ostream& os) const;
-//    protected:
-//NOTCHECKED      value_type maximalDistanceToParent_;
-//NOTCHECKED      vector_t neutralConfiguration_;
-//NOTCHECKED      DeviceWkPtr_t robot_;
-//NOTCHECKED      JointJacobian_t jacobian_;
-//NOTCHECKED      Index id;
-//NOTCHECKED      std::vector<Index> children;
-//NOTCHECKED      void setChildList();
-//NOTCHECKED      ModelPtr_t       model() ;      
-//NOTCHECKED      ModelConstPtr_t  model() const ;
-//NOTCHECKED      DataPtr_t        data()  ;      
-//NOTCHECKED      DataConstPtr_t   data()  const ;
+//      virtual std::ostream& display (std::ostream& os) const;
 
 /* -------------------------------------------------------------------------- */
 /*

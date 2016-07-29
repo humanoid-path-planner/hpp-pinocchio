@@ -451,7 +451,9 @@ namespace hpp {
 
     }; // class Device
 
-    std::ostream& operator<< (std::ostream& os, const hpp::pinocchio::Device& device);
+    inline std::ostream& operator<< (std::ostream& os, const hpp::pinocchio::Device& device)
+    { return device.print(os); }
+
   } // namespace pinocchio
 } // namespace hpp
 
