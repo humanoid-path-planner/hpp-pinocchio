@@ -155,9 +155,9 @@ namespace hpp {
     }
 
 
-    /* --- JOINT TYPE BOUND --------------------------------------------------*/
-    /* --- JOINT TYPE BOUND --------------------------------------------------*/
-    /* --- JOINT TYPE BOUND --------------------------------------------------*/
+    /* --- MAX DISTANCE ------------------------------------------------------*/
+    /* --- MAX DISTANCE ------------------------------------------------------*/
+    /* --- MAX DISTANCE ------------------------------------------------------*/
 
     template<typename Joint>
     value_type computeMaximalDistanceToParent( const se3::Model & model,
@@ -258,11 +258,6 @@ namespace hpp {
       { return computeMaximalDistanceToParent(model,jmodel.derived(),jointPlacement) ; }
     };
 
-
-//NOTYET    value_type  Joint::upperBoundLinearVelocity () const {}
-//NOTYET    value_type  Joint::upperBoundAngularVelocity () const {}
-//NOTYET    
-
     void  Joint::computeMaximalDistanceToParent () 
     {
       VisitMaximalDistanceToParent visitor(model(),
@@ -271,6 +266,89 @@ namespace hpp {
       maximalDistanceToParent_ = 
         boost::apply_visitor( visitor, jmv );
     }
+
+    /* --- MAX VEL -----------------------------------------------------------*/
+    /* --- MAX VEL -----------------------------------------------------------*/
+    /* --- MAX VEL -----------------------------------------------------------*/
+
+    /* --- LINEAR VELOCITY ---------------------------------------------------*/
+    template<typename D>
+    value_type upperBoundLinearVelocity( const se3::JointModelBase<D> & )                  
+    {
+      assert (false 
+              && "The function <upperBoundLinearVel> as not been implemented for this class of joint");
+      return 0.0;
+    }
+    value_type upperBoundLinearVelocity( const se3::JointModelFreeFlyer & )                  { return 1.0; }
+    template<int AXIS>
+    value_type upperBoundLinearVelocity( const se3::JointModelRevolute<AXIS> & )             { return 0.0; }
+    value_type upperBoundLinearVelocity( const se3::JointModelRevoluteUnaligned & )          { return 0.0; }
+    template<int AXIS>
+    value_type upperBoundLinearVelocity( const se3::JointModelRevoluteUnbounded<AXIS> & )    { return 0.0; }
+    template<int AXIS>
+    value_type upperBoundLinearVelocity( const se3::JointModelPrismatic<AXIS> & )            { return 1.0; }
+    value_type upperBoundLinearVelocity( const se3::JointModelPrismaticUnaligned & )         { return 1.0; }
+    value_type upperBoundLinearVelocity( const se3::JointModelSpherical & )                  { return 0.0; }
+    value_type upperBoundLinearVelocity( const se3::JointModelSphericalZYX & )               { return 0.0; }
+    value_type upperBoundLinearVelocity( const se3::JointModelTranslation & )                { return 1.0; }
+    value_type upperBoundLinearVelocity( const se3::JointModelPlanar & )                     { return 1.0; }
+
+
+    struct VisitUpperBoundLinearVelocity : public boost::static_visitor<value_type> 
+    {
+      template<typename Joint>
+      value_type operator() ( const se3::JointModelBase<Joint> & jmodel ) const
+      { return upperBoundLinearVelocity(jmodel.derived()) ; }
+    };
+
+    value_type  Joint::upperBoundLinearVelocity () const
+    {
+      VisitUpperBoundLinearVelocity visitor;
+      const se3::JointModelVariant & jmv = model().joints[jointIndex];
+
+      //return boost::apply_visitor(visitor,jmv);
+      return boost::apply_visitor(VisitUpperBoundLinearVelocity(),jmv);
+    }
+ 
+    /* --- ANGULAR VELOCITY -------------------------------------------------- */
+    template<typename D>
+    value_type upperBoundAngularVelocity( const se3::JointModelBase<D> & )                  
+    {
+      assert (false 
+              && "The function <upperBoundAngularVel> as not been implemented for this class of joint");
+      return 0.0;
+    }
+    value_type upperBoundAngularVelocity( const se3::JointModelFreeFlyer & )                  { return 1.0; }
+    template<int AXIS>
+    value_type upperBoundAngularVelocity( const se3::JointModelRevolute<AXIS> & )             { return 1.0; }
+    value_type upperBoundAngularVelocity( const se3::JointModelRevoluteUnaligned & )          { return 1.0; }
+    template<int AXIS>
+    value_type upperBoundAngularVelocity( const se3::JointModelRevoluteUnbounded<AXIS> & )    { return 1.0; }
+    template<int AXIS>
+    value_type upperBoundAngularVelocity( const se3::JointModelPrismatic<AXIS> & )            { return 0.0; }
+    value_type upperBoundAngularVelocity( const se3::JointModelPrismaticUnaligned & )         { return 0.0; }
+    value_type upperBoundAngularVelocity( const se3::JointModelSpherical & )                  { return 1.0; }
+    value_type upperBoundAngularVelocity( const se3::JointModelSphericalZYX & )               { return 1.0; }
+    value_type upperBoundAngularVelocity( const se3::JointModelTranslation & )                { return 0.0; }
+    value_type upperBoundAngularVelocity( const se3::JointModelPlanar & )                     { return 1.0; }
+
+    struct VisitUpperBoundAngularVelocity : public boost::static_visitor<value_type> 
+    {
+      template<typename Joint>
+      value_type operator() ( const se3::JointModelBase<Joint> & jmodel ) const
+      { return upperBoundAngularVelocity(jmodel.derived()) ; }
+    };
+
+    value_type  Joint::upperBoundAngularVelocity () const
+    {
+      VisitUpperBoundAngularVelocity visitor;
+      const se3::JointModelVariant & jmv = model().joints[jointIndex];
+
+      //return boost::apply_visitor(visitor,jmv);
+      return boost::apply_visitor(VisitUpperBoundAngularVelocity(),jmv);
+    }
+//NOTYET    value_type  Joint::upperBoundAngularVelocity () const {}
+
 
     const JointJacobian_t&  Joint::jacobian (const bool local) const
     {

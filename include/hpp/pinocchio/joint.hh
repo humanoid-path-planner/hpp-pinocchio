@@ -193,7 +193,7 @@ namespace hpp {
       /// \li \f$\mathbf{q}_{joint}\f$ is any joint configuration,
       /// \li \f$\mathbf{\dot{q}}_{joint}\f$ is the joint velocity, and
       /// \li \f$\mathbf{v} = J(\mathbf{q})*\mathbf{\dot{q}} \f$ is the linear velocity of the joint frame.
-//NOTYET      value_type upperBoundLinearVelocity () const;
+      value_type upperBoundLinearVelocity () const;
 
       /// Get upper bound on angular velocity of the joint frame
       /// \return coefficient \f$\lambda\f$ such that
@@ -204,7 +204,7 @@ namespace hpp {
       /// \li \f$\mathbf{q}_{joint}\f$ is any joint configuration,
       /// \li \f$\mathbf{\dot{q}}_{joint}\f$ is the joint velocity, and
       /// \li \f$\omega = J(\mathbf{q})*\mathbf{\dot{q}}\f$ is the angular velocity of the joint frame.
-//NOTYET      value_type upperBoundAngularVelocity () const;
+      value_type upperBoundAngularVelocity () const;
 
       /// Maximal distance of joint origin to parent origin
       const value_type& maximalDistanceToParent () const { return maximalDistanceToParent_; }

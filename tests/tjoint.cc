@@ -174,8 +174,9 @@ BOOST_AUTO_TEST_CASE (joint)
       BOOST_CHECK( (p2m::X(oMe)*Jp*m2p::Xq(oMb)).isApprox(Jm) );
       BOOST_CHECK( (m2p::X(oMe)*Jm*p2m::Xq(oMb)).isApprox(Jp) );
 
-      BOOST_CHECK( std::abs(jp->maximalDistanceToParent()-jm->maximalDistanceToParent())<1e-6 );
-
+      BOOST_CHECK( std::abs(jp->maximalDistanceToParent()  -jm->maximalDistanceToParent())  <1e-6 );
+      BOOST_CHECK( std::abs(jp->upperBoundLinearVelocity() -jm->upperBoundLinearVelocity()) <1e-6 );
+      BOOST_CHECK( std::abs(jp->upperBoundAngularVelocity()-jm->upperBoundAngularVelocity())<1e-6 );
     }
 
   /* Checking positionInParentFrame is difficult because of the modification of revolute
