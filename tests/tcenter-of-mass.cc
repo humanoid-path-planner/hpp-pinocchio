@@ -185,6 +185,6 @@ BOOST_AUTO_TEST_CASE (finiteDiff)
       std::cout << "JcomR = [ " << (comP->jacobian()*R.transpose()).leftCols<12>() << "]; " << std::endl;
     }
   
-  BOOST_CHECK( comP->jacobian().isApprox( Jcom*R,1e-5 ) );
+  BOOST_CHECK( comP->jacobian().isApprox( Jcom,1e-5 ) );
 }
 
