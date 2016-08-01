@@ -174,7 +174,8 @@ namespace hpp {
         se3::urdf::buildGeom(robot->model(), urdfName, se3::COLLISION,
             robot->geomModel(), baseDirs);
         // TODO the collision pairs are reinitialized while they should not be.
-        // We should keep the information from the previous GeometryData.
+        // We should keep the information from the previous GeometryModel.
+        robot->geomModel().addAllCollisionPairs();
         robot->createGeomData();
 	hppDout (notice, "Finished parsing URDF file.");
       }
@@ -197,10 +198,13 @@ namespace hpp {
 	  + filename + ".srdf";
         std::vector<std::string> baseDirs = se3::rosPaths();
 
+        const std::size_t nColPair = robot->geomModel().collisionPairs.size();
         std::string srdfName = se3::retrieveResourcePath(srdfPath, baseDirs);
         se3::srdf::removeCollisionPairsFromSrdf
           (robot->model(), robot->geomModel(), srdfName, verbose);
-	hppDout (notice, "Finished parsing SRDF file.");
+	hppDout (notice, "Finished parsing SRDF file. Removed "
+            << nColPair - robot->geomModel().collisionPairs.size() <<
+            " collision pairs.");
       }
     } // end of namespace urdf.
   } // end of namespace pinocchio.

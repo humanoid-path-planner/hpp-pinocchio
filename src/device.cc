@@ -34,8 +34,10 @@ namespace hpp {
 
     Device::
     Device(const std::string& name)
-      : model_()
+      : model_(new se3::Model())
       , data_ ()
+      , geomModel_(new se3::GeometryModel())
+      , geomData_ ()
       , name_ (name)
       , jointVector_()
       , obstacles_()
@@ -307,7 +309,6 @@ namespace hpp {
     {
       return geomData().distance_results;
     }
-
 
   } // namespace pinocchio
 } // namespace hpp

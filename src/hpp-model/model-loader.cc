@@ -25,18 +25,15 @@ const std::string urdfDefaultFilename =
 hpp::pinocchio::DevicePtr_t hppPinocchio( bool withGeoms, const std::string urdfFilename)
 {
   hpp::pinocchio::DevicePtr_t pinocchio = hpp::pinocchio::Device::create(urdfFilename);
-  hpp::pinocchio::ModelPtr_t model( new se3::Model() );
-  se3::urdf::buildModel(urdfFilename,se3::JointModelFreeFlyer(),*model);
-  pinocchio->model(model);
+  se3::urdf::buildModel(urdfFilename,se3::JointModelFreeFlyer(),pinocchio->model());
   pinocchio->createData();
 
   if( withGeoms )
     {
       std::vector<std::string> baseDirs; baseDirs.push_back(ROMEO_MODEL_DIR);
-      hpp::pinocchio::GeomModelPtr_t geom( new se3::GeometryModel() );
-      se3::urdf::buildGeom(pinocchio->model(),pinocchio->name(),se3::COLLISION,*geom,baseDirs);
+      se3::urdf::buildGeom(pinocchio->model(),pinocchio->name(),se3::COLLISION,pinocchio->geomModel(),baseDirs);
+      pinocchio->geomModel().addAllCollisionPairs();
 
-      pinocchio->geomModel(geom);
       pinocchio->createGeomData();
     }
 
