@@ -341,8 +341,7 @@ namespace hpp {
       /// \param type collision or distance.
       //DEPREC const CollisionPairs_t& collisionPairs (Request_t type) const;
 
-      /// Iterator over inner objects of the device
-      /// \param type Collision or distance
+      /// Vector of inner objects of the device
       DeviceObjectVector& objectVector () {return objectVector_; }
       const DeviceObjectVector& objectVector () const { return objectVector_; }
 
