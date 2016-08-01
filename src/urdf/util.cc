@@ -16,6 +16,7 @@
 
 #include <hpp/pinocchio/urdf/util.hh>
 
+#include <pinocchio/parsers/utils.hpp>
 #include <pinocchio/parsers/urdf.hpp>
 #include <pinocchio/multibody/geometry.hpp>
 #include <pinocchio/parsers/srdf.hpp>
@@ -29,6 +30,12 @@ namespace hpp {
   namespace pinocchio {
     namespace urdf {
       namespace {
+#ifdef HPP_DEBUG
+        const bool verbose = false;
+#else
+        const bool verbose = true;
+#endif
+
         JointPtr_t findSpecialJoint (const HumanoidRobotPtr_t& robot, const std::string& linkName)
         {
           return robot->getJointByBodyName (linkName);
@@ -87,6 +94,14 @@ namespace hpp {
           origin[2] = 0;
           robot->gaze (dir, origin);
         }
+
+        se3::JointModelVariant buildJoint (const std::string& type)
+        {
+          if (type == "freeflyer")   return se3::JointModelFreeFlyer();
+          else if (type == "planar") return se3::JointModelPlanar();
+          else                       throw  std::invalid_argument
+            ("Root joint type is currently not available.");
+        }
       }
 
       void loadRobotModel (const DevicePtr_t& robot,
@@ -96,36 +111,8 @@ namespace hpp {
 			   const std::string& urdfSuffix,
                            const std::string& srdfSuffix)
       {
-#ifdef HPP_DEBUG
-        const bool verbose = false;
-#else
-        const bool verbose = true;
-#endif
-	std::string urdfPath = "package://" + package + "/urdf/"
-	  + modelName + urdfSuffix + ".urdf";
-	std::string srdfPath = "package://" + package + "/srdf/"
-	  + modelName + srdfSuffix + ".srdf";
-        std::vector<std::string> baseDirs = se3::rosPaths();
-
-        ModelPtr_t model( new se3::Model() );
-        std::string urdfName = se3::retrieveResourcePath(urdfPath, baseDirs);
-        assert (rootJointType == "freeflyer" && "Root joint type is currently not available.");
-        *model = se3::urdf::buildModel(urdfName,se3::JointModelFreeFlyer(), verbose);
-        robot->model(model);
-        robot->createData();
-
-        GeomModelPtr_t geom( new se3::GeometryModel() );
-        se3::GeometryModel & geomRef = *geom;
-        geomRef = se3::urdf::buildGeom(robot->model(),robot->name(),baseDirs,se3::COLLISION);
-
-        robot->geomModel(geom);
-        robot->createGeomData();
-	hppDout (notice, "Finished parsing URDF file.");
-
-        std::string srdfName = se3::retrieveResourcePath(urdfPath, baseDirs);
-        se3::srdf::removeCollisionPairsFromSrdf
-          (robot->model(), robot->geomModel(), robot->geomData(), srdfName, verbose);
-	hppDout (notice, "Finished parsing SRDF file.");
+        loadUrdfModel (robot, rootJointType, package, modelName + urdfSuffix);
+        loadSrdfModel (robot, package, modelName + srdfSuffix);
       }
 
       void loadRobotModel (const DevicePtr_t& robot,
@@ -173,27 +160,21 @@ namespace hpp {
 			  const std::string& package,
 			  const std::string& filename)
       {
-#ifdef HPP_DEBUG
-        const bool verbose = false;
-#else
-        const bool verbose = true;
-#endif
 	std::string urdfPath = "package://" + package + "/urdf/"
 	  + filename + ".urdf";
         std::vector<std::string> baseDirs = se3::rosPaths();
 
-        ModelPtr_t model( new se3::Model() );
         std::string urdfName = se3::retrieveResourcePath(urdfPath, baseDirs);
-        assert (rootType == "freeflyer" && "Root joint type is currently not available.");
-        *model = se3::urdf::buildModel(urdfName,se3::JointModelFreeFlyer(), verbose);
-        robot->model(model);
+        if (rootType == "anchor")
+          se3::urdf::buildModel(urdfName, robot->model(), verbose);
+        else
+          se3::urdf::buildModel(urdfName, buildJoint(rootType), robot->model(), verbose);
         robot->createData();
 
-        GeomModelPtr_t geom( new se3::GeometryModel() );
-        se3::GeometryModel & geomRef = *geom;
-        geomRef = se3::urdf::buildGeom(robot->model(),robot->name(),baseDirs,se3::COLLISION);
-
-        robot->geomModel(geom);
+        se3::urdf::buildGeom(robot->model(), urdfName, se3::COLLISION,
+            robot->geomModel(), baseDirs);
+        // TODO the collision pairs are reinitialized while they should not be.
+        // We should keep the information from the previous GeometryData.
         robot->createGeomData();
 	hppDout (notice, "Finished parsing URDF file.");
       }
@@ -206,6 +187,20 @@ namespace hpp {
 			  const std::string& filename)
       {
         assert ("Not implemented yet because the prefix/baseJoint not yet available in Pinocchio.");
+      }
+
+      void loadSrdfModel (const DevicePtr_t& robot,
+			  const std::string& package,
+			  const std::string& filename)
+      {
+	std::string srdfPath = "package://" + package + "/srdf/"
+	  + filename + ".srdf";
+        std::vector<std::string> baseDirs = se3::rosPaths();
+
+        std::string srdfName = se3::retrieveResourcePath(srdfPath, baseDirs);
+        se3::srdf::removeCollisionPairsFromSrdf
+          (robot->model(), robot->geomModel(), srdfName, verbose);
+	hppDout (notice, "Finished parsing SRDF file.");
       }
     } // end of namespace urdf.
   } // end of namespace pinocchio.

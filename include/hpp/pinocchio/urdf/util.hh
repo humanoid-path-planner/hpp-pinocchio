@@ -125,6 +125,9 @@ namespace hpp
 			  const std::string& package,
 			  const std::string& filename);
 
+      void loadSrdfModel (const DevicePtr_t& robot,
+			  const std::string& package,
+			  const std::string& filename);
     } // end of namespace urdf.
   } // end of namespace pinocchio.
 } // end of namespace hpp.
