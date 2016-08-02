@@ -122,6 +122,12 @@ namespace hpp {
       return model().jointPlacements[jointIndex];
     }
 
+    void Joint::positionInParentFrame (const Transform3f& p)
+    {
+      selfAssert();
+      model().jointPlacements[jointIndex] = p;
+    }
+
     void Joint::isBounded (size_type rank, bool bounded)
     {
       const size_type idx = model().joints[jointIndex].idx_q() + rank;
