@@ -286,10 +286,7 @@ namespace hpp {
         return jointIndex;
       }
 
-      const se3::JointModel& jointModel() const
-      {
-        return model().joints[index()];
-      }
+      const se3::JointModel& jointModel() const;
 
       /// \}
 

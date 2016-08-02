@@ -25,6 +25,7 @@
 # include <list>
 
 # include <hpp/util/debug.hh>
+
 # include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/config.hh>
@@ -33,7 +34,6 @@
 # include <hpp/pinocchio/extra-config-space.hh>
 # include <hpp/pinocchio/joint.hh>
 # include <hpp/pinocchio/device-object-vector.hh>
-# include <pinocchio/multibody/model.hpp>
 
 namespace hpp {
   namespace pinocchio {

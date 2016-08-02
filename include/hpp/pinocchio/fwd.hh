@@ -24,19 +24,18 @@
 # include <list>
 # include <map>
 # include <Eigen/Core>
+
+# include <pinocchio/spatial/fwd.hpp>
+# include <pinocchio/multibody/fwd.hpp>
+
 # include <hpp/util/pointer.hh>
 # include <hpp/fcl/fwd.hh>
 # include <hpp/fcl/math/matrix_3f.h>
-# include <pinocchio/multibody/model.hpp>
 
 # include <hpp/pinocchio/deprecated.hh>
 
 namespace se3
 {
-  struct Model;
-  struct Data;
-  struct GeometryModel;
-  struct GeometryData;
   struct DistanceResult;
 }
 

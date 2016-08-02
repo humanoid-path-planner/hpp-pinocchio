@@ -18,9 +18,11 @@
 // <http://www.gnu.org/licenses/>.
 
 # include <hpp/pinocchio/joint.hh>
+
+# include <pinocchio/algorithm/jacobian.hpp>
+
 # include <hpp/pinocchio/device.hh>
 # include <hpp/pinocchio/body.hh>
-# include <pinocchio/algorithm/jacobian.hpp>
 
 namespace hpp {
   namespace pinocchio {
@@ -433,6 +435,11 @@ namespace hpp {
              << std::endl;
       }
       return os;
+    }
+
+    const se3::JointModel& Joint::jointModel() const
+    {
+      return model().joints[index()];
     }
 
     /* --- ITERATOR --------------------------------------------------------- */

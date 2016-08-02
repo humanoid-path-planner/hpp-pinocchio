@@ -19,6 +19,9 @@
 
 #include <hpp/pinocchio/gripper.hh>
 
+#include <pinocchio/spatial/se3.hpp>
+#include <pinocchio/multibody/model.hpp>
+
 #include <hpp/pinocchio/device.hh>
 
 namespace hpp {

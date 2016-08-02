@@ -17,17 +17,21 @@
 // hpp-pinocchio  If not, see
 // <http://www.gnu.org/licenses/>.
 
-#include <Eigen/Core>
-#include <hpp/pinocchio/fwd.hh>
-//#include <hpp/pinocchio/distance-result.hh>
-#include <hpp/pinocchio/extra-config-space.hh>
-#include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/device.hh>
+
+#include <boost/foreach.hpp>
+#include <Eigen/Core>
+
+#include <pinocchio/multibody/model.hpp>
 #include <pinocchio/algorithm/center-of-mass.hpp>
 #include <pinocchio/algorithm/jacobian.hpp>
 #include <pinocchio/algorithm/kinematics.hpp>
 #include <pinocchio/algorithm/geometry.hpp>
-#include <boost/foreach.hpp>
+
+#include <hpp/pinocchio/fwd.hh>
+//#include <hpp/pinocchio/distance-result.hh>
+#include <hpp/pinocchio/extra-config-space.hh>
+#include <hpp/pinocchio/joint.hh>
 
 namespace hpp {
   namespace pinocchio {

@@ -21,6 +21,8 @@
 /* --- CONVERTIONS ---------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+#include <pinocchio/spatial/se3.hpp>
+
 struct m2p
 {
   static hpp::pinocchio::Configuration_t
