@@ -44,6 +44,8 @@ namespace hpp {
       , geomData_ ()
       , name_ (name)
       , jointVector_()
+      , upToDate_ (false)
+      , computationFlag_ (JOINT_POSITION)
       , obstacles_()
       , objectVector_ ()
       , weakPtr_()
