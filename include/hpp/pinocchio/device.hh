@@ -238,7 +238,7 @@ namespace hpp {
       /// Set current velocity
       void currentVelocity (vectorIn_t velocity)
       {
-	upToDate_ = false;
+        invalidate();
 	currentVelocity_ = velocity;
       }
 
@@ -251,7 +251,7 @@ namespace hpp {
       /// Set current acceleration
       void currentAcceleration (vectorIn_t acceleration)
       {
-	upToDate_ = false;
+        invalidate();
 	currentAcceleration_ = acceleration;
       }
       /// \}
@@ -363,7 +363,7 @@ namespace hpp {
       void controlComputation (const Computation_t& flag)
       {
 	computationFlag_ = flag;
-	upToDate_ = false;
+        invalidate();
       }
       /// Get computation flag
       Computation_t computationFlag () const
@@ -371,7 +371,9 @@ namespace hpp {
 	return computationFlag_;
       }
       /// Compute forward kinematics
-      virtual void computeForwardKinematics ();
+      void computeForwardKinematics ();
+      /// Update the geometry placement to the currentConfiguration
+      void updateGeometryPlacements ();
       /// \}
       // -----------------------------------------------------------------------
 
@@ -406,6 +408,7 @@ namespace hpp {
       /// Resize configuration when changing data or extra-config.
       void resizeState ();
       void resizeJacobians ();
+      inline void invalidate () { upToDate_ = false; geomUpToDate_ = false; }
 
     protected:
       // Pinocchio objects
@@ -429,7 +432,7 @@ namespace hpp {
       //DEPREC vector3_t com_;
       //DEPREC ComJacobian_t jacobianCom_;
       //DEPREC value_type mass_;
-      bool upToDate_;
+      bool upToDate_, geomUpToDate_;
       Computation_t computationFlag_;
       //DEPREC // Collision pairs between bodies
       //DEPREC CollisionPairs_t collisionPairs_;

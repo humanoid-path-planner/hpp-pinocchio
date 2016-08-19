@@ -44,12 +44,13 @@ namespace hpp {
       , geomData_ ()
       , name_ (name)
       , jointVector_()
-      , upToDate_ (false)
       , computationFlag_ (JOINT_POSITION)
       , obstacles_()
       , objectVector_ ()
       , weakPtr_()
-    {}
+    {
+      invalidate();
+    }
 
     // static method
     DevicePtr_t Device::
@@ -209,7 +210,7 @@ namespace hpp {
     {
       if (configuration != currentConfiguration_)
         {
-          upToDate_ = false;
+          invalidate();
           currentConfiguration_ = configuration;
           return true;
 	}
@@ -285,6 +286,15 @@ namespace hpp {
         se3::computeJacobians(*model_,*data_,currentConfiguration_);
     }
 
+    void Device::
+    updateGeometryPlacements ()
+    {
+      if (!geomUpToDate_) {
+        se3::updateGeometryPlacements(model(),data(),geomModel(),geomData());
+        geomUpToDate_ = true;
+      }
+    }
+
     std::ostream& Device::
     print (std::ostream& os) const
     {
@@ -301,7 +311,7 @@ namespace hpp {
     {
       /* Following hpp::model API, the forward kinematics (joint placement) is
        * supposed to have already been computed. */
-      se3::updateGeometryPlacements(model(),data(),geomModel(),geomData());
+      updateGeometryPlacements();
       return se3::computeCollisions(geomData(),stopAtFirstCollision);
     }
 
@@ -309,7 +319,7 @@ namespace hpp {
     {
       /* Following hpp::model API, the forward kinematics (joint placement) is
        * supposed to have already been computed. */
-      se3::updateGeometryPlacements(model(),data(),geomModel(),geomData());
+      updateGeometryPlacements();
       se3::computeDistances (geomData());
     }
 
