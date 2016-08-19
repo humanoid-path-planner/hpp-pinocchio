@@ -49,7 +49,9 @@ namespace hpp {
         geomInModelIndex(geomInModel)
       , inOutType(INNER)
     {
-      jointIndex = pinocchio().parent;
+      se3::FrameIndex fid = pinocchio().parentFrame;
+      assert (devicePtr->model().frames[fid].type == se3::BODY);
+      jointIndex = pinocchio().parentJoint;
       selfAssert();
     }
 

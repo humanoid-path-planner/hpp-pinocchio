@@ -22,11 +22,13 @@
 #include <boost/test/unit_test.hpp>
 
 #include <hpp/model/device.hh>
+#include <hpp/model/collision-object.hh>
 #include <hpp/model/urdf/util.hh>
 
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/body.hh>
+#include <hpp/pinocchio/urdf/util.hh>
 #include "../tests/utils.hh"
 
 static bool verbose = false;
@@ -342,8 +344,10 @@ BOOST_AUTO_TEST_CASE (tclone)
 /* -------------------------------------------------------------------------- */
 BOOST_AUTO_TEST_CASE (geom)
 {
-  hpp::model::DevicePtr_t model = hppModel();
-  hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio(true);
+  hpp::model    ::DevicePtr_t model     = hpp::model::Device::create ("test");
+  hpp::model    ::urdf::loadRobotModel(model, "freeflyer", "romeo_description", "romeo", "_small", "_small");
+  hpp::pinocchio::DevicePtr_t pinocchio = hpp::pinocchio::Device::create ("test");
+  hpp::pinocchio::urdf::loadRobotModel(pinocchio, "freeflyer", "romeo_description", "romeo", "_small", "_small");
 
 #ifdef NDEBUG
   for(int i=0;i<1000;++i)
@@ -369,10 +373,29 @@ BOOST_AUTO_TEST_CASE (geom)
 
   const hpp::model    ::DistanceResults_t & dm = model    ->distanceResults();
   const hpp::pinocchio::DistanceResults_t & dp = pinocchio->distanceResults();
-  assert(dm.size() == dp.size());
-  for( int i=0;i<dm.size();++i )
+  BOOST_REQUIRE(dm.size() == dp.size());
+  for( int i=0;i<dp.size();++i )
     {
-      BOOST_CHECK( std::abs(dm[i].distance() == dp[i].distance())<1e-6 );
+      bool found = false;
+      const std::string& np1 = pinocchio->geomModel().geometryObjects[dp[i].object1].name;
+      const std::string& np2 = pinocchio->geomModel().geometryObjects[dp[i].object2].name;
+      for ( int j=0; j<dm.size(); ++j)
+      {
+        const std::string& nm1 = dm[j].innerObject->name();
+        const std::string& nm2 = dm[j].outerObject->name();
+        bool direct = (nm1 == np1 && nm2 == np2);
+        bool invert = (nm1 == np2 && nm2 == np1);
+        if (direct || invert) {
+          BOOST_CHECK_MESSAGE( std::abs(dm[j].distance() - dp[i].distance())<1e-6,
+              "Distance not correct: " <<
+              dm[j].distance() << " - " << dp[i].distance()
+              );
+          BOOST_WARN_MESSAGE(invert, "Object are inverted.");
+          found = true;
+          break;
+        }
+      }
+      BOOST_CHECK_MESSAGE( found, "Distance not checked by hpp-model: " << np1 << " - " << np2);
     }
 
 

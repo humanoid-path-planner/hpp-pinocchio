@@ -197,7 +197,9 @@ namespace hpp {
     void Device::
     resizeState()
     {
-      currentConfiguration_.resize(configSize());
+      // FIXME we should not use neutralConfiguration here.
+      currentConfiguration_ = neutralConfiguration();
+      // currentConfiguration_.resize(configSize());
       currentVelocity_.resize(numberDof());
       currentAcceleration_.resize(numberDof());
     }
