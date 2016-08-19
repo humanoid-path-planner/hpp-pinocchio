@@ -151,15 +151,15 @@ BOOST_AUTO_TEST_CASE(geomsAccess)
     {
       hpp::pinocchio::JointConstPtr_t jp = *it;
       hpp::model    ::JointConstPtr_t jm = model->getJointByName(jp->name());
-      assert( jm );
-      assert( jp->name() == jm->name() );
+      BOOST_REQUIRE( jm );
+      BOOST_CHECK( jp->name() == jm->name() );
 
       hpp::pinocchio::BodyPtr_t bp = jp->linkedBody();
       hpp::model    ::BodyPtr_t bm = jm->linkedBody();
-      assert ( bp->name() == bm->name() );
+      BOOST_CHECK( bp->name() == bm->name() );
 
       /* Check inner objects. */
-      assert (bp->innerObjects().size() == int(bm->innerObjects(hpp::model::COLLISION).size()));
+      BOOST_REQUIRE (bp->innerObjects().size() == int(bm->innerObjects(hpp::model::COLLISION).size()));
       for (hpp::pinocchio::ObjectVector::const_iterator itcoll = bp->innerObjects().begin();
            itcoll!=bp->innerObjects().end() ; ++ itcoll)
         {
