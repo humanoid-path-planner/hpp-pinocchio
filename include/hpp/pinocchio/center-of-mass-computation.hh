@@ -30,6 +30,10 @@ namespace hpp {
     {
       public:
         typedef std::vector <se3::JointIndex> JointRootIndexes_t;
+        /// \cond
+        // This fixes an alignment issue of se3::Data::hg
+        EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+        /// \endcond
 
       public:
 
