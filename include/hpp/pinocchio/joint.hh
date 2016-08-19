@@ -21,10 +21,8 @@
 # define HPP_PINOCCHIO_JOINT_HH
 
 # include <cstddef>
-# include <hpp/fcl/math/transform.h>
-# include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/fwd.hh>
-# include <hpp/pinocchio/fake-container.hh>
+# include <hpp/pinocchio/config.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -312,28 +310,6 @@ namespace hpp {
     }; // class Joint
 
     inline std::ostream& operator<< (std::ostream& os, const Joint& joint) { return joint.display(os); }
-
-    /** Fake std::vector<Joint>, used to comply with the actual structure of hpp::model.
-     *
-     * You can use it for the following loop:
-     *       for (JointVector_t::const_iterator it = jv.begin (); 
-     *               it != jv.end (); ++it) 
-     *          cout << (*it)->name;
-     */
-    struct JointVector
-      : public FakeContainer<JointPtr_t,JointConstPtr_t>
-    {
-      JointVector(DevicePtr_t device) : FakeContainer<JointPtr_t,JointConstPtr_t>(device) {}
-      JointVector() {}
-      virtual ~JointVector() {}
-
-      virtual JointPtr_t at(const size_type i) ;
-      virtual JointConstPtr_t at(const size_type i) const ;
-      virtual size_type size() const ;
-      virtual size_type iend() const ;
-
-      void selfAssert(size_type i = 0) const;
-    };
 
   } // namespace pinocchio
 } // namespace hpp

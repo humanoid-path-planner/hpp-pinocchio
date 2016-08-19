@@ -21,8 +21,8 @@
 #define HPP_PINOCCHIO_OBJECT_ITERATOR_HH
 
 # include <vector>
-# include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/fwd.hh>
+# include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/fake-container.hh>
 
 namespace hpp {
@@ -42,6 +42,49 @@ namespace hpp {
 
       void selfAssert(size_type i = 0) const;
     }; // struct DeviceObjectVector
+
+    /* --- CONTAINER -------------------------------------------------------- */
+    struct ObjectVector 
+      : public FakeContainer<CollisionObjectPtr_t,CollisionObjectConstPtr_t>
+    {
+      typedef se3::JointIndex JointIndex;
+
+      JointIndex jointIndex;
+      InOutType inOutType;
+
+      ObjectVector(DevicePtr_t device,const JointIndex i, InOutType inout)
+        : FakeContainer<CollisionObjectPtr_t,CollisionObjectConstPtr_t>(device)
+        , jointIndex(i), inOutType(inout) {}
+      ObjectVector() {}
+
+      virtual CollisionObjectPtr_t at(const size_type i) ;
+      virtual CollisionObjectConstPtr_t at(const size_type i) const ;
+      virtual size_type size() const ;
+
+      void selfAssert(size_type i = 0) const;
+    };
+
+    /** Fake std::vector<Joint>, used to comply with the actual structure of hpp::model.
+     *
+     * You can use it for the following loop:
+     *       for (JointVector_t::const_iterator it = jv.begin (); 
+     *               it != jv.end (); ++it) 
+     *          cout << (*it)->name;
+     */
+    struct JointVector
+      : public FakeContainer<JointPtr_t,JointConstPtr_t>
+    {
+      JointVector(DevicePtr_t device) : FakeContainer<JointPtr_t,JointConstPtr_t>(device) {}
+      JointVector() {}
+      virtual ~JointVector() {}
+
+      virtual JointPtr_t at(const size_type i) ;
+      virtual JointConstPtr_t at(const size_type i) const ;
+      virtual size_type size() const ;
+      virtual size_type iend() const ;
+
+      void selfAssert(size_type i = 0) const;
+    };
   } // namespace pinocchio
 } // namespace hpp
 

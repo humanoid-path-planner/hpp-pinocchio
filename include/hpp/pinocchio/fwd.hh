@@ -57,7 +57,9 @@ namespace hpp {
     HPP_PREDEF_CLASS (JointConfiguration);
     HPP_PREDEF_CLASS (Gripper);
     HPP_PREDEF_CLASS (CenterOfMassComputation);
+
     enum Request_t {COLLISION, DISTANCE};
+    enum InOutType { INNER, OUTER };
 
     typedef double value_type;
     typedef Eigen::Matrix <value_type, Eigen::Dynamic, 1> vector_t;
@@ -83,8 +85,9 @@ namespace hpp {
     typedef boost::shared_ptr<Body> BodyPtr_t;
     typedef boost::shared_ptr<const Body> BodyConstPtr_t;
     //typedef std::vector<BodyPtr_t> BodyVector_t;
-    typedef fcl::CollisionObject * fclCollisionObjectPtr_t;
-    typedef const fcl::CollisionObject * fclConstCollisionObjectPtr_t;
+    typedef       fcl::CollisionObject   FclCollisionObject;
+    typedef       fcl::CollisionObject * FclCollisionObjectPtr_t;
+    typedef const fcl::CollisionObject * FclConstCollisionObjectPtr_t;
     typedef boost::shared_ptr<CollisionObject> CollisionObjectPtr_t;
     typedef boost::shared_ptr<const CollisionObject> CollisionObjectConstPtr_t;
     //DEPREC typedef std::list <CollisionObjectPtr_t> ObjectVector_t;
@@ -105,6 +108,8 @@ namespace hpp {
     typedef boost::shared_ptr<se3::Data>                DataPtr_t;
     typedef boost::shared_ptr<const se3::Data>          DataConstPtr_t;
 
+    typedef se3::GeometryModel       GeomModel;
+    typedef se3::GeometryData        GeomData;
     typedef boost::shared_ptr<se3::GeometryModel>       GeomModelPtr_t;
     typedef boost::shared_ptr<const se3::GeometryModel> GeomModelConstPtr_t;
     typedef boost::shared_ptr<se3::GeometryData>        GeomDataPtr_t;

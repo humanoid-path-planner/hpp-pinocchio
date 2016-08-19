@@ -23,6 +23,7 @@
 #include <pinocchio/multibody/model.hpp>
 
 #include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/joint.hh>
 
 namespace hpp {
   namespace pinocchio {

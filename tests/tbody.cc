@@ -28,6 +28,7 @@
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/body.hh>
+#include <hpp/pinocchio/collision-object.hh>
 #include <pinocchio/multibody/geometry.hpp>
 #include "../tests/utils.hh"
 
@@ -285,7 +286,7 @@ BOOST_AUTO_TEST_CASE(collisionObject)
                                             pinocchio->geomModel().geometryObjects[0].collision_geometry,
                                             se3::SE3::Identity(),std::string("fixedObs1"),
                                             std::string("//") );
-  hpp::pinocchio::CollisionObject obs(pinocchio,0,0,hpp::pinocchio::CollisionObject::INNER);
+  hpp::pinocchio::CollisionObject obs(pinocchio,0,0,hpp::pinocchio::INNER);
   obs.move(se3::SE3::Random()); // self asserted.
   BOOST_CHECK( pinocchio->obstacles().size()==1);
 }

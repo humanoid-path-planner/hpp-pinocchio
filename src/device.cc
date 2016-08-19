@@ -59,7 +59,7 @@ namespace hpp {
       res->init (res);
       res->weakPtr_ = res;
       res->jointVector_ = JointVector(res);
-      res->obstacles_ = ObjectVector(res,0,CollisionObject::INNER);
+      res->obstacles_ = ObjectVector(res,0,INNER);
       res->objectVector_ = DeviceObjectVector(res);
       return res;
     }

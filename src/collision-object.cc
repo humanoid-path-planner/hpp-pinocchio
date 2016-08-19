@@ -17,11 +17,13 @@
 // hpp-pinocchio  If not, see
 // <http://www.gnu.org/licenses/>.
 
-
 #include <hpp/pinocchio/collision-object.hh>
-#include <hpp/pinocchio/device.hh>
+
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/multibody/geometry.hpp>
+
+#include <hpp/pinocchio/joint.hh>
+#include <hpp/pinocchio/device.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -31,60 +33,89 @@ namespace hpp {
                      const JointIndex joint,
                      const GeomIndex geom,
                      const InOutType inout ) 
-      : devicePtr(device),jointIndex(joint)
-      , geomInJointIndex(geom),geomInJointIndexSet(true),
-        geomInModelIndex(0)
+      : devicePtr(device)
+      , geomModel_(devicePtr->geomModelPtr())
+      , jointIndex_(joint)
+      , geomInModelIndex(0)
       , inOutType(inout)
     {
       selfAssert(); 
-      geomInModelIndex = objectVec().at(jointIndex)[geomInJointIndex];
+      assert(objectVec().at(jointIndex_).size()>geom);
+      geomInModelIndex = objectVec().at(jointIndex_)[geom];
       selfAssert(); 
     }
 
     CollisionObject::
     CollisionObject( DevicePtr_t device, 
                      const GeomIndex geomInModel )
-      : devicePtr(device),jointIndex(0)
-      , geomInJointIndex(0),geomInJointIndexSet(false),
-        geomInModelIndex(geomInModel)
+      : devicePtr(device)
+      , geomModel_(devicePtr->geomModelPtr())
+      , jointIndex_(0)
+      , geomInModelIndex(geomInModel)
       , inOutType(INNER)
     {
-      se3::FrameIndex fid = pinocchio().parentFrame;
-      assert (devicePtr->model().frames[fid].type == se3::BODY);
-      jointIndex = pinocchio().parentJoint;
+      jointIndex_ = pinocchio().parentJoint;
+      selfAssert();
+    }
+
+    CollisionObject::
+    CollisionObject( GeomModelPtr_t geomModel, 
+                     const GeomIndex geomInModel )
+      : devicePtr()
+      , geomModel_(geomModel)
+      , jointIndex_(0)
+      , geomInModelIndex(geomInModel)
+      , inOutType(INNER)
+    {
+      jointIndex_ = pinocchio().parentJoint;
       selfAssert();
     }
 
     CollisionObject::ObjectVec_t & 
     CollisionObject::objectVec()
     {
-      if(inOutType==INNER) return devicePtr->geomModel().innerObjects;
-      else                 return devicePtr->geomModel().outerObjects;
+      if(inOutType==INNER) return geomModel_->innerObjects;
+      else                 return geomModel_->outerObjects;
     }
     const CollisionObject::ObjectVec_t & 
     CollisionObject::objectVec() const
     {
-      if(inOutType==INNER) return devicePtr->geomModel().innerObjects;
-      else                 return devicePtr->geomModel().outerObjects;
+      if(inOutType==INNER) return geomModel_->innerObjects;
+      else                 return geomModel_->outerObjects;
     }
     
     const std::string& CollisionObject::name () const { return pinocchio().name; }
 
     // This function should rather return a shared_ptr<const>
     const se3::GeometryObject & CollisionObject::pinocchio () const
-    { return devicePtr->geomModel().geometryObjects[geomInModelIndex]; }
+    { return geomModel_->geometryObjects[geomInModelIndex]; }
     se3::GeometryObject & CollisionObject::pinocchio ()
-    { return devicePtr->geomModel().geometryObjects[geomInModelIndex]; }
+    { return geomModel_->geometryObjects[geomInModelIndex]; }
 
-    fclCollisionObjectPtr_t CollisionObject::fcl ()
-    { return & devicePtr->geomData().collisionObjects[geomInModelIndex]; }
-    fclConstCollisionObjectPtr_t CollisionObject::fcl () const 
-    { return & devicePtr->geomData().collisionObjects[geomInModelIndex]; }
+    FclCollisionObjectPtr_t CollisionObject::fcl (GeomData& geomData) const
+    {
+      return & geomData.collisionObjects[geomInModelIndex];
+    }
+
+    FclConstCollisionObjectPtr_t CollisionObject::fcl (const GeomData& geomData) const 
+    {
+      return & geomData.collisionObjects[geomInModelIndex];
+    }
+
+    FclConstCollisionObjectPtr_t CollisionObject::fcl () const { return fcl(devicePtr->geomData()); }
+    FclCollisionObjectPtr_t      CollisionObject::fcl ()       { return fcl(devicePtr->geomData()); }
 
     JointPtr_t      CollisionObject::joint ()
-    { return JointPtr_t     (new Joint(devicePtr,jointIndex)); }
+    {
+      if (!devicePtr) return JointPtr_t();
+      return JointPtr_t (new Joint(devicePtr,jointIndex_));
+    }
+
     JointConstPtr_t CollisionObject::joint () const
-    { return JointConstPtr_t(new Joint(devicePtr,jointIndex)); }
+    {
+      if (!devicePtr) return JointConstPtr_t();
+      return JointConstPtr_t(new Joint(devicePtr,jointIndex_));
+    }
 
     const Transform3f& CollisionObject::
     positionInJointFrame () const { return pinocchio().placement; }
@@ -97,7 +128,7 @@ namespace hpp {
     void CollisionObject::move (const Transform3f& position)
     { 
       // move does not work but for object attached to the universe (joint 0)
-      assert( jointIndex==0 ); 
+      assert( jointIndex_==0 ); 
       devicePtr->geomData().oMg[geomInModelIndex] = position;
       devicePtr->geomData().collisionObjects[geomInModelIndex]
         .setTransform(toFclTransform3f(position));
@@ -106,38 +137,9 @@ namespace hpp {
 
     void CollisionObject::selfAssert() const
     { 
-      assert(devicePtr);
-      assert(devicePtr->model().njoint>int(jointIndex));
-      if(geomInJointIndexSet)
-        assert(objectVec().at(jointIndex).size()>geomInJointIndex);
-      assert(devicePtr->geomModel().geometryObjects.size()>geomInModelIndex);
+      assert(geomModel_);
+      assert(!devicePtr || devicePtr->model().njoint>int(jointIndex_));
+      assert(geomModel_->geometryObjects.size()>geomInModelIndex);
     }
-
-    /* --- ITERATOR --------------------------------------------------------- */
-    CollisionObjectPtr_t ObjectVector::at(const size_type i)
-    {
-      return CollisionObjectPtr_t(new CollisionObject(devicePtr,jointIndex,i,inOutType));
-    }
-
-    CollisionObjectConstPtr_t ObjectVector::at(const size_type i) const
-    {
-      return CollisionObjectConstPtr_t(new CollisionObject(devicePtr,jointIndex,i,inOutType));
-    }
-
-    size_type ObjectVector::size() const
-    {
-      if( inOutType==CollisionObject::INNER )
-        return size_type(devicePtr->geomModel().innerObjects[jointIndex].size());
-      else
-        return size_type(devicePtr->geomModel().outerObjects[jointIndex].size());
-    }
-    
-    void ObjectVector::selfAssert(size_type i) const
-    {
-      assert(devicePtr);
-      assert(int(jointIndex)<devicePtr->model().njoint);
-      assert(i<size());
-    }
-
   } // namespace pinocchio
 } // namespace hpp

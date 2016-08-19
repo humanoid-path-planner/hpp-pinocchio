@@ -21,7 +21,7 @@
 # define HPP_PINOCCHIO_GRIPPER_HH
 
 # include <hpp/pinocchio/fwd.hh>
-# include <hpp/pinocchio/joint.hh>
+# include <hpp/pinocchio/config.hh>
 
 namespace hpp {
   namespace pinocchio {

@@ -21,11 +21,12 @@
 # define HPP_PINOCCHIO_BODY_HH
 
 # include <hpp/util/pointer.hh>
-# include <hpp/pinocchio/config.hh>
-# include <hpp/pinocchio/fwd.hh>
-# include <hpp/pinocchio/collision-object.hh>
 
 # include <pinocchio/multibody/fwd.hpp>
+
+# include <hpp/pinocchio/config.hh>
+# include <hpp/pinocchio/fwd.hh>
+# include <hpp/pinocchio/device-object-vector.hh>
 
 namespace hpp {
   namespace pinocchio {

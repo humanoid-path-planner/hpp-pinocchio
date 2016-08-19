@@ -17,12 +17,16 @@
 // hpp-pinocchio  If not, see
 // <http://www.gnu.org/licenses/>.
 
-#include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/body.hh>
+
+#include <boost/foreach.hpp>
+
 #include <pinocchio/spatial/fcl-pinocchio-conversions.hpp>
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/multibody/geometry.hpp>
-#include <boost/foreach.hpp>
+
+#include <hpp/pinocchio/joint.hh>
+#include <hpp/pinocchio/device.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -30,8 +34,8 @@ namespace hpp {
     Body::
     Body (DevicePtr_t device, JointIndex joint) 
       : devicePtr(device),jointIndex(joint) ,frameIndexSet(false)
-      , innerObjects_(device,joint,CollisionObject::INNER)
-      , outerObjects_(device,joint,CollisionObject::OUTER)
+      , innerObjects_(device,joint,INNER)
+      , outerObjects_(device,joint,OUTER)
     {
       selfAssert();
     }

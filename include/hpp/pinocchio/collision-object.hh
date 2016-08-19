@@ -20,21 +20,16 @@
 #ifndef HPP_PINOCCHIO_COLLISION_OBJECT_HH
 # define HPP_PINOCCHIO_COLLISION_OBJECT_HH
 
-# include <hpp/fcl/collision_object.h>
+# include <pinocchio/multibody/fwd.hpp>
+
+# include <hpp/pinocchio/deprecated.hh>
 # include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/fwd.hh>
-# include <hpp/pinocchio/fake-container.hh>
-# include <pinocchio/multibody/fwd.hpp>
 
 namespace se3
 {
   struct GeometryObject;
 }
-
-namespace fcl {
-  HPP_PREDEF_CLASS (CollisionObject);
-  HPP_PREDEF_CLASS (CollisionGeometry);
-} // namespace fcl
 
 namespace hpp {
   namespace pinocchio {
@@ -46,32 +41,24 @@ namespace hpp {
 
       typedef se3::JointIndex JointIndex;
       typedef se3::GeomIndex GeomIndex;
-      enum InOutType { INNER, OUTER };
 
       typedef std::vector<GeomIndex> GeomIndexList;
       typedef std::map < se3::JointIndex, GeomIndexList > ObjectVec_t;
 
-      //DREPEC /// Create collision object and return shared pointer
-      //DREPEC static CollisionObjectPtr_t create (fcl::CollisionObjectPtr_t object,
-      //DREPEC 					  const std::string& name);
-      //DREPEC /// Create collision object and return shared pointer
-      //DREPEC static CollisionObjectPtr_t create (fcl::CollisionGeometryPtr_t geometry,
-      //DREPEC 					  const Transform3f& position,
-      //DREPEC 					  const std::string& name);
-      //DREPEC /// Clone object and attach to given joint.
-      //DREPEC CollisionObjectPtr_t clone (const JointPtr_t& joint) const;
-
       /// Construction from inner/outer list, using a joint index as reference.
       /// \param geom: index of the object in either inner or outer objects of joint <joint>.
-      CollisionObject( DevicePtr_t device, 
+      CollisionObject( DevicePtr_t device,
                        const JointIndex joint,
                        const GeomIndex geom,
-                       const InOutType inout = INNER );
+                       const InOutType inout = INNER ) HPP_PINOCCHIO_DEPRECATED;
 
       /// Construction from global collision-object list. The joint ID is recovered from
       /// the collision object in Pinocchio and InOut is set to INNER. The geomIndexInJoint
       /// is not defined (geomIndexInJointSet = false)
-      CollisionObject( DevicePtr_t device, 
+      CollisionObject( DevicePtr_t device,
+                       const GeomIndex geom );
+
+      CollisionObject( GeomModelPtr_t geomModel,
                        const GeomIndex geom );
 
       const std::string& name () const;
@@ -81,8 +68,13 @@ namespace hpp {
       se3::GeometryObject &       pinocchio ();
       
       /// Access to fcl object
-      fclConstCollisionObjectPtr_t fcl () const ;
-      fclCollisionObjectPtr_t fcl () ;
+      FclConstCollisionObjectPtr_t fcl (const GeomData& data) const;
+      FclCollisionObjectPtr_t      fcl (      GeomData& data) const;
+      FclConstCollisionObjectPtr_t fcl () const ;
+      FclCollisionObjectPtr_t      fcl ();
+
+      /// Get joint index
+      const JointIndex& jointIndex () const { return jointIndex_; }
 
       /// Get joint
       JointPtr_t joint () ;
@@ -122,82 +114,13 @@ namespace hpp {
       ObjectVec_t &       objectVec();
       const ObjectVec_t & objectVec() const;
 
-      //DEPREC /// \name Construction, destruction and copy
-      //DEPREC /// \{
-      //DEPREC 
-      //DEPREC /// Wrap fcl collision object at identity position
-      //DEPREC explicit CollisionObject (fcl::CollisionObjectPtr_t object,
-      //DEPREC 				const std::string& name) :
-      //DEPREC 	object_ (object), joint_ (0), name_ (name), weakPtr_ ()
-      //DEPREC 	{
-      //DEPREC 	  positionInJointFrame_.setIdentity ();
-      //DEPREC 	}
-      //DEPREC /// Wrap fcl collision object and put at given position
-      //DEPREC explicit CollisionObject (const fcl::CollisionGeometryPtr_t geometry,
-      //DEPREC 				const Transform3f& position,
-      //DEPREC 				const std::string& name) :
-      //DEPREC 	object_ (new fcl::CollisionObject (geometry, position)),
-      //DEPREC 	joint_ (0), name_ (name), weakPtr_ ()
-      //DEPREC 	{
-      //DEPREC 	  positionInJointFrame_ = position;
-      //DEPREC 	}
-      //DEPREC /// Copy constructor
-      //DEPREC explicit CollisionObject (const CollisionObject& object) :
-      //DEPREC object_ (new fcl::CollisionObject (object.fcl()->collisionGeometry(),
-      //DEPREC                                object.fcl()->getTransform())),
-      //DEPREC positionInJointFrame_ (object.positionInJointFrame_),
-      //DEPREC joint_ (0x0),
-      //DEPREC name_ (object.name_),
-      //DEPREC weakPtr_ ()
-      //DEPREC   {
-      //DEPREC   }
-      //DEPREC 
-      //DEPREC /// \}
-      //DEPREC void init (const CollisionObjectWkPtr_t& self)
-      //DEPREC {
-      //DEPREC 	weakPtr_ = self;
-      //DEPREC }
-
     private:
       DevicePtr_t devicePtr;
-      JointIndex  jointIndex;
-      GeomIndex   geomInJointIndex;     // Index in joint list.
-      bool        geomInJointIndexSet;  // True if geomInJointIndex is set.
+      GeomModelPtr_t geomModel_;
+      JointIndex  jointIndex_;
       GeomIndex   geomInModelIndex;     // Index in global model list.
       InOutType   inOutType;            // Object in Inner or Outer object list.
-
-      //DEPREC fcl::CollisionObjectPtr_t object_;
-      //DEPREC fcl::Transform3f positionInJointFrame_;
-      //DEPREC JointPtr_t joint_;
-      //DEPREC std::string name_;
-      //DEPREC CollisionObjectWkPtr_t weakPtr_;
     }; // class CollisionObject
-
-
-    typedef boost::shared_ptr<CollisionObject> CollisionObjectPtr_t;
-    typedef boost::shared_ptr<const CollisionObject> CollisionObjectConstPtr_t;
-
-    /* --- CONTAINER -------------------------------------------------------- */
-    struct ObjectVector 
-      : public FakeContainer<CollisionObjectPtr_t,CollisionObjectConstPtr_t>
-    {
-      typedef se3::JointIndex JointIndex;
-      typedef CollisionObject::InOutType InOutType;
-
-      JointIndex jointIndex;
-      InOutType inOutType;
-
-      ObjectVector(DevicePtr_t device,const JointIndex i,CollisionObject::InOutType inout)
-        : FakeContainer<CollisionObjectPtr_t,CollisionObjectConstPtr_t>(device)
-        , jointIndex(i), inOutType(inout) {}
-      ObjectVector() {}
-
-      virtual CollisionObjectPtr_t at(const size_type i) ;
-      virtual CollisionObjectConstPtr_t at(const size_type i) const ;
-      virtual size_type size() const ;
-
-      void selfAssert(size_type i = 0) const;
-    };
   } // namespace pinocchio
 } // namespace hpp
 

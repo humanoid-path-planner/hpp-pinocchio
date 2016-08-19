@@ -19,9 +19,11 @@
 
 # include <hpp/pinocchio/device-object-vector.hh>
 
-# include <hpp/pinocchio/collision-object.hh>
-# include <hpp/pinocchio/device.hh>
 # include <pinocchio/multibody/geometry.hpp>
+
+# include <hpp/pinocchio/joint.hh>
+# include <hpp/pinocchio/device.hh>
+# include <hpp/pinocchio/collision-object.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -47,5 +49,53 @@ namespace hpp {
       assert(i<size());
     }
 
+    /* --- ObjectVector --------------------------------------------------------- */
+    CollisionObjectPtr_t ObjectVector::at(const size_type i)
+    {
+      return CollisionObjectPtr_t(new CollisionObject(devicePtr,jointIndex,i,inOutType));
+    }
+
+    CollisionObjectConstPtr_t ObjectVector::at(const size_type i) const
+    {
+      return CollisionObjectConstPtr_t(new CollisionObject(devicePtr,jointIndex,i,inOutType));
+    }
+
+    size_type ObjectVector::size() const
+    {
+      if( inOutType==INNER )
+        return size_type(devicePtr->geomModel().innerObjects[jointIndex].size());
+      else
+        return size_type(devicePtr->geomModel().outerObjects[jointIndex].size());
+    }
+    
+    void ObjectVector::selfAssert(size_type i) const
+    {
+      assert(devicePtr);
+      assert(int(jointIndex)<devicePtr->model().njoint);
+      assert(i<size());
+    }
+
+    /* --- JointVector --------------------------------------------------------- */
+    
+    /* Access to pinocchio index + 1 because pinocchio first joint is the universe. */
+    JointPtr_t JointVector::at(const size_type i) 
+    { selfAssert(i); return JointPtr_t(new Joint(devicePtr,i+1)); }
+    
+    /* Access to pinocchio index + 1 because pinocchio first joint is the universe. */
+    JointConstPtr_t JointVector::at(const size_type i) const 
+    { selfAssert(i); return JointConstPtr_t(new Joint(devicePtr,i+1)); }
+
+    size_type JointVector::size() const 
+    { return devicePtr->model().njoint - 1; }
+
+    size_type JointVector::iend() const 
+    { return size(); }
+
+    void JointVector::selfAssert(size_type i) const
+    {
+      assert(devicePtr);
+      assert(i>=ibegin());
+      assert(i<iend());
+    }
   } // namespace pinocchio
 } // namespace hpp

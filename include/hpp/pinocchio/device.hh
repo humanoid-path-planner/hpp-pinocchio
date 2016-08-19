@@ -26,13 +26,9 @@
 
 # include <hpp/util/debug.hh>
 
-# include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/config.hh>
-//# include <hpp/pinocchio/distance-result.hh>
-# include <hpp/pinocchio/collision-object.hh>
 # include <hpp/pinocchio/extra-config-space.hh>
-# include <hpp/pinocchio/joint.hh>
 # include <hpp/pinocchio/device-object-vector.hh>
 
 namespace hpp {
