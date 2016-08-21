@@ -264,26 +264,29 @@ namespace hpp {
       // jacobian IMPLIES position
       assert( (computationFlag_&JOINT_POSITION) || (!(computationFlag_&JACOBIAN)) );
 
+      const size_type nq = model().nq;
+      const size_type nv = model().nv;
+
       if (computationFlag_ & ACCELERATION )
-        se3::forwardKinematics(*model_,*data_,currentConfiguration_,
-                               currentVelocity_,currentAcceleration_);
+        se3::forwardKinematics(*model_,*data_,currentConfiguration_.head(nq),
+                               currentVelocity_.head(nv),currentAcceleration_.head(nv));
       else if (computationFlag_ & VELOCITY )
-        se3::forwardKinematics(*model_,*data_,currentConfiguration_,
-                               currentVelocity_);
+        se3::forwardKinematics(*model_,*data_,currentConfiguration_.head(nq),
+                               currentVelocity_.head(nv));
       else if (computationFlag_ & JOINT_POSITION )
-        se3::forwardKinematics(*model_,*data_,currentConfiguration_);
+        se3::forwardKinematics(*model_,*data_,currentConfiguration_.head(nq));
 
       if (computationFlag_&COM)
         {
           if (computationFlag_|JACOBIAN) 
             // TODO: Jcom should not recompute the kinematics (\sa pinocchio issue #219)
-            se3::jacobianCenterOfMass(*model_,*data_,currentConfiguration_,true);
+            se3::jacobianCenterOfMass(*model_,*data_,currentConfiguration_.head(nq),true);
           else 
-            se3::centerOfMass(*model_,*data_,currentConfiguration_,true,false);
+            se3::centerOfMass(*model_,*data_,currentConfiguration_.head(nq),true,false);
         }
 
       if(computationFlag_&JACOBIAN)
-        se3::computeJacobians(*model_,*data_,currentConfiguration_);
+        se3::computeJacobians(*model_,*data_,currentConfiguration_.head(nq));
     }
 
     void Device::
