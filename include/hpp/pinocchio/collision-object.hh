@@ -59,6 +59,7 @@ namespace hpp {
                        const GeomIndex geom );
 
       CollisionObject( GeomModelPtr_t geomModel,
+                       GeomDataPtr_t  geomData,
                        const GeomIndex geom );
 
       const std::string& name () const;
@@ -117,6 +118,7 @@ namespace hpp {
     private:
       DevicePtr_t devicePtr;
       GeomModelPtr_t geomModel_;
+      GeomDataPtr_t  geomData_;
       JointIndex  jointIndex_;
       GeomIndex   geomInModelIndex;     // Index in global model list.
       InOutType   inOutType;            // Object in Inner or Outer object list.

@@ -35,6 +35,7 @@ namespace hpp {
                      const InOutType inout ) 
       : devicePtr(device)
       , geomModel_(devicePtr->geomModelPtr())
+      , geomData_(devicePtr->geomDataPtr())
       , jointIndex_(joint)
       , geomInModelIndex(0)
       , inOutType(inout)
@@ -50,6 +51,7 @@ namespace hpp {
                      const GeomIndex geomInModel )
       : devicePtr(device)
       , geomModel_(devicePtr->geomModelPtr())
+      , geomData_(devicePtr->geomDataPtr())
       , jointIndex_(0)
       , geomInModelIndex(geomInModel)
       , inOutType(INNER)
@@ -59,10 +61,12 @@ namespace hpp {
     }
 
     CollisionObject::
-    CollisionObject( GeomModelPtr_t geomModel, 
+    CollisionObject( GeomModelPtr_t geomModel,
+                     GeomDataPtr_t  geomData,
                      const GeomIndex geomInModel )
       : devicePtr()
       , geomModel_(geomModel)
+      , geomData_(geomData)
       , jointIndex_(0)
       , geomInModelIndex(geomInModel)
       , inOutType(INNER)
@@ -97,13 +101,13 @@ namespace hpp {
       return & geomData.collisionObjects[geomInModelIndex];
     }
 
-    FclConstCollisionObjectPtr_t CollisionObject::fcl (const GeomData& geomData) const 
+    FclConstCollisionObjectPtr_t CollisionObject::fcl (const GeomData& geomData) const
     {
       return & geomData.collisionObjects[geomInModelIndex];
     }
 
-    FclConstCollisionObjectPtr_t CollisionObject::fcl () const { return fcl(devicePtr->geomData()); }
-    FclCollisionObjectPtr_t      CollisionObject::fcl ()       { return fcl(devicePtr->geomData()); }
+    FclConstCollisionObjectPtr_t CollisionObject::fcl () const { return fcl(*geomData_); }
+    FclCollisionObjectPtr_t      CollisionObject::fcl ()       { return fcl(*geomData_); }
 
     JointPtr_t      CollisionObject::joint ()
     {
@@ -121,16 +125,16 @@ namespace hpp {
     positionInJointFrame () const { return pinocchio().placement; }
 
     const fcl::Transform3f& CollisionObject::getFclTransform () const
-    { return devicePtr->geomData().collisionObjects[geomInModelIndex].getTransform(); }
+    { return geomData_->collisionObjects[geomInModelIndex].getTransform(); }
     const Transform3f& CollisionObject::getTransform () const
-    { return devicePtr->geomData().oMg[geomInModelIndex];  }
+    { return geomData_->oMg[geomInModelIndex];  }
 
     void CollisionObject::move (const Transform3f& position)
     { 
       // move does not work but for object attached to the universe (joint 0)
       assert( jointIndex_==0 ); 
-      devicePtr->geomData().oMg[geomInModelIndex] = position;
-      devicePtr->geomData().collisionObjects[geomInModelIndex]
+      geomData_->oMg[geomInModelIndex] = position;
+      geomData_->collisionObjects[geomInModelIndex]
         .setTransform(toFclTransform3f(position));
       pinocchio().placement = position;
     }
@@ -138,6 +142,7 @@ namespace hpp {
     void CollisionObject::selfAssert() const
     { 
       assert(geomModel_);
+      assert(geomData_);
       assert(!devicePtr || devicePtr->model().njoint>int(jointIndex_));
       assert(geomModel_->geometryObjects.size()>geomInModelIndex);
     }
