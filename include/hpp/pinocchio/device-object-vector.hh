@@ -62,6 +62,10 @@ namespace hpp {
       virtual size_type size() const ;
 
       void selfAssert(size_type i = 0) const;
+
+      private:
+      typedef std::vector<se3::GeomIndex> GeomIndexList;
+      const GeomIndexList & geometries() const;
     };
 
     /** Fake std::vector<Joint>, used to comply with the actual structure of hpp::model.

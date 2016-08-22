@@ -52,20 +52,17 @@ namespace hpp {
     /* --- ObjectVector --------------------------------------------------------- */
     CollisionObjectPtr_t ObjectVector::at(const size_type i)
     {
-      return CollisionObjectPtr_t(new CollisionObject(devicePtr,jointIndex,i,inOutType));
+      return CollisionObjectPtr_t(new CollisionObject(devicePtr, geometries()[i]));
     }
 
     CollisionObjectConstPtr_t ObjectVector::at(const size_type i) const
     {
-      return CollisionObjectConstPtr_t(new CollisionObject(devicePtr,jointIndex,i,inOutType));
+      return CollisionObjectConstPtr_t(new CollisionObject(devicePtr, geometries()[i]));
     }
 
     size_type ObjectVector::size() const
     {
-      if( inOutType==INNER )
-        return size_type(devicePtr->geomModel().innerObjects[jointIndex].size());
-      else
-        return size_type(devicePtr->geomModel().outerObjects[jointIndex].size());
+      return geometries().size();
     }
     
     void ObjectVector::selfAssert(size_type i) const
@@ -73,6 +70,12 @@ namespace hpp {
       assert(devicePtr);
       assert(int(jointIndex)<devicePtr->model().njoint);
       assert(i<size());
+    }
+
+    const ObjectVector::GeomIndexList & ObjectVector::geometries() const
+    {
+      if(inOutType==INNER) return devicePtr->geomModel().innerObjects[jointIndex];
+      else                 return devicePtr->geomModel().outerObjects[jointIndex];
     }
 
     /* --- JointVector --------------------------------------------------------- */
