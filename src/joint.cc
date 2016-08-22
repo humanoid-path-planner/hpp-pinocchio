@@ -179,6 +179,33 @@ namespace hpp {
     /* --- MAX DISTANCE ------------------------------------------------------*/
     /* --- MAX DISTANCE ------------------------------------------------------*/
 
+    template <bool X, bool Y, bool Z, typename Derived>
+    value_type computeMaximalDistanceToParentForAlignedTranslation(
+        const Eigen::MatrixBase<Derived>& lower,
+        const Eigen::MatrixBase<Derived>& upper,
+        const se3::SE3& placement)
+    {
+      if (!lower.allFinite() || !upper.allFinite())
+        return std::numeric_limits <value_type>::infinity ();
+
+      value_type d = 0;
+      const size_type iX = 0;
+      const size_type iY = (X ? 1 : 0);
+      const size_type iZ = iY + (Y ? 1 : 0);
+      vector3_t p (vector3_t::Zero());
+      for (size_type i = 0; i < (X ? 1 : 2); ++i) {
+        if (X) p[0] = (i == 0 ? lower[iX] : upper[iX]);
+        for (size_type j = 0; j < (Y ? 1 : 2); ++j) {
+          if (Y) p[1] = (j == 0 ? lower[iY] : upper[iY]);
+          for (size_type k = 0; k < (Z ? 1 : 2); ++k) {
+            if (Z) p[1] = (k == 0 ? lower[iZ] : upper[iZ]);
+            d = std::max(d, placement.act(p).norm());
+          }
+        }
+      }
+      return d;
+    }
+
     template<typename Joint>
     value_type computeMaximalDistanceToParent( const se3::Model & model,
                                                const se3::JointModelBase<Joint> & ,
@@ -190,10 +217,15 @@ namespace hpp {
     }
 
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelFreeFlyer& , const se3::SE3 & jointPlacement )
-    { return std::numeric_limits <value_type>::infinity (); }
-    // TODO (really?): handle the case where the FF is bounded.
-	  
+    ( const se3::Model & model, const se3::JointModelFreeFlyer& jmodel, const se3::SE3 & jointPlacement )
+    {
+      const size_type& i = jmodel.idx_q();
+      return computeMaximalDistanceToParentForAlignedTranslation<true, true, true>(
+          model.lowerPositionLimit.segment<se3::JointModelTranslation::NQ>(i),
+          model.upperPositionLimit.segment<se3::JointModelTranslation::NQ>(i),
+          jointPlacement);
+    }
+
     template<int AXIS>
     value_type computeMaximalDistanceToParent
     ( const se3::Model & model, const se3::JointModelRevolute<AXIS> & , const se3::SE3 & jointPlacement )
@@ -214,19 +246,11 @@ namespace hpp {
     ( const se3::Model & model, const se3::JointModelPrismatic<AXIS> & jmodel, 
       const se3::SE3 & jointPlacement )
     {
-      
-      if( std::isinf (model.lowerPositionLimit[jmodel.nq()])
-          || std::isinf (model.upperPositionLimit[jmodel.nq()]) )
-        return std::numeric_limits <value_type>::infinity (); 
-
-      Eigen::Vector3d pmin = Eigen::Vector3d::Zero();
-      pmin[AXIS] = model.lowerPositionLimit[jmodel.nq()];
-
-      Eigen::Vector3d pmax = Eigen::Vector3d::Zero();
-      pmax[AXIS] = model.upperPositionLimit[jmodel.nq()];
-
-      return std::max ( jointPlacement.act(pmin).norm(),
-                        jointPlacement.act(pmax).norm() );
+      return computeMaximalDistanceToParentForAlignedTranslation
+        <AXIS == 0, AXIS == 1, AXIS == 2>(
+          model.lowerPositionLimit.segment<1>(jmodel.idx_q()),
+          model.upperPositionLimit.segment<1>(jmodel.idx_q()),
+          jointPlacement);
     }
 
     value_type computeMaximalDistanceToParent
@@ -253,18 +277,25 @@ namespace hpp {
     { return jointPlacement.translation().norm(); }
 
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelTranslation& , const se3::SE3 & jointPlacement )
+    ( const se3::Model & model, const se3::JointModelTranslation& jmodel, const se3::SE3 & jointPlacement )
     {
-      return std::numeric_limits <value_type>::infinity (); 
+      const size_type& i = jmodel.idx_q();
+      return computeMaximalDistanceToParentForAlignedTranslation<true, true, true>(
+          model.lowerPositionLimit.segment<se3::JointModelTranslation::NQ>(i),
+          model.upperPositionLimit.segment<se3::JointModelTranslation::NQ>(i),
+          jointPlacement);
     }
     // TODO (really?): handle the case where the translation is bounded.
 
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelPlanar& , const se3::SE3 & jointPlacement )
+    ( const se3::Model & model, const se3::JointModelPlanar& jmodel, const se3::SE3 & jointPlacement )
     {
-      return std::numeric_limits <value_type>::infinity (); 
+      const size_type& i = jmodel.idx_q();
+      return computeMaximalDistanceToParentForAlignedTranslation <true, true, false> (
+          model.lowerPositionLimit.segment<2>(i),
+          model.upperPositionLimit.segment<2>(i),
+          jointPlacement);
     }
-    // TODO (really?): handle the case where the planar is bounded.
 
     struct VisitMaximalDistanceToParent : public boost::static_visitor<value_type> 
     {
