@@ -58,10 +58,6 @@ namespace hpp {
     {
       DevicePtr_t res = DevicePtr_t(new Device(name)); // init shared ptr
       res->init (res);
-      res->weakPtr_ = res;
-      res->jointVector_ = JointVector(res);
-      res->obstacles_ = ObjectVector(res,0,INNER);
-      res->objectVector_ = DeviceObjectVector(res);
       return res;
     }
     
@@ -89,6 +85,10 @@ namespace hpp {
     void Device::init(const DeviceWkPtr_t& weakPtr)
     {
       weakPtr_ = weakPtr;
+      DevicePtr_t self (weakPtr_.lock());
+      jointVector_ = JointVector(self);
+      obstacles_ = ObjectVector(self,0,INNER);
+      objectVector_ = DeviceObjectVector(self);
     }
 
     void Device::
@@ -162,13 +162,18 @@ namespace hpp {
     getJointByBodyName (const std::string& name) const
     {
       assert(model_);
-      assert(model_->existFrame(name));
-      se3::Model::FrameIndex bodyId = model_->getFrameId(name);
-      assert(model_->frames[bodyId].type == se3::BODY);
-      se3::Model::JointIndex jointId = model_->frames[bodyId].parent;
-      //assert(jointId>=0);
-      assert((int)jointId<model_->njoint);
-      return JointPtr_t( new Joint(weakPtr_.lock(),jointId) );
+      if (model_->existFrame(name)) {
+        se3::Model::FrameIndex bodyId = model_->getFrameId(name);
+        if (model_->frames[bodyId].type == se3::BODY) {
+          se3::Model::JointIndex jointId = model_->frames[bodyId].parent;
+          //assert(jointId>=0);
+          assert((int)jointId<model_->njoint);
+          return JointPtr_t( new Joint(weakPtr_.lock(),jointId) );
+        }
+      }
+      throw std::runtime_error ("Device " + name_ +
+                                " has no joint with body of name "
+                                + name);
     }
 
     size_type Device::
