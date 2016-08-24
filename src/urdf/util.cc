@@ -43,7 +43,7 @@ namespace hpp {
 
         void setSpecialJoints (const HumanoidRobotPtr_t& robot) {
           try {
-            robot->waist (findSpecialJoint (robot, "root_joint"));
+            robot->waist (robot->getJointByName("root_joint"));
           } catch (const std::exception&) {
             hppDout (notice, "No waist joint found");
           }
