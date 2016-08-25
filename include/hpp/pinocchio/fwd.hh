@@ -21,18 +21,13 @@
 # define HPP_PINOCCHIO_FWD_HH
 
 # include <vector>
-# include <list>
-# include <map>
 # include <Eigen/Core>
+
+# include <hpp/util/pointer.hh>
+# include <hpp/fcl/fwd.hh>       // Needs boost/shared_ptr.hpp
 
 # include <pinocchio/spatial/fwd.hpp>
 # include <pinocchio/multibody/fwd.hpp>
-
-# include <hpp/util/pointer.hh>
-# include <hpp/fcl/fwd.hh>
-# include <hpp/fcl/math/matrix_3f.h>
-
-# include <hpp/pinocchio/deprecated.hh>
 
 namespace se3
 {
@@ -60,6 +55,15 @@ namespace hpp {
 
     enum Request_t {COLLISION, DISTANCE};
     enum InOutType { INNER, OUTER };
+
+    // Pinocchio typedefs
+    typedef se3::JointIndex     JointIndex;
+    typedef se3::GeomIndex      GeomIndex;
+    typedef se3::Model          Model;
+    typedef se3::Data           Data;
+    typedef se3::GeometryModel  GeomModel;
+    typedef se3::GeometryData   GeomData;
+    typedef se3::SE3            Transform3f;
 
     typedef double value_type;
     typedef Eigen::Matrix <value_type, Eigen::Dynamic, 1> vector_t;
@@ -100,21 +104,16 @@ namespace hpp {
     typedef boost::shared_ptr<const Joint> JointConstPtr_t;
     typedef boost::shared_ptr <Gripper> GripperPtr_t;
     typedef std::vector <GripperPtr_t> Grippers_t;
-    //DEPREC typedef fcl::Transform3f Transform3f;
-    typedef se3::SE3 Transform3f;
 
-    typedef boost::shared_ptr<se3::Model>               ModelPtr_t;
-    typedef boost::shared_ptr<const se3::Model>         ModelConstPtr_t;
-    typedef boost::shared_ptr<se3::Data>                DataPtr_t;
-    typedef boost::shared_ptr<const se3::Data>          DataConstPtr_t;
+    typedef boost::shared_ptr<Model>           ModelPtr_t;
+    typedef boost::shared_ptr<const Model>     ModelConstPtr_t;
+    typedef boost::shared_ptr<Data>            DataPtr_t;
+    typedef boost::shared_ptr<const Data>      DataConstPtr_t;
 
-    typedef se3::GeometryModel       GeomModel;
-    typedef se3::GeometryData        GeomData;
-    typedef boost::shared_ptr<se3::GeometryModel>       GeomModelPtr_t;
-    typedef boost::shared_ptr<const se3::GeometryModel> GeomModelConstPtr_t;
-    typedef boost::shared_ptr<se3::GeometryData>        GeomDataPtr_t;
-    typedef boost::shared_ptr<const se3::GeometryData>  GeomDataConstPtr_t;
-
+    typedef boost::shared_ptr<GeomModel>       GeomModelPtr_t;
+    typedef boost::shared_ptr<const GeomModel> GeomModelConstPtr_t;
+    typedef boost::shared_ptr<GeomData>        GeomDataPtr_t;
+    typedef boost::shared_ptr<const GeomData>  GeomDataConstPtr_t;
   } // namespace pinocchio
 } // namespace hpp
 #endif //HPP_MODEL_FWD_HH

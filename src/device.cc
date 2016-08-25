@@ -38,9 +38,9 @@ namespace hpp {
 
     Device::
     Device(const std::string& name)
-      : model_(new se3::Model())
+      : model_(new Model())
       , data_ ()
-      , geomModel_(new se3::GeometryModel())
+      , geomModel_(new GeomModel())
       , geomData_ ()
       , name_ (name)
       , jointVector_()
@@ -94,7 +94,7 @@ namespace hpp {
     void Device::
     createData()
     {
-      data_ = DataPtr_t( new se3::Data(*model_) );
+      data_ = DataPtr_t( new Data(*model_) );
       // We assume that model is now complete and state can be resized.
       resizeState(); 
     }
@@ -102,7 +102,7 @@ namespace hpp {
     void Device::
     createGeomData()
     {
-      geomData_ = GeomDataPtr_t( new se3::GeometryData(*geomModel_) );
+      geomData_ = GeomDataPtr_t( new GeomData(*geomModel_) );
       se3::computeBodyRadius(*model_,*geomModel_,*geomData_);
     }
     
@@ -154,7 +154,7 @@ namespace hpp {
 	throw std::runtime_error ("Device " + name_ +
 				  " does not have any joint named "
 				  + name);
-      se3::Index id = model_->getJointId(name);
+      JointIndex id = model_->getJointId(name);
       return JointPtr_t( new Joint(weakPtr_.lock(),id) );
     }
 
@@ -165,7 +165,7 @@ namespace hpp {
       if (model_->existFrame(name)) {
         se3::Model::FrameIndex bodyId = model_->getFrameId(name);
         if (model_->frames[bodyId].type == se3::BODY) {
-          se3::Model::JointIndex jointId = model_->frames[bodyId].parent;
+          JointIndex jointId = model_->frames[bodyId].parent;
           //assert(jointId>=0);
           assert((int)jointId<model_->njoint);
           return JointPtr_t( new Joint(weakPtr_.lock(),jointId) );

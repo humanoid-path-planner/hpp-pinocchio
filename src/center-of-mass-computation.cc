@@ -37,7 +37,7 @@ namespace hpp {
 
     void CenterOfMassComputation::compute (const Device::Computation_t& flag)
     {
-      const se3::Model& model = robot_->model();
+      const Model& model = robot_->model();
 
       bool computeCOM = (flag & Device::COM);
       bool computeJac = (flag & Device::JACOBIAN);
@@ -54,7 +54,7 @@ namespace hpp {
       // Propagate COM initialization on all joints. 
       // Could be done only on subtree, with minor gain (possibly loss because of 
       // more difficult branch prediction). I dont recommend to implement it.
-      for(se3::Model::JointIndex jid=1;jid<se3::JointIndex(model.nbody);++jid)
+      for(JointIndex jid=1;jid<JointIndex(model.nbody);++jid)
         {
           const double &            mass  = model.inertias[jid].mass ();
           data.mass[jid] = mass;
@@ -63,9 +63,9 @@ namespace hpp {
 
       // Nullify non-subtree com and mass.
       int root = 0;
-      for( se3::JointIndex jid=1; int(jid)<model.njoint; ++jid )
+      for(JointIndex jid=1; int(jid)<model.njoint; ++jid )
         {
-          const se3::JointIndex& rootId = roots_[root];
+          const JointIndex& rootId = roots_[root];
           if(jid == rootId)
             {
               jid = data.lastChild[rootId];
@@ -82,10 +82,10 @@ namespace hpp {
       // Nasty cast below, from (u-long) size_t to int.
       for( int root=int(roots_.size()-1); root>=0; --root )
       {
-        se3::JointIndex rootId = roots_[root];
+        JointIndex rootId = roots_[root];
 
         // Backward loop on descendents of joint rootId.
-        for( se3::JointIndex jid = data.lastChild[rootId];jid>=rootId;--jid )
+        for( JointIndex jid = data.lastChild[rootId];jid>=rootId;--jid )
           {
             if(computeJac)
               se3::JacobianCenterOfMassBackwardStep
@@ -94,7 +94,7 @@ namespace hpp {
             else
               {
                 assert(computeCOM);
-                const se3::JointIndex & parent = model.parents[jid];
+                const JointIndex & parent = model.parents[jid];
                 data.com [parent] += data.com [jid];
                 data.mass[parent] += data.mass[jid];
               }
@@ -105,11 +105,11 @@ namespace hpp {
           } // end for jid
 
         // Backward loop on ancestors of joint rootId
-        se3::JointIndex jid = model.parents[rootId]; // loop variable
+        JointIndex jid = model.parents[rootId]; // loop variable
         rootId = (root>0) ? roots_[root-1] : 0;      // root of previous subtree in roots_
         while (jid>rootId)                           // stop when meeting the next subtree
           {
-            const se3::JointIndex & parent = model.parents[jid];
+            const JointIndex & parent = model.parents[jid];
             if(computeJac)
               se3::JacobianCenterOfMassBackwardStep
                 ::run(model.joints[jid],data.joints[jid],
@@ -136,9 +136,9 @@ namespace hpp {
 
     void CenterOfMassComputation::add (const JointPtr_t& j)
     {
-      se3::JointIndex jid = j->index();
-      const se3::Model& model = robot_->model();
-      BOOST_FOREACH( const se3::JointIndex rootId,  roots_ )
+      JointIndex jid = j->index();
+      const Model& model = robot_->model();
+      BOOST_FOREACH( const JointIndex rootId,  roots_ )
         {
           assert (int(rootId)<model.njoint);
           // Assert that the new root is not in already-recorded subtrees.

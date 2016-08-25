@@ -49,8 +49,8 @@ namespace hpp {
         assert(devicePtr->model().nFrames>int(frameIndex));
     }
 
-    const se3::Model & Body::model() const { return devicePtr->model(); }
-    se3::Model &       Body::model()       { return devicePtr->model(); }
+    const Model & Body::model() const { return devicePtr->model(); }
+    Model &       Body::model()       { return devicePtr->model(); }
     se3::Frame &       Body::frame()
     {
       searchFrameIndex();

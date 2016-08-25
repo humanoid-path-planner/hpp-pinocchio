@@ -26,7 +26,7 @@
 
 namespace hpp {
   namespace pinocchio {
-    Joint::Joint (DevicePtr_t device, Index indexInJointList ) 
+    Joint::Joint (DevicePtr_t device, JointIndex indexInJointList ) 
       :devicePtr(device)
       ,jointIndex(indexInJointList)
     {
@@ -41,7 +41,7 @@ namespace hpp {
     {
       assert(devicePtr->modelPtr()); assert(devicePtr->dataPtr());
       children.clear();
-      for( se3::Index child=jointIndex+1;int(child)<=data().lastChild[jointIndex];++child )
+      for( JointIndex child=jointIndex+1;int(child)<=data().lastChild[jointIndex];++child )
         if( model().parents[child]==jointIndex ) children.push_back (child) ;
     }
 
@@ -52,14 +52,14 @@ namespace hpp {
       assert(devicePtr->model().njoint>int(jointIndex));
     }
 
-    se3::Model&        Joint::model()       { selfAssert(); return devicePtr->model(); }
-    const se3::Model&  Joint::model() const { selfAssert(); return devicePtr->model(); }
-    se3::Data &        Joint::data()        { selfAssert(); return devicePtr->data (); }
-    const se3::Data &  Joint::data()  const { selfAssert(); return devicePtr->data (); }
+    Model&        Joint::model()       { selfAssert(); return devicePtr->model(); }
+    const Model&  Joint::model() const { selfAssert(); return devicePtr->model(); }
+    Data &        Joint::data()        { selfAssert(); return devicePtr->data (); }
+    const Data &  Joint::data()  const { selfAssert(); return devicePtr->data (); }
     
 
     JointPtr_t Joint::parentJoint () const{
-        Index idParent = model().parents[jointIndex];
+        JointIndex idParent = model().parents[jointIndex];
         if(idParent == 0)
             return JointPtr_t();
         else{

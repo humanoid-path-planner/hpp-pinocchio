@@ -46,15 +46,13 @@ namespace hpp {
     /// instance that has the same class hierarchy as Joint.
     class HPP_PINOCCHIO_DLLAPI Joint {
     public:
-      typedef se3::Index Index;
-
       /// \name Construction and copy and destruction
       /// \{
 
       /// Constructor
       /// \param device pointer on the device the joint is belonging to.
       /// \param indexInJointList index of the joint, i.e. joint = device.model.joints[index]
-      Joint (DevicePtr_t device, Index indexInJointList );
+      Joint (DevicePtr_t device, JointIndex indexInJointList );
 
       //DEPREC /// Constructor
       //DEPREC /// \param initialPosition position of the joint before being inserted
@@ -279,7 +277,7 @@ namespace hpp {
       /// \name Pinocchio API
       /// \{
 
-      const Index& index () const
+      const JointIndex& index () const
       {
         return jointIndex;
       }
@@ -293,15 +291,15 @@ namespace hpp {
       //DEPREC vector_t neutralConfiguration_;
       DevicePtr_t devicePtr;
       mutable JointJacobian_t jacobian_;
-      Index jointIndex;
-      std::vector<Index> children;
+      JointIndex jointIndex;
+      std::vector<JointIndex> children;
 
       /// Store list of childrens.
       void setChildList();
-      se3::Model&        model() ;      
-      const se3::Model&  model() const ;
-      se3::Data &        data()  ;      
-      const se3::Data &  data()  const ;
+      Model&        model() ;      
+      const Model&  model() const ;
+      Data &        data()  ;      
+      const Data &  data()  const ;
 
       /// Assert that the members of the struct are valid (no null pointer, etc).
       void selfAssert() const;

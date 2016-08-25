@@ -29,7 +29,7 @@ namespace hpp {
     class CenterOfMassComputation
     {
       public:
-        typedef std::vector <se3::JointIndex> JointRootIndexes_t;
+        typedef std::vector <JointIndex> JointRootIndexes_t;
         /// \cond
         // This fixes an alignment issue of se3::Data::hg
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -60,7 +60,7 @@ namespace hpp {
         // Root of the subtrees
         JointRootIndexes_t roots_;
         // Specific pinocchio Data to store the computation results
-        se3::Data data;
+        Data data;
 
         // value_type mass_;
         // vector3_t com_;

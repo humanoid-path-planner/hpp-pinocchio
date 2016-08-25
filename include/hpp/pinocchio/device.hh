@@ -28,6 +28,7 @@
 
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/config.hh>
+# include <hpp/pinocchio/deprecated.hh>
 # include <hpp/pinocchio/extra-config-space.hh>
 # include <hpp/pinocchio/device-object-vector.hh>
 
@@ -99,9 +100,9 @@ namespace hpp {
       /// Access to pinocchio model
       ModelPtr_t        modelPtr()       { return model_; }
       /// Access to pinocchio model
-      const se3::Model& model()    const { assert(model_); return *model_; }
+      const Model& model()    const { assert(model_); return *model_; }
       /// Access to pinocchio model
-      se3::Model&       model()          { assert(model_); return *model_; }
+      Model&       model()          { assert(model_); return *model_; }
 
       /// Set pinocchio geom.
       void geomModel( GeomModelPtr_t geomModelPtr ) { geomModel_ = geomModelPtr; }
@@ -110,9 +111,9 @@ namespace hpp {
       /// Access to pinocchio geomModel
       GeomModelPtr_t             geomModelPtr() { return geomModel_; }
       /// Access to pinocchio geomModel
-      const se3::GeometryModel & geomModel() const { assert(geomModel_); return *geomModel_; }
+      const GeomModel & geomModel() const { assert(geomModel_); return *geomModel_; }
       /// Access to pinocchio geomModel
-      se3::GeometryModel &       geomModel() { assert(geomModel_); return *geomModel_; }
+      GeomModel &       geomModel() { assert(geomModel_); return *geomModel_; }
 
       /// Set Pinocchio data corresponding to model
       void data( DataPtr_t dataPtr ) { data_ = dataPtr; resizeState(); }
@@ -121,9 +122,9 @@ namespace hpp {
       /// Access to Pinocchio data/
       DataPtr_t         dataPtr() { return data_; }
       /// Access to Pinocchio data/
-      const se3::Data & data() const { assert(data_); return *data_; }
+      const Data & data() const { assert(data_); return *data_; }
       /// Access to Pinocchio data/
-      se3::Data &       data() { assert(data_); return *data_; }
+      Data &       data() { assert(data_); return *data_; }
       /// Create Pinocchio data from model.
       void createData();
 
@@ -134,9 +135,9 @@ namespace hpp {
       /// Access to Pinocchio geomData/
       GeomDataPtr_t            geomDataPtr()       { return geomData_; }
       /// Access to Pinocchio geomData/
-      const se3::GeometryData& geomData() const    { assert(geomData_); return *geomData_; }
+      const GeomData& geomData() const    { assert(geomData_); return *geomData_; }
       /// Access to Pinocchio geomData/
-      se3::GeometryData&       geomData()          { assert(geomData_); return *geomData_; }
+      GeomData&       geomData()          { assert(geomData_); return *geomData_; }
       /// Create Pinocchio geomData from model.
       void createGeomData();
 

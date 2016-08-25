@@ -20,6 +20,8 @@
 #ifndef HPP_PINOCCHIO_COLLISION_OBJECT_HH
 # define HPP_PINOCCHIO_COLLISION_OBJECT_HH
 
+#include <map>
+
 # include <pinocchio/multibody/fwd.hpp>
 
 # include <hpp/pinocchio/deprecated.hh>
@@ -39,11 +41,8 @@ namespace hpp {
     /// distance computation can be computed between them.
     struct HPP_PINOCCHIO_DLLAPI CollisionObject {
 
-      typedef se3::JointIndex JointIndex;
-      typedef se3::GeomIndex GeomIndex;
-
       typedef std::vector<GeomIndex> GeomIndexList;
-      typedef std::map < se3::JointIndex, GeomIndexList > ObjectVec_t;
+      typedef std::map < JointIndex, GeomIndexList > ObjectVec_t;
 
       /// Construction from inner/outer list, using a joint index as reference.
       /// \param geom: index of the object in either inner or outer objects of joint <joint>.
