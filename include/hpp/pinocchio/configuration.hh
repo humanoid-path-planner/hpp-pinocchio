@@ -45,6 +45,7 @@ namespace hpp {
 
     /// Integrate a constant velocity during unit time.
     ///
+    /// \param saturateConfig when true, calls saturate at the end
     /// \param robot robot that describes the kinematic chain
     /// \param configuration initial and result configurations
     /// \param velocity velocity vector
@@ -57,14 +58,23 @@ namespace hpp {
     ///
     /// \note bounded degrees of freedom are saturated if the result of the
     ///       above operation is beyond a bound.
-    inline void integrate  (const DevicePtr_t& robot,
-			    ConfigurationIn_t configuration,
-			    vectorIn_t velocity, ConfigurationOut_t result)
+    template<bool saturateConfig>
+    inline void integrate (const DevicePtr_t& robot,
+                           ConfigurationIn_t configuration,
+                           vectorIn_t velocity, ConfigurationOut_t result)
     {
       result = se3::integrate(robot->model(), configuration, velocity);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = configuration.tail (dim) + velocity.tail (dim);
-      saturate(robot, result);
+      if (saturateConfig) saturate(robot, result);
+    }
+
+    /// Same as integrate<true>
+    inline void integrate (const DevicePtr_t& robot,
+                           ConfigurationIn_t configuration,
+                           vectorIn_t velocity, ConfigurationOut_t result)
+    {
+      integrate<true> (robot, configuration, velocity, result);
     }
 
     /// Interpolate between two configurations of the robot
