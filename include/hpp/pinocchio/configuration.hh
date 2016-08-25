@@ -25,6 +25,24 @@
 
 namespace hpp {
   namespace pinocchio {
+    /// Saturate joint parameter value so that they are not out of bounds.
+    ///
+    /// \param robot robot that describes the kinematic chain
+    /// \param configuration initial and result configurations
+    /// \retval result configuration reached after saturation.
+    inline void saturate (const DevicePtr_t& robot,
+			  ConfigurationOut_t configuration)
+    {
+      const se3::Model& model = robot->model();
+      configuration.head(model.nq) = model.upperPositionLimit.cwiseMin(configuration.head(model.nq));
+      configuration.head(model.nq) = model.lowerPositionLimit.cwiseMax(configuration.head(model.nq));
+
+      const ExtraConfigSpace& ecs = robot->extraConfigSpace();
+      const size_type& d = ecs.dimension();
+      configuration.tail(d) = ecs.upper().cwiseMin(configuration.tail(d));
+      configuration.tail(d) = ecs.lower().cwiseMax(configuration.tail(d));
+    }
+
     /// Integrate a constant velocity during unit time.
     ///
     /// \param robot robot that describes the kinematic chain
@@ -46,6 +64,7 @@ namespace hpp {
       result = se3::integrate(robot->model(), configuration, velocity);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = configuration.tail (dim) + velocity.tail (dim);
+      saturate(robot, result);
     }
 
     /// Interpolate between two configurations of the robot

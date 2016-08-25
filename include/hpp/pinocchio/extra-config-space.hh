@@ -55,6 +55,14 @@ namespace hpp {
       {
 	return upperBounds_ [index];
       }
+      const vector_t& lower () const
+      {
+        return lowerBounds_;
+      }
+      const vector_t& upper () const
+      {
+        return upperBounds_;
+      }
       /// Get dimension
       size_type dimension () const
       {
