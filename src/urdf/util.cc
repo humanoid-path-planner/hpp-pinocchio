@@ -19,10 +19,12 @@
 #include <pinocchio/parsers/utils.hpp>
 #include <pinocchio/parsers/urdf.hpp>
 #include <pinocchio/multibody/geometry.hpp>
+#include <pinocchio/algorithm/geometry.hpp>
 #include <pinocchio/parsers/srdf.hpp>
 
 #include <hpp/util/debug.hh>
 
+#include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/humanoid-robot.hh>
 
@@ -41,39 +43,39 @@ namespace hpp {
           return robot->getJointByBodyName (linkName);
         }
 
-        void setSpecialJoints (const HumanoidRobotPtr_t& robot) {
+        void setSpecialJoints (const HumanoidRobotPtr_t& robot, const std::string& prefix) {
           try {
-            robot->waist (robot->getJointByName("root_joint"));
+            robot->waist (robot->getJointByName(prefix + "root_joint"));
           } catch (const std::exception&) {
             hppDout (notice, "No waist joint found");
           }
           try {
-            robot->chest (findSpecialJoint (robot, "chest"));
+            robot->chest (findSpecialJoint (robot, prefix + "chest"));
           } catch (const std::exception&) {
             hppDout (notice, "No chest joint found");
           }
           try {
-            robot->leftWrist (findSpecialJoint (robot, "l_wrist"));
+            robot->leftWrist (findSpecialJoint (robot, prefix + "l_wrist"));
           } catch (const std::exception&) {
             hppDout (notice, "No left wrist joint found");
           }
           try {
-            robot->rightWrist (findSpecialJoint (robot, "r_wrist"));
+            robot->rightWrist (findSpecialJoint (robot, prefix + "r_wrist"));
           } catch (const std::exception&) {
             hppDout (notice, "No right wrist joint found");
           }
           try {
-            robot->leftAnkle (findSpecialJoint (robot, "l_ankle"));
+            robot->leftAnkle (findSpecialJoint (robot, prefix + "l_ankle"));
           } catch (const std::exception&) {
             hppDout (notice, "No left ankle joint found");
           }
           try {
-            robot->rightAnkle (findSpecialJoint (robot, "r_ankle"));
+            robot->rightAnkle (findSpecialJoint (robot, prefix + "r_ankle"));
           } catch (const std::exception&) {
             hppDout (notice, "No right ankle joint found");
           }
           try {
-            robot->gazeJoint (findSpecialJoint (robot, "gaze"));
+            robot->gazeJoint (findSpecialJoint (robot, prefix + "gaze"));
           } catch (const std::exception&) {
             hppDout (notice, "No gaze joint found");
           }
@@ -102,6 +104,69 @@ namespace hpp {
           else                       throw  std::invalid_argument
             ("Root joint type is currently not available.");
         }
+
+        void setPrefix (const std::string& prefix,
+            Model& model, GeomModel& geomModel,
+            const JointIndex& idFirstJoint)
+        {
+          for (JointIndex i = idFirstJoint; i < model.joints.size(); ++i) {
+            model.names[i] = prefix + model.names[i];
+          }
+          BOOST_FOREACH(se3::Frame& f, model.frames) {
+            if (f.parent >= idFirstJoint) f.name = prefix + f.name;
+          }
+          BOOST_FOREACH(se3::GeometryObject& go, geomModel.geometryObjects) {
+            if (go.parentJoint >= idFirstJoint) go.name = prefix + go.name;
+          }
+        }
+
+        template <bool LoadSRDF> void loadModel
+          (const DevicePtr_t& robot,
+           const JointIndex&  baseJoint,
+           const std::string& prefix,
+           const std::string& rootType,
+           const std::string& package,
+           const std::string& urdfName,
+           const std::string& srdfName)
+          {
+            if (baseJoint != 0)
+              throw std::invalid_argument ("Only appending robots at the world is supported.");
+            std::vector<std::string> baseDirs = se3::rosPaths();
+
+            std::string urdfPath =
+              "package://" + package + "/urdf/" + urdfName + ".urdf";
+            std::string urdfFileName = se3::retrieveResourcePath(urdfPath, baseDirs);
+
+            Model& model = robot->model();
+            const JointIndex& idFirstJoint = model.joints.size();
+            if (rootType == "anchor")
+              se3::urdf::buildModel(urdfFileName, robot->model(), verbose);
+            else
+              se3::urdf::buildModel(urdfFileName, buildJoint(rootType), robot->model(), verbose);
+            robot->createData();
+
+            hppDout (notice, "Finished parsing URDF file.");
+
+            GeomModel geomModel;
+
+            se3::urdf::buildGeom(robot->model(), urdfFileName, se3::COLLISION, geomModel, baseDirs);
+            geomModel.addAllCollisionPairs();
+
+            if (LoadSRDF) {
+              std::string srdfPath =
+                "package://" + package + "/srdf/" + srdfName + ".srdf";
+              std::string srdfFileName = se3::retrieveResourcePath(srdfPath, baseDirs);
+              se3::srdf::removeCollisionPairsFromSrdf
+                (robot->model(), geomModel, srdfFileName, verbose);
+            }
+
+            if (!prefix.empty()) setPrefix(prefix, robot->model(), geomModel, idFirstJoint);
+
+            se3::appendGeometryModel(robot->geomModel(), geomModel);
+            robot->createGeomData();
+
+            hppDout (notice, "Finished parsing SRDF file.");
+          }
       }
 
       void loadRobotModel (const DevicePtr_t& robot,
@@ -111,12 +176,12 @@ namespace hpp {
 			   const std::string& urdfSuffix,
                            const std::string& srdfSuffix)
       {
-        loadUrdfModel (robot, rootJointType, package, modelName + urdfSuffix);
-        loadSrdfModel (robot, package, modelName + srdfSuffix);
+        loadModel <true> (robot, 0, "", rootJointType,
+            package, modelName + urdfSuffix, modelName + srdfSuffix);
       }
 
       void loadRobotModel (const DevicePtr_t& robot,
-                           const JointPtr_t&  baseJoint,
+                           const JointIndex&  baseJoint,
 			   const std::string& prefix,
 			   const std::string& rootJointType,
 			   const std::string& package,
@@ -124,7 +189,10 @@ namespace hpp {
 			   const std::string& urdfSuffix,
                            const std::string& srdfSuffix)
       {
-        assert ("Not implemented yet because the prefix/baseJoint not yet available in Pinocchio.");
+        loadModel <true> (robot, baseJoint, 
+            (prefix.empty() ? "" : prefix + "/"),
+            rootJointType,
+            package, modelName + urdfSuffix, modelName + srdfSuffix);
       }
 
       void loadHumanoidModel (const HumanoidRobotPtr_t& robot,
@@ -137,14 +205,13 @@ namespace hpp {
         loadRobotModel(robot, rootJointType, package, modelName, urdfSuffix, srdfSuffix);
 
 	// Look for special joints and attach them to the model.
-	setSpecialJoints (robot);
+	setSpecialJoints (robot, "");
 	// Fill gaze position and direction.
 	fillGaze (robot);
-
       }
 
       void loadHumanoidModel (const HumanoidRobotPtr_t& robot,
-                              const JointPtr_t&  baseJoint,
+                              const JointIndex&  baseJoint,
 			      const std::string& prefix,
 			      const std::string& rootJointType,
 			      const std::string& package,
@@ -152,7 +219,24 @@ namespace hpp {
 			      const std::string& urdfSuffix,
 			      const std::string& srdfSuffix)
       {
-        assert ("Not implemented yet because the prefix/baseJoint not yet available in Pinocchio.");
+        loadRobotModel(robot, baseJoint, prefix, rootJointType, package, modelName, urdfSuffix, srdfSuffix);
+
+	// Look for special joints and attach them to the model.
+	setSpecialJoints (robot, prefix);
+	// Fill gaze position and direction.
+	fillGaze (robot);
+      }
+
+      void loadUrdfModel (const DevicePtr_t& robot,
+                          const JointIndex&  baseJoint,
+                          const std::string& prefix,
+			  const std::string& rootJointType,
+			  const std::string& package,
+			  const std::string& filename)
+      {
+        loadModel<false> (robot, baseJoint,
+            (prefix.empty() ? "" : prefix + "/"),
+            rootJointType, package, filename, "");
       }
 
       void loadUrdfModel (const DevicePtr_t& robot,
@@ -160,51 +244,7 @@ namespace hpp {
 			  const std::string& package,
 			  const std::string& filename)
       {
-	std::string urdfPath = "package://" + package + "/urdf/"
-	  + filename + ".urdf";
-        std::vector<std::string> baseDirs = se3::rosPaths();
-
-        std::string urdfName = se3::retrieveResourcePath(urdfPath, baseDirs);
-        if (rootType == "anchor")
-          se3::urdf::buildModel(urdfName, robot->model(), verbose);
-        else
-          se3::urdf::buildModel(urdfName, buildJoint(rootType), robot->model(), verbose);
-        robot->createData();
-
-        se3::urdf::buildGeom(robot->model(), urdfName, se3::COLLISION,
-            robot->geomModel(), baseDirs);
-        // TODO the collision pairs are reinitialized while they should not be.
-        // We should keep the information from the previous GeometryModel.
-        robot->geomModel().addAllCollisionPairs();
-        robot->createGeomData();
-	hppDout (notice, "Finished parsing URDF file.");
-      }
-
-      void loadUrdfModel (const DevicePtr_t& robot,
-                          const JointPtr_t&  baseJoint,
-			  const std::string& prefix,
-			  const std::string& rootJointType,
-			  const std::string& package,
-			  const std::string& filename)
-      {
-        assert ("Not implemented yet because the prefix/baseJoint not yet available in Pinocchio.");
-      }
-
-      void loadSrdfModel (const DevicePtr_t& robot,
-			  const std::string& package,
-			  const std::string& filename)
-      {
-	std::string srdfPath = "package://" + package + "/srdf/"
-	  + filename + ".srdf";
-        std::vector<std::string> baseDirs = se3::rosPaths();
-
-        const std::size_t nColPair = robot->geomModel().collisionPairs.size();
-        std::string srdfName = se3::retrieveResourcePath(srdfPath, baseDirs);
-        se3::srdf::removeCollisionPairsFromSrdf
-          (robot->model(), robot->geomModel(), srdfName, verbose);
-	hppDout (notice, "Finished parsing SRDF file. Removed "
-            << nColPair - robot->geomModel().collisionPairs.size() <<
-            " collision pairs.");
+        loadModel<false> (robot, 0, "", rootType, package, filename, "");
       }
     } // end of namespace urdf.
   } // end of namespace pinocchio.

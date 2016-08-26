@@ -50,7 +50,7 @@ namespace hpp
       /// \li
       /// package://${package}/srdf/${modelName}${srdfSuffix}.srdf
       void loadRobotModel (const DevicePtr_t& robot,
-                           const JointPtr_t&  baseJoint,
+                           const JointIndex&  baseJoint,
 			   const std::string& prefix,
 			   const std::string& rootJointType,
 			   const std::string& package,
@@ -85,7 +85,7 @@ namespace hpp
       /// \li
       /// package://${package}/srdf/${modelName}${srdfSuffix}.srdf
       void loadHumanoidModel (const HumanoidRobotPtr_t& robot,
-                              const JointPtr_t&  baseJoint,
+                              const JointIndex&  baseJoint,
                               const std::string& prefix,
 			      const std::string& rootJointType,
 			      const std::string& package,
@@ -115,17 +115,13 @@ namespace hpp
       /// \li
       /// package://${package}/urdf/${filename}.urdf
       void loadUrdfModel (const DevicePtr_t& robot,
-                          const JointPtr_t&  baseJoint,
+                          const JointIndex&  baseJoint,
                           const std::string& prefix,
 			  const std::string& rootJointType,
 			  const std::string& package,
 			  const std::string& filename);
       void loadUrdfModel (const DevicePtr_t& robot,
 			  const std::string& rootJointType,
-			  const std::string& package,
-			  const std::string& filename);
-
-      void loadSrdfModel (const DevicePtr_t& robot,
 			  const std::string& package,
 			  const std::string& filename);
     } // end of namespace urdf.
