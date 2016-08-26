@@ -50,6 +50,8 @@ namespace hpp {
       , weakPtr_()
     {
       invalidate();
+      createData();
+      createGeomData();
     }
 
     // static method
