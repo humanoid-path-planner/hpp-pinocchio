@@ -26,6 +26,7 @@
 #include <hpp/model/urdf/util.hh>
 
 #include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/simple-device.hh>
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/body.hh>
 #include <hpp/pinocchio/urdf/util.hh>
@@ -399,4 +400,11 @@ BOOST_AUTO_TEST_CASE (geom)
     }
 
 
+}
+/* -------------------------------------------------------------------------- */
+BOOST_AUTO_TEST_CASE (simpleDevice)
+{
+  hpp::pinocchio::DevicePtr_t pinocchio;
+  pinocchio = hpp::pinocchio::humanoidSimple("1");
+  pinocchio = hpp::pinocchio::humanoidSimple("2", false);
 }
