@@ -63,7 +63,8 @@ namespace hpp {
                            ConfigurationIn_t configuration,
                            vectorIn_t velocity, ConfigurationOut_t result)
     {
-      result = se3::integrate(robot->model(), configuration, velocity);
+      const se3::Model& model = robot->model();
+      result.head(model.nq) = se3::integrate(model, configuration, velocity);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = configuration.tail (dim) + velocity.tail (dim);
       if (saturateConfig) saturate(robot, result);
