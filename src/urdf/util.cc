@@ -31,6 +31,8 @@
 namespace hpp {
   namespace pinocchio {
     namespace urdf {
+      using se3::FrameIndex;
+
       namespace {
 #ifdef HPP_DEBUG
         const bool verbose = false;
@@ -107,16 +109,18 @@ namespace hpp {
 
         void setPrefix (const std::string& prefix,
             Model& model, GeomModel& geomModel,
-            const JointIndex& idFirstJoint)
+            const JointIndex& idFirstJoint,
+            const FrameIndex& idFirstFrame)
         {
           for (JointIndex i = idFirstJoint; i < model.joints.size(); ++i) {
             model.names[i] = prefix + model.names[i];
           }
-          BOOST_FOREACH(se3::Frame& f, model.frames) {
-            if (f.parent >= idFirstJoint) f.name = prefix + f.name;
+          for (FrameIndex i = idFirstFrame; i < model.frames.size(); ++i) {
+            se3::Frame& f = model.frames[i];
+            f.name = prefix + f.name;
           }
           BOOST_FOREACH(se3::GeometryObject& go, geomModel.geometryObjects) {
-            if (go.parentJoint >= idFirstJoint) go.name = prefix + go.name;
+            go.name = prefix + go.name;
           }
         }
 
@@ -138,7 +142,8 @@ namespace hpp {
             std::string urdfFileName = se3::retrieveResourcePath(urdfPath, baseDirs);
 
             Model& model = robot->model();
-            const JointIndex& idFirstJoint = model.joints.size();
+            const JointIndex idFirstJoint = model.joints.size();
+            const FrameIndex idFirstFrame = model.frames.size();
             if (rootType == "anchor")
               se3::urdf::buildModel(urdfFileName, robot->model(), verbose);
             else
@@ -160,7 +165,7 @@ namespace hpp {
                 (robot->model(), geomModel, srdfFileName, verbose);
             }
 
-            if (!prefix.empty()) setPrefix(prefix, robot->model(), geomModel, idFirstJoint);
+            if (!prefix.empty()) setPrefix(prefix, robot->model(), geomModel, idFirstJoint, idFirstFrame);
 
             se3::appendGeometryModel(robot->geomModel(), geomModel);
             robot->createGeomData();
