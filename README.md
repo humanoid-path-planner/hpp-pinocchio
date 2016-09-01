@@ -1,12 +1,13 @@
-hpp-model-urdf
+hpp-pinocchio
 ========
 
-This package implements a library that allows you to load a pinocchio model
-and wrap it (mostly) following the API of hpp-model. In the long term
-hpp-pinocchio should replace hpp-model.
+This package implements a library that wraps the [Pinocchio](http://stack-of-tasks.github.io/pinocchio/) library to be used in the [Humanoid Path Planner](https://humanoid-path-planner.github.io/hpp-doc/) framework.
 
 Setup
 -----
+
+The easiest way to install this package is to uses the [installation instructions of HPP](https://humanoid-path-planner.github.io/hpp-doc/download.html).
+For a manual installation, follow these steps.
 
 To compile this package, it is recommended to create a separate build
 directory:
