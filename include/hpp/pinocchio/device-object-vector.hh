@@ -32,7 +32,7 @@ namespace hpp {
     struct  DeviceObjectVector
       : public FakeContainer<CollisionObjectPtr_t,CollisionObjectConstPtr_t>
     {
-      DeviceObjectVector(DevicePtr_t device)
+      DeviceObjectVector(DeviceWkPtr_t device)
       : FakeContainer<CollisionObjectPtr_t,CollisionObjectConstPtr_t>(device) {}
       DeviceObjectVector() {}
 
@@ -52,7 +52,7 @@ namespace hpp {
       JointIndex jointIndex;
       InOutType inOutType;
 
-      ObjectVector(DevicePtr_t device,const JointIndex i, InOutType inout)
+      ObjectVector(DeviceWkPtr_t device,const JointIndex i, InOutType inout)
         : FakeContainer<CollisionObjectPtr_t,CollisionObjectConstPtr_t>(device)
         , jointIndex(i), inOutType(inout) {}
       ObjectVector() {}
@@ -78,7 +78,7 @@ namespace hpp {
     struct JointVector
       : public FakeContainer<JointPtr_t,JointConstPtr_t>
     {
-      JointVector(DevicePtr_t device) : FakeContainer<JointPtr_t,JointConstPtr_t>(device) {}
+      JointVector(DeviceWkPtr_t device) : FakeContainer<JointPtr_t,JointConstPtr_t>(device) {}
       JointVector() {}
       virtual ~JointVector() {}
 

@@ -31,33 +31,33 @@ namespace hpp {
     CollisionObjectPtr_t DeviceObjectVector::at(const size_type i)
     { 
       selfAssert();
-      return CollisionObjectPtr_t (new CollisionObject(devicePtr,i)); 
+      return CollisionObjectPtr_t (new CollisionObject(device(),i)); 
     }
 
     CollisionObjectConstPtr_t DeviceObjectVector::at(const size_type i) const
     { 
       selfAssert();
-      return CollisionObjectConstPtr_t (new CollisionObject(devicePtr,i)); 
+      return CollisionObjectConstPtr_t (new CollisionObject(device(),i)); 
     }
 
     size_type DeviceObjectVector::size() const
-    { return devicePtr->geomModel().ngeoms; }
+    { return device()->geomModel().ngeoms; }
     
     void DeviceObjectVector::selfAssert(size_type i) const
     {
-      assert(devicePtr);
+      assert(device());
       assert(i<size());
     }
 
     /* --- ObjectVector --------------------------------------------------------- */
     CollisionObjectPtr_t ObjectVector::at(const size_type i)
     {
-      return CollisionObjectPtr_t(new CollisionObject(devicePtr, geometries()[i]));
+      return CollisionObjectPtr_t(new CollisionObject(device(), geometries()[i]));
     }
 
     CollisionObjectConstPtr_t ObjectVector::at(const size_type i) const
     {
-      return CollisionObjectConstPtr_t(new CollisionObject(devicePtr, geometries()[i]));
+      return CollisionObjectConstPtr_t(new CollisionObject(device(), geometries()[i]));
     }
 
     size_type ObjectVector::size() const
@@ -67,36 +67,36 @@ namespace hpp {
     
     void ObjectVector::selfAssert(size_type i) const
     {
-      assert(devicePtr);
-      assert(int(jointIndex)<devicePtr->model().njoint);
+      assert(device());
+      assert(int(jointIndex)<device()->model().njoint);
       assert(i<size());
     }
 
     const ObjectVector::GeomIndexList & ObjectVector::geometries() const
     {
-      if(inOutType==INNER) return devicePtr->geomModel().innerObjects[jointIndex];
-      else                 return devicePtr->geomModel().outerObjects[jointIndex];
+      if(inOutType==INNER) return device()->geomModel().innerObjects[jointIndex];
+      else                 return device()->geomModel().outerObjects[jointIndex];
     }
 
     /* --- JointVector --------------------------------------------------------- */
     
     /* Access to pinocchio index + 1 because pinocchio first joint is the universe. */
     JointPtr_t JointVector::at(const size_type i) 
-    { selfAssert(i); return JointPtr_t(new Joint(devicePtr,i+1)); }
+    { selfAssert(i); return JointPtr_t(new Joint(device(),i+1)); }
     
     /* Access to pinocchio index + 1 because pinocchio first joint is the universe. */
     JointConstPtr_t JointVector::at(const size_type i) const 
-    { selfAssert(i); return JointConstPtr_t(new Joint(devicePtr,i+1)); }
+    { selfAssert(i); return JointConstPtr_t(new Joint(device(),i+1)); }
 
     size_type JointVector::size() const 
-    { return devicePtr->model().njoint - 1; }
+    { return device()->model().njoint - 1; }
 
     size_type JointVector::iend() const 
     { return size(); }
 
     void JointVector::selfAssert(size_type i) const
     {
-      assert(devicePtr);
+      assert(device());
       assert(i>=ibegin());
       assert(i<iend());
     }
