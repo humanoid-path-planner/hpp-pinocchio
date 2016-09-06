@@ -281,8 +281,7 @@ BOOST_AUTO_TEST_CASE(collisionObject)
     }
 
   // Add fixed obstacle at the root of the model.
-  pinocchio->model().addFrame(se3::Frame("obstacle", 0, se3::SE3::Identity(), se3::BODY));
-  pinocchio->geomModel().addGeometryObject( pinocchio->model(),pinocchio->model().getFrameId("obstacle"),
+  pinocchio->geomModel().addGeometryObject( pinocchio->model(),pinocchio->model().getFrameId("universe"),
                                             pinocchio->geomModel().geometryObjects[0].collision_geometry,
                                             se3::SE3::Identity(),std::string("fixedObs1"),
                                             std::string("//") );
