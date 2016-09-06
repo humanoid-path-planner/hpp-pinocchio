@@ -113,6 +113,23 @@ namespace hpp {
       result.tail (dim) = q1.tail (dim) - q2.tail (dim);
     }
 
+    /// Test that two configurations are close
+    ///
+    /// \param robot robot that describes the kinematic chain
+    /// \param q1 first configuration,
+    /// \param q2 second configuration,
+    /// \param eps numerical threshold
+    /// \return true if the configurations are closer than the numerical
+    /// threshold
+    bool inline isApprox (const DevicePtr_t& robot, ConfigurationIn_t q1,
+			  ConfigurationIn_t q2, value_type eps)
+    {
+      // TODO add precision argument in se3::isSameConfiguration
+      if (!se3::isSameConfiguration(robot->model(), q1, q2)) return false;
+      const size_type& dim = robot->extraConfigSpace().dimension();
+      return q2.tail (dim).isApprox (q1.tail (dim), eps);
+    }
+
     /// Distance between two configuration.
     ///
     /// \param robot robot that describes the kinematic chain
