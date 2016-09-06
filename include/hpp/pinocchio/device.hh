@@ -409,7 +409,6 @@ namespace hpp {
       /// Resize configuration when changing data or extra-config.
       void resizeState ();
       void resizeJacobians ();
-      inline void invalidate () { upToDate_ = false; geomUpToDate_ = false; }
 
     protected:
       // Pinocchio objects
@@ -417,6 +416,8 @@ namespace hpp {
       DataPtr_t data_;
       GeomModelPtr_t geomModel_;
       GeomDataPtr_t geomData_;
+
+      inline void invalidate () { upToDate_ = false; geomUpToDate_ = false; }
 
       std::string name_;
       //DEPREC DistanceResults_t distances_;
