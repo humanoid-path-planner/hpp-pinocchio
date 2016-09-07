@@ -26,6 +26,7 @@ SET(LIBRARY_SOURCES
   device-object-vector.cc
   gripper.cc
   center-of-mass-computation.cc
+  configuration.cc
 
   urdf/util.cc
   )

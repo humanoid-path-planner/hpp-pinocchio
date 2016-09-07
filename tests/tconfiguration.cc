@@ -29,6 +29,8 @@
 
 #include <Eigen/Geometry>
 
+#include <pinocchio/algorithm/joint-configuration.hpp>
+
 #include <hpp/model/device.hh>
 #include <hpp/model/urdf/util.hh>
 

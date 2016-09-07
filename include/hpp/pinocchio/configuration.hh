@@ -20,8 +20,7 @@
 #ifndef HPP_MODEL_CONFIGURATION_HH
 # define HPP_MODEL_CONFIGURATION_HH
 
-# include <hpp/pinocchio/device.hh>
-# include <pinocchio/algorithm/joint-configuration.hpp>
+# include <hpp/pinocchio/fwd.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -30,18 +29,8 @@ namespace hpp {
     /// \param robot robot that describes the kinematic chain
     /// \param configuration initial and result configurations
     /// \retval result configuration reached after saturation.
-    inline void saturate (const DevicePtr_t& robot,
-			  ConfigurationOut_t configuration)
-    {
-      const se3::Model& model = robot->model();
-      configuration.head(model.nq) = model.upperPositionLimit.cwiseMin(configuration.head(model.nq));
-      configuration.head(model.nq) = model.lowerPositionLimit.cwiseMax(configuration.head(model.nq));
-
-      const ExtraConfigSpace& ecs = robot->extraConfigSpace();
-      const size_type& d = ecs.dimension();
-      configuration.tail(d) = ecs.upper().cwiseMin(configuration.tail(d));
-      configuration.tail(d) = ecs.lower().cwiseMax(configuration.tail(d));
-    }
+    void saturate (const DevicePtr_t& robot,
+                   ConfigurationOut_t configuration);
 
     /// Integrate a constant velocity during unit time.
     ///
@@ -59,16 +48,9 @@ namespace hpp {
     /// \note bounded degrees of freedom are saturated if the result of the
     ///       above operation is beyond a bound.
     template<bool saturateConfig>
-    inline void integrate (const DevicePtr_t& robot,
-                           ConfigurationIn_t configuration,
-                           vectorIn_t velocity, ConfigurationOut_t result)
-    {
-      const se3::Model& model = robot->model();
-      result.head(model.nq) = se3::integrate(model, configuration, velocity);
-      const size_type& dim = robot->extraConfigSpace().dimension();
-      result.tail (dim) = configuration.tail (dim) + velocity.tail (dim);
-      if (saturateConfig) saturate(robot, result);
-    }
+    void integrate (const DevicePtr_t& robot,
+                    ConfigurationIn_t configuration,
+                    vectorIn_t velocity, ConfigurationOut_t result);
 
     /// Same as integrate<true>
     inline void integrate (const DevicePtr_t& robot,
@@ -84,16 +66,11 @@ namespace hpp {
     /// \param u in [0,1] position along the interpolation: q0 for u=0,
     /// q1 for u=1
     /// \retval result interpolated configuration
-    inline void interpolate  (const DevicePtr_t& robot,
-			      ConfigurationIn_t q0,
-			      ConfigurationIn_t q1,
-                              const value_type& u,
-                              ConfigurationOut_t result)
-    {
-      result = se3::interpolate(robot->model(), q0, q1, u);
-      const size_type& dim = robot->extraConfigSpace().dimension();
-      result.tail (dim) = u * q1.tail (dim) + (1-u) * q0.tail (dim);
-    }
+    void interpolate  (const DevicePtr_t& robot,
+                       ConfigurationIn_t q0,
+                       ConfigurationIn_t q1,
+                       const value_type& u,
+                       ConfigurationOut_t result);
 
     /// Difference between two configurations as a vector
     ///
@@ -105,13 +82,8 @@ namespace hpp {
     /// \f$\textbf{v}\f$
     /// \note If the configuration space is a vector space, this is
     /// \f$\textbf{v} = q_1 - q_2\f$
-    void inline difference (const DevicePtr_t& robot, ConfigurationIn_t q1,
-			    ConfigurationIn_t q2, vectorOut_t result)
-    {
-      result = se3::differentiate(robot->model(), q2, q1);
-      const size_type& dim = robot->extraConfigSpace().dimension();
-      result.tail (dim) = q1.tail (dim) - q2.tail (dim);
-    }
+    void difference (const DevicePtr_t& robot, ConfigurationIn_t q1,
+                     ConfigurationIn_t q2, vectorOut_t result);
 
     /// Test that two configurations are close
     ///
@@ -121,28 +93,18 @@ namespace hpp {
     /// \param eps numerical threshold
     /// \return true if the configurations are closer than the numerical
     /// threshold
-    bool inline isApprox (const DevicePtr_t& robot, ConfigurationIn_t q1,
-			  ConfigurationIn_t q2, value_type eps)
-    {
-      // TODO add precision argument in se3::isSameConfiguration
-      if (!se3::isSameConfiguration(robot->model(), q1, q2)) return false;
-      const size_type& dim = robot->extraConfigSpace().dimension();
-      return q2.tail (dim).isApprox (q1.tail (dim), eps);
-    }
+    ///
+    /// \todo add precision argument in se3::isSameConfiguration
+    bool isApprox (const DevicePtr_t& robot, ConfigurationIn_t q1,
+                   ConfigurationIn_t q2, value_type eps);
 
     /// Distance between two configuration.
     ///
     /// \param robot robot that describes the kinematic chain
     /// \param q1 first configuration,
     /// \param q2 second configuration,
-    inline value_type distance (const DevicePtr_t& robot, ConfigurationIn_t q1,
-			  ConfigurationIn_t q2)
-    {
-      vector_t dist = se3::distance(robot->model(), q1, q2);
-      const size_type& dim = robot->extraConfigSpace().dimension();
-      if (dim == 0) return dist.norm();
-      else return sqrt (dist.squaredNorm() + (q2.tail (dim) - q1.tail (dim)).squaredNorm ());
-    }
+    value_type distance (const DevicePtr_t& robot, ConfigurationIn_t q1,
+                         ConfigurationIn_t q2);
 
     /// Normalize configuration
     ///
@@ -150,10 +112,7 @@ namespace hpp {
     /// space. Normalization consists in projecting a vector on this
     /// sub-manifold. It mostly consists in normalizing quaternions for 
     /// SO3 joints and 2D-vectors for unbounded rotations.
-    inline void normalize (const DevicePtr_t& robot, Configuration_t& q)
-    {
-      se3::normalize(robot->model(), q);
-    }
+    void normalize (const DevicePtr_t& robot, Configuration_t& q);
 
     /// For backward compatibility.
     /// See normalize normalize (const DevicePtr_t&, Configuration_t&)
