@@ -30,11 +30,6 @@
 # include <pinocchio/spatial/fwd.hpp>
 # include <pinocchio/multibody/fwd.hpp>
 
-namespace se3
-{
-  struct DistanceResult;
-}
-
 /*# define HPP_PREDEF_CLASS_AND_POINTERS(NAME)                          \
   HPP_PREDEF_CLASS(NAME);                                               \
   typedef boost::shared_ptr<NAME> NAME##Ptr_t;                          \
