@@ -21,6 +21,9 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <pinocchio/multibody/geometry.hpp>
+#include <pinocchio/algorithm/geometry.hpp>
+
 #include <hpp/model/device.hh>
 #include <hpp/model/collision-object.hh>
 #include <hpp/model/urdf/util.hh>
@@ -29,7 +32,7 @@
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/body.hh>
 #include <hpp/pinocchio/collision-object.hh>
-#include <pinocchio/multibody/geometry.hpp>
+
 #include "../tests/utils.hh"
 
 static bool verbose = false;
@@ -144,8 +147,8 @@ struct IsCollisionObjectNamed
 BOOST_AUTO_TEST_CASE(geomsAccess)
 {
   verbose = true;
-  hpp::model::DevicePtr_t     model     = hppModel();
-  hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio(true);
+  hpp::model::DevicePtr_t     model     = hppModel(true);
+  hpp::pinocchio::DevicePtr_t pinocchio = hppPinocchio(true, true);
 
   for (hpp::pinocchio::JointVector::const_iterator it = ++pinocchio->getJointVector().begin ();
        it != pinocchio->getJointVector().end (); ++it) 
@@ -182,7 +185,7 @@ BOOST_AUTO_TEST_CASE(geomsAccess)
         } // for each inner object
 
       /* Check outer objects. */
-      assert (bp->outerObjects().size() == int(bm->outerObjects(hpp::model::COLLISION).size()));
+      BOOST_REQUIRE (bp->outerObjects().size() == int(bm->outerObjects(hpp::model::COLLISION).size()));
       for (hpp::pinocchio::ObjectVector::const_iterator itcoll = bp->outerObjects().begin();
            itcoll!=bp->outerObjects().end() ; ++ itcoll)
         {
@@ -281,11 +284,19 @@ BOOST_AUTO_TEST_CASE(collisionObject)
     }
 
   // Add fixed obstacle at the root of the model.
-  pinocchio->geomModel().addGeometryObject( pinocchio->model(),pinocchio->model().getFrameId("universe"),
-                                            pinocchio->geomModel().geometryObjects[0].collision_geometry,
-                                            se3::SE3::Identity(),std::string("fixedObs1"),
-                                            std::string("//") );
-  hpp::pinocchio::CollisionObject obs(pinocchio,0,0,hpp::pinocchio::INNER);
+  int fid = pinocchio->model().addFrame(se3::Frame("universe_body", 0, 0, se3::SE3::Identity(), se3::BODY));
+  BOOST_REQUIRE(fid >= 0);
+  se3::GeometryModel obsGeomModel;
+  obsGeomModel.addGeometryObject(
+      se3::GeometryObject ("fixedObs1", fid, 0,
+        pinocchio->geomModel().geometryObjects[0].fcl,
+        se3::SE3::Identity(),
+        std::string("//")),
+      pinocchio->model(),
+      false);
+  se3::appendGeometryModel(pinocchio->geomModel(), obsGeomModel);
+  pinocchio->createGeomData();
+  hpp::pinocchio::CollisionObject obs(pinocchio,pinocchio->geomModel().getGeometryId("fixedObs1"));
   obs.move(se3::SE3::Random()); // self asserted.
   BOOST_CHECK( pinocchio->obstacles().size()==1);
 }

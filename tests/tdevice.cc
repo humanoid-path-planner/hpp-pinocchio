@@ -375,28 +375,35 @@ BOOST_AUTO_TEST_CASE (geom)
   const hpp::model    ::DistanceResults_t & dm = model    ->distanceResults();
   const hpp::pinocchio::DistanceResults_t & dp = pinocchio->distanceResults();
   BOOST_REQUIRE(dm.size() == dp.size());
-  for( int i=0;i<dp.size();++i )
+  for( int i=0;i<dm.size();++i )
     {
-      bool found = false;
-      const std::string& np1 = pinocchio->geomModel().geometryObjects[dp[i].object1].name;
-      const std::string& np2 = pinocchio->geomModel().geometryObjects[dp[i].object2].name;
-      for ( int j=0; j<dm.size(); ++j)
-      {
-        const std::string& nm1 = dm[j].innerObject->name();
-        const std::string& nm2 = dm[j].outerObject->name();
-        bool direct = (nm1 == np1 && nm2 == np2);
-        bool invert = (nm1 == np2 && nm2 == np1);
-        if (direct || invert) {
-          BOOST_CHECK_MESSAGE( std::abs(dm[j].distance() - dp[i].distance())<1e-6,
-              "Distance not correct: " <<
-              dm[j].distance() << " - " << dp[i].distance()
-              );
-          BOOST_WARN_MESSAGE(invert, "Object are inverted.");
-          found = true;
-          break;
-        }
-      }
-      BOOST_CHECK_MESSAGE( found, "Distance not checked by hpp-model: " << np1 << " - " << np2);
+      const std::string& nm1 = dm[i].innerObject->name();
+      const std::string& nm2 = dm[i].outerObject->name();
+      bool existGeometries =
+        pinocchio->geomModel().existGeometryName(nm1)
+        && pinocchio->geomModel().existGeometryName(nm2);
+      BOOST_CHECK_MESSAGE(existGeometries,
+          "Geometries does not exist in hpp-pinocchio: " << nm1 << " - " << nm2);
+      if (!existGeometries) continue;
+
+      const se3::GeomIndex idp1 = pinocchio->geomModel().getGeometryId(nm1);
+      const se3::GeomIndex idp2 = pinocchio->geomModel().getGeometryId(nm2);
+
+      const se3::CollisionPair cp (idp1, idp2);
+      bool existColPair = pinocchio->geomModel().existCollisionPair(cp);
+      BOOST_CHECK_MESSAGE(existColPair,
+          "Distance not checked by hpp-pinocchio: " << nm1 << " - " << nm2);
+      if (!existColPair) continue;
+
+      const se3::PairIndex idcp = pinocchio->geomModel().findCollisionPair(cp);
+
+      // | a - b | < 1e-2 * max(1e-5, (a+b)/2)
+      hpp::pinocchio::value_type eps = 1e-2 * std::max(1e-5, (dm[i].distance() + dp[idcp].min_distance) / 2);
+      BOOST_CHECK_MESSAGE( std::abs(dm[i].distance() - dp[idcp].min_distance)<eps,
+          "Distance not correct: " <<
+          dm[i].distance() << " - " << dp[idcp].min_distance
+          << " = " << std::abs(dm[i].distance() - dp[idcp].min_distance) << " > " << eps
+          );
     }
 
 

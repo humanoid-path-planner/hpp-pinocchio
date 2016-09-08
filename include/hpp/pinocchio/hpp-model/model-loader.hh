@@ -34,16 +34,38 @@ namespace hpp {
       hppDout (notice, "Finished parsing URDF file.");
       return robot;
     }
+
+    DevicePtr_t
+    robotFromUrdfSrdf( const std::string urdf, const std::string srdf, const std::string rootType="freeflyer" )
+    {
+      // Create the robot object.
+      DevicePtr_t robot  = hpp::model::Device::create(urdf);
+      // Build robot model from URDF.
+      urdf::Parser urdfParser (rootType, robot);
+      urdfParser.parse (std::string("file://")+urdf);
+      hppDout (notice, "Finished parsing URDF file.");
+      srdf::Parser srdfParser (&urdfParser);
+      srdfParser.parse (std::string("file://")+srdf, robot);
+      hppDout (notice, "Finished parsing SRDF file.");
+      return robot;
+    }
   } // namespace hpp
 } // namespace model
 
 /* Default path of the urdf file describing the robot to parse. */
 extern const std::string urdfDefaultFilename;
+extern const std::string srdfDefaultFilename;
 
 /* Build a hpp::model::Device from urdf path. */  
-hpp::model::DevicePtr_t hppModel( const std::string urdfFilename = urdfDefaultFilename )
-{ return hpp::model::robotFromUrdf(urdfFilename); }
+
+hpp::model::DevicePtr_t hppModel( bool withSrdf = false, const std::string urdfFilename = urdfDefaultFilename , const std::string srdfFilename = srdfDefaultFilename)
+{ 
+  if (withSrdf) return hpp::model::robotFromUrdfSrdf(urdfFilename, srdfFilename);
+  else          return hpp::model::robotFromUrdf    (urdfFilename);
+}
 
 /* Build a hpp::pinocchio::Device from urdf path. */
 hpp::pinocchio::DevicePtr_t hppPinocchio( bool withGeoms = false,
-                                          const std::string urdfFilename = urdfDefaultFilename);
+                                          bool withSrdf = false,
+                                          const std::string urdfFilename = urdfDefaultFilename,
+                                          const std::string srdfFilename = srdfDefaultFilename);

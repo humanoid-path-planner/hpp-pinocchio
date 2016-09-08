@@ -16,14 +16,19 @@
 
 #include <hpp/pinocchio/hpp-model/model-loader.hh>
 #include <pinocchio/multibody/geometry.hpp>
+#include <pinocchio/parsers/srdf.hpp>
 
 /* Default path of the urdf file describing the robot to parse. */
 const std::string urdfDefaultFilename =
        ROMEO_MODEL_DIR "/romeo_description/urdf/romeo_small.urdf";
+const std::string srdfDefaultFilename =
+       ROMEO_MODEL_DIR "/romeo_description/srdf/romeo_small.srdf";
 
 /* Build a hpp::pinocchio::Device from urdf path. */
-hpp::pinocchio::DevicePtr_t hppPinocchio( bool withGeoms, const std::string urdfFilename)
+hpp::pinocchio::DevicePtr_t hppPinocchio( bool withGeoms, bool withSrdf,
+    const std::string urdfFilename, const std::string srdfFilename)
 {
+  assert (!withSrdf || (withSrdf && withGeoms));
   hpp::pinocchio::DevicePtr_t pinocchio = hpp::pinocchio::Device::create(urdfFilename);
   se3::urdf::buildModel(urdfFilename,se3::JointModelFreeFlyer(),pinocchio->model());
   pinocchio->createData();
@@ -33,6 +38,10 @@ hpp::pinocchio::DevicePtr_t hppPinocchio( bool withGeoms, const std::string urdf
       std::vector<std::string> baseDirs; baseDirs.push_back(ROMEO_MODEL_DIR);
       se3::urdf::buildGeom(pinocchio->model(),pinocchio->name(),se3::COLLISION,pinocchio->geomModel(),baseDirs);
       pinocchio->geomModel().addAllCollisionPairs();
+
+      if (withSrdf)
+        se3::srdf::removeCollisionPairsFromSrdf
+          (pinocchio->model(), pinocchio->geomModel(), srdfFilename, false);
 
       pinocchio->createGeomData();
     }
