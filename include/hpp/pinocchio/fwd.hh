@@ -24,7 +24,8 @@
 # include <Eigen/Core>
 
 # include <hpp/util/pointer.hh>
-# include <hpp/fcl/fwd.hh>       // Needs boost/shared_ptr.hpp
+# include <hpp/fcl/fwd.hh>              // Needs boost/shared_ptr.hpp
+# include <hpp/fcl/collision_data.h>    // DistanceResult
 
 # include <pinocchio/spatial/fwd.hpp>
 # include <pinocchio/multibody/fwd.hpp>
@@ -97,7 +98,7 @@ namespace hpp {
     //DEPREC typedef std::list <CollisionObjectPtr_t> ObjectVector_t;
     typedef boost::shared_ptr <Device> DevicePtr_t;
     typedef boost::shared_ptr <const Device> DeviceConstPtr_t;
-    typedef std::vector <se3::DistanceResult> DistanceResults_t;
+    typedef std::vector <fcl::DistanceResult> DistanceResults_t;
     typedef boost::shared_ptr <HumanoidRobot> HumanoidRobotPtr_t;
     typedef boost::shared_ptr <CenterOfMassComputation> CenterOfMassComputationPtr_t;
     typedef boost::shared_ptr<Joint> JointPtr_t;

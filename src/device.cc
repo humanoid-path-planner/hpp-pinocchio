@@ -322,7 +322,7 @@ namespace hpp {
       /* Following hpp::model API, the forward kinematics (joint placement) is
        * supposed to have already been computed. */
       updateGeometryPlacements();
-      return se3::computeCollisions(geomData(),stopAtFirstCollision);
+      return se3::computeCollisions(geomModel(), geomData(),stopAtFirstCollision);
     }
 
     void Device::computeDistances ()
@@ -330,12 +330,12 @@ namespace hpp {
       /* Following hpp::model API, the forward kinematics (joint placement) is
        * supposed to have already been computed. */
       updateGeometryPlacements();
-      se3::computeDistances (geomData());
+      se3::computeDistances (geomModel(), geomData());
     }
 
     const DistanceResults_t& Device::distanceResults () const
     {
-      return geomData().distance_results;
+      return geomData().distanceResults;
     }
 
   } // namespace pinocchio

@@ -74,8 +74,8 @@ namespace hpp {
 
     const ObjectVector::GeomIndexList & ObjectVector::geometries() const
     {
-      if(inOutType==INNER) return device()->geomModel().innerObjects[jointIndex];
-      else                 return device()->geomModel().outerObjects[jointIndex];
+      if(inOutType==INNER) return device()->geomData().innerObjects[jointIndex];
+      else                 return device()->geomData().outerObjects[jointIndex];
     }
 
     /* --- JointVector --------------------------------------------------------- */

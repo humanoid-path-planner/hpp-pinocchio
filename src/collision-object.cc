@@ -78,14 +78,14 @@ namespace hpp {
     CollisionObject::ObjectVec_t & 
     CollisionObject::objectVec()
     {
-      if(inOutType==INNER) return geomModel_->innerObjects;
-      else                 return geomModel_->outerObjects;
+      if(inOutType==INNER) return geomData_->innerObjects;
+      else                 return geomData_->outerObjects;
     }
     const CollisionObject::ObjectVec_t & 
     CollisionObject::objectVec() const
     {
-      if(inOutType==INNER) return geomModel_->innerObjects;
-      else                 return geomModel_->outerObjects;
+      if(inOutType==INNER) return geomData_->innerObjects;
+      else                 return geomData_->outerObjects;
     }
     
     const std::string& CollisionObject::name () const { return pinocchio().name; }
