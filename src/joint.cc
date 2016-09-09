@@ -24,6 +24,8 @@
 # include <hpp/pinocchio/device.hh>
 # include <hpp/pinocchio/body.hh>
 
+# define CALL_JOINT(method, valueIfZero) \
+  (jointIndex > 0 ? model().joints[jointIndex].method() : valueIfZero);
 namespace hpp {
   namespace pinocchio {
     Joint::Joint (DevicePtr_t device, JointIndex indexInJointList ) 
@@ -84,24 +86,24 @@ namespace hpp {
     size_type  Joint::numberDof () const 
     {
       selfAssert();
-      return model().joints[jointIndex].nv();
+      return CALL_JOINT(nv, 0);
     }
     size_type  Joint::configSize () const
     {
       selfAssert();
-      return model().joints[jointIndex].nq();
+      return CALL_JOINT(nq, 0);
     }
 
     size_type  Joint::rankInConfiguration () const
     {
       selfAssert();
-      return model().joints[jointIndex].idx_q();
+      return CALL_JOINT(idx_q, 0);
     }
 
     size_type  Joint::rankInVelocity () const
     {
       selfAssert();
-      return model().joints[jointIndex].idx_v();
+      return CALL_JOINT(idx_v, 0);
     }
 
     std::size_t  Joint::numberChildJoints () const
