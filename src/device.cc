@@ -169,7 +169,7 @@ namespace hpp {
         if (model_->frames[bodyId].type == se3::BODY) {
           JointIndex jointId = model_->frames[bodyId].parent;
           //assert(jointId>=0);
-          assert((int)jointId<model_->njoint);
+          assert((std::size_t)jointId<model_->joints.size());
           return JointPtr_t( new Joint(weakPtr_.lock(),jointId) );
         }
       }

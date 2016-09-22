@@ -86,7 +86,7 @@ static void nullifyMasses(se3::Model & model, const se3::Data & data,
                           const std::vector <se3::JointIndex> & roots )
 {
   int root = 0;
-  for( se3::JointIndex jid=1; int(jid)<model.njoint; ++jid )
+  for( se3::JointIndex jid=1; jid<se3::JointIndex(model.joints.size()); ++jid )
     {
       const se3::JointIndex& rootId = roots[root];
       if(jid == rootId)

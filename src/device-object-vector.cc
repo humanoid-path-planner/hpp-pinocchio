@@ -68,7 +68,7 @@ namespace hpp {
     void ObjectVector::selfAssert(size_type i) const
     {
       assert(device());
-      assert(int(jointIndex)<device()->model().njoint);
+      assert(std::size_t(jointIndex)<device()->model().joints.size());
       assert(i<size());
     }
 
@@ -89,7 +89,7 @@ namespace hpp {
     { selfAssert(i); return JointConstPtr_t(new Joint(device(),i+1)); }
 
     size_type JointVector::size() const 
-    { return device()->model().njoint - 1; }
+    { return device()->model().joints.size() - 1; }
 
     size_type JointVector::iend() const 
     { return size(); }

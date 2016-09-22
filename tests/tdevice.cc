@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE (compute)
   BOOST_CHECK( pinocchio->computationFlag()==hpp::pinocchio::Device::ALL);
 
   // Skip root joint because the name is not the same.
-  for (int i=2;i<pinocchio->model().njoint;++i)
+  for (std::size_t i=2;i<pinocchio->model().joints.size();++i)
     {
       const std::string& name = pinocchio->model().names[i];
       hpp::model    ::JointPtr_t jm = model    ->getJointByName (name);
@@ -243,7 +243,7 @@ BOOST_AUTO_TEST_CASE(jointAccess)
 
   BOOST_CHECK (pinocchio->getJointAtVelocityRank(0)->name() == pinocchio->rootJoint()->name());
 
-  for (int i=1;i<pinocchio->model().njoint;++i)
+  for (int i=1;i<pinocchio->model().joints.size();++i)
     {
       BOOST_CHECK( pinocchio->getJointAtConfigRank(pinocchio->model().joints[i].idx_q())->name()
                    == pinocchio->model().names[i] );

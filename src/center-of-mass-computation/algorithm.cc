@@ -28,7 +28,7 @@ namespace se3
     data.com[0].setZero ();
     data.mass[0] = 0;
     
-    for(Model::JointIndex i=1;i<(Model::JointIndex)(model.nbody);++i)
+    for(Model::JointIndex i=1;i<(Model::JointIndex)(model.joints.size());++i)
     {
       const double mass = model.inertias[i].mass();
       const SE3::Vector3 & lever = model.inertias[i].lever();
@@ -74,7 +74,7 @@ namespace se3
     data.com[0].setZero ();
     data.mass[0] = 0;
     
-    for(Model::JointIndex i=1;i<(Model::JointIndex)(model.nbody);++i)
+    for(Model::JointIndex i=1;i<(Model::JointIndex)(model.joints.size());++i)
     {
       const double mass = model.inertias[i].mass();
       const SE3::Vector3 & lever = model.inertias[i].lever();

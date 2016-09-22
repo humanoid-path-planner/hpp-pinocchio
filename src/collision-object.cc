@@ -143,7 +143,7 @@ namespace hpp {
     { 
       assert(geomModel_);
       assert(geomData_);
-      assert(!devicePtr || devicePtr->model().njoint>int(jointIndex_));
+      assert(!devicePtr || devicePtr->model().joints.size()>std::size_t(jointIndex_));
       assert(geomModel_->geometryObjects.size()>geomInModelIndex);
     }
   } // namespace pinocchio

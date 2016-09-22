@@ -44,9 +44,9 @@ namespace hpp {
     {
       assert(devicePtr);
       assert(devicePtr->modelPtr());
-      assert(devicePtr->model().njoint>int(jointIndex));
+      assert(devicePtr->model().joints.size()>std::size_t(jointIndex));
       if(frameIndexSet)
-        assert(devicePtr->model().nFrames>int(frameIndex));
+        assert(devicePtr->model().frames.size()>std::size_t(frameIndex));
     }
 
     const Model & Body::model() const { return devicePtr->model(); }
@@ -109,7 +109,7 @@ namespace hpp {
     {
       selfAssert();
       assert(devicePtr->geomDataPtr());
-      assert(int(devicePtr->geomData().radius.size())==model().njoint);
+      assert(std::size_t(devicePtr->geomData().radius.size())==model().joints.size());
       return devicePtr->geomData().radius[jointIndex]; 
     }
 

@@ -34,7 +34,7 @@ namespace hpp {
     {
       assert (devicePtr);
       assert (devicePtr->modelPtr());
-      assert (int(jointIndex)<model().njoint);
+      assert (std::size_t(jointIndex)<model().joints.size());
       setChildList();
       computeMaximalDistanceToParent();
     }
@@ -51,7 +51,7 @@ namespace hpp {
     {
       assert(devicePtr);
       assert(devicePtr->modelPtr()); assert(devicePtr->dataPtr());
-      assert(devicePtr->model().njoint>int(jointIndex));
+      assert(devicePtr->model().joints.size()>std::size_t(jointIndex));
     }
 
     Model&        Joint::model()       { selfAssert(); return devicePtr->model(); }

@@ -54,7 +54,7 @@ namespace hpp {
       // Propagate COM initialization on all joints. 
       // Could be done only on subtree, with minor gain (possibly loss because of 
       // more difficult branch prediction). I dont recommend to implement it.
-      for(JointIndex jid=1;jid<JointIndex(model.nbody);++jid)
+      for(JointIndex jid=1;jid<JointIndex(model.joints.size());++jid)
         {
           const double &            mass  = model.inertias[jid].mass ();
           data.mass[jid] = mass;
@@ -63,7 +63,7 @@ namespace hpp {
 
       // Nullify non-subtree com and mass.
       int root = 0;
-      for(JointIndex jid=1; int(jid)<model.njoint; ++jid )
+      for(JointIndex jid=1; std::size_t(jid)<model.joints.size(); ++jid )
         {
           const JointIndex& rootId = roots_[root];
           if(jid == rootId)
@@ -140,7 +140,7 @@ namespace hpp {
       const Model& model = robot_->model();
       BOOST_FOREACH( const JointIndex rootId,  roots_ )
         {
-          assert (int(rootId)<model.njoint);
+          assert (std::size_t(rootId)<model.joints.size());
           // Assert that the new root is not in already-recorded subtrees.
           if( (jid<rootId) || (data.lastChild[rootId]<int(jid)) )
             // We are doing something stupid. Should we throw an error

@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(difference_and_integrate)
   Configuration_t q1; q1.resize (robot->configSize ());
   Configuration_t q2; q2.resize (robot->configSize ());
   vector_t q1_minus_q0; q1_minus_q0.resize (robot->numberDof ());
-  const value_type eps_dist = robot->numberDof() * sqrt(Eigen::NumTraits<value_type>::epsilon());
+  const value_type eps_dist = (value_type)robot->numberDof() * sqrt(Eigen::NumTraits<value_type>::epsilon());
   for (size_type i=0; i<10000; ++i) {
     q0 = se3::randomConfiguration (robot->model());
     q1 = se3::randomConfiguration (robot->model());
