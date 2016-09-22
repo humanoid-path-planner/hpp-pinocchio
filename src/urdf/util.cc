@@ -124,6 +124,20 @@ namespace hpp {
           }
         }
 
+        void setRootJointBounds(Model& model,
+            const JointIndex& rtIdx,
+            const std::string& rootType)
+        {
+          if (rootType == "freeflyer") {
+            // Quaternion bounds
+            const value_type b = 1.01;
+            const size_type quat_idx = model.joints[rtIdx].idx_q() + 3;
+            model.upperPositionLimit.segment<4>(quat_idx).setConstant(+b);
+            model.lowerPositionLimit.segment<4>(quat_idx).setConstant(-b);
+          } else if (rootType == "planar") {
+          }
+        }
+
         template <bool LoadSRDF> void loadModel
           (const DevicePtr_t& robot,
            const JointIndex&  baseJoint,
@@ -145,16 +159,16 @@ namespace hpp {
             const JointIndex idFirstJoint = model.joints.size();
             const FrameIndex idFirstFrame = model.frames.size();
             if (rootType == "anchor")
-              se3::urdf::buildModel(urdfFileName, robot->model(), verbose);
+              se3::urdf::buildModel(urdfFileName, model, verbose);
             else
-              se3::urdf::buildModel(urdfFileName, buildJoint(rootType), robot->model(), verbose);
+              se3::urdf::buildModel(urdfFileName, buildJoint(rootType), model, verbose);
             robot->createData();
 
             hppDout (notice, "Finished parsing URDF file.");
 
             GeomModel geomModel;
 
-            se3::urdf::buildGeom(robot->model(), urdfFileName, se3::COLLISION, geomModel, baseDirs);
+            se3::urdf::buildGeom(model, urdfFileName, se3::COLLISION, geomModel, baseDirs);
             geomModel.addAllCollisionPairs();
 
             if (LoadSRDF) {
@@ -162,10 +176,15 @@ namespace hpp {
                 "package://" + package + "/srdf/" + srdfName + ".srdf";
               std::string srdfFileName = se3::retrieveResourcePath(srdfPath, baseDirs);
               se3::srdf::removeCollisionPairsFromSrdf
-                (robot->model(), geomModel, srdfFileName, verbose);
+                (model, geomModel, srdfFileName, verbose);
             }
 
-            if (!prefix.empty()) setPrefix(prefix, robot->model(), geomModel, idFirstJoint, idFirstFrame);
+            if (!prefix.empty()) setPrefix(prefix, model, geomModel, idFirstJoint, idFirstFrame);
+
+            // Update root joint bounds
+            assert((rootType == "anchor")
+                || (model.names[idFirstJoint] == prefix + "root_joint"));
+            setRootJointBounds(model, idFirstJoint, rootType);
 
             se3::appendGeometryModel(robot->geomModel(), geomModel);
             robot->createGeomData();
