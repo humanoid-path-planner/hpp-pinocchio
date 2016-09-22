@@ -146,10 +146,9 @@ namespace hpp {
     bool Joint::isBounded (size_type rank) const
     {
       const size_type idx = model().joints[jointIndex].idx_q() + rank;
-      const value_type& inf = std::numeric_limits<value_type>::infinity();
       assert(rank < configSize());
-      return ( model().lowerPositionLimit[idx] > -inf)
-        &&   ( model().upperPositionLimit[idx] <  inf);
+      return !std::isinf (model().lowerPositionLimit[idx])
+        &&   !std::isinf (model().upperPositionLimit[idx]);
     }
     value_type Joint::lowerBound (size_type rank) const
     {
@@ -259,12 +258,12 @@ namespace hpp {
     ( const se3::Model & model, const se3::JointModelPrismaticUnaligned& jmodel, 
       const se3::SE3 & jointPlacement )
     {
-      if( std::isinf (model.lowerPositionLimit[jmodel.nq()])
-          || std::isinf (model.upperPositionLimit[jmodel.nq()]) )
+      if( std::isinf (model.lowerPositionLimit[jmodel.idx_q()])
+          || std::isinf (model.upperPositionLimit[jmodel.idx_q()]) )
         return std::numeric_limits <value_type>::infinity (); 
  
-      Eigen::Vector3d pmin = jmodel.axis *  model.lowerPositionLimit[jmodel.nq()];
-      Eigen::Vector3d pmax = jmodel.axis *  model.upperPositionLimit[jmodel.nq()];
+      Eigen::Vector3d pmin = jmodel.axis *  model.lowerPositionLimit[jmodel.idx_q()];
+      Eigen::Vector3d pmax = jmodel.axis *  model.upperPositionLimit[jmodel.idx_q()];
 
       return std::max ( jointPlacement.act(pmin).norm(),
                         jointPlacement.act(pmax).norm() );
