@@ -131,6 +131,26 @@ BOOST_AUTO_TEST_CASE (joint)
       BOOST_CHECK( jp->rankInVelocity()      == jm->rankInVelocity() );
       BOOST_CHECK( isApproxPermutation(jm->currentTransformation(),
                                        jp->currentTransformation()) );
+
+      for( unsigned int c=0; c<jm->configSize(); ++c ) {
+        BOOST_CHECK(jp->isBounded(c) == jm->isBounded(c));
+      }
+      using hpp::pinocchio::value_type;
+      jp->upperBound(0,  std::numeric_limits<value_type>::infinity());
+      jp->lowerBound(0, -std::numeric_limits<value_type>::infinity());
+      BOOST_CHECK_MESSAGE(!jp->isBounded(0),
+          "Wrong isBounded result: " << jp->lowerBound(0) << ", " << jp->upperBound(0)
+          );
+      jp->upperBound(0,  0                                          );
+      jp->lowerBound(0, -std::numeric_limits<value_type>::infinity());
+      BOOST_CHECK_MESSAGE(!jp->isBounded(0),
+          "Wrong isBounded result: " << jp->lowerBound(0) << ", " << jp->upperBound(0)
+          );
+      jp->upperBound(0,  0                                          );
+      jp->lowerBound(0, -1                                          );
+      BOOST_CHECK_MESSAGE( jp->isBounded(0),
+          "Wrong isBounded result: " << jp->lowerBound(0) << ", " << jp->upperBound(0)
+          );
       
       // Possibly some children are anchor, and then removed from Pinocchio
       BOOST_CHECK( jp->numberChildJoints()   <= jm->numberChildJoints() );

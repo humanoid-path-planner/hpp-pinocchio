@@ -148,8 +148,8 @@ namespace hpp {
       const size_type idx = model().joints[jointIndex].idx_q() + rank;
       const value_type& inf = std::numeric_limits<value_type>::infinity();
       assert(rank < configSize());
-      return !( model().lowerPositionLimit[idx] == -inf)
-        ||   !( model().upperPositionLimit[idx] ==  inf);
+      return ( model().lowerPositionLimit[idx] > -inf)
+        &&   ( model().upperPositionLimit[idx] <  inf);
     }
     value_type Joint::lowerBound (size_type rank) const
     {
