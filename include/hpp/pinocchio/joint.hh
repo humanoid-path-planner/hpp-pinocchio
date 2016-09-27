@@ -282,7 +282,7 @@ namespace hpp {
         return jointIndex;
       }
 
-      const se3::JointModel& jointModel() const;
+      const JointModel& jointModel() const;
 
       /// \}
 

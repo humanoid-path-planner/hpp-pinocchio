@@ -19,6 +19,7 @@
 
 # include <hpp/pinocchio/joint.hh>
 
+# include <pinocchio/multibody/joint/joint.hpp>
 # include <pinocchio/algorithm/jacobian.hpp>
 
 # include <hpp/pinocchio/device.hh>
@@ -475,7 +476,7 @@ namespace hpp {
       return os;
     }
 
-    const se3::JointModel& Joint::jointModel() const
+    const JointModel& Joint::jointModel() const
     {
       return model().joints[index()];
     }

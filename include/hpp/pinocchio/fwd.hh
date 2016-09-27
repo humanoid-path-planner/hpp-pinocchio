@@ -29,6 +29,7 @@
 
 # include <pinocchio/spatial/fwd.hpp>
 # include <pinocchio/multibody/fwd.hpp>
+# include <pinocchio/multibody/joint/fwd.hpp>
 
 /*# define HPP_PREDEF_CLASS_AND_POINTERS(NAME)                          \
   HPP_PREDEF_CLASS(NAME);                                               \
@@ -60,6 +61,7 @@ namespace hpp {
     typedef se3::GeometryModel  GeomModel;
     typedef se3::GeometryData   GeomData;
     typedef se3::SE3            Transform3f;
+    typedef se3::JointModel     JointModel;
 
     typedef double value_type;
     typedef Eigen::Matrix <value_type, Eigen::Dynamic, 1> vector_t;
