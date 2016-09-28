@@ -42,9 +42,19 @@ namespace hpp {
         /// \param objectPositionInJoint object position in the the grasping
         ///        joint.
         static GripperPtr_t create (const std::string& name,
-            const DevicePtr_t& device)
+            const DeviceWkPtr_t& device)
         {
           Gripper* ptr = new Gripper (name, device);
+          GripperPtr_t shPtr (ptr);
+          ptr->init (shPtr);
+          return shPtr;
+        }
+
+        static GripperPtr_t createCopy (const GripperPtr_t& gripper,
+            const DeviceWkPtr_t& otherDevice)
+        {
+          Gripper* ptr = new Gripper (gripper->name(), otherDevice);
+          ptr->clearance(gripper->clearance());
           GripperPtr_t shPtr (ptr);
           ptr->init (shPtr);
           return shPtr;
@@ -99,7 +109,7 @@ namespace hpp {
         /// \param device
         /// \todo device should be of type DeviceConstPtr_t but the constructor of
         /// JointPtr_t needs a DevicePtr_t.
-        Gripper (const std::string& name, const DevicePtr_t& device);
+        Gripper (const std::string& name, const DeviceWkPtr_t& device);
 
         void init (GripperWkPtr_t weakPtr)
         {
@@ -107,8 +117,10 @@ namespace hpp {
         }
 
       private:
+        inline DevicePtr_t device() const;
+
         std::string name_;
-        DevicePtr_t device_;
+        DeviceWkPtr_t device_;
         /// Joint of the robot that holds handles.
         JointPtr_t joint_;
         se3::FrameIndex fid_;

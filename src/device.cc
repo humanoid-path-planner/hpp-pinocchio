@@ -31,6 +31,7 @@
 #include <hpp/pinocchio/fwd.hh>
 //#include <hpp/pinocchio/distance-result.hh>
 #include <hpp/pinocchio/extra-config-space.hh>
+#include <hpp/pinocchio/gripper.hh>
 #include <hpp/pinocchio/joint.hh>
 
 namespace hpp {
@@ -54,6 +55,27 @@ namespace hpp {
       createGeomData();
     }
 
+    Device::Device(const Device& other)
+      : model_(other.model_)
+      , data_ (new Data (other.data()))
+      , geomModel_(other.geomModel_)
+      , geomData_ (new GeomData (other.geomData()))
+      , name_ (other.name_)
+      , jointVector_()
+      , currentConfiguration_ (other.currentConfiguration_)
+      , currentVelocity_ (other.currentVelocity_)
+      , currentAcceleration_ (other.currentAcceleration_)
+      , upToDate_ (false)
+      , geomUpToDate_ (false)
+      , computationFlag_ (other.computationFlag_)
+      , obstacles_()
+      , objectVector_ ()
+      , grippers_ ()
+      , extraConfigSpace_ (other.extraConfigSpace_)
+      , weakPtr_()
+    {
+    }
+
     // static method
     DevicePtr_t Device::
     create (const std::string & name)
@@ -65,11 +87,10 @@ namespace hpp {
     
     // static method
     DevicePtr_t Device::
-    createCopy (const DevicePtr_t& device)
+    createCopy (const DevicePtr_t& other)
     {
-      DevicePtr_t res = Device::create(device->name()); // init shared ptr
-      res->model(device->modelPtr());  // Copy pointer to pinocchio model
-      res->createData();    // Create a new data, dont copy the pointer.
+      DevicePtr_t res = DevicePtr_t(new Device(*other)); // init shared ptr
+      res->initCopy (res, *other);
       return res;
     }
 
@@ -91,6 +112,14 @@ namespace hpp {
       jointVector_ = JointVector(self);
       obstacles_ = ObjectVector(self,0,INNER);
       objectVector_ = DeviceObjectVector(self);
+    }
+
+    void Device::initCopy(const DeviceWkPtr_t& weakPtr, const Device& other)
+    {
+      init(weakPtr);
+      grippers_.resize (other.grippers_.size());
+      for (std::size_t i = 0; i < grippers_.size(); ++i)
+        grippers_[i] = Gripper::createCopy(other.grippers_[i], weakPtr);
     }
 
     void Device::

@@ -27,23 +27,26 @@
 
 namespace hpp {
   namespace pinocchio {
-    Gripper::Gripper (const std::string& name, const DevicePtr_t& device) :
+    Gripper::Gripper (const std::string& name, const DeviceWkPtr_t& device) :
       name_ (name),
       device_ (device),
       clearance_ (0)
     {
-      fid_ = device->model().getFrameId (name);
+      DevicePtr_t d = this->device();
+      fid_ = d->model().getFrameId (name);
+      // TODO as joint_ keeps a shared pointer to the device, the device will
+      // never be deleted.
       joint_ = JointPtr_t (
-          new Joint(device, device->model().frames[fid_].parent));
+          new Joint(d, d->model().frames[fid_].parent));
     }
+
     const Transform3f& Gripper::objectPositionInJoint () const
     {
-      return device_->model().frames[fid_].placement;
+      return device()->model().frames[fid_].placement;
     }
 
     GripperPtr_t Gripper::clone () const
     {
-      GripperPtr_t self = weakPtr_.lock ();
       return Gripper::create (name_, device_);
     }
 
@@ -61,5 +64,11 @@ namespace hpp {
       return gripper.print (os);
     }
 
+    DevicePtr_t Gripper::device() const
+    {
+      DevicePtr_t d = device_.lock();
+      assert (d);
+      return d;
+    }
   } // namespace pinocchio
 } // namespace hpp

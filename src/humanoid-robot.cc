@@ -19,11 +19,22 @@
 
 #include <hpp/pinocchio/humanoid-robot.hh>
 
+#include <hpp/pinocchio/joint.hh>
+
 namespace hpp {
   namespace pinocchio {
 
     HumanoidRobot::HumanoidRobot (const std::string& name)
       : Device (name), weakPtr_ ()
+    {
+    }
+
+    // ========================================================================
+
+    HumanoidRobot::HumanoidRobot (const HumanoidRobot& other)
+      : Device (other), weakPtr_ ()
+      , gazeOrigin_ (other.gazeOrigin_)
+      , gazeDirection_ (other.gazeDirection_)
     {
     }
 
@@ -51,6 +62,28 @@ namespace hpp {
       Device::init (weakPtr);
       weakPtr_ = weakPtr;
     }
+
+    // ========================================================================
+
+    void HumanoidRobot::initCopy (const HumanoidRobotWkPtr_t& weakPtr, const HumanoidRobot& other)
+    {
+      // Cannot call HumanoidRobot::init because Device::init would be called
+      // twice.
+      weakPtr_ = weakPtr;
+      Device::initCopy (weakPtr, other);
+      // TODO the HumanoidRobot will be never be deleted as these joints have
+      // a shared pointer to the device.
+      DevicePtr_t d = weakPtr_.lock();
+      waist_      = JointPtr_t (new Joint (d, other.waist_     ->index()));
+      chest_      = JointPtr_t (new Joint (d, other.chest_     ->index()));
+      leftWrist_  = JointPtr_t (new Joint (d, other.leftWrist_ ->index()));
+      rightWrist_ = JointPtr_t (new Joint (d, other.rightWrist_->index()));
+      leftAnkle_  = JointPtr_t (new Joint (d, other.leftAnkle_ ->index()));
+      rightAnkle_ = JointPtr_t (new Joint (d, other.rightAnkle_->index()));
+      gazeJoint_  = JointPtr_t (new Joint (d, other.gazeJoint_ ->index()));
+    }
+
+    // ========================================================================
 
       /// \brief Get Joint corresponding to the waist.
       JointPtr_t HumanoidRobot::waist() const

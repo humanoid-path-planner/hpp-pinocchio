@@ -102,10 +102,14 @@ namespace hpp {
       /// \brief Constructor
       HumanoidRobot (const std::string& name);
 
+      HumanoidRobot (const HumanoidRobot& other);
+
       ///
       /// \brief Initialization.
       ///
       void init (const HumanoidRobotWkPtr_t& weakPtr);
+
+      void initCopy (const HumanoidRobotWkPtr_t& weakPtr, const HumanoidRobot& other);
 
     private:
       HumanoidRobotWkPtr_t weakPtr_;

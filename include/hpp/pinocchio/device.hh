@@ -388,14 +388,13 @@ namespace hpp {
       /// \brief Initialization.
       ///
       void init(const DeviceWkPtr_t& weakPtr);
-      //DEPREC /// \brief Initialization of of a clone device.
-      //DEPREC ///
-      //DEPREC void initCopy(const DeviceWkPtr_t& weakPtr, const Device& model);
+      /// \brief Initialization of of a clone device.
+      ///
+      void initCopy(const DeviceWkPtr_t& weakPtr, const Device& other);
 
       //DEPREC /// Recompute the number of distance pairs and resize the vector of distance results.
       //DEPREC void updateDistances ();
 
-    private:
       /// \brief Copy Constructor
       Device(const Device& device);
 
