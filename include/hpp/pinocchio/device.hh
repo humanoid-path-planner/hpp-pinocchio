@@ -408,7 +408,6 @@ namespace hpp {
 
       /// Resize configuration when changing data or extra-config.
       void resizeState ();
-      void resizeJacobians ();
 
     protected:
       // Pinocchio objects
