@@ -156,7 +156,7 @@ namespace hpp {
       BOOST_FOREACH( const se3::JointModel & j, model_->joints )
         {
           if( j.id()==0 ) continue; // Skip "universe" joint
-          const size_type iq = j.idx_q() - r;
+          const size_type iq = r - j.idx_q();
           if( 0 <= iq && iq < j.nq() ) return JointPtr_t( new Joint(weakPtr_.lock(),j.id()) );
         }
       assert(false && "The joint at config rank has not been found");
@@ -170,7 +170,7 @@ namespace hpp {
       BOOST_FOREACH( const se3::JointModel & j,model_->joints )
         {
           if( j.id()==0 ) continue; // Skip "universe" joint
-          const size_type iv = j.idx_v() - r;
+          const size_type iv = r - j.idx_v();
           if( 0 <= iv && iv < j.nv() ) return JointPtr_t( new Joint(weakPtr_.lock(),j.id()) );
         }
       assert(false && "The joint at velocity rank has not been found");
