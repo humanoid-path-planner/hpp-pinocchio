@@ -154,7 +154,10 @@ namespace hpp {
             std::string urdfPath =
               "package://" + package + "/urdf/" + urdfName + ".urdf";
             std::string urdfFileName = se3::retrieveResourcePath(urdfPath, baseDirs);
-
+	    if (urdfFileName == "") {
+	      throw std::invalid_argument (std::string ("Unable to retrieve ") +
+					   urdfPath);
+	    }
             Model& model = robot->model();
             const JointIndex idFirstJoint = model.joints.size();
             const FrameIndex idFirstFrame = model.frames.size();
@@ -175,6 +178,10 @@ namespace hpp {
               std::string srdfPath =
                 "package://" + package + "/srdf/" + srdfName + ".srdf";
               std::string srdfFileName = se3::retrieveResourcePath(srdfPath, baseDirs);
+	    if (srdfFileName == "") {
+	      throw std::invalid_argument (std::string ("Unable to retrieve ") +
+					   srdfPath);
+	    }
               se3::srdf::removeCollisionPairsFromSrdf
                 (model, geomModel, srdfFileName, verbose);
             }
