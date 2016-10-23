@@ -161,9 +161,13 @@ namespace hpp {
       inline JointVector& getJointVector () { return jointVector_; }
 
       /// Get the joint at configuration rank r
+      /// \return  joint j such that j->rankInConfiguration () <=
+      ///          r < j->rankInConfiguration () + j->configSize ()
       JointPtr_t getJointAtConfigRank (const size_type& r) const;
 
       /// Get the joint at velocity rank r
+      /// \return  joint j such that j->rankInVelocity () <=
+      ///          r < j->rankInVelocity () + j->numberDof ()
       JointPtr_t getJointAtVelocityRank (const size_type& r) const;
 
       /// Get joint by name
