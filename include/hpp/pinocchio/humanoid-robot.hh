@@ -38,8 +38,8 @@ namespace hpp {
       /// @{
       virtual ~HumanoidRobot ();
 
-      /// \brief Clone as a CkwsDevice
-      HumanoidRobotPtr_t clone () const;
+      /// \brief Clone as a HumanoidRobot
+      virtual DevicePtr_t clone () const;
 
       ///
       /// @}

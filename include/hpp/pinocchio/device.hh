@@ -71,7 +71,7 @@ namespace hpp {
       /// The pinocchio model is not copied (only copy the pointer).
       /// A new Pinocchio "data" is created.
       /// As the model is not copied, cloning is a non constant operation. \sa cloneConst
-      DevicePtr_t clone() { return createCopy(weakPtr_.lock()); }
+      virtual DevicePtr_t clone() { return createCopy(weakPtr_.lock()); }
       /// \brief Clone as a CkwsDevice
       /// Both pinocchio objects model and data are copied.
       /// TODO: this method is not implemented yet (assert if called)

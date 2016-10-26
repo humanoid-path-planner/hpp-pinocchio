@@ -57,6 +57,16 @@ namespace hpp {
 
     // ========================================================================
 
+    DevicePtr_t HumanoidRobot::clone () const
+    {
+      HumanoidRobot *ptr = new HumanoidRobot (*this);
+      HumanoidRobotPtr_t shPtr (ptr);
+      ptr->initCopy (shPtr, *this);
+      return shPtr;
+    }
+
+    // ========================================================================
+
     void HumanoidRobot::init(const HumanoidRobotWkPtr_t& weakPtr)
     {
       Device::init (weakPtr);
