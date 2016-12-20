@@ -291,7 +291,8 @@ BOOST_AUTO_TEST_CASE(collisionObject)
       se3::GeometryObject ("fixedObs1", fid, 0,
         pinocchio->geomModel().geometryObjects[0].fcl,
         se3::SE3::Identity(),
-        std::string("//")),
+        std::string("//"),
+        hpp::pinocchio::vector3_t::Ones()),
       pinocchio->model(),
       false);
   se3::appendGeometryModel(pinocchio->geomModel(), obsGeomModel);
