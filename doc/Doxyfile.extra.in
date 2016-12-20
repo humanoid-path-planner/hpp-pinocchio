@@ -5,9 +5,4 @@ FILE_PATTERNS          = *.cc *.hh *.hxx \
 INPUT                  = @CMAKE_SOURCE_DIR@/include \
                          @CMAKE_SOURCE_DIR@/doc
 
-HTML_HEADER            = @CMAKE_SOURCE_DIR@/doc/header.html
-HTML_FOOTER            = @CMAKE_SOURCE_DIR@/doc/footer.html
-
-TAGFILES               = "@HPP_MODEL_DOXYGENDOCDIR@/hpp-model.doxytag=@HPP_MODEL_DOXYGENDOCDIR@"
-
 GENERATE_TREEVIEW      = NO
