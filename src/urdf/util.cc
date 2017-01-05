@@ -129,12 +129,23 @@ namespace hpp {
             const std::string& rootType)
         {
           if (rootType == "freeflyer") {
+            value_type b = std::numeric_limits<value_type>::infinity();
+            model.upperPositionLimit.segment<3>(rtIdx).setConstant(+b);
+            model.lowerPositionLimit.segment<3>(rtIdx).setConstant(-b);
             // Quaternion bounds
-            const value_type b = 1.01;
+            b = 1.01;
             const size_type quat_idx = model.joints[rtIdx].idx_q() + 3;
             model.upperPositionLimit.segment<4>(quat_idx).setConstant(+b);
             model.lowerPositionLimit.segment<4>(quat_idx).setConstant(-b);
           } else if (rootType == "planar") {
+            value_type b = std::numeric_limits<value_type>::infinity();
+            model.upperPositionLimit.segment<2>(rtIdx).setConstant(+b);
+            model.lowerPositionLimit.segment<2>(rtIdx).setConstant(-b);
+            // Unit complex bounds
+            b = 1.01;
+            const size_type cplx_idx = model.joints[rtIdx].idx_q() + 2;
+            model.upperPositionLimit.segment<2>(cplx_idx).setConstant(+b);
+            model.lowerPositionLimit.segment<2>(cplx_idx).setConstant(-b);
           }
         }
 
