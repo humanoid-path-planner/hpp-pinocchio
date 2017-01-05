@@ -31,6 +31,7 @@ namespace hpp {
       DevicePtr_t robot = Device::create (name);
       se3::buildModels::humanoidSimple(robot->model(), usingFF);
       robot->createData();
+      robot->createGeomData();
       robot->controlComputation(compFlags);
       robot->currentConfiguration(robot->neutralConfiguration());
       robot->computeForwardKinematics();
