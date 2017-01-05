@@ -39,7 +39,7 @@ namespace hpp {
             const Eigen::MatrixBase<ConfigR_t> & q1,
             const typename ConfigL_t::Scalar& w)
         {
-          return w * squaredDistance_impl(q0, q1);
+          return w * squaredDistance(q0, q1);
         }
       };
     } // namespace liegroup
