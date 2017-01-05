@@ -18,6 +18,7 @@
 
 #include <pinocchio/algorithm/joint-configuration.hpp>
 #include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/liegroup.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -40,7 +41,7 @@ namespace hpp {
                     vectorIn_t velocity, ConfigurationOut_t result)
     {
       const se3::Model& model = robot->model();
-      result.head(model.nq) = se3::integrate(model, configuration, velocity);
+      result.head(model.nq) = se3::integrate<LieGroupTpl>(model, configuration, velocity);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = configuration.tail (dim) + velocity.tail (dim);
       if (saturateConfig) saturate(robot, result);
@@ -59,7 +60,7 @@ namespace hpp {
                       const value_type& u,
                       ConfigurationOut_t result)
     {
-      result = se3::interpolate(robot->model(), q0, q1, u);
+      result = se3::interpolate<LieGroupTpl>(robot->model(), q0, q1, u);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = u * q1.tail (dim) + (1-u) * q0.tail (dim);
     }
@@ -67,7 +68,7 @@ namespace hpp {
     void difference (const DevicePtr_t& robot, ConfigurationIn_t q1,
                      ConfigurationIn_t q2, vectorOut_t result)
     {
-      result = se3::differentiate(robot->model(), q2, q1);
+      result = se3::differentiate<LieGroupTpl>(robot->model(), q2, q1);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = q1.tail (dim) - q2.tail (dim);
     }
@@ -75,8 +76,7 @@ namespace hpp {
     bool isApprox (const DevicePtr_t& robot, ConfigurationIn_t q1,
 			  ConfigurationIn_t q2, value_type eps)
     {
-      // TODO add precision argument in se3::isSameConfiguration
-      if (!se3::isSameConfiguration(robot->model(), q1, q2)) return false;
+      if (!se3::isSameConfiguration<LieGroupTpl>(robot->model(), q1, q2, eps)) return false;
       const size_type& dim = robot->extraConfigSpace().dimension();
       return q2.tail (dim).isApprox (q1.tail (dim), eps);
     }
@@ -84,10 +84,10 @@ namespace hpp {
     value_type distance (const DevicePtr_t& robot, ConfigurationIn_t q1,
                          ConfigurationIn_t q2)
     {
-      vector_t dist = se3::distance(robot->model(), q1, q2);
+      vector_t dist = se3::squaredDistance<LieGroupTpl>(robot->model(), q1, q2);
       const size_type& dim = robot->extraConfigSpace().dimension();
-      if (dim == 0) return dist.norm();
-      else return sqrt (dist.squaredNorm() + (q2.tail (dim) - q1.tail (dim)).squaredNorm ());
+      if (dim == 0) return sqrt(dist.sum());
+      else return sqrt (dist.sum() + (q2.tail (dim) - q1.tail (dim)).squaredNorm ());
     }
 
     void normalize (const DevicePtr_t& robot, Configuration_t& q)
