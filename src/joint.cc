@@ -25,6 +25,8 @@
 # include <hpp/pinocchio/device.hh>
 # include <hpp/pinocchio/body.hh>
 
+# include "joint/bound.hh"
+
 # define CALL_JOINT(method, valueIfZero) \
   (jointIndex > 0 ? model().joints[jointIndex].method() : valueIfZero);
 namespace hpp {
@@ -174,6 +176,16 @@ namespace hpp {
       const size_type idx = model().joints[jointIndex].idx_q() + rank;
       assert(rank < configSize());
       model().upperPositionLimit[idx] = upperBound;
+    }
+    void Joint::lowerBounds (vectorIn_t lowerBounds)
+    {
+      SetBoundStep::run(model().joints[jointIndex],
+          SetBoundStep::ArgsType(lowerBounds, model().lowerPositionLimit));
+    }
+    void Joint::upperBounds (vectorIn_t upperBounds)
+    {
+      SetBoundStep::run(model().joints[jointIndex],
+          SetBoundStep::ArgsType(upperBounds, model().upperPositionLimit));
     }
 
 

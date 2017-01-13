@@ -179,6 +179,10 @@ namespace hpp {
       void lowerBound (size_type rank, value_type lowerBound);
       /// Set upper bound of given degree of freedom
       void upperBound (size_type rank, value_type upperBound);
+      /// Set lower bounds
+      void lowerBounds (vectorIn_t lowerBounds);
+      /// Set upper bounds
+      void upperBounds (vectorIn_t upperBounds);
 
       /// Get upper bound on linear velocity of the joint frame
       /// \return coefficient \f$\lambda\f$ such that

@@ -25,12 +25,19 @@ namespace hpp {
       template<int N>
         struct SpecialOrthogonalOperation : public se3::SpecialOrthogonalOperation<N>
       {
+        typedef se3::SpecialOrthogonalOperation<N> Base;
+        enum {
+          BoundSize = 0,
+          NR = Base::NV,
+          NT = 0
+        };
+
         template <class ConfigL_t, class ConfigR_t>
           static double squaredDistance(
               const Eigen::MatrixBase<ConfigL_t> & q0,
               const Eigen::MatrixBase<ConfigR_t> & q1)
           {
-            return se3::SpecialOrthogonalOperation<N>::squaredDistance(q0, q1);
+            return Base::squaredDistance(q0, q1);
           }
 
         template <class ConfigL_t, class ConfigR_t>
@@ -40,6 +47,27 @@ namespace hpp {
             const typename ConfigL_t::Scalar& w)
         {
           return w * squaredDistance(q0, q1);
+        }
+
+        template <class ConfigIn_t, class ConfigOut_t>
+        static void setBound(
+            const Eigen::MatrixBase<ConfigIn_t > & bound,
+            const Eigen::MatrixBase<ConfigOut_t> & out)
+        {
+          if (bound.size() == 0) return;
+          if (bound.size() != Base::NQ) {
+            HPP_THROW(std::invalid_argument, "Expected vector of size 0 or "
+                << Base::NQ << ", got size " << bound.size());
+          }
+          const_cast<Eigen::MatrixBase<ConfigOut_t>&>(out).head(bound.size()) = bound;
+        }
+
+        template <class JacobianIn_t, class JacobianOut_t>
+        static void getRotationSubJacobian(
+            const Eigen::MatrixBase<JacobianIn_t > & Jin,
+            const Eigen::MatrixBase<JacobianOut_t> & Jout)
+        {
+          const_cast<Eigen::MatrixBase<JacobianOut_t>&> (Jout) = Jin;
         }
       };
     } // namespace liegroup
