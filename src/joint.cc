@@ -130,6 +130,7 @@ namespace hpp {
     void Joint::positionInParentFrame (const Transform3f& p)
     {
       selfAssert();
+      devicePtr->invalidate();
       model().jointPlacements[jointIndex] = p;
     }
 
