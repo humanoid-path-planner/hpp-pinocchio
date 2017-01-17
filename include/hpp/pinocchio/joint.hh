@@ -158,8 +158,9 @@ namespace hpp {
       /// Get (constant) placement of joint in parent frame, i.e. model.jointPlacement[idx]
       const Transform3f& positionInParentFrame () const;
 
-      /// Set position of joint in parent frame
-      void positionInParentFrame (const Transform3f& p);
+      //DEPREC /// Set position of joint in parent frame
+      //DEPREC /// Use Frame::positionInParentFrame instead
+      //DEPREC void positionInParentFrame (const Transform3f& p);
       ///\}
       // -----------------------------------------------------------------------
       /// \name Bounds

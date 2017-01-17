@@ -24,6 +24,7 @@
 
 # include <hpp/pinocchio/device.hh>
 # include <hpp/pinocchio/body.hh>
+# include <hpp/pinocchio/frame.hh>
 
 # include "joint/bound.hh"
 
@@ -125,13 +126,6 @@ namespace hpp {
     {
       selfAssert();
       return model().jointPlacements[jointIndex];
-    }
-
-    void Joint::positionInParentFrame (const Transform3f& p)
-    {
-      selfAssert();
-      devicePtr->invalidate();
-      model().jointPlacements[jointIndex] = p;
     }
 
     void Joint::isBounded (size_type rank, bool bounded)
