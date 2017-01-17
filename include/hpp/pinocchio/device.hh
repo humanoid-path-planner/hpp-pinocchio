@@ -27,6 +27,7 @@
 # include <hpp/util/debug.hh>
 
 # include <hpp/pinocchio/fwd.hh>
+# include <hpp/pinocchio/frame.hh>
 # include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/deprecated.hh>
 # include <hpp/pinocchio/extra-config-space.hh>
@@ -44,6 +45,7 @@ namespace hpp {
     class HPP_PINOCCHIO_DLLAPI Device
     {
       friend class Joint;
+      friend class Frame;
     public:
       /// Flags to select computation
       /// To optimize computation time, computations performed by method
@@ -178,6 +180,11 @@ namespace hpp {
       /// Get joint by body name
       /// \throw runtime_error if device has no body with this name
       JointPtr_t getJointByBodyName (const std::string& name) const;
+
+      /// Get frame by name
+      /// \param name name of the frame.
+      /// \throw runtime_error if device has no frame with this name
+      Frame getFrameByName (const std::string& name) const;
 
       /// Size of configuration vectors
       /// Sum of joint dimensions and of extra configuration space dimension

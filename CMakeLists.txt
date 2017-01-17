@@ -70,6 +70,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/device.hh
   include/hpp/pinocchio/humanoid-robot.hh
   include/hpp/pinocchio/joint.hh
+  include/hpp/pinocchio/frame.hh
   include/hpp/pinocchio/body.hh
   include/hpp/pinocchio/fake-container.hh
   include/hpp/pinocchio/device-object-vector.hh

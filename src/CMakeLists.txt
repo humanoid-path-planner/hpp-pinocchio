@@ -21,6 +21,7 @@ SET(LIBRARY_SOURCES
   device.cc
   humanoid-robot.cc
   joint.cc
+  frame.cc
   collision-object.cc
   body.cc
   device-object-vector.cc

@@ -49,12 +49,14 @@ namespace hpp {
     HPP_PREDEF_CLASS (JointConfiguration);
     HPP_PREDEF_CLASS (Gripper);
     HPP_PREDEF_CLASS (CenterOfMassComputation);
+    class Frame;
 
     enum Request_t {COLLISION, DISTANCE};
     enum InOutType { INNER, OUTER };
 
     // Pinocchio typedefs
     typedef se3::JointIndex     JointIndex;
+    typedef se3::FrameIndex     FrameIndex;
     typedef se3::GeomIndex      GeomIndex;
     typedef se3::Model          Model;
     typedef se3::Data           Data;

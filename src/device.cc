@@ -207,6 +207,19 @@ namespace hpp {
                                 + name);
     }
 
+    Frame Device::
+    getFrameByName (const std::string& name) const
+    {
+      assert(model_);
+      const se3::FrameType type = (se3::FrameType)(se3::JOINT | se3::FIXED_JOINT);
+      if(! model_->existFrame(name, type))
+	throw std::logic_error ("Device " + name_ +
+				" does not have any frame named "
+				+ name);
+      FrameIndex id = model_->getFrameId(name, type);
+      return Frame(weakPtr_.lock(), id);
+    }
+
     size_type Device::
     configSize () const
     {
