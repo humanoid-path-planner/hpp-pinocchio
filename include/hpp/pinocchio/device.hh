@@ -148,13 +148,11 @@ namespace hpp {
       /// \name Joints
       /// \{
 
-      //DEPREC /// Set the root of the kinematic chain
-      //DEPREC virtual void rootJoint (JointPtr_t joint);
-      //DEPREC /// Set position of root joint in world frame
-      //DEPREC void rootJointPosition (const Transform3f& position);
-
       /// Get root joint
       JointPtr_t rootJoint () const;
+
+      /// Get root frame
+      Frame rootFrame () const;
 
       //DEPREC /// Register joint in internal containers
       //DEPREC void registerJoint (const JointPtr_t& joint);

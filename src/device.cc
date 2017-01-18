@@ -141,10 +141,15 @@ namespace hpp {
     /* --- JOINT ------------------------------------------------------------ */
     /* ---------------------------------------------------------------------- */
 
-    JointPtr_t Device::
-    rootJoint () const
+    JointPtr_t Device::rootJoint () const
     {
       return JointPtr_t( new Joint(weakPtr_.lock(),1) );
+    }
+
+    Frame Device::rootFrame () const
+    {
+      const se3::FrameType type = (se3::FrameType)(se3::JOINT | se3::FIXED_JOINT);
+      return Frame(weakPtr_.lock(), model().getFrameId("root_joint", type));
     }
 
     JointPtr_t Device::
