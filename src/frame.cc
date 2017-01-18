@@ -79,16 +79,22 @@ namespace hpp {
       return pinocchio().name;
     }
 
-    const Transform3f&  Frame::currentTransformation () const 
+    Transform3f Frame::currentTransformation () const 
     {
       selfAssert();
-      return data().oMf[frameIndex_];
+      const Data & d = data();
+      const se3::Frame f = model().frames[frameIndex_];
+      if (f.type == se3::JOINT)
+        return d.oMi[f.parent];
+      else
+        return d.oMi[f.parent] * f.placement;
     }
 
     void Frame::setChildList()
     {
       assert(devicePtr_->modelPtr()); assert(devicePtr_->dataPtr());
       children_.clear();
+      if (!isFixed()) return;
       const Model& model = devicePtr_->model();
 
       std::vector<bool> visited (model.frames.size(), false);
@@ -104,11 +110,8 @@ namespace hpp {
       for (FrameIndex i = model.frames.size() - 1; i > 0; --i) {
         if (visited[i]) continue;
         visited[i] = true;
-        if (   model.frames[i].type != se3::FIXED_JOINT
-            && model.frames[i].type != se3::JOINT)
-          continue;
         k = model.frames[i].previousFrame;
-        while (model.frames[k].type == se3::FIXED_JOINT) {
+        while (model.frames[k].type != se3::JOINT) {
           if (k == frameIndex_ || k == 0) break;
           visited[k] = true;
           k = model.frames[k].previousFrame;
@@ -135,8 +138,10 @@ namespace hpp {
     Transform3f Frame::positionInParentFrame () const
     {
       selfAssert();
-      return model().frames[pinocchio().previousFrame].placement.inverse() 
-        *    model().frames[index()                  ].placement;
+      const Model& m = model();
+      const se3::Frame f = m.frames[index()];
+      return m.frames[f.previousFrame].placement.inverse() 
+        * ((f.type == se3::FIXED_JOINT) ? f.placement : m.jointPlacements[f.parent]);
     }
 
     void Frame::positionInParentFrame (const Transform3f& p)
@@ -145,8 +150,12 @@ namespace hpp {
       devicePtr_->invalidate();
       Model& model = devicePtr_->model();
       se3::Frame& me = pinocchio();
-      Transform3f fMj = me.placement.inverse();
-      me.placement = model.frames[me.previousFrame].placement * p;
+      bool isJoint = (me.type == se3::JOINT);
+      Transform3f fMj = (isJoint ? model.jointPlacements[me.parent].inverse() : me.placement.inverse());
+      if (isJoint)
+        model.jointPlacements[me.parent] = model.frames[me.previousFrame].placement * p;
+      else
+        me.placement = model.frames[me.previousFrame].placement * p;
 
       std::vector<bool> visited (model.frames.size(), false);
       for (std::size_t i = 0; i < children_.size(); ++i) {
