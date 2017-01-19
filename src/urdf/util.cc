@@ -128,22 +128,23 @@ namespace hpp {
             const JointIndex& rtIdx,
             const std::string& rootType)
         {
+          const std::size_t idx = model.joints[rtIdx].idx_q();
           if (rootType == "freeflyer") {
             value_type b = std::numeric_limits<value_type>::infinity();
-            model.upperPositionLimit.segment<3>(rtIdx).setConstant(+b);
-            model.lowerPositionLimit.segment<3>(rtIdx).setConstant(-b);
+            model.upperPositionLimit.segment<3>(idx).setConstant(+b);
+            model.lowerPositionLimit.segment<3>(idx).setConstant(-b);
             // Quaternion bounds
             b = 1.01;
-            const size_type quat_idx = model.joints[rtIdx].idx_q() + 3;
+            const size_type quat_idx = idx + 3;
             model.upperPositionLimit.segment<4>(quat_idx).setConstant(+b);
             model.lowerPositionLimit.segment<4>(quat_idx).setConstant(-b);
           } else if (rootType == "planar") {
             value_type b = std::numeric_limits<value_type>::infinity();
-            model.upperPositionLimit.segment<2>(rtIdx).setConstant(+b);
-            model.lowerPositionLimit.segment<2>(rtIdx).setConstant(-b);
+            model.upperPositionLimit.segment<2>(idx).setConstant(+b);
+            model.lowerPositionLimit.segment<2>(idx).setConstant(-b);
             // Unit complex bounds
             b = 1.01;
-            const size_type cplx_idx = model.joints[rtIdx].idx_q() + 2;
+            const size_type cplx_idx = idx + 2;
             model.upperPositionLimit.segment<2>(cplx_idx).setConstant(+b);
             model.lowerPositionLimit.segment<2>(cplx_idx).setConstant(-b);
           }
