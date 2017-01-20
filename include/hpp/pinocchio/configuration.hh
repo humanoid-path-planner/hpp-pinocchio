@@ -66,11 +66,18 @@ namespace hpp {
     /// \param u in [0,1] position along the interpolation: q0 for u=0,
     /// q1 for u=1
     /// \retval result interpolated configuration
+    template <typename LieGroup>
     void interpolate  (const DevicePtr_t& robot,
                        ConfigurationIn_t q0,
                        ConfigurationIn_t q1,
                        const value_type& u,
                        ConfigurationOut_t result);
+
+    void interpolate (const DevicePtr_t& robot,
+                      ConfigurationIn_t q0,
+                      ConfigurationIn_t q1,
+                      const value_type& u,
+                      ConfigurationOut_t result);
 
     /// Difference between two configurations as a vector
     ///
