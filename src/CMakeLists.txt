@@ -28,6 +28,7 @@ SET(LIBRARY_SOURCES
   gripper.cc
   center-of-mass-computation.cc
   configuration.cc
+  simple-device.cc
 
   urdf/util.cc
   )

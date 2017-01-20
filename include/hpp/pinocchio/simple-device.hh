@@ -17,7 +17,7 @@
 #ifndef HPP_PINOCCHIO_SIMPLE_DEVICE_HH
 # define HPP_PINOCCHIO_SIMPLE_DEVICE_HH
 
-# include <pinocchio/parsers/sample-models.hpp>
+# include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/device.hh>
 
 namespace hpp {
@@ -26,17 +26,7 @@ namespace hpp {
         const std::string& name = "humanoidSimple",
         bool usingFF = true,
         Device::Computation_t compFlags = (Device::Computation_t) (Device::JOINT_POSITION | Device::JACOBIAN)
-        )
-    {
-      DevicePtr_t robot = Device::create (name);
-      se3::buildModels::humanoidSimple(robot->model(), usingFF);
-      robot->createData();
-      robot->createGeomData();
-      robot->controlComputation(compFlags);
-      robot->currentConfiguration(robot->neutralConfiguration());
-      robot->computeForwardKinematics();
-      return robot;
-    }
+        );
   } // namespace pinocchio
 } // namespace hpp
 #endif // HPP_PINOCCHIO_SIMPLE_DEVICE_HH
