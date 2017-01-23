@@ -128,9 +128,9 @@ namespace hpp {
             const JointIndex& rtIdx,
             const std::string& rootType)
         {
-          const std::size_t idx = model.joints[rtIdx].idx_q();
+          value_type b = std::numeric_limits<value_type>::infinity();
           if (rootType == "freeflyer") {
-            value_type b = std::numeric_limits<value_type>::infinity();
+            const std::size_t idx = model.joints[rtIdx].idx_q();
             model.upperPositionLimit.segment<3>(idx).setConstant(+b);
             model.lowerPositionLimit.segment<3>(idx).setConstant(-b);
             // Quaternion bounds
@@ -139,7 +139,7 @@ namespace hpp {
             model.upperPositionLimit.segment<4>(quat_idx).setConstant(+b);
             model.lowerPositionLimit.segment<4>(quat_idx).setConstant(-b);
           } else if (rootType == "planar") {
-            value_type b = std::numeric_limits<value_type>::infinity();
+            const std::size_t idx = model.joints[rtIdx].idx_q();
             model.upperPositionLimit.segment<2>(idx).setConstant(+b);
             model.lowerPositionLimit.segment<2>(idx).setConstant(-b);
             // Unit complex bounds
