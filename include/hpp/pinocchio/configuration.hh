@@ -89,6 +89,10 @@ namespace hpp {
     /// \f$\textbf{v}\f$
     /// \note If the configuration space is a vector space, this is
     /// \f$\textbf{v} = q_1 - q_2\f$
+    template <typename LieGroup>
+    void difference (const DevicePtr_t& robot, ConfigurationIn_t q1,
+                     ConfigurationIn_t q2, vectorOut_t result);
+
     void difference (const DevicePtr_t& robot, ConfigurationIn_t q1,
                      ConfigurationIn_t q2, vectorOut_t result);
 
