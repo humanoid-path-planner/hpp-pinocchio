@@ -86,8 +86,8 @@ namespace hpp {
       const_iterator rbegin() const { return const_iterator(*this,iend()-1  ); }
       const_iterator rend()   const { return const_iterator(*this,ibegin()-1); }
 
-      T               operator[](const int idx)       { return at(idx); }
-      Tconst          operator[](const int idx) const { return at(idx); }
+      T               operator[](const size_type idx)       { return at(idx); }
+      Tconst          operator[](const size_type idx) const { return at(idx); }
 
       DevicePtr_t device () const { assert(!deviceWkPtr_.expired()); return deviceWkPtr_.lock(); }
     };
