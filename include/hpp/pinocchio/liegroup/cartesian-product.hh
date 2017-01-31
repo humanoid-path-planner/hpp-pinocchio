@@ -92,6 +92,14 @@ namespace hpp {
             LieGroup2::getRotationSubJacobian(Jin.template rightCols<LieGroup2::NV>(),
                                               J  .template rightCols<LieGroup2::NR>());
         }
+
+        template <class ConfigIn_t>
+        static bool isValidConfig(const Eigen::MatrixBase<ConfigIn_t > & q, const value_type& eps)
+        {
+          EIGEN_STATIC_ASSERT_SAME_VECTOR_SIZE(ConfigIn_t , Base::ConfigVector_t);
+          return LieGroup1::isValidConfig(q.template head<LieGroup1::NQ>(), eps)
+            &&   LieGroup2::isValidConfig(q.template tail<LieGroup2::NQ>(), eps);
+        }
       }; // struct CartesianProductOperation
     } // namespace liegroup
   } // namespace pinocchio

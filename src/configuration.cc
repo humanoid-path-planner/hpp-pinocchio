@@ -133,37 +133,30 @@ namespace hpp {
       JOINT_MODEL_VISITOR_INIT(IsValidStep);
 
       template<typename JointModel>
-      static void algo(const se3::JointModelBase<JointModel> &,
-                       ConfigurationIn_t,
-                       const value_type &,
-                       bool & ret)
-      {
-        ret = true;
-      }
-
-      template<int I>
-      static void algo(const se3::JointModelRevoluteUnbounded<I> & jmodel,
+      static void algo(const se3::JointModelBase<JointModel> & jmodel,
                        ConfigurationIn_t q,
                        const value_type & eps,
                        bool & ret)
       {
-        ret = (std::abs(jmodel.jointConfigSelector(q).norm() - 1) < eps );
-      }
-
-      static void algo(const se3::JointModelFreeFlyer & jmodel,
-                       ConfigurationIn_t q,
-                       const value_type & eps,
-                       bool & ret)
-      {
-        ret = (std::abs(jmodel.jointConfigSelector(q).norm() - 1) < eps );
+        typedef typename LieGroupTpl::operation<JointModel>::type LG_t;
+        ret = ret && LG_t::isValidConfig(jmodel.jointConfigSelector(q), eps);
       }
     };
 
+    template<>
+    void IsValidStep::algo<se3::JointModelComposite>(const se3::JointModelBase<se3::JointModelComposite> & jmodel,
+                     ConfigurationIn_t q,
+                     const value_type & eps,
+                     bool & ret)
+    {
+      se3::details::Dispatch<IsValidStep>::run(jmodel, IsValidStep::ArgsType(q, eps, ret));
+    }
+
     bool isValidConfiguration (const DevicePtr_t& robot, ConfigurationIn_t q, const value_type& eps)
     {
-      bool ret;
+      bool ret = true;
       const se3::Model& model = robot->model();
-      for (std::size_t i = 1; model.njoints; ++i) {
+      for (std::size_t i = 1; i < model.njoints; ++i) {
         IsValidStep::run(model.joints[i],
                          IsValidStep::ArgsType(q, eps, ret));
         if (!ret) return false;

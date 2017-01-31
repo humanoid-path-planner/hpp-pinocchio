@@ -88,6 +88,12 @@ namespace hpp {
         {
           details::assign_if<rot>::run(Jin, Jout);
         }
+
+        template <class ConfigIn_t>
+        static bool isValidConfig(const Eigen::MatrixBase<ConfigIn_t > &, const value_type&)
+        {
+          return true;
+        }
       };
     } // namespace liegroup
   } // namespace pinocchio
