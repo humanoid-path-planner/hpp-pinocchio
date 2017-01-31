@@ -123,5 +123,52 @@ namespace hpp {
     {
       se3::normalize(robot->model(), q);
     }
+
+    struct IsValidStep : public se3::fusion::JointModelVisitor<IsValidStep>
+    {
+      typedef boost::fusion::vector<ConfigurationIn_t,
+                                    const value_type &,
+                                    bool &> ArgsType;
+
+      JOINT_MODEL_VISITOR_INIT(IsValidStep);
+
+      template<typename JointModel>
+      static void algo(const se3::JointModelBase<JointModel> &,
+                       ConfigurationIn_t,
+                       const value_type &,
+                       bool & ret)
+      {
+        ret = true;
+      }
+
+      template<int I>
+      static void algo(const se3::JointModelRevoluteUnbounded<I> & jmodel,
+                       ConfigurationIn_t q,
+                       const value_type & eps,
+                       bool & ret)
+      {
+        ret = (std::abs(jmodel.jointConfigSelector(q).norm() - 1) < eps );
+      }
+
+      static void algo(const se3::JointModelFreeFlyer & jmodel,
+                       ConfigurationIn_t q,
+                       const value_type & eps,
+                       bool & ret)
+      {
+        ret = (std::abs(jmodel.jointConfigSelector(q).norm() - 1) < eps );
+      }
+    };
+
+    bool isValidConfiguration (const DevicePtr_t& robot, ConfigurationIn_t q, const value_type& eps)
+    {
+      bool ret;
+      const se3::Model& model = robot->model();
+      for (std::size_t i = 1; model.njoints; ++i) {
+        IsValidStep::run(model.joints[i],
+                         IsValidStep::ArgsType(q, eps, ret));
+        if (!ret) return false;
+      }
+      return true;
+    }
   } // namespace pinocchio
 } // namespace hpp
