@@ -31,21 +31,13 @@
 
 #include <pinocchio/algorithm/joint-configuration.hpp>
 
-#include <hpp/model/device.hh>
-#include <hpp/model/urdf/util.hh>
-
 #include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/humanoid-robot.hh>
 #include <hpp/pinocchio/configuration.hh>
-#include "../tests/utils.hh"
 
-/// This is a mere copy of the test in hpp-model.
-/// Not testing against hpp-model outputs.
+#include <hpp/pinocchio/urdf/util.hh>
 
-using hpp::pinocchio::Configuration_t;
-using hpp::pinocchio::vector_t;
-using hpp::pinocchio::vectorIn_t;
-using hpp::pinocchio::value_type;
-using hpp::pinocchio::size_type;
+using namespace hpp::pinocchio;
 typedef Eigen::AngleAxis <value_type> AngleAxis_t;
 typedef Eigen::Quaternion <value_type> Quaternion_t;
 
@@ -70,6 +62,16 @@ vector_t interpolation (hpp::pinocchio::DevicePtr_t robot, vectorIn_t q0, vector
   bool print = false;
 
   vector_t q2 (q0);
+  vector_t v (robot->numberDof());
+  hpp::pinocchio::difference  (robot, q1, q0, v);
+
+  /// Check that q1 - q0 is the same as (-q1) - q0
+  vector_t mq1 (q1);
+  mq1.segment<4>(rso3) *= -1;
+  vector_t mv (robot->numberDof());
+  hpp::pinocchio::difference  (robot, mq1, q0, mv);
+  BOOST_CHECK(mv.isApprox(v));
+
   value_type u = 0;
   value_type step = (value_type)1 / (value_type)(n + 2);
   vector_t angle1 (n+2), angle2(n+2);
@@ -78,23 +80,38 @@ vector_t interpolation (hpp::pinocchio::DevicePtr_t robot, vectorIn_t q0, vector
   for (int i = 0; i < n + 2; ++i) {
     u = 0 + i * step;
     hpp::pinocchio::interpolate (robot, q0, q1, u, q2);
-    if (print) std::cout << q2.segment<4>(rso3).transpose() << "\n";
     AngleAxis_t aa1 (aa (q0.segment<4>(rso3),q2.segment<4>(rso3)));
     angle1[i] = aa1.angle ();
     if (print) std::cout << aa1.angle () << ", ";
+    if (print) std::cout << q2.segment<4>(rso3).transpose() << "\n";
   }
   if (print) std::cout << "\nEigen: ";
   for (int i = 0; i < n + 2; ++i) {
     u = 0 + i * step;
     vector_t eigen_slerp = slerp (q0.segment<4>(rso3), q1.segment<4>(rso3), u);
-    if (print) std::cout << eigen_slerp.transpose() << "\n";
     AngleAxis_t aa2 (aa (q0.segment<4>(rso3),eigen_slerp));
     angle2[i] = aa2.angle ();
     if (print) std::cout << aa2.angle () << ", ";
+    if (print) std::cout << eigen_slerp.transpose() << "\n";
   }
   if (print) std::cout << "\n";
   return angle1 - angle2;
 }
+
+/* Build a hpp::pinocchio::Device from urdf path. */
+DevicePtr_t hppPinocchio()
+{
+  HumanoidRobotPtr_t robot  = HumanoidRobot::create("romeo");
+  urdf::loadHumanoidModel (robot,
+			   "freeflyer",
+			   "romeo_description",
+			   "romeo",
+			   "_small",
+			   "_small");
+  return robot;
+}
+
+const size_type NB_CONF = 4;
 
 BOOST_AUTO_TEST_CASE(difference_and_integrate)
 {
@@ -107,11 +124,11 @@ BOOST_AUTO_TEST_CASE(difference_and_integrate)
   Configuration_t q2; q2.resize (robot->configSize ());
   vector_t q1_minus_q0; q1_minus_q0.resize (robot->numberDof ());
   const value_type eps_dist = (value_type)robot->numberDof() * sqrt(Eigen::NumTraits<value_type>::epsilon());
-  for (size_type i=0; i<10000; ++i) {
+  for (size_type i=0; i<NB_CONF; ++i) {
     q0 = se3::randomConfiguration (robot->model());
     q1 = se3::randomConfiguration (robot->model());
 
-    hpp::pinocchio::difference (robot, q1, q0, q1_minus_q0);
+    hpp::pinocchio::difference<se3::LieGroupTpl> (robot, q1, q0, q1_minus_q0);
     hpp::pinocchio::integrate (robot, q0, q1_minus_q0, q2);
 
     // Check that the distance is the norm of the difference
@@ -120,6 +137,7 @@ BOOST_AUTO_TEST_CASE(difference_and_integrate)
         "\nThe distance is not the norm of the difference\n" <<
         "q0=" << q0.transpose () << "\n" <<
         "q1=" << q1.transpose () << "\n" <<
+        "(q1 - q0) = " << q1_minus_q0.transpose () << '\n' <<
         "distance=" << distance  << "\n" <<
         "(q1 - q0).norm () = " << q1_minus_q0.norm ()
         );
@@ -135,7 +153,7 @@ BOOST_AUTO_TEST_CASE(difference_and_integrate)
   }
 }
 
-BOOST_AUTO_TEST_CASE(interpolate)
+BOOST_AUTO_TEST_CASE(testInterpolate)
 {
   hpp::pinocchio::DevicePtr_t robot = hppPinocchio();
   robot->model().lowerPositionLimit.head<3>().setConstant(-1);
@@ -147,7 +165,7 @@ BOOST_AUTO_TEST_CASE(interpolate)
   vector_t q1_minus_q0; q1_minus_q0.resize (robot->numberDof ());
   const value_type eps_dist = robot->numberDof() * sqrt(Eigen::NumTraits<value_type>::epsilon());
   value_type distance;
-  for (size_type i=0; i<10000; ++i) {
+  for (size_type i=0; i<NB_CONF; ++i) {
     q0 = se3::randomConfiguration (robot->model());
     q1 = se3::randomConfiguration (robot->model());
 
@@ -176,4 +194,19 @@ BOOST_AUTO_TEST_CASE(interpolate)
         "distance=" << distance
         );
   }
+}
+
+BOOST_AUTO_TEST_CASE(testConfiguration)
+{
+  hpp::pinocchio::DevicePtr_t robot = hppPinocchio();
+  robot->model().lowerPositionLimit.head<3>().setConstant(-1);
+  robot->model().upperPositionLimit.head<3>().setOnes();
+
+  Configuration_t q = robot->neutralConfiguration();
+  value_type eps = 1e-6;
+  BOOST_CHECK(isValidConfiguration(robot, q, eps));
+
+  /// Set a quaternion of norm != 1
+  q[3] = 1; q[4] = 1;
+  BOOST_CHECK(!isValidConfiguration(robot, q, eps));
 }
