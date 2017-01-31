@@ -18,14 +18,13 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <hpp/model/device.hh>
-
 #include <pinocchio/algorithm/frames.hpp>
 
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/humanoid-robot.hh>
 #include <hpp/pinocchio/frame.hh>
-#include "../tests/utils.hh"
+#include <hpp/pinocchio/urdf/util.hh>
 
 static bool verbose = false;
 
@@ -49,6 +48,19 @@ void check_children(const Model& model, const Frame& f, Strings_t expected_child
   for (std::size_t i = 0; i < expected_children.size(); ++i) {
     BOOST_CHECK_MESSAGE(false, "Frame " << expected_children[i] << " not found");
   }
+}
+
+/* Build a hpp::pinocchio::Device from urdf path. */
+DevicePtr_t hppPinocchio()
+{
+  HumanoidRobotPtr_t robot  = HumanoidRobot::create("romeo");
+  urdf::loadHumanoidModel (robot,
+			   "freeflyer",
+			   "romeo_description",
+			   "romeo",
+			   "_small",
+			   "_small");
+  return robot;
 }
 
 BOOST_AUTO_TEST_CASE (frame)
