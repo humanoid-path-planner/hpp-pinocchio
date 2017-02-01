@@ -111,7 +111,7 @@ Robots_t createRobots()
 
 const size_type NB_CONF = 4;
 const size_type NB_SUCCESSIVE_INTERPOLATION = 1000;
-const value_type eps = 1e-12;
+const value_type eps = sqrt(Eigen::NumTraits<value_type>::dummy_precision());
 
 BOOST_AUTO_TEST_CASE(is_valid_configuration)
 {
@@ -130,8 +130,8 @@ BOOST_AUTO_TEST_CASE(is_valid_configuration)
   q = robot->neutralConfiguration();
   BOOST_CHECK(isNormalized(robot, q, eps));
 
-  /// Set a quaternion of norm != 1
-  q[2] = 1; q[3] = 1;
+  /// Set a complex of norm != 1
+  q.segment<2>(2) << 1, 1;
   BOOST_CHECK(!isNormalized(robot, q, eps));
 
   robot = unittest::makeDevice(unittest::CarLike);

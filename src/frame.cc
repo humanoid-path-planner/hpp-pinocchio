@@ -113,6 +113,14 @@ namespace hpp {
         k = model.frames[i].previousFrame;
         while (model.frames[k].type != se3::JOINT) {
           if (k == frameIndex_ || k == 0) break;
+          // if (visited[k]) {
+            // std::vector<FrameIndex>::iterator _k = 
+              // std::find(children_.begin(), children_.end(), k);
+            // if (_k != children_.end())
+              // children_.erase(_k);
+            // k = frameIndex_;
+            // break;
+          // }
           visited[k] = true;
           k = model.frames[k].previousFrame;
         }
