@@ -71,7 +71,7 @@ namespace hpp {
         }
 
         template <class ConfigIn_t>
-        static bool isValidConfig(const Eigen::MatrixBase<ConfigIn_t > & q, const value_type& eps)
+        static bool isNormalized(const Eigen::MatrixBase<ConfigIn_t > & q, const value_type& eps)
         {
           EIGEN_STATIC_ASSERT_SAME_VECTOR_SIZE(ConfigIn_t , Base::ConfigVector_t);
           return (std::abs(q.norm() - 1) < eps );

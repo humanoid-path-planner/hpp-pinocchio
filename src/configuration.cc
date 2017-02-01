@@ -141,13 +141,13 @@ namespace hpp {
       se3::normalize(robot->model(), q);
     }
 
-    struct IsValidStep : public se3::fusion::JointModelVisitor<IsValidStep>
+    struct IsNormalizedStep : public se3::fusion::JointModelVisitor<IsNormalizedStep>
     {
       typedef boost::fusion::vector<ConfigurationIn_t,
                                     const value_type &,
                                     bool &> ArgsType;
 
-      JOINT_MODEL_VISITOR_INIT(IsValidStep);
+      JOINT_MODEL_VISITOR_INIT(IsNormalizedStep);
 
       template<typename JointModel>
       static void algo(const se3::JointModelBase<JointModel> & jmodel,
@@ -156,26 +156,26 @@ namespace hpp {
                        bool & ret)
       {
         typedef typename LieGroupTpl::operation<JointModel>::type LG_t;
-        ret = ret && LG_t::isValidConfig(jmodel.jointConfigSelector(q), eps);
+        ret = ret && LG_t::isNormalized(jmodel.jointConfigSelector(q), eps);
       }
     };
 
     template<>
-    void IsValidStep::algo<se3::JointModelComposite>(const se3::JointModelBase<se3::JointModelComposite> & jmodel,
+    void IsNormalizedStep::algo<se3::JointModelComposite>(const se3::JointModelBase<se3::JointModelComposite> & jmodel,
                      ConfigurationIn_t q,
                      const value_type & eps,
                      bool & ret)
     {
-      se3::details::Dispatch<IsValidStep>::run(jmodel, IsValidStep::ArgsType(q, eps, ret));
+      se3::details::Dispatch<IsNormalizedStep>::run(jmodel, IsNormalizedStep::ArgsType(q, eps, ret));
     }
 
-    bool isValidConfiguration (const DevicePtr_t& robot, ConfigurationIn_t q, const value_type& eps)
+    bool isNormalized (const DevicePtr_t& robot, ConfigurationIn_t q, const value_type& eps)
     {
       bool ret = true;
       const se3::Model& model = robot->model();
-      for (std::size_t i = 1; i < model.njoints; ++i) {
-        IsValidStep::run(model.joints[i],
-                         IsValidStep::ArgsType(q, eps, ret));
+      for (std::size_t i = 1; i < (std::size_t)model.njoints; ++i) {
+        IsNormalizedStep::run(model.joints[i],
+                         IsNormalizedStep::ArgsType(q, eps, ret));
         if (!ret) return false;
       }
       return true;

@@ -119,25 +119,25 @@ BOOST_AUTO_TEST_CASE(is_valid_configuration)
   robot = unittest::makeDevice(unittest::HumanoidRomeo);
 
   Configuration_t q = robot->neutralConfiguration();
-  BOOST_CHECK(isValidConfiguration(robot, q, eps));
+  BOOST_CHECK(isNormalized(robot, q, eps));
 
   /// Set a quaternion of norm != 1
   q[3] = 1; q[4] = 1;
-  BOOST_CHECK(!isValidConfiguration(robot, q, eps));
+  BOOST_CHECK(!isNormalized(robot, q, eps));
 
   robot = unittest::makeDevice(unittest::CarLike);
 
   q = robot->neutralConfiguration();
-  BOOST_CHECK(isValidConfiguration(robot, q, eps));
+  BOOST_CHECK(isNormalized(robot, q, eps));
 
   /// Set a quaternion of norm != 1
   q[2] = 1; q[3] = 1;
-  BOOST_CHECK(!isValidConfiguration(robot, q, eps));
+  BOOST_CHECK(!isNormalized(robot, q, eps));
 
   robot = unittest::makeDevice(unittest::CarLike);
 
   q = robot->neutralConfiguration();
-  BOOST_CHECK(isValidConfiguration(robot, q, eps));
+  BOOST_CHECK(isNormalized(robot, q, eps));
 }
 
 void test_difference_and_distance(DevicePtr_t robot)
@@ -151,8 +151,8 @@ void test_difference_and_distance(DevicePtr_t robot)
     q0 = se3::randomConfiguration (robot->model());
     q1 = se3::randomConfiguration (robot->model());
 
-    BOOST_CHECK(isValidConfiguration(robot, q0, eps));
-    BOOST_CHECK(isValidConfiguration(robot, q1, eps));
+    BOOST_CHECK(isNormalized(robot, q0, eps));
+    BOOST_CHECK(isNormalized(robot, q1, eps));
 
     difference<se3::LieGroupTpl> (robot, q1, q0, q1_minus_q0);
 
@@ -190,13 +190,13 @@ void test_difference_and_integrate(DevicePtr_t robot)
     q0 = se3::randomConfiguration (robot->model());
     q1 = se3::randomConfiguration (robot->model());
 
-    BOOST_CHECK(isValidConfiguration(robot, q0, eps));
-    BOOST_CHECK(isValidConfiguration(robot, q1, eps));
+    BOOST_CHECK(isNormalized(robot, q0, eps));
+    BOOST_CHECK(isNormalized(robot, q1, eps));
 
     difference<LieGroup> (robot, q1, q0, q1_minus_q0);
     integrate<true, LieGroup> (robot, q0, q1_minus_q0, q2);
 
-    BOOST_CHECK(isValidConfiguration(robot, q2, eps));
+    BOOST_CHECK(isNormalized(robot, q2, eps));
 
     // Check that distance (q0 + (q1 - q0), q1) is zero
     BOOST_CHECK_MESSAGE (isApprox(robot, q1, q2, eps),
@@ -230,8 +230,8 @@ void test_interpolate_and_integrate (DevicePtr_t robot)
     q0 = se3::randomConfiguration (robot->model());
     q1 = se3::randomConfiguration (robot->model());
 
-    BOOST_CHECK(isValidConfiguration(robot, q0, eps));
-    BOOST_CHECK(isValidConfiguration(robot, q1, eps));
+    BOOST_CHECK(isNormalized(robot, q0, eps));
+    BOOST_CHECK(isNormalized(robot, q1, eps));
 
     difference<LieGroup> (robot, q1, q0, q1_minus_q0);
 
@@ -264,8 +264,8 @@ void test_interpolate_and_integrate (DevicePtr_t robot)
     interpolate<LieGroup> (robot, q0, q1, 0.5, q2);
     integrate<true, LieGroup> (robot, q0, 0.5 * q1_minus_q0, q3);
 
-    BOOST_CHECK(isValidConfiguration(robot, q2, eps));
-    BOOST_CHECK(isValidConfiguration(robot, q3, eps));
+    BOOST_CHECK(isNormalized(robot, q2, eps));
+    BOOST_CHECK(isNormalized(robot, q3, eps));
 
     BOOST_CHECK(isApprox(robot, q2, q3, eps));
 
@@ -303,11 +303,11 @@ void test_successive_interpolation (DevicePtr_t robot)
 
     for (size_type i=0; i<NB_SUCCESSIVE_INTERPOLATION; ++i) {
       q1 = se3::randomConfiguration (robot->model());
-      BOOST_CHECK(isValidConfiguration(robot, q1, eps));
+      BOOST_CHECK(isNormalized(robot, q1, eps));
       difference<LieGroup> (robot, q1, q0, q1_minus_q0);
 
       integrate<true, LieGroup> (robot, q0, 0.5 * q1_minus_q0, q0);
-      BOOST_CHECK(isValidConfiguration(robot, q0, eps));
+      BOOST_CHECK(isNormalized(robot, q0, eps));
     }
   }
 }

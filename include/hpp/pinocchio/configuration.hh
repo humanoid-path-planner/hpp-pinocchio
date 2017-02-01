@@ -134,8 +134,8 @@ namespace hpp {
     /// Check if a configuration is normalized
     ///
     /// It consists in checking that norm of quaternions and complex is one.
-    bool isValidConfiguration (const DevicePtr_t& robot, ConfigurationIn_t q,
-                               const value_type& eps);
+    bool isNormalized (const DevicePtr_t& robot, ConfigurationIn_t q,
+                       const value_type& eps);
 
     /// Write configuration in a string
     inline std::string displayConfig (ConfigurationIn_t q)

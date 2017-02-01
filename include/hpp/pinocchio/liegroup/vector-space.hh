@@ -90,7 +90,7 @@ namespace hpp {
         }
 
         template <class ConfigIn_t>
-        static bool isValidConfig(const Eigen::MatrixBase<ConfigIn_t > &, const value_type&)
+        static bool isNormalized(const Eigen::MatrixBase<ConfigIn_t > &, const value_type&)
         {
           return true;
         }
