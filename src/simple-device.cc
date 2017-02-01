@@ -18,6 +18,10 @@
 
 # include <pinocchio/parsers/sample-models.hpp>
 
+# include <hpp/pinocchio/device.hh>
+# include <hpp/pinocchio/humanoid-robot.hh>
+# include <hpp/pinocchio/urdf/util.hh>
+
 namespace hpp {
   namespace pinocchio {
     DevicePtr_t humanoidSimple(
@@ -40,6 +44,50 @@ namespace hpp {
       robot->model().lowerPositionLimit.segment<4>(3).setConstant(-1.01);
       robot->model().upperPositionLimit.segment<4>(3).setConstant( 1.01);
       return robot;
+    }
+
+    namespace unittest {
+      DevicePtr_t makeDevice (TestDeviceType type)
+      {
+        switch (type) {
+#ifdef HPP_ENVIRONMENTS
+          case CarLike:
+            {
+              DevicePtr_t robot  = Device::create("carlike");
+              urdf::loadRobotModel (robot, "planar", "hpp_environments", "buggy", "", "");
+              robot->model().lowerPositionLimit.head<2>().setConstant(-1);
+              robot->model().upperPositionLimit.head<2>().setOnes();
+              return robot;
+            }
+          case ManipulatorArm2:
+            {
+              DevicePtr_t robot  = Device::create("arm");
+              urdf::loadRobotModel (robot, "anchor", "hpp_environments", "tests/baxter", "_simple", "_simple");
+              return robot;
+            }
+#else
+          case CarLike:
+          case ManipulatorArm2:
+            throw std::invalid_argument("hpp-pinocchio was compiled without HPP_ENVIRONMENTS");
+#endif
+            break;
+          case HumanoidRomeo:
+#ifdef ROMEO_DESCRIPTION
+            {
+              HumanoidRobotPtr_t robot  = HumanoidRobot::create("romeo");
+              urdf::loadHumanoidModel (robot, "freeflyer", "romeo_description", "romeo", "_small", "_small");
+              robot->model().lowerPositionLimit.head<3>().setConstant(-1);
+              robot->model().upperPositionLimit.head<3>().setOnes();
+              return robot;
+            }
+#else
+            throw std::invalid_argument("hpp-pinocchio was compiled without ROMEO_DESCRIPTION");
+#endif
+            break;
+          default:
+            throw std::invalid_argument("Unknown robot type.");
+        }
+      }
     }
   } // namespace pinocchio
 } // namespace hpp

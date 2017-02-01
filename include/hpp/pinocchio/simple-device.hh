@@ -27,6 +27,16 @@ namespace hpp {
         bool usingFF = true,
         Device::Computation_t compFlags = (Device::Computation_t) (Device::JOINT_POSITION | Device::JACOBIAN)
         );
+
+    namespace unittest {
+      enum TestDeviceType {
+        HumanoidRomeo,
+        CarLike,
+        ManipulatorArm2
+      };
+
+      DevicePtr_t makeDevice (TestDeviceType type);
+    }
   } // namespace pinocchio
 } // namespace hpp
 #endif // HPP_PINOCCHIO_SIMPLE_DEVICE_HH
