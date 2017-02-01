@@ -36,24 +36,41 @@ namespace hpp {
       configuration.tail(d) = ecs.lower().cwiseMax(configuration.tail(d));
     }
 
-    template<bool saturateConfig>
+    template<bool saturateConfig, typename LieGroup>
     void integrate (const DevicePtr_t& robot,
                     ConfigurationIn_t configuration,
                     vectorIn_t velocity, ConfigurationOut_t result)
     {
       const se3::Model& model = robot->model();
-      result.head(model.nq) = se3::integrate<se3::LieGroupTpl>(model, configuration, velocity);
+      result.head(model.nq) = se3::integrate<LieGroup>(model, configuration, velocity);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = configuration.tail (dim) + velocity.tail (dim);
       if (saturateConfig) saturate(robot, result);
     }
 
-    template void integrate<true> (const DevicePtr_t& robot,
+    template void integrate<true,  LieGroupTpl>
+                                  (const DevicePtr_t& robot,
                                    ConfigurationIn_t configuration,
                                    vectorIn_t velocity, ConfigurationOut_t result);
-    template void integrate<false>(const DevicePtr_t& robot,
+    template void integrate<false, LieGroupTpl>
+                                  (const DevicePtr_t& robot,
                                    ConfigurationIn_t configuration,
                                    vectorIn_t velocity, ConfigurationOut_t result);
+    template void integrate<true,  se3::LieGroupTpl>
+                                  (const DevicePtr_t& robot,
+                                   ConfigurationIn_t configuration,
+                                   vectorIn_t velocity, ConfigurationOut_t result);
+    template void integrate<false, se3::LieGroupTpl>
+                                  (const DevicePtr_t& robot,
+                                   ConfigurationIn_t configuration,
+                                   vectorIn_t velocity, ConfigurationOut_t result);
+
+    void integrate (const DevicePtr_t& robot,
+                           ConfigurationIn_t configuration,
+                           vectorIn_t velocity, ConfigurationOut_t result)
+    {
+      integrate<true, se3::LieGroupTpl> (robot, configuration, velocity, result);
+    }
 
     template <typename LieGroup>
     void interpolate (const DevicePtr_t& robot,

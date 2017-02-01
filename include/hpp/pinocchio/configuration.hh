@@ -47,18 +47,15 @@ namespace hpp {
     ///
     /// \note bounded degrees of freedom are saturated if the result of the
     ///       above operation is beyond a bound.
-    template<bool saturateConfig>
+    template<bool saturateConfig, typename LieGroup>
     void integrate (const DevicePtr_t& robot,
                     ConfigurationIn_t configuration,
                     vectorIn_t velocity, ConfigurationOut_t result);
 
-    /// Same as integrate<true>
-    inline void integrate (const DevicePtr_t& robot,
-                           ConfigurationIn_t configuration,
-                           vectorIn_t velocity, ConfigurationOut_t result)
-    {
-      integrate<true> (robot, configuration, velocity, result);
-    }
+    /// Same as integrate<true, se3::LieGroupTpl>
+    void integrate (const DevicePtr_t& robot,
+                    ConfigurationIn_t configuration,
+                    vectorIn_t velocity, ConfigurationOut_t result);
 
     /// Interpolate between two configurations of the robot
     /// \param robot robot that describes the kinematic chain
