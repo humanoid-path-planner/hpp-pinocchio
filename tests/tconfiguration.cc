@@ -34,8 +34,9 @@
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/humanoid-robot.hh>
 #include <hpp/pinocchio/configuration.hh>
+#include <hpp/pinocchio/liegroup.hh>
 
-#include <hpp/pinocchio/urdf/util.hh>
+#include <hpp/pinocchio/simple-device.hh>
 
 using namespace hpp::pinocchio;
 typedef Eigen::AngleAxis <value_type> AngleAxis_t;
@@ -79,7 +80,7 @@ vector_t interpolation (hpp::pinocchio::DevicePtr_t robot, vectorIn_t q0, vector
   if (print) std::cout << "HPP  : ";
   for (int i = 0; i < n + 2; ++i) {
     u = 0 + i * step;
-    hpp::pinocchio::interpolate (robot, q0, q1, u, q2);
+    interpolate (robot, q0, q1, u, q2);
     AngleAxis_t aa1 (aa (q0.segment<4>(rso3),q2.segment<4>(rso3)));
     angle1[i] = aa1.angle ();
     if (print) std::cout << aa1.angle () << ", ";
@@ -98,27 +99,49 @@ vector_t interpolation (hpp::pinocchio::DevicePtr_t robot, vectorIn_t q0, vector
   return angle1 - angle2;
 }
 
-/* Build a hpp::pinocchio::Device from urdf path. */
-DevicePtr_t hppPinocchio()
+typedef std::vector<DevicePtr_t> Robots_t;
+Robots_t createRobots()
 {
-  HumanoidRobotPtr_t robot  = HumanoidRobot::create("romeo");
-  urdf::loadHumanoidModel (robot,
-			   "freeflyer",
-			   "romeo_description",
-			   "romeo",
-			   "_small",
-			   "_small");
-  return robot;
+  Robots_t r;
+  r.push_back(unittest::makeDevice(unittest::HumanoidRomeo));
+  r.push_back(unittest::makeDevice(unittest::CarLike));
+  r.push_back(unittest::makeDevice(unittest::ManipulatorArm2));
+  return r;
 }
 
 const size_type NB_CONF = 4;
+const size_type NB_SUCCESSIVE_INTERPOLATION = 1000;
+const value_type eps = 1e-12;
 
-BOOST_AUTO_TEST_CASE(difference_and_integrate)
+BOOST_AUTO_TEST_CASE(is_valid_configuration)
 {
-  hpp::pinocchio::DevicePtr_t robot = hppPinocchio();
-  robot->model().lowerPositionLimit.head<3>().setConstant(-1);
-  robot->model().upperPositionLimit.head<3>().setOnes();
+  DevicePtr_t robot;
+  robot = unittest::makeDevice(unittest::HumanoidRomeo);
 
+  Configuration_t q = robot->neutralConfiguration();
+  BOOST_CHECK(isValidConfiguration(robot, q, eps));
+
+  /// Set a quaternion of norm != 1
+  q[3] = 1; q[4] = 1;
+  BOOST_CHECK(!isValidConfiguration(robot, q, eps));
+
+  robot = unittest::makeDevice(unittest::CarLike);
+
+  q = robot->neutralConfiguration();
+  BOOST_CHECK(isValidConfiguration(robot, q, eps));
+
+  /// Set a quaternion of norm != 1
+  q[2] = 1; q[3] = 1;
+  BOOST_CHECK(!isValidConfiguration(robot, q, eps));
+
+  robot = unittest::makeDevice(unittest::CarLike);
+
+  q = robot->neutralConfiguration();
+  BOOST_CHECK(isValidConfiguration(robot, q, eps));
+}
+
+void test_difference_and_distance(DevicePtr_t robot)
+{
   Configuration_t q0; q0.resize (robot->configSize ());
   Configuration_t q1; q1.resize (robot->configSize ());
   Configuration_t q2; q2.resize (robot->configSize ());
@@ -128,66 +151,128 @@ BOOST_AUTO_TEST_CASE(difference_and_integrate)
     q0 = se3::randomConfiguration (robot->model());
     q1 = se3::randomConfiguration (robot->model());
 
-    hpp::pinocchio::difference<se3::LieGroupTpl> (robot, q1, q0, q1_minus_q0);
-    hpp::pinocchio::integrate (robot, q0, q1_minus_q0, q2);
+    BOOST_CHECK(isValidConfiguration(robot, q0, eps));
+    BOOST_CHECK(isValidConfiguration(robot, q1, eps));
+
+    difference<se3::LieGroupTpl> (robot, q1, q0, q1_minus_q0);
 
     // Check that the distance is the norm of the difference
-    value_type distance = hpp::pinocchio::distance (robot, q0, q1);
-    BOOST_CHECK_MESSAGE (distance - q1_minus_q0.norm () < Eigen::NumTraits<value_type>::dummy_precision(),
-        "\nThe distance is not the norm of the difference\n" <<
+    value_type d = distance (robot, q0, q1);
+
+    BOOST_CHECK_MESSAGE (std::abs(d - q1_minus_q0.norm ()) < Eigen::NumTraits<value_type>::dummy_precision(),
+        "\n" << robot->name() << ": The distance is not the norm of the difference\n" <<
         "q0=" << q0.transpose () << "\n" <<
         "q1=" << q1.transpose () << "\n" <<
         "(q1 - q0) = " << q1_minus_q0.transpose () << '\n' <<
-        "distance=" << distance  << "\n" <<
+        "distance=" << d  << "\n" <<
         "(q1 - q0).norm () = " << q1_minus_q0.norm ()
-        );
-
-    // Check that distance (q0 + (q1 - q0), q1) is zero
-    distance = hpp::pinocchio::distance (robot, q1, q2);
-    BOOST_CHECK_MESSAGE (distance < eps_dist,
-        "\n(q0 + (q1 - q0)) is not equivalent to q1\n" <<
-        "q1=" << q1.transpose () << "\n" <<
-        "q2=" << q2.transpose () << "\n" <<
-        "distance=" << distance
         );
   }
 }
 
-BOOST_AUTO_TEST_CASE(testInterpolate)
+BOOST_AUTO_TEST_CASE(difference_and_distance)
 {
-  hpp::pinocchio::DevicePtr_t robot = hppPinocchio();
-  robot->model().lowerPositionLimit.head<3>().setConstant(-1);
-  robot->model().upperPositionLimit.head<3>().setOnes();
+  Robots_t robots = createRobots ();
+  for (std::size_t i = 0; i < robots.size(); ++i) {
+    test_difference_and_distance (robots[i]);
+  }
+}
 
+template<typename LieGroup>
+void test_difference_and_integrate(DevicePtr_t robot)
+{
   Configuration_t q0; q0.resize (robot->configSize ());
   Configuration_t q1; q1.resize (robot->configSize ());
   Configuration_t q2; q2.resize (robot->configSize ());
   vector_t q1_minus_q0; q1_minus_q0.resize (robot->numberDof ());
-  const value_type eps_dist = robot->numberDof() * sqrt(Eigen::NumTraits<value_type>::epsilon());
-  value_type distance;
+  const value_type eps_dist = (value_type)robot->numberDof() * sqrt(Eigen::NumTraits<value_type>::epsilon());
   for (size_type i=0; i<NB_CONF; ++i) {
     q0 = se3::randomConfiguration (robot->model());
     q1 = se3::randomConfiguration (robot->model());
 
-    hpp::pinocchio::interpolate (robot, q0, q1, 0, q2);
-    distance = hpp::pinocchio::distance (robot, q0, q2);
-    BOOST_CHECK_MESSAGE (distance < eps_dist,
+    BOOST_CHECK(isValidConfiguration(robot, q0, eps));
+    BOOST_CHECK(isValidConfiguration(robot, q1, eps));
+
+    difference<LieGroup> (robot, q1, q0, q1_minus_q0);
+    integrate<true, LieGroup> (robot, q0, q1_minus_q0, q2);
+
+    BOOST_CHECK(isValidConfiguration(robot, q2, eps));
+
+    // Check that distance (q0 + (q1 - q0), q1) is zero
+    BOOST_CHECK_MESSAGE (isApprox(robot, q1, q2, eps),
+        "\n(q0 + (q1 - q0)) is not equivalent to q1\n" <<
+        "q1=" << q1.transpose () << "\n" <<
+        "q2=" << q2.transpose () << "\n"
+        );
+  }
+}
+
+BOOST_AUTO_TEST_CASE(difference_and_integrate)
+{
+  Robots_t robots = createRobots ();
+  for (std::size_t i = 0; i < robots.size(); ++i) {
+    test_difference_and_integrate<se3::LieGroupTpl> (robots[i]);
+    test_difference_and_integrate<     LieGroupTpl> (robots[i]);
+  }
+}
+
+template<typename LieGroup>
+void test_interpolate_and_integrate (DevicePtr_t robot)
+{
+  Configuration_t q0; q0.resize (robot->configSize ());
+  Configuration_t q1; q1.resize (robot->configSize ());
+  Configuration_t q2; q2.resize (robot->configSize ());
+  Configuration_t q3; q3.resize (robot->configSize ());
+  vector_t q1_minus_q0; q1_minus_q0.resize (robot->numberDof ());
+  const value_type eps_dist = robot->numberDof() * sqrt(Eigen::NumTraits<value_type>::epsilon());
+  value_type d0, d1;
+  for (size_type i=0; i<NB_CONF; ++i) {
+    q0 = se3::randomConfiguration (robot->model());
+    q1 = se3::randomConfiguration (robot->model());
+
+    BOOST_CHECK(isValidConfiguration(robot, q0, eps));
+    BOOST_CHECK(isValidConfiguration(robot, q1, eps));
+
+    difference<LieGroup> (robot, q1, q0, q1_minus_q0);
+
+    interpolate<LieGroup> (robot, q0, q1, 0, q2);
+    d0 = distance (robot, q0, q2);
+
+    BOOST_CHECK_MESSAGE (d0 < eps_dist,
         "\n(q0 + 0 * (q1 - q0)) is not equivalent to q0\n" <<
         "q0=" << q0.transpose () << "\n" <<
         "q1=" << q1.transpose () << "\n" <<
         "q2=" << q2.transpose () << "\n" <<
-        "distance=" << distance
+        "distance=" << d0
         );
 
-    vector_t errors = interpolation (robot, q0, q1, 4);
-    BOOST_CHECK_MESSAGE (errors.isZero (),
-        "The interpolation computed by HPP does not match the Eigen SLERP"
-        );
+    // vector_t errors = interpolation (robot, q0, q1, 4);
+    // BOOST_CHECK_MESSAGE (errors.isZero (),
+        // "The interpolation computed by HPP does not match the Eigen SLERP"
+        // );
 
-    hpp::pinocchio::interpolate (robot, q0, q1, 1, q2);
-    distance = hpp::pinocchio::distance (robot, q1, q2);
-    BOOST_CHECK_MESSAGE (distance < eps_dist,
+    interpolate<LieGroup> (robot, q0, q1, 1, q2);
+    d1 = distance (robot, q1, q2);
+    BOOST_CHECK_MESSAGE (d1 < eps_dist,
         "\n(q0 + 1 * (q1 - q0)) is not equivalent to q1\n" <<
+        "q0=" << q0.transpose () << "\n" <<
+        "q1=" << q1.transpose () << "\n" <<
+        "q2=" << q2.transpose () << "\n" <<
+        "distance=" << d1
+        );
+
+    interpolate<LieGroup> (robot, q0, q1, 0.5, q2);
+    integrate<true, LieGroup> (robot, q0, 0.5 * q1_minus_q0, q3);
+
+    BOOST_CHECK(isValidConfiguration(robot, q2, eps));
+    BOOST_CHECK(isValidConfiguration(robot, q3, eps));
+
+    BOOST_CHECK(isApprox(robot, q2, q3, eps));
+
+    d0 = distance (robot, q0, q2);
+    d1 = distance (robot, q1, q2);
+    BOOST_CHECK_MESSAGE (std::abs(d0 - d1) < eps_dist,
+        "\nq2 = (q0 + 0.5 * (q1 - q0)) is not equivalent to q1\n" <<
         "q0=" << q0.transpose () << "\n" <<
         "q1=" << q1.transpose () << "\n" <<
         "q2=" << q2.transpose () << "\n" <<
@@ -196,17 +281,42 @@ BOOST_AUTO_TEST_CASE(testInterpolate)
   }
 }
 
-BOOST_AUTO_TEST_CASE(testConfiguration)
+BOOST_AUTO_TEST_CASE(interpolate_and_integrate)
 {
-  hpp::pinocchio::DevicePtr_t robot = hppPinocchio();
-  robot->model().lowerPositionLimit.head<3>().setConstant(-1);
-  robot->model().upperPositionLimit.head<3>().setOnes();
+  Robots_t robots = createRobots ();
+  for (std::size_t i = 0; i < robots.size(); ++i) {
+    test_interpolate_and_integrate <se3::LieGroupTpl> (robots[i]);
+    test_interpolate_and_integrate <     LieGroupTpl> (robots[i]);
+  }
+}
 
-  Configuration_t q = robot->neutralConfiguration();
-  value_type eps = 1e-6;
-  BOOST_CHECK(isValidConfiguration(robot, q, eps));
+template<typename LieGroup>
+void test_successive_interpolation (DevicePtr_t robot)
+{
+  Configuration_t q0; q0.resize (robot->configSize ());
+  Configuration_t q1; q1.resize (robot->configSize ());
 
-  /// Set a quaternion of norm != 1
-  q[3] = 1; q[4] = 1;
-  BOOST_CHECK(!isValidConfiguration(robot, q, eps));
+  vector_t q1_minus_q0; q1_minus_q0.resize (robot->numberDof ());
+
+  for (size_type i=0; i<NB_CONF; ++i) {
+    q0 = se3::randomConfiguration (robot->model());
+
+    for (size_type i=0; i<NB_SUCCESSIVE_INTERPOLATION; ++i) {
+      q1 = se3::randomConfiguration (robot->model());
+      BOOST_CHECK(isValidConfiguration(robot, q1, eps));
+      difference<LieGroup> (robot, q1, q0, q1_minus_q0);
+
+      integrate<true, LieGroup> (robot, q0, 0.5 * q1_minus_q0, q0);
+      BOOST_CHECK(isValidConfiguration(robot, q0, eps));
+    }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(successive_interpolation)
+{
+  Robots_t robots = createRobots ();
+  for (std::size_t i = 0; i < robots.size(); ++i) {
+    test_successive_interpolation <se3::LieGroupTpl> (robots[i]);
+    test_successive_interpolation <     LieGroupTpl> (robots[i]);
+  }
 }
