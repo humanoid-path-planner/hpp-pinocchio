@@ -53,9 +53,9 @@ SEARCH_FOR_BOOST()
 
 # Search for dependecies.
 ADD_REQUIRED_DEPENDENCY("assimp")
-ADD_REQUIRED_DEPENDENCY("hpp-util >= 3")
-ADD_REQUIRED_DEPENDENCY("hpp-fcl >= 0.4.2")
-ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.1")
+ADD_REQUIRED_DEPENDENCY("hpp-util >= 3.2")
+ADD_REQUIRED_DEPENDENCY("hpp-fcl >= 0.4.3")
+ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.2.2")
 ADD_REQUIRED_DEPENDENCY("resource_retriever")
 
 ADD_OPTIONAL_DEPENDENCY("hpp-model >= 3")
