@@ -16,6 +16,7 @@
 
 # include <hpp/pinocchio/frame.hh>
 
+# include <pinocchio/multibody/geometry.hpp>
 # include <pinocchio/multibody/joint/joint.hpp>
 # include <pinocchio/algorithm/jacobian.hpp>
 
@@ -25,6 +26,20 @@
 
 namespace hpp {
   namespace pinocchio {
+    namespace {
+      void moveFrame (Model& model, GeomModel& geomModel, const FrameIndex& pF, const Transform3f& new_jMf)
+      {
+        se3::Frame& f = model.frames[pF];
+        const Transform3f old_fMj = f.placement.inverse();
+        for (GeomIndex i = 0; i < geomModel.geometryObjects.size(); ++i) {
+          se3::GeometryObject& go = geomModel.geometryObjects[i];
+          if (go.parentFrame == pF)
+            go.placement = new_jMf * old_fMj * go.placement;
+        }
+        f.placement = new_jMf;
+      }
+    }
+
     Frame::Frame (DevicePtr_t device, FrameIndex indexInFrameList ) 
       :devicePtr_(device)
       ,frameIndex_(indexInFrameList)
@@ -157,6 +172,7 @@ namespace hpp {
       selfAssert();
       devicePtr_->invalidate();
       Model& model = devicePtr_->model();
+      GeomModel& geomModel = devicePtr_->geomModel();
       se3::Frame& me = pinocchio();
       bool isJoint = (me.type == se3::JOINT);
       Transform3f fMj = (isJoint ? model.jointPlacements[me.parent].inverse() : me.placement.inverse());
@@ -173,8 +189,7 @@ namespace hpp {
         while (k != frameIndex_) {
           if (visited[k]) break;
           visited[k] = true;
-          Transform3f& jMk = model.frames[k].placement;
-          jMk = me.placement * fMj * jMk;
+          moveFrame (model, geomModel, k, me.placement * fMj * model.frames[k].placement);
           k = model.frames[k].previousFrame;
         }
       }
