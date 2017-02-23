@@ -35,9 +35,9 @@ namespace hpp {
 
       namespace {
 #ifdef HPP_DEBUG
-        const bool verbose = false;
-#else
         const bool verbose = true;
+#else
+        const bool verbose = false;
 #endif
 
         JointPtr_t findSpecialJoint (const HumanoidRobotPtr_t& robot, const std::string& linkName)
