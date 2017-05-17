@@ -22,17 +22,22 @@
 #include <boost/foreach.hpp>
 #include <Eigen/Core>
 
+#include <hpp/fcl/BV/AABB.h>
+
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/algorithm/center-of-mass.hpp>
 #include <pinocchio/algorithm/jacobian.hpp>
 #include <pinocchio/algorithm/kinematics.hpp>
 #include <pinocchio/algorithm/geometry.hpp>
+#include <pinocchio/algorithm/joint-configuration.hpp> // se3::details::Dispatch
 
 #include <hpp/pinocchio/fwd.hh>
 //#include <hpp/pinocchio/distance-result.hh>
+#include <hpp/pinocchio/body.hh>
 #include <hpp/pinocchio/extra-config-space.hh>
 #include <hpp/pinocchio/gripper.hh>
 #include <hpp/pinocchio/joint.hh>
+#include <hpp/pinocchio/liegroup.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -385,5 +390,140 @@ namespace hpp {
       return geomData().distanceResults;
     }
 
+    /* ---------------------------------------------------------------------- */
+    /* --- Bounding box ----------------------------------------------------- */
+    /* ---------------------------------------------------------------------- */
+
+    struct AABBStep : public se3::fusion::JointModelVisitor<AABBStep>
+    {
+      typedef boost::fusion::vector<const Model&,
+                                    Configuration_t,
+                                    bool,
+                                    fcl::AABB&> ArgsType;
+
+      JOINT_MODEL_VISITOR_INIT(AABBStep);
+
+      template<typename JointModel>
+      static void algo(const se3::JointModelBase<JointModel> & jmodel,
+                       const Model& model,
+                       Configuration_t q,
+                       bool initializeAABB,
+                       fcl::AABB& aabb)
+      {
+        typedef typename LieGroupTpl::operation<JointModel>::type LG_t;
+        /*
+        if (LG_t::NT == 0) {
+          aabb.min_.setZero();
+          aabb.max_.setZero();
+          return;
+        }
+        */
+        typename JointModel::JointDataDerived data (jmodel.createData());
+        // Set configuration to lower bound.
+        jmodel.jointConfigSelector(q).template head<LG_t::NT>() =
+          jmodel.jointConfigSelector(model.lowerPositionLimit).template head<LG_t::NT>();
+        jmodel.calc(data, q);
+        vector3_t min = data.M.translation();
+        // Set configuration to upper bound.
+        jmodel.jointConfigSelector(q).template head<LG_t::NT>() =
+          jmodel.jointConfigSelector(model.upperPositionLimit).template head<LG_t::NT>();
+        jmodel.calc(data, q);
+        vector3_t max = data.M.translation();
+
+        // This should not be required as it should be done in AABB::operator+=(Vec3f)
+        // for(int i = 0; i < 3; ++i) {
+          // if (min[i] > max[i]) std::swap(min[i], max[i]);
+        // }
+        // aabb.min_ = min;
+        // aabb.max_ = max;
+        if (initializeAABB) aabb = fcl::AABB(min);
+        else                aabb += min;
+        aabb += max;
+      }
+
+    };
+
+    template <>
+    void AABBStep::algo<se3::JointModelComposite>(
+        const se3::JointModelBase<se3::JointModelComposite> & jmodel,
+        const Model& model,
+        Configuration_t q,
+        bool initializeAABB,
+        fcl::AABB& aabb)
+    {
+      // TODO this should for but I did not test it.
+      hppDout(warning, "Computing AABB of JointModelComposite should work but has never been tested");
+      if (initializeAABB)  {
+        typename se3::JointModelComposite::JointDataDerived data = jmodel.createData();
+        jmodel.calc(data, q);
+        aabb = fcl::AABB(data.M.translation());
+      }
+      se3::details::Dispatch<AABBStep>::run(jmodel, AABBStep::ArgsType(model, q, false, aabb));
+    }
+
+    fcl::AABB Device::computeAABB() const
+    {
+      // TODO check that user has called
+
+      const Model& m (model());
+
+      // Compute maximal distance to parent joint.
+      std::vector<value_type> maxDistToParent (m.joints.size(), 0);
+      for (JointIndex i = 1; i < m.joints.size(); ++i)
+      {
+        Joint joint (weakPtr_.lock(), i);
+        joint.computeMaximalDistanceToParent();
+        maxDistToParent[i] = joint.maximalDistanceToParent();
+      }
+
+      // Compute maximal distance to root joint.
+      std::vector<value_type> maxDistToRoot (m.joints.size(), 0);
+      std::vector<value_type> distances (m.joints.size(), 0);
+
+      std::vector<JointIndex> rootIdxs;
+      std::vector<value_type> maxRadius;
+      for (JointIndex i = 1; i < m.joints.size(); ++i)
+      {
+        if (m.parents[i] == 0) // Moving child of universe
+        {
+          rootIdxs.push_back(i);
+          maxRadius.push_back(0);
+          // This is the root of a subtree.
+          // maxDistToRoot[i] = 0; // Already zero by initialization
+        } else {
+          maxDistToRoot[i] = maxDistToRoot[m.parents[i]] + maxDistToParent[i];
+        }
+
+        Body body (weakPtr_.lock(), i);
+        distances[i] = body.radius() + maxDistToRoot[i];
+
+        maxRadius.back() = std::max(maxRadius.back(), distances[i]);
+      }
+
+      // Compute AABB
+      fcl::AABB aabb;
+      for (std::size_t k = 0; k < rootIdxs.size(); ++k)
+      {
+        JointIndex i = rootIdxs[k];
+        value_type radius = maxRadius[k];
+
+        fcl::AABB aabb_subtree;
+        AABBStep::run(m.joints[i],
+            AABBStep::ArgsType (m, currentConfiguration_, true, aabb_subtree));
+
+        // Move AABB
+        fcl::rotate   (aabb_subtree, m.jointPlacements[i].rotation   ());
+        fcl::translate(aabb_subtree, m.jointPlacements[i].translation());
+
+        // Add radius
+        aabb_subtree.min_.array() -= radius;
+        aabb_subtree.max_.array() += radius;
+        
+        // Merge back into previous one.
+        if (k == 0) aabb  = aabb_subtree;
+        else        aabb += aabb_subtree;
+      }
+      return aabb;
+    }
   } // namespace pinocchio
 } // namespace hpp

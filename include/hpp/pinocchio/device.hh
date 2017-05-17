@@ -390,6 +390,16 @@ namespace hpp {
       /// Print object in a stream
       virtual std::ostream& print (std::ostream& os) const;
 
+      /// Compute an aligned bounding around the robot.
+      /// The bounding box is computed as follows:
+      /// - for each direct children of the universe joint:
+      ///   - compute a bounding box of its center (using the bounds in translation)
+      ///   - compute the maximal distance between the its center and
+      ///     each bodies attach its subtree.
+      ///   - sum the two.
+      /// - sum all the BB obtained.
+      fcl::AABB computeAABB() const;
+
     protected:
       /// \brief Constructor
       Device(const std::string& name);
