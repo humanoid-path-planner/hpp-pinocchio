@@ -101,9 +101,10 @@ namespace hpp {
 
         se3::JointModelVariant buildJoint (const std::string& type)
         {
-          if (type == "freeflyer")   return se3::JointModelFreeFlyer();
-          else if (type == "planar") return se3::JointModelPlanar();
-          else                       throw  std::invalid_argument
+          if (type == "freeflyer")      return se3::JointModelFreeFlyer();
+          else if (type == "planar")    return se3::JointModelPlanar();
+          else if (type == "prismatic") return se3::JointModelPrismatic<0>();
+          else                          throw  std::invalid_argument
             ("Root joint type is currently not available.");
         }
 
