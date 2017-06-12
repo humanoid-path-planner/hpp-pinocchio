@@ -350,6 +350,8 @@ namespace hpp {
 
       if(computationFlag_&JACOBIAN)
         se3::computeJacobians(*model_,*data_,robotConf_);
+
+      upToDate_ = true;
     }
 
     void Device::
