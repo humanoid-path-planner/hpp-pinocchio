@@ -151,66 +151,15 @@ namespace hpp {
           }
         }
 
-        template <bool LoadSRDF> void loadModel
-          (const DevicePtr_t& robot,
-           const JointIndex&  baseJoint,
-           const std::string& prefix,
-           const std::string& rootType,
-           const std::string& package,
-           const std::string& urdfName,
-           const std::string& srdfName)
-          {
-            if (baseJoint != 0)
-              throw std::invalid_argument ("Only appending robots at the world is supported.");
-            std::vector<std::string> baseDirs = se3::rosPaths();
-
-            std::string urdfPath =
-              "package://" + package + "/urdf/" + urdfName + ".urdf";
-            std::string urdfFileName = se3::retrieveResourcePath(urdfPath, baseDirs);
-	    if (urdfFileName == "") {
-	      throw std::invalid_argument (std::string ("Unable to retrieve ") +
-					   urdfPath);
-	    }
-            Model& model = robot->model();
-            const JointIndex idFirstJoint = model.joints.size();
-            const FrameIndex idFirstFrame = model.frames.size();
-            if (rootType == "anchor")
-              se3::urdf::buildModel(urdfFileName, model, verbose);
-            else
-              se3::urdf::buildModel(urdfFileName, buildJoint(rootType), model, verbose);
-            robot->createData();
-
-            hppDout (notice, "Finished parsing URDF file.");
-
-            GeomModel geomModel;
-
-            se3::urdf::buildGeom(model, urdfFileName, se3::COLLISION, geomModel, baseDirs);
-            geomModel.addAllCollisionPairs();
-
-            if (LoadSRDF) {
-              std::string srdfPath =
-                "package://" + package + "/srdf/" + srdfName + ".srdf";
-              std::string srdfFileName = se3::retrieveResourcePath(srdfPath, baseDirs);
-	    if (srdfFileName == "") {
-	      throw std::invalid_argument (std::string ("Unable to retrieve ") +
-					   srdfPath);
-	    }
-              se3::srdf::removeCollisionPairsFromSrdf
-                (model, geomModel, srdfFileName, verbose);
-            }
-
-            if (!prefix.empty()) setPrefix(prefix, model, geomModel, idFirstJoint, idFirstFrame);
-
-            // Update root joint bounds
-            assert((rootType == "anchor")
-                || (model.names[idFirstJoint] == prefix + "root_joint"));
-            setRootJointBounds(model, idFirstJoint, rootType);
-
-            se3::appendGeometryModel(robot->geomModel(), geomModel);
-            robot->createGeomData();
-
-            hppDout (notice, "Finished parsing SRDF file.");
-          }
+        std::string makeModelPath (const std::string& package,
+                                   const std::string& type,
+                                   const std::string& modelName,
+                                   const std::string& suffix = "")
+        {
+          std::stringstream ss;
+          ss << "package://" << package << "/" << type << "/" << modelName << suffix << "." << type;
+          return ss.str();
+        }
       }
 
       void loadRobotModel (const DevicePtr_t& robot,
@@ -221,7 +170,8 @@ namespace hpp {
                            const std::string& srdfSuffix)
       {
         loadModel <true> (robot, 0, "", rootJointType,
-            package, modelName + urdfSuffix, modelName + srdfSuffix);
+            makeModelPath(package, "urdf", modelName, urdfSuffix),
+            makeModelPath(package, "srdf", modelName, srdfSuffix));
       }
 
       void loadRobotModel (const DevicePtr_t& robot,
@@ -236,7 +186,8 @@ namespace hpp {
         loadModel <true> (robot, baseJoint, 
             (prefix.empty() ? "" : prefix + "/"),
             rootJointType,
-            package, modelName + urdfSuffix, modelName + srdfSuffix);
+            makeModelPath(package, "urdf", modelName, urdfSuffix),
+            makeModelPath(package, "srdf", modelName, srdfSuffix));
       }
 
       void loadHumanoidModel (const HumanoidRobotPtr_t& robot,
@@ -280,7 +231,8 @@ namespace hpp {
       {
         loadModel<false> (robot, baseJoint,
             (prefix.empty() ? "" : prefix + "/"),
-            rootJointType, package, filename, "");
+            rootJointType,
+            makeModelPath(package, "urdf", filename), "");
       }
 
       void loadUrdfModel (const DevicePtr_t& robot,
@@ -288,8 +240,68 @@ namespace hpp {
 			  const std::string& package,
 			  const std::string& filename)
       {
-        loadModel<false> (robot, 0, "", rootType, package, filename, "");
+        loadModel<false> (robot, 0, "", rootType,
+            makeModelPath(package, "urdf", filename), "");
       }
+
+        template <bool LoadSRDF>
+        void loadModel (const DevicePtr_t& robot,
+                        const JointIndex&  baseJoint,
+                        const std::string& prefix,
+                        const std::string& rootType,
+                        const std::string& urdfPath,
+                        const std::string& srdfPath)
+        {
+          if (baseJoint != 0)
+            throw std::invalid_argument ("Only appending robots at the world is supported.");
+          std::vector<std::string> baseDirs = se3::rosPaths();
+
+          std::string urdfFileName = se3::retrieveResourcePath(urdfPath, baseDirs);
+          if (urdfFileName == "") {
+            throw std::invalid_argument (std::string ("Unable to retrieve ") +
+                urdfPath);
+          }
+          Model& model = robot->model();
+          const JointIndex idFirstJoint = model.joints.size();
+          const FrameIndex idFirstFrame = model.frames.size();
+          if (rootType == "anchor")
+            se3::urdf::buildModel(urdfFileName, model, verbose);
+          else
+            se3::urdf::buildModel(urdfFileName, buildJoint(rootType), model, verbose);
+          robot->createData();
+
+          hppDout (notice, "Finished parsing URDF file.");
+
+          GeomModel geomModel;
+
+          se3::urdf::buildGeom(model, urdfFileName, se3::COLLISION, geomModel, baseDirs);
+          geomModel.addAllCollisionPairs();
+
+          if (LoadSRDF) {
+            std::string srdfFileName = se3::retrieveResourcePath(srdfPath, baseDirs);
+            if (srdfFileName == "") {
+              throw std::invalid_argument (std::string ("Unable to retrieve ") +
+                  srdfPath);
+            }
+            se3::srdf::removeCollisionPairsFromSrdf
+              (model, geomModel, srdfFileName, verbose);
+          }
+
+          if (!prefix.empty()) setPrefix(prefix, model, geomModel, idFirstJoint, idFirstFrame);
+
+          // Update root joint bounds
+          assert((rootType == "anchor")
+              || (model.names[idFirstJoint] == prefix + "root_joint"));
+          setRootJointBounds(model, idFirstJoint, rootType);
+
+          se3::appendGeometryModel(robot->geomModel(), geomModel);
+          robot->createGeomData();
+
+          hppDout (notice, "Finished parsing SRDF file.");
+        }
+
+        template void loadModel<true> (const DevicePtr_t&, const JointIndex&, const std::string&, const std::string&, const std::string&, const std::string&);
+        template void loadModel<false>(const DevicePtr_t&, const JointIndex&, const std::string&, const std::string&, const std::string&, const std::string&);
     } // end of namespace urdf.
   } // end of namespace pinocchio.
 } // end of namespace  hpp.

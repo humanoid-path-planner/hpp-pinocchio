@@ -124,6 +124,17 @@ namespace hpp
 			  const std::string& rootJointType,
 			  const std::string& package,
 			  const std::string& filename);
+
+      /// This is the base function which is called by the other function.
+      /// It reads a URDF file, and optionnally a SRDF file, and build the
+      /// robot.
+      template <bool LoadSRDF>
+      void loadModel (const DevicePtr_t& robot,
+                      const JointIndex&  baseJoint,
+                      const std::string& prefix,
+                      const std::string& rootType,
+                      const std::string& urdfPath,
+                      const std::string& srdfPath);
     } // end of namespace urdf.
   } // end of namespace pinocchio.
 } // end of namespace hpp.
