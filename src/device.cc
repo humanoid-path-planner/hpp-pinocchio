@@ -326,26 +326,30 @@ namespace hpp {
       const size_type nq = model().nq;
       const size_type nv = model().nv;
 
+      // TODO pinocchio does not allow to pass currentConfiguration_.head(nq) as
+      // a reference. This line avoids dynamic memory allocation
+      robotConf_ = currentConfiguration_.head(nq);
+
       if (computationFlag_ & ACCELERATION )
-        se3::forwardKinematics(*model_,*data_,currentConfiguration_.head(nq),
+        se3::forwardKinematics(*model_,*data_,robotConf_,
                                currentVelocity_.head(nv),currentAcceleration_.head(nv));
       else if (computationFlag_ & VELOCITY )
-        se3::forwardKinematics(*model_,*data_,currentConfiguration_.head(nq),
+        se3::forwardKinematics(*model_,*data_,robotConf_,
                                currentVelocity_.head(nv));
       else if (computationFlag_ & JOINT_POSITION )
-        se3::forwardKinematics(*model_,*data_,currentConfiguration_.head(nq));
+        se3::forwardKinematics(*model_,*data_,robotConf_);
 
       if (computationFlag_&COM)
         {
           if (computationFlag_|JACOBIAN) 
             // TODO: Jcom should not recompute the kinematics (\sa pinocchio issue #219)
-            se3::jacobianCenterOfMass(*model_,*data_,currentConfiguration_.head(nq),true);
+            se3::jacobianCenterOfMass(*model_,*data_,robotConf_,true);
           else 
-            se3::centerOfMass(*model_,*data_,currentConfiguration_.head(nq),true,false);
+            se3::centerOfMass(*model_,*data_,robotConf_,true,false);
         }
 
       if(computationFlag_&JACOBIAN)
-        se3::computeJacobians(*model_,*data_,currentConfiguration_.head(nq));
+        se3::computeJacobians(*model_,*data_,robotConf_);
     }
 
     void Device::

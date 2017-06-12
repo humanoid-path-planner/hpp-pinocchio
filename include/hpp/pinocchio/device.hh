@@ -467,6 +467,8 @@ namespace hpp {
       ExtraConfigSpace extraConfigSpace_;
       DeviceWkPtr_t weakPtr_;
 
+      /// Temporary variable to avoid dynamic allocation
+      mutable Configuration_t robotConf_;
     }; // class Device
 
     inline std::ostream& operator<< (std::ostream& os, const hpp::pinocchio::Device& device)
