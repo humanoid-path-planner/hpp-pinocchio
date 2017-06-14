@@ -345,7 +345,8 @@ namespace hpp {
             // TODO: Jcom should not recompute the kinematics (\sa pinocchio issue #219)
             se3::jacobianCenterOfMass(*model_,*data_,robotConf_,true);
           else 
-            se3::centerOfMass(*model_,*data_,robotConf_,true,false);
+            // Compose Com position, but not velocity and acceleration.
+            se3::centerOfMass<true, false, false>(*model_,*data_,true);
         }
 
       if(computationFlag_&JACOBIAN)
