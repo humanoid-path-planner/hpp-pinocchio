@@ -22,6 +22,8 @@
 #include <pinocchio/algorithm/center-of-mass.hpp>
 #include <pinocchio/algorithm/copy.hpp>
 
+#include <hpp/util/exception-factory.hh>
+
 #include "hpp/pinocchio/joint.hh"
 #include "hpp/pinocchio/device.hh"
 
@@ -142,10 +144,12 @@ namespace hpp {
         {
           assert (std::size_t(rootId)<model.joints.size());
           // Assert that the new root is not in already-recorded subtrees.
-          if( (jid<rootId) || (data.lastChild[rootId]<int(jid)) )
+          if( (jid >= rootId) && (data.lastChild[rootId] >= int(jid)) )
             // We are doing something stupid. Should we throw an error
             // or just return silently ?
-            throw std::invalid_argument("This joint is already in a subtree");
+            HPP_THROW(std::invalid_argument, "Joint " << j->name()
+                << " (" << jid << ") is already in a subtree ["
+                << rootId << ", " << data.lastChild[rootId] << "]");
         }
 
       roots_.push_back(jid);
