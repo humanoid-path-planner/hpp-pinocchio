@@ -140,10 +140,11 @@ namespace hpp {
     /// Write configuration in a string
     inline std::string displayConfig (ConfigurationIn_t q)
     {
-      std::ostringstream oss;
+      std::ostringstream oss; oss << "(";
       for (size_type i=0; i < q.size (); ++i) {
 	oss << q [i] << ",";
       }
+      oss << ")";
       return oss.str ();
     }
   } // namespace model
