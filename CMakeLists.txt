@@ -84,6 +84,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/simple-device.hh
 
   include/hpp/pinocchio/liegroup.hh
+  include/hpp/pinocchio/liegroup-element.hh
   include/hpp/pinocchio/liegroup/vector-space.hh
   include/hpp/pinocchio/liegroup/cartesian-product.hh
   include/hpp/pinocchio/liegroup/special-orthogonal.hh

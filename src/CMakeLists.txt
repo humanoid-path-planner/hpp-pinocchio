@@ -29,7 +29,7 @@ SET(LIBRARY_SOURCES
   center-of-mass-computation.cc
   configuration.cc
   simple-device.cc
-
+  liegroup-element.cc
   urdf/util.cc
   )
 
