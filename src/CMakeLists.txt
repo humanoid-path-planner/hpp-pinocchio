@@ -30,6 +30,7 @@ SET(LIBRARY_SOURCES
   configuration.cc
   simple-device.cc
   liegroup-element.cc
+  liegroup-space.cc
   urdf/util.cc
   )
 

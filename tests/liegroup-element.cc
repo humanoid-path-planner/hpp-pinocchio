@@ -25,6 +25,7 @@ using hpp::pinocchio::value_type;
 using hpp::pinocchio::vector_t;
 using hpp::pinocchio::LiegroupElement;
 using hpp::pinocchio::LiegroupType;
+using hpp::pinocchio::LiegroupSpace;
 
 static bool sameR3xSO3 (const LiegroupElement& e1, const LiegroupElement& e2,
                         const value_type& eps)
@@ -65,6 +66,7 @@ BOOST_AUTO_TEST_CASE (testR3SO3)
 {
   vector_t u1 (7), u3 (7);
   vector_t velocity (6);
+  LiegroupSpace R3xSO3 (LiegroupSpace::R3 () * LiegroupSpace::SO3 ());
 
   for (std::size_t i=0; i<100; ++i) {
     u1.setRandom ();
@@ -73,18 +75,14 @@ BOOST_AUTO_TEST_CASE (testR3SO3)
     u1.tail <4> ().normalize ();
     u3.tail <4> ().normalize ();
 
-    LiegroupElement e1
-      (u1, list_of (LiegroupType (se3::VectorSpaceOperation <3> ()))
-       (LiegroupType (se3::SpecialOrthogonalOperation <3> ())));
+    LiegroupElement e1 (u1, R3xSO3);
     velocity.setRandom ();
 
     LiegroupElement e2 (e1 + velocity);
 
     BOOST_CHECK (((e2 - e1) - velocity).norm () < 1e-10);
 
-    LiegroupElement e3
-      (u3, list_of (LiegroupType (se3::VectorSpaceOperation <3> ()))
-       (LiegroupType (se3::SpecialOrthogonalOperation <3> ())));
+    LiegroupElement e3 (u3, R3xSO3);
     velocity = e3 - e1;
 
     BOOST_CHECK (sameR3xSO3 (e1 + velocity, e3, 1e-10));
@@ -99,9 +97,7 @@ BOOST_AUTO_TEST_CASE (testR3SO3)
   velocity.setZero ();
   velocity [3] = M_PI/2;
 
-  LiegroupElement e5
-    (u5, list_of (LiegroupType (se3::VectorSpaceOperation <3> ()))
-     (LiegroupType (se3::SpecialOrthogonalOperation <3> ())));
+  LiegroupElement e5 (u5, R3xSO3);
 
   LiegroupElement e6 (e5 + velocity);
   BOOST_CHECK ((e6.value () - res).norm () < 1e-10);
@@ -110,9 +106,7 @@ BOOST_AUTO_TEST_CASE (testR3SO3)
   velocity.setZero ();
   velocity [4] = M_PI/2;
 
-  e5 = LiegroupElement
-    (u5, list_of (LiegroupType (se3::VectorSpaceOperation <3> ()))
-     (LiegroupType (se3::SpecialOrthogonalOperation <3> ())));
+  e5 = LiegroupElement (u5, R3xSO3);
 
   e6 = e5 + velocity;
   BOOST_CHECK ((e6.value () - res).norm () < 1e-10);

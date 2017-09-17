@@ -17,24 +17,10 @@
 #ifndef HPP_PINOCCHIO_LIEGROUP_ELEMENT_HH
 # define HPP_PINOCCHIO_LIEGROUP_ELEMENT_HH
 
-# include <vector>
-# include <boost/variant.hpp>
-# include <pinocchio/multibody/liegroup/special-euclidean.hpp>
-# include <pinocchio/multibody/liegroup/special-orthogonal.hpp>
-# include <pinocchio/multibody/liegroup/vector-space.hpp>
-# include <hpp/pinocchio/fwd.hh>
+# include <hpp/pinocchio/liegroup-space.hh>
 
 namespace hpp {
   namespace pinocchio {
-    typedef boost::variant <se3::VectorSpaceOperation <Eigen::Dynamic>,
-                            se3::VectorSpaceOperation <1>,
-                            se3::VectorSpaceOperation <2>,
-                            se3::VectorSpaceOperation <3>,
-                            se3::SpecialEuclideanOperation<2>,
-                            se3::SpecialEuclideanOperation<3>,
-                            se3::SpecialOrthogonalOperation <2>,
-                            se3::SpecialOrthogonalOperation <3> > LiegroupType;
-
     class LiegroupElement
     {
     public:
@@ -43,56 +29,37 @@ namespace hpp {
       friend vector_t operator-
       (const LiegroupElement& e1, const LiegroupElement& e2);
 
-      typedef std::vector <LiegroupType> LiegroupTypes;
       /// Constructor
       /// \param value vector representation,
-      /// \param liegroupTypes vector of types of Lie groups defining the
-      ///        the space the value belongs to as a Cartesian product of Lie
-      ///        groups.
+      /// \param liegroupSpace space the element belongs to.
       LiegroupElement (const vector_t& value,
-                       const LiegroupTypes& liegroupTypes) :
-        value_ (value), liegroupTypes_ (liegroupTypes)
+                       const LiegroupSpace& liegroupSpace) :
+        value_ (value), space_ (liegroupSpace)
       {
-        computeSize ();
+        assert (value_.size () == space_.nq ());
       }
       /// Constructor
       /// \param value vector representation,
       ///
       /// By default the space containing the value is a vector space.
       LiegroupElement (const vector_t& value) :
-        value_ (value), liegroupTypes_ ()
+        value_ (value), space_ (value.size ())
       {
-        nq_ = nv_ = value_.size ();
-        liegroupTypes_.push_back
-          (se3::VectorSpaceOperation <Eigen::Dynamic> ((int) nq_));
       }
       /// get reference to vector of Lie groups
-      const LiegroupTypes& liegroupTypes () const
+      const LiegroupSpace& space () const
       {
-        return liegroupTypes_;
+        return space_;
       }
 
-      /// Dimension of the vector representation
-      size_type nq () const
-      {
-        return nq_;
-      }
-      /// Dimension of the Lie group tangent space
-      size_type nv () const
-      {
-        return nv_;
-      }
       /// Vector representation
       const vector_t& value () const
       {
         return value_;
       }
     private:
-      void computeSize ();
       vector_t value_;
-      LiegroupTypes liegroupTypes_;
-      // Size of vector representation and of Lie group tangent space
-      size_type nq_, nv_;
+      LiegroupSpace space_;
     }; // class LiegroupElement
 
     /// Integration of a velocity vector from a configuration

@@ -114,6 +114,8 @@ namespace hpp {
     typedef boost::shared_ptr<const GeomModel> GeomModelConstPtr_t;
     typedef boost::shared_ptr<GeomData>        GeomDataPtr_t;
     typedef boost::shared_ptr<const GeomData>  GeomDataConstPtr_t;
+
+    class LiegroupElement;
   } // namespace pinocchio
 } // namespace hpp
 #endif //HPP_MODEL_FWD_HH
