@@ -21,6 +21,12 @@
 
 namespace hpp {
   namespace pinocchio {
+    /// \addtogroup liegroup
+    /// \{
+
+    /// Element of a Lie group
+    ///
+    /// See class LiegroupSpace.
     class LiegroupElement
     {
     public:
@@ -80,6 +86,7 @@ namespace hpp {
     /// By extension of the vector space case, we represent the integration
     /// of a constant velocity during unit time by an addition
     vector_t operator- (const LiegroupElement& e1, const LiegroupElement& e2);
+    /// \}
   } // namespace pinocchio
 } // namespace hpp
 

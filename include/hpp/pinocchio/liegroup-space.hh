@@ -26,6 +26,9 @@
 
 namespace hpp {
   namespace pinocchio {
+    /// \addtogroup liegroup
+    /// \{
+
     /// Elementary Lie groups
     typedef boost::variant <se3::VectorSpaceOperation <Eigen::Dynamic>,
                             se3::VectorSpaceOperation <1>,
@@ -172,6 +175,7 @@ namespace hpp {
       }
 
       /// Return an element
+      ///
       /// Vector representation is allocated but not initialized
       LiegroupElement element () const;
     private:
@@ -189,6 +193,7 @@ namespace hpp {
     /// Cartesian product between Lie groups
     LiegroupSpace operator*
     (const LiegroupSpace& sp1, const LiegroupSpace& sp2);
+    /// \}
   } // namespace pinocchio
 } // namespace hpp
 
