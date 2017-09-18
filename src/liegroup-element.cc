@@ -60,6 +60,12 @@ namespace hpp {
       }; // struct SubstractionVisitor
     } // namespace liegroupType
 
+    LiegroupElement::operator vector_t ()
+    {
+      return value_;
+    }
+
+
     LiegroupElement operator+ (const LiegroupElement& e, const vector_t& v)
     {
       assert (e.space ().nv () == v.size ());

@@ -18,6 +18,7 @@
 # define HPP_PINOCCHIO_LIEGROUP_ELEMENT_HH
 
 # include <hpp/pinocchio/liegroup-space.hh>
+# include <hpp/pinocchio/deprecated.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -34,6 +35,11 @@ namespace hpp {
       (const LiegroupElement& e, const vector_t& v);
       friend vector_t operator-
       (const LiegroupElement& e1, const LiegroupElement& e2);
+
+      /// Temporary cast to vector
+      /// \deprecated this operator is meant to detect implicit cast into
+      /// vector_t in order to modify user code.
+      operator vector_t () HPP_PINOCCHIO_DEPRECATED;
 
       /// Constructor
       /// \param value vector representation,
