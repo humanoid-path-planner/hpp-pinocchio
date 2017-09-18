@@ -58,11 +58,24 @@ namespace hpp {
         return space_;
       }
 
-      /// Vector representation
+      /// Const vector representation
       const vector_t& value () const
       {
         return value_;
       }
+
+      /// Modifiable vector representation
+      vector_t& value ()
+      {
+        return value_;
+      }
+
+      /// Size of the vector representation
+      size_type size () const
+      {
+        return value_.size ();
+      }
+
     private:
       vector_t value_;
       LiegroupSpace space_;
