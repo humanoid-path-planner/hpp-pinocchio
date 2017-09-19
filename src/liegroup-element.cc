@@ -67,18 +67,18 @@ namespace hpp {
 
     void LiegroupElement::setNeutral ()
     {
-      value_ = space_.neutral ();
+      value_ = space_->neutral ();
     }
 
     LiegroupElement operator+ (const LiegroupElement& e, const vector_t& v)
     {
-      assert (e.space ().nv () == v.size ());
+      assert (e.space ()->nv () == v.size ());
       typedef std::vector <LiegroupType> LiegroupTypes;
       LiegroupElement result (e);
       size_type iq = 0, iv = 0;
       for (LiegroupTypes::const_iterator it =
-             e.space ().liegroupTypes ().begin ();
-           it != e.space ().liegroupTypes ().end (); ++it) {
+             e.space ()->liegroupTypes ().begin ();
+           it != e.space ()->liegroupTypes ().end (); ++it) {
         liegroupType::DimensionVisitor dv;
         boost::apply_visitor (dv, *it);
 
@@ -94,22 +94,24 @@ namespace hpp {
 
     vector_t operator- (const LiegroupElement& e1, const LiegroupElement& e2)
     {
-      assert (e1.space ().nq () == e2.space ().nq ());
+      assert (e1.space ()->nq () == e2.space ()->nq ());
       typedef std::vector <LiegroupType> LiegroupTypes;
-      vector_t result (e1.space ().nv ());
+      vector_t result (e1.space ()->nv ());
       size_type iq = 0, iv = 0;
 
-      LiegroupTypes::const_iterator it1 = e1.space ().liegroupTypes ().begin ();
-      LiegroupTypes::const_iterator it2 = e2.space ().liegroupTypes ().begin ();
+      LiegroupTypes::const_iterator it1 =
+        e1.space ()->liegroupTypes ().begin ();
+      LiegroupTypes::const_iterator it2 =
+        e2.space ()->liegroupTypes ().begin ();
 
-      while ((it1 != e1.space ().liegroupTypes ().end ()) &&
-             (it2 != e2.space ().liegroupTypes ().end ())) {
+      while ((it1 != e1.space ()->liegroupTypes ().end ()) &&
+             (it2 != e2.space ()->liegroupTypes ().end ())) {
         liegroupType::DimensionVisitor dv;
         boost::apply_visitor (dv, *it1);
 
         liegroupType::SubstractionVisitor sv (e1.value_.segment (iq, dv.nq),
                                               e2.value_.segment (iq, dv.nq),
-                                              e1.space ().nv ());
+                                              e1.space ()->nv ());
         boost::apply_visitor (sv, *it1);
         result.segment (iv, dv.nv) = sv.result;
         iq += dv.nq;

@@ -45,24 +45,24 @@ namespace hpp {
       /// \param value vector representation,
       /// \param liegroupSpace space the element belongs to.
       LiegroupElement (const vector_t& value,
-                       const LiegroupSpace& liegroupSpace) :
+                       const LiegroupSpacePtr_t& liegroupSpace) :
         value_ (value), space_ (liegroupSpace)
       {
-        assert (value_.size () == space_.nq ());
+        assert (value_.size () == space_->nq ());
       }
       /// Constructor
       /// \param liegroupSpace space the element belongs to.
-      LiegroupElement (const LiegroupSpace& liegroupSpace) :
-        value_ (liegroupSpace.nq ()), space_ (liegroupSpace)
+      LiegroupElement (const LiegroupSpacePtr_t& liegroupSpace) :
+        value_ (liegroupSpace->nq ()), space_ (liegroupSpace)
       {
-        assert (value_.size () == space_.nq ());
+        assert (value_.size () == space_->nq ());
       }
       /// Constructor
       /// \param value vector representation,
       ///
       /// By default the space containing the value is a vector space.
       LiegroupElement (const vector_t& value) :
-        value_ (value), space_ (value.size ())
+        value_ (value), space_ (LiegroupSpace::create (value.size ()))
       {
       }
 
@@ -74,7 +74,7 @@ namespace hpp {
       }
 
       /// get reference to vector of Lie groups
-      const LiegroupSpace& space () const
+      const LiegroupSpacePtr_t& space () const
       {
         return space_;
       }
@@ -102,7 +102,7 @@ namespace hpp {
 
     private:
       vector_t value_;
-      LiegroupSpace space_;
+      LiegroupSpacePtr_t space_;
     }; // class LiegroupElement
 
     /// Integration of a velocity vector from a configuration

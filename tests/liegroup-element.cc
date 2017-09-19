@@ -26,6 +26,7 @@ using hpp::pinocchio::vector_t;
 using hpp::pinocchio::LiegroupElement;
 using hpp::pinocchio::LiegroupType;
 using hpp::pinocchio::LiegroupSpace;
+using hpp::pinocchio::LiegroupSpacePtr_t;
 
 static bool sameR3xSO3 (const LiegroupElement& e1, const LiegroupElement& e2,
                         const value_type& eps)
@@ -66,11 +67,11 @@ BOOST_AUTO_TEST_CASE (testR3SO3)
 {
   vector_t u1 (7), u3 (7);
   vector_t velocity (6);
-  LiegroupSpace R3xSO3 (LiegroupSpace::R3 () * LiegroupSpace::SO3 ());
+  LiegroupSpacePtr_t R3xSO3 (LiegroupSpace::R3 () * LiegroupSpace::SO3 ());
 
   vector_t neutral (7); neutral << 0, 0, 0, 0, 0, 0, 1;
-  BOOST_CHECK (R3xSO3.neutral () == neutral);
-  LiegroupElement e (R3xSO3.element ());
+  BOOST_CHECK (R3xSO3->neutral () == neutral);
+  LiegroupElement e (R3xSO3);
   e.setNeutral ();
   BOOST_CHECK (e.value () == neutral);
 

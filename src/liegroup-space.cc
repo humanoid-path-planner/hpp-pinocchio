@@ -19,10 +19,111 @@
 
 namespace hpp {
   namespace pinocchio {
-    LiegroupElement LiegroupSpace::element () const
+
+    LiegroupSpacePtr_t LiegroupSpace::Rn (const size_type& n)
     {
-      vector_t value (nq_);
-      return LiegroupElement (value, *this);
+      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      S->liegroupTypes_.push_back
+        (se3::VectorSpaceOperation <Eigen::Dynamic> ((int)n));
+      S->nq_ = S->nv_ = n;
+      S->neutral_.resize (S->nq_); S->neutral_.setZero ();
+      std::ostringstream oss; oss << "R^" << n;
+      S->name_ = oss.str ();
+      return S;
+    }
+
+    /// Return \f$\mathbf{R}\f$ as a Lie group
+    LiegroupSpacePtr_t LiegroupSpace::R1 ()
+    {
+      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      S->liegroupTypes_.push_back (se3::VectorSpaceOperation <1> ());
+      S->nq_ = S->nv_ = 1;
+      S->neutral_.resize (S->nq_); S->neutral_.setZero ();
+      S->name_ = "R";
+      return S;
+    }
+
+    /// Return \f$\mathbf{R}^2\f$ as a Lie group
+    LiegroupSpacePtr_t LiegroupSpace::R2 ()
+    {
+      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      S->liegroupTypes_.push_back (se3::VectorSpaceOperation <2> ());
+      S->nq_ = S->nv_ = 2;
+      S->neutral_.resize (S->nq_); S->neutral_.setZero ();
+      S->name_ = "R^2";
+      return S;
+    }
+
+      /// Return \f$\mathbf{R}^3\f$ as a Lie group
+    LiegroupSpacePtr_t LiegroupSpace::R3 ()
+    {
+      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      S->liegroupTypes_.push_back (se3::VectorSpaceOperation <3> ());
+      S->nq_ = S->nv_ = 3;
+      S->neutral_.resize (S->nq_); S->neutral_.setZero ();
+      S->name_ = "R^3";
+      return S;
+    }
+
+      /// Return \f$SE(2)\f$
+    LiegroupSpacePtr_t LiegroupSpace::SE2 ()
+    {
+      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      S->liegroupTypes_.push_back (se3::SpecialEuclideanOperation<2> ());
+      S->nq_ = se3::SpecialEuclideanOperation<2>::NQ;
+      S->nv_ = se3::SpecialEuclideanOperation<2>::NV;
+      S->neutral_.resize (S->nq_); S->neutral_.setZero ();
+      S->neutral_ [2] = 1;
+      S->name_ = "SE(2)";
+      return S;
+    }
+
+    /// Return \f$SE(3)\f$
+    LiegroupSpacePtr_t LiegroupSpace::SE3 ()
+    {
+      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      S->liegroupTypes_.push_back (se3::SpecialEuclideanOperation<3> ());
+      S->nq_ = se3::SpecialEuclideanOperation<3>::NQ;
+      S->nv_ = se3::SpecialEuclideanOperation<3>::NV;
+      S->neutral_.resize (S->nq_); S->neutral_.setZero ();
+      S->neutral_ [6] = 1;
+      S->name_ = "SE(3)";
+      return S;
+    }
+
+    /// Return \f$SO(2)\f$
+    LiegroupSpacePtr_t LiegroupSpace::SO2 ()
+    {
+      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      S->liegroupTypes_.push_back (se3::SpecialOrthogonalOperation<2> ());
+      S->nq_ = se3::SpecialOrthogonalOperation<2>::NQ;
+      S->nv_ = se3::SpecialOrthogonalOperation<2>::NV;
+      S->neutral_.resize (S->nq_); S->neutral_.setZero ();
+      S->neutral_ [0] = 1;
+      S->name_ = "SO(2)";
+      return S;
+    }
+
+    /// Return \f$SO(3)\f$
+    LiegroupSpacePtr_t LiegroupSpace::SO3 ()
+    {
+      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      S->liegroupTypes_.push_back (se3::SpecialOrthogonalOperation<3> ());
+      S->nq_ = se3::SpecialOrthogonalOperation<3>::NQ;
+      S->nv_ = se3::SpecialOrthogonalOperation<3>::NV;
+      S->neutral_.resize (S->nq_); S->neutral_.setZero ();
+      S->neutral_ [3] = 1;
+      S->name_ = "SO(3)";
+      return S;
+      }
+
+    /// Return empty Lie group
+    LiegroupSpacePtr_t LiegroupSpace::empty ()
+    {
+      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      S->nq_ = S->nv_ = 0;
+      S->neutral_.resize (S->nq_);
+      return S;
     }
 
     vector_t LiegroupSpace::neutral () const
@@ -30,18 +131,21 @@ namespace hpp {
       return neutral_;
     }
 
-    LiegroupSpace operator*
-    (const LiegroupSpace& sp1, const LiegroupSpace& sp2)
+    LiegroupSpacePtr_t operator*
+    (const LiegroupSpacePtr_t& sp1, const LiegroupSpacePtr_t& sp2)
     {
-      LiegroupSpace res (sp1);
-      res.liegroupTypes_.insert (res.liegroupTypes_.end (),
-                                 sp2.liegroupTypes_.begin (),
-                                 sp2.liegroupTypes_.end ());
-      res.nq_ = sp1.nq_ + sp2.nq_;
-      res.nv_ = sp1.nv_ + sp2.nv_;
-      res.neutral_.resize (res.nq_);
-      res.neutral_.head (sp1.nq ()) = sp1.neutral ();
-      res.neutral_.tail (sp2.nq ()) = sp2.neutral ();
+      LiegroupSpacePtr_t res (LiegroupSpace::create (sp1));
+      res->liegroupTypes_.insert (res->liegroupTypes_.end (),
+                                  sp2->liegroupTypes_.begin (),
+                                  sp2->liegroupTypes_.end ());
+      res->nq_ = sp1->nq_ + sp2->nq_;
+      res->nv_ = sp1->nv_ + sp2->nv_;
+      res->neutral_.resize (res->nq_);
+      res->neutral_.head (sp1->nq ()) = sp1->neutral ();
+      res->neutral_.tail (sp2->nq ()) = sp2->neutral ();
+      res->name_ = sp1->name ();
+      if (sp1->name () != "" && sp2->name () != "") res->name_ += "*";
+      res->name_ += sp2->name ();
       return res;
     }
 

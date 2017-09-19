@@ -61,122 +61,43 @@ namespace hpp {
     class LiegroupSpace
     {
     public:
-      friend LiegroupSpace operator* (const LiegroupSpace& sp1,
-                                      const LiegroupSpace& sp2);
+      friend LiegroupSpacePtr_t operator*
+      (const LiegroupSpacePtr_t& sp1, const LiegroupSpacePtr_t& sp2);
       /// \name Elementary Lie groups
       /// \{
 
       /// Return \f$\mathbf{R}^n\f$ as a Lie group
       /// \param n dimension of vector space
-      static LiegroupSpace Rn (const size_type& n)
-      {
-        LiegroupSpace S;
-        S.liegroupTypes_.push_back
-          (se3::VectorSpaceOperation <Eigen::Dynamic> ((int)n));
-        S.nq_ = S.nv_ = n;
-        S.neutral_.resize (S.nq_); S.neutral_.setZero ();
-        return S;
-      }
-
+      static LiegroupSpacePtr_t Rn (const size_type& n);
       /// Return \f$\mathbf{R}\f$ as a Lie group
-      static LiegroupSpace R1 ()
-      {
-        LiegroupSpace S;
-        S.liegroupTypes_.push_back (se3::VectorSpaceOperation <1> ());
-        S.nq_ = S.nv_ = 1;
-        S.neutral_.resize (S.nq_); S.neutral_.setZero ();
-        return S;
-      }
-
+      static LiegroupSpacePtr_t R1 ();
       /// Return \f$\mathbf{R}^2\f$ as a Lie group
-      static LiegroupSpace R2 ()
-      {
-        LiegroupSpace S;
-        S.liegroupTypes_.push_back (se3::VectorSpaceOperation <2> ());
-        S.nq_ = S.nv_ = 2;
-        S.neutral_.resize (S.nq_); S.neutral_.setZero ();
-        return S;
-      }
-
+      static LiegroupSpacePtr_t R2 ();
       /// Return \f$\mathbf{R}^3\f$ as a Lie group
-      static LiegroupSpace R3 ()
-      {
-        LiegroupSpace S;
-        S.liegroupTypes_.push_back (se3::VectorSpaceOperation <3> ());
-        S.nq_ = S.nv_ = 3;
-        S.neutral_.resize (S.nq_); S.neutral_.setZero ();
-        return S;
-      }
-
+      static LiegroupSpacePtr_t R3 ();
       /// Return \f$SE(2)\f$
-      static LiegroupSpace SE2 ()
-      {
-        LiegroupSpace S;
-        S.liegroupTypes_.push_back (se3::SpecialEuclideanOperation<2> ());
-        S.nq_ = se3::SpecialEuclideanOperation<2>::NQ;
-        S.nv_ = se3::SpecialEuclideanOperation<2>::NV;
-        S.neutral_.resize (S.nq_); S.neutral_.setZero (); S.neutral_ [2] = 1;
-        return S;
-      }
-
+      static LiegroupSpacePtr_t SE2 ();
       /// Return \f$SE(3)\f$
-      static LiegroupSpace SE3 ()
-      {
-        LiegroupSpace S;
-        S.liegroupTypes_.push_back (se3::SpecialEuclideanOperation<3> ());
-        S.nq_ = se3::SpecialEuclideanOperation<3>::NQ;
-        S.nv_ = se3::SpecialEuclideanOperation<3>::NV;
-        S.neutral_.resize (S.nq_); S.neutral_.setZero (); S.neutral_ [6] = 1;
-        return S;
-      }
-
+      static LiegroupSpacePtr_t SE3 ();
       /// Return \f$SO(2)\f$
-      static LiegroupSpace SO2 ()
-      {
-        LiegroupSpace S;
-        S.liegroupTypes_.push_back (se3::SpecialOrthogonalOperation<2> ());
-        S.nq_ = se3::SpecialOrthogonalOperation<2>::NQ;
-        S.nv_ = se3::SpecialOrthogonalOperation<2>::NV;
-        S.neutral_.resize (S.nq_); S.neutral_.setZero (); S.neutral_ [0] = 1;
-        return S;
-      }
-
+      static LiegroupSpacePtr_t SO2 ();
       /// Return \f$SO(3)\f$
-      static LiegroupSpace SO3 ()
-      {
-        LiegroupSpace S;
-        S.liegroupTypes_.push_back (se3::SpecialOrthogonalOperation<3> ());
-        S.nq_ = se3::SpecialOrthogonalOperation<3>::NQ;
-        S.nv_ = se3::SpecialOrthogonalOperation<3>::NV;
-        S.neutral_.resize (S.nq_); S.neutral_.setZero (); S.neutral_ [3] = 1;
-        return S;
-      }
-
+      static LiegroupSpacePtr_t SO3 ();
       /// Return empty Lie group
-      static LiegroupSpace empty ()
-      {
-        LiegroupSpace S;
-        S.nq_ = S.nv_ = 0;
-        S.neutral_.resize (S.nq_);
-        return S;
-      }
-
+      static LiegroupSpacePtr_t empty ();
       /// \}
 
       /// Constructor of vector space of given size
-      LiegroupSpace (const size_type& size) : nq_ (size), nv_ (size),
-                                              neutral_ (size)
+      static LiegroupSpacePtr_t create (const size_type& size)
       {
-        nq_ = nv_ = size;
-        liegroupTypes_.push_back
-          (se3::VectorSpaceOperation <Eigen::Dynamic> ((int) nq_));
-        neutral_.setZero ();
+        return LiegroupSpacePtr_t (new LiegroupSpace (size));
       }
-      LiegroupSpace (const LiegroupSpace& other) :
-        liegroupTypes_ (other.liegroupTypes_), nq_ (other.nq_), nv_ (other.nv_),
-        neutral_ (other.neutral_)
+
+      static LiegroupSpacePtr_t create (const LiegroupSpaceConstPtr_t& other)
       {
+        return LiegroupSpacePtr_t (new LiegroupSpace (*other));
       }
+
       /// Dimension of the vector representation
       size_type nq () const
       {
@@ -201,6 +122,24 @@ namespace hpp {
 
       /// Return the neutral element as a vector
       vector_t neutral () const;
+
+    protected:
+
+      /// Constructor of vector space of given size
+      LiegroupSpace (const size_type& size) : nq_ (size), nv_ (size),
+                                              neutral_ (size)
+      {
+        nq_ = nv_ = size;
+        liegroupTypes_.push_back
+          (se3::VectorSpaceOperation <Eigen::Dynamic> ((int) nq_));
+        neutral_.setZero ();
+      }
+      LiegroupSpace (const LiegroupSpace& other) :
+        liegroupTypes_ (other.liegroupTypes_), nq_ (other.nq_), nv_ (other.nv_),
+        neutral_ (other.neutral_)
+      {
+      }
+
     private:
       /// Private constructor
       ///
@@ -216,8 +155,8 @@ namespace hpp {
     }; // class LiegroupSpace
 
     /// Cartesian product between Lie groups
-    LiegroupSpace operator*
-    (const LiegroupSpace& sp1, const LiegroupSpace& sp2);
+    LiegroupSpacePtr_t operator*
+    (const LiegroupSpaceConstPtr_t& sp1, const LiegroupSpaceConstPtr_t& sp2);
     /// \}
   } // namespace pinocchio
 } // namespace hpp

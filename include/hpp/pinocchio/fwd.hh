@@ -117,6 +117,8 @@ namespace hpp {
 
     class LiegroupElement;
     class LiegroupSpace;
+    typedef boost::shared_ptr <LiegroupSpace> LiegroupSpacePtr_t;
+    typedef boost::shared_ptr <const LiegroupSpace> LiegroupSpaceConstPtr_t;
   } // namespace pinocchio
 } // namespace hpp
 #endif //HPP_MODEL_FWD_HH
