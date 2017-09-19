@@ -51,6 +51,13 @@ namespace hpp {
         assert (value_.size () == space_.nq ());
       }
       /// Constructor
+      /// \param liegroupSpace space the element belongs to.
+      LiegroupElement (const LiegroupSpace& liegroupSpace) :
+        value_ (liegroupSpace.nq ()), space_ (liegroupSpace)
+      {
+        assert (value_.size () == space_.nq ());
+      }
+      /// Constructor
       /// \param value vector representation,
       ///
       /// By default the space containing the value is a vector space.
@@ -58,6 +65,14 @@ namespace hpp {
         value_ (value), space_ (value.size ())
       {
       }
+
+      /// Constructor of trivial element
+      LiegroupElement () :
+        value_ (), space_ (LiegroupSpace::empty ())
+      {
+        value_.resize (0);
+      }
+
       /// get reference to vector of Lie groups
       const LiegroupSpace& space () const
       {
