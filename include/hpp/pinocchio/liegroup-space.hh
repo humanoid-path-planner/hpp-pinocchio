@@ -18,6 +18,7 @@
 # define HPP_PINOCCHIO_LIEGROUP_SPACE_HH
 
 # include <vector>
+# include <string>
 # include <boost/variant.hpp>
 # include <pinocchio/multibody/liegroup/special-euclidean.hpp>
 # include <pinocchio/multibody/liegroup/special-orthogonal.hpp>
@@ -115,14 +116,14 @@ namespace hpp {
         return liegroupTypes_;
       }
 
-      /// Return an element
-      ///
-      /// Vector representation is allocated but not initialized
-      LiegroupElement element () const;
-
       /// Return the neutral element as a vector
       vector_t neutral () const;
 
+      /// Return name of Lie group
+      const std::string& name () const
+      {
+        return name_;
+      }
     protected:
 
       /// Constructor of vector space of given size
@@ -132,11 +133,13 @@ namespace hpp {
         nq_ = nv_ = size;
         liegroupTypes_.push_back
           (se3::VectorSpaceOperation <Eigen::Dynamic> ((int) nq_));
+        std::ostringstream oss; oss << "R^" << nq_;
+        name_ = oss.str ();
         neutral_.setZero ();
       }
       LiegroupSpace (const LiegroupSpace& other) :
         liegroupTypes_ (other.liegroupTypes_), nq_ (other.nq_), nv_ (other.nv_),
-        neutral_ (other.neutral_)
+        neutral_ (other.neutral_), name_ (other.name_)
       {
       }
 
@@ -144,7 +147,7 @@ namespace hpp {
       /// Private constructor
       ///
       /// dimensions not initialized.
-      LiegroupSpace () : liegroupTypes_ (), neutral_ ()
+      LiegroupSpace () : liegroupTypes_ (), neutral_ (), name_ ()
       {
       }
       std::vector <LiegroupType> liegroupTypes_;
@@ -152,11 +155,19 @@ namespace hpp {
       size_type nq_, nv_;
       /// Neutral element of the Lie group
       vector_t neutral_;
+      /// Name of the space
+      std::string name_;
     }; // class LiegroupSpace
 
     /// Cartesian product between Lie groups
     LiegroupSpacePtr_t operator*
     (const LiegroupSpaceConstPtr_t& sp1, const LiegroupSpaceConstPtr_t& sp2);
+    /// Writing in a stream
+    inline std::ostream& operator<< (std::ostream& os,
+                                     const LiegroupSpace& space)
+    {
+      os << space.name (); return os;
+    }
     /// \}
   } // namespace pinocchio
 } // namespace hpp

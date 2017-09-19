@@ -124,6 +124,13 @@ namespace hpp {
     /// of a constant velocity during unit time by an addition
     vector_t operator- (const LiegroupElement& e1, const LiegroupElement& e2);
     /// \}
+
+    inline std::ostream& operator<< (std::ostream& os, const LiegroupElement& e)
+    {
+      os << "Lie group element in " << e.space () << "represented by vector ("
+         << e.value ().transpose () << ")";
+      return os;
+    }
   } // namespace pinocchio
 } // namespace hpp
 
