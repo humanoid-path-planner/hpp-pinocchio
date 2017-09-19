@@ -80,13 +80,13 @@ namespace hpp {
       }
 
       /// Const vector representation
-      const vector_t& value () const
+      const vector_t&  vector () const
       {
         return value_;
       }
 
       /// Modifiable vector representation
-      vector_t& value ()
+      vector_t&  vector ()
       {
         return value_;
       }
@@ -128,7 +128,7 @@ namespace hpp {
     inline std::ostream& operator<< (std::ostream& os, const LiegroupElement& e)
     {
       os << "Lie group element in " << e.space () << "represented by vector ("
-         << e.value ().transpose () << ")";
+         << e. vector ().transpose () << ")";
       return os;
     }
   } // namespace pinocchio

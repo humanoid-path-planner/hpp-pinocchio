@@ -31,7 +31,7 @@ using hpp::pinocchio::LiegroupSpacePtr_t;
 static bool sameR3xSO3 (const LiegroupElement& e1, const LiegroupElement& e2,
                         const value_type& eps)
 {
-  vector_t u1 (e1.value ()), u2 (e2.value ());
+  vector_t u1 (e1. vector ()), u2 (e2. vector ());
   if ((u2-u1).norm () < eps) return true;
   u2.tail <4> () *= -1;
   if ((u2-u1).norm () < eps) return true;
@@ -53,11 +53,11 @@ BOOST_AUTO_TEST_CASE (testVectorSpace)
     vector_t diff (u1 - u2);
 
     LiegroupElement e1 (u1), e2 (u2);
-    BOOST_CHECK (e1.value ().rows () == n);
-    BOOST_CHECK (e1.value ().rows () == n);
-    BOOST_CHECK ((e1 + u2).value ().size () == n);
+    BOOST_CHECK (e1. vector ().rows () == n);
+    BOOST_CHECK (e1. vector ().rows () == n);
+    BOOST_CHECK ((e1 + u2). vector ().size () == n);
     BOOST_CHECK ((e1 - e2).size () == n);
-    BOOST_CHECK (((e1 + u2).value () - sum).norm () < 1e-10);
+    BOOST_CHECK (((e1 + u2). vector () - sum).norm () < 1e-10);
     BOOST_CHECK (((e1 - e2) - diff).norm () < 1e-10);
   }
 }
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE (testR3SO3)
   BOOST_CHECK (R3xSO3->neutral () == neutral);
   LiegroupElement e (R3xSO3);
   e.setNeutral ();
-  BOOST_CHECK (e.value () == neutral);
+  BOOST_CHECK (e. vector () == neutral);
 
   for (std::size_t i=0; i<100; ++i) {
     u1.setRandom ();
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE (testR3SO3)
   LiegroupElement e5 (u5, R3xSO3);
 
   LiegroupElement e6 (e5 + velocity);
-  BOOST_CHECK ((e6.value () - res).norm () < 1e-10);
+  BOOST_CHECK ((e6. vector () - res).norm () < 1e-10);
 
   res << 0, 0, 0, 0, sqrt (2)/2, 0, sqrt (2)/2;
   velocity.setZero ();
@@ -116,5 +116,5 @@ BOOST_AUTO_TEST_CASE (testR3SO3)
   e5 = LiegroupElement (u5, R3xSO3);
 
   e6 = e5 + velocity;
-  BOOST_CHECK ((e6.value () - res).norm () < 1e-10);
+  BOOST_CHECK ((e6. vector () - res).norm () < 1e-10);
 }
