@@ -25,6 +25,11 @@ namespace hpp {
       return LiegroupElement (value, *this);
     }
 
+    vector_t LiegroupSpace::neutral () const
+    {
+      return neutral_;
+    }
+
     LiegroupSpace operator*
     (const LiegroupSpace& sp1, const LiegroupSpace& sp2)
     {
@@ -32,8 +37,11 @@ namespace hpp {
       res.liegroupTypes_.insert (res.liegroupTypes_.end (),
                                  sp2.liegroupTypes_.begin (),
                                  sp2.liegroupTypes_.end ());
-      res.nq_ += sp2.nq_;
-      res.nv_ += sp2.nv_;      
+      res.nq_ = sp1.nq_ + sp2.nq_;
+      res.nv_ = sp1.nv_ + sp2.nv_;
+      res.neutral_.resize (res.nq_);
+      res.neutral_.head (sp1.nq ()) = sp1.neutral ();
+      res.neutral_.tail (sp2.nq ()) = sp2.neutral ();
       return res;
     }
 

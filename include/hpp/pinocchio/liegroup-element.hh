@@ -97,6 +97,9 @@ namespace hpp {
         return value_.size ();
       }
 
+      /// Set element to neutral element
+      void setNeutral ();
+
     private:
       vector_t value_;
       LiegroupSpace space_;

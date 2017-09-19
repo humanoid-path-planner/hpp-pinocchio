@@ -65,6 +65,10 @@ namespace hpp {
       return value_;
     }
 
+    void LiegroupElement::setNeutral ()
+    {
+      value_ = space_.neutral ();
+    }
 
     LiegroupElement operator+ (const LiegroupElement& e, const vector_t& v)
     {

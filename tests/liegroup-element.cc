@@ -68,6 +68,12 @@ BOOST_AUTO_TEST_CASE (testR3SO3)
   vector_t velocity (6);
   LiegroupSpace R3xSO3 (LiegroupSpace::R3 () * LiegroupSpace::SO3 ());
 
+  vector_t neutral (7); neutral << 0, 0, 0, 0, 0, 0, 1;
+  BOOST_CHECK (R3xSO3.neutral () == neutral);
+  LiegroupElement e (R3xSO3.element ());
+  e.setNeutral ();
+  BOOST_CHECK (e.value () == neutral);
+
   for (std::size_t i=0; i<100; ++i) {
     u1.setRandom ();
     u3.setRandom ();
