@@ -60,11 +60,6 @@ namespace hpp {
       }; // struct SubstractionVisitor
     } // namespace liegroupType
 
-    LiegroupElement::operator vector_t ()
-    {
-      return value_;
-    }
-
     void LiegroupElement::setNeutral ()
     {
       value_ = space_->neutral ();

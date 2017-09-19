@@ -36,11 +36,6 @@ namespace hpp {
       friend vector_t operator-
       (const LiegroupElement& e1, const LiegroupElement& e2);
 
-      /// Temporary cast to vector
-      /// \deprecated this operator is meant to detect implicit cast into
-      /// vector_t in order to modify user code.
-      operator vector_t () HPP_PINOCCHIO_DEPRECATED;
-
       /// Constructor
       /// \param value vector representation,
       /// \param liegroupSpace space the element belongs to.
