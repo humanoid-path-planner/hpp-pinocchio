@@ -93,6 +93,11 @@ BOOST_AUTO_TEST_CASE (testR3SO3)
     velocity = e3 - e1;
 
     BOOST_CHECK (sameR3xSO3 (e1 + velocity, e3, 1e-10));
+
+    e2 = e1 + velocity;
+    e3 = e2 + (- velocity);
+
+    BOOST_CHECK (sameR3xSO3 (e1, e3, 1e-10));
   }
 
   // Test rotation around frame axes from unit quaternion.

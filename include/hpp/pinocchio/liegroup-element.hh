@@ -56,7 +56,7 @@ namespace hpp {
       /// \param value vector representation,
       ///
       /// By default the space containing the value is a vector space.
-      LiegroupElement (const vector_t& value) :
+      explicit LiegroupElement (const vector_t& value) :
         value_ (value), space_ (LiegroupSpace::create (value.size ()))
       {
       }
