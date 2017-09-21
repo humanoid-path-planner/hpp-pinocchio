@@ -23,6 +23,7 @@
 # include <pinocchio/multibody/liegroup/special-euclidean.hpp>
 # include <pinocchio/multibody/liegroup/special-orthogonal.hpp>
 # include <pinocchio/multibody/liegroup/vector-space.hpp>
+# include <hpp/pinocchio/liegroup.hh>
 # include <hpp/pinocchio/fwd.hh>
 
 namespace hpp {
@@ -31,14 +32,22 @@ namespace hpp {
     /// \{
 
     /// Elementary Lie groups
-    typedef boost::variant <se3::VectorSpaceOperation <Eigen::Dynamic>,
-                            se3::VectorSpaceOperation <1>,
-                            se3::VectorSpaceOperation <2>,
-                            se3::VectorSpaceOperation <3>,
-                            se3::SpecialEuclideanOperation<2>,
-                            se3::SpecialEuclideanOperation<3>,
-                            se3::SpecialOrthogonalOperation <2>,
-                            se3::SpecialOrthogonalOperation <3> > LiegroupType;
+    typedef boost::variant <liegroup::VectorSpaceOperation
+                            <Eigen::Dynamic, false>,
+                            liegroup::VectorSpaceOperation <1, true>,
+                            liegroup::VectorSpaceOperation <1, false>,
+                            liegroup::VectorSpaceOperation <2, false>,
+                            liegroup::VectorSpaceOperation <3, false>,
+                            liegroup::VectorSpaceOperation <3, true>,
+                            liegroup::CartesianProductOperation<
+                              liegroup::VectorSpaceOperation<3, false>,
+                              liegroup::SpecialOrthogonalOperation<3> >,
+                            liegroup::CartesianProductOperation<
+                              liegroup::VectorSpaceOperation<2, false>,
+                              liegroup::SpecialOrthogonalOperation<2> >,
+                            liegroup::SpecialOrthogonalOperation <2>,
+                            liegroup::SpecialOrthogonalOperation <3> >
+    LiegroupType;
 
     /// Cartesian product of elementary Lie groups
     ///
@@ -88,15 +97,23 @@ namespace hpp {
       static LiegroupSpacePtr_t empty ();
       /// \}
 
-      /// Constructor of vector space of given size
+      /// Create instance of vector space of given size
       static LiegroupSpacePtr_t create (const size_type& size)
       {
         return LiegroupSpacePtr_t (new LiegroupSpace (size));
       }
 
+      /// Create copy
       static LiegroupSpacePtr_t create (const LiegroupSpaceConstPtr_t& other)
       {
         return LiegroupSpacePtr_t (new LiegroupSpace (*other));
+      }
+
+      /// Create instance with one Elementary Lie group and a name
+      static LiegroupSpacePtr_t create (const LiegroupType& type,
+                                        const std::string& name)
+      {
+        return LiegroupSpacePtr_t (new LiegroupSpace (type, name));
       }
 
       /// Dimension of the vector representation
@@ -132,7 +149,7 @@ namespace hpp {
       {
         nq_ = nv_ = size;
         liegroupTypes_.push_back
-          (se3::VectorSpaceOperation <Eigen::Dynamic> ((int) nq_));
+          (liegroup::VectorSpaceOperation <Eigen::Dynamic, false> ((int) nq_));
         std::ostringstream oss; oss << "R^" << nq_;
         name_ = oss.str ();
         neutral_.setZero ();
@@ -141,6 +158,12 @@ namespace hpp {
         liegroupTypes_ (other.liegroupTypes_), nq_ (other.nq_), nv_ (other.nv_),
         neutral_ (other.neutral_), name_ (other.name_)
       {
+      }
+
+      LiegroupSpace (const LiegroupType& type, const std::string& name) :
+        liegroupTypes_ (), neutral_ (), name_ (name)
+      {
+        liegroupTypes_.push_back (type);
       }
 
     private:

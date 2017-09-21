@@ -25,6 +25,7 @@
 # include <hpp/pinocchio/device.hh>
 # include <hpp/pinocchio/body.hh>
 # include <hpp/pinocchio/frame.hh>
+# include <hpp/pinocchio/liegroup-space.hh>
 
 # include "joint/bound.hh"
 
@@ -481,6 +482,37 @@ namespace hpp {
              << std::endl;
       }
       return os;
+    }
+
+    class ConfigSpaceVisitor : public boost::static_visitor <>
+    {
+    public:
+      template <typename JointModel> void operator () (JointModel&)
+      {
+        typename LieGroupTpl::operation <JointModel>::type tmp;
+        liegroupType_ = LiegroupType (tmp);
+      }
+
+      void operator () (se3::JointModelComposite&)
+      {
+        assert (false && "Method Joint::configurationSpace is not implemented "
+                "for JointComposite");
+      }
+
+      const LiegroupType& result () const
+      {
+        return liegroupType_;
+      }
+    private:
+      LiegroupType liegroupType_;
+    }; // class configSpaceVisitor
+
+    LiegroupSpacePtr_t Joint::configurationSpace () const
+    {
+      ConfigSpaceVisitor v;
+      std::ostringstream oss; oss << "CS(" << jointModel ().classname () << ")";
+      boost::apply_visitor (v, const_cast <JointModel&> (jointModel ()));
+      return LiegroupSpace::create (v.result (), oss.str ());
     }
 
     const JointModel& Joint::jointModel() const

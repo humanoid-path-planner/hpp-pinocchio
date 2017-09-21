@@ -21,6 +21,8 @@
 
 #include <hpp/util/exception-factory.hh>
 
+#include <hpp/pinocchio/fwd.hh>
+
 namespace hpp {
   namespace pinocchio {
     namespace liegroup {
@@ -50,6 +52,13 @@ namespace hpp {
           NR = (rot ? Size : 0),
           NT = (rot ? 0 : Size)
         };
+
+        /// Constructor
+        /// \param size size of the vector space: should be the equal to
+        ///        template argument for static sized vector-spaces.
+        VectorSpaceOperation (int size = Size) : Base (size)
+        {
+        }
 
         template <class ConfigL_t, class ConfigR_t>
           static double squaredDistance(
