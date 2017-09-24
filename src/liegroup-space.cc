@@ -23,7 +23,9 @@ namespace hpp {
 
     LiegroupSpacePtr_t LiegroupSpace::Rn (const size_type& n)
     {
-      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      LiegroupSpace* ptr (new LiegroupSpace ());
+      LiegroupSpacePtr_t  S (ptr);
+      ptr->init (S);
       S->liegroupTypes_.push_back
         (liegroup::VectorSpaceOperation <Eigen::Dynamic, false> ((int)n));
       S->nq_ = S->nv_ = n;
@@ -36,7 +38,9 @@ namespace hpp {
     /// Return \f$\mathbf{R}\f$ as a Lie group
     LiegroupSpacePtr_t LiegroupSpace::R1 ()
     {
-      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      LiegroupSpace* ptr (new LiegroupSpace ());
+      LiegroupSpacePtr_t  S (ptr);
+      ptr->init (S);
       S->liegroupTypes_.push_back (liegroup::VectorSpaceOperation <1, false> ());
       S->nq_ = S->nv_ = 1;
       S->neutral_.resize (S->nq_); S->neutral_.setZero ();
@@ -47,7 +51,9 @@ namespace hpp {
     /// Return \f$\mathbf{R}^2\f$ as a Lie group
     LiegroupSpacePtr_t LiegroupSpace::R2 ()
     {
-      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      LiegroupSpace* ptr (new LiegroupSpace ());
+      LiegroupSpacePtr_t  S (ptr);
+      ptr->init (S);
       S->liegroupTypes_.push_back (liegroup::VectorSpaceOperation <2, false> ());
       S->nq_ = S->nv_ = 2;
       S->neutral_.resize (S->nq_); S->neutral_.setZero ();
@@ -58,7 +64,9 @@ namespace hpp {
       /// Return \f$\mathbf{R}^3\f$ as a Lie group
     LiegroupSpacePtr_t LiegroupSpace::R3 ()
     {
-      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      LiegroupSpace* ptr (new LiegroupSpace ());
+      LiegroupSpacePtr_t  S (ptr);
+      ptr->init (S);
       S->liegroupTypes_.push_back (liegroup::VectorSpaceOperation <3, false> ());
       S->nq_ = S->nv_ = 3;
       S->neutral_.resize (S->nq_); S->neutral_.setZero ();
@@ -69,7 +77,9 @@ namespace hpp {
     /// Return \f$SO(2)\f$
     LiegroupSpacePtr_t LiegroupSpace::SO2 ()
     {
-      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      LiegroupSpace* ptr (new LiegroupSpace ());
+      LiegroupSpacePtr_t  S (ptr);
+      ptr->init (S);
       S->liegroupTypes_.push_back (liegroup::SpecialOrthogonalOperation<2> ());
       S->nq_ = liegroup::SpecialOrthogonalOperation<2>::NQ;
       S->nv_ = liegroup::SpecialOrthogonalOperation<2>::NV;
@@ -82,7 +92,9 @@ namespace hpp {
     /// Return \f$SO(3)\f$
     LiegroupSpacePtr_t LiegroupSpace::SO3 ()
     {
-      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      LiegroupSpace* ptr (new LiegroupSpace ());
+      LiegroupSpacePtr_t  S (ptr);
+      ptr->init (S);
       S->liegroupTypes_.push_back (liegroup::SpecialOrthogonalOperation<3> ());
       S->nq_ = liegroup::SpecialOrthogonalOperation<3>::NQ;
       S->nv_ = liegroup::SpecialOrthogonalOperation<3>::NV;
@@ -95,15 +107,17 @@ namespace hpp {
     /// Return empty Lie group
     LiegroupSpacePtr_t LiegroupSpace::empty ()
     {
-      LiegroupSpacePtr_t  S (new LiegroupSpace ());
+      LiegroupSpace* ptr (new LiegroupSpace ());
+      LiegroupSpacePtr_t  S (ptr);
+      ptr->init (S);
       S->nq_ = S->nv_ = 0;
       S->neutral_.resize (S->nq_);
       return S;
     }
 
-    vector_t LiegroupSpace::neutral () const
+    LiegroupElement LiegroupSpace::neutral () const
     {
-      return neutral_;
+      return LiegroupElement (neutral_, weak_.lock ());
     }
 
     bool LiegroupSpace::operator== (const LiegroupSpace& other) const
@@ -127,6 +141,11 @@ namespace hpp {
       return !(operator== (other));
     }
 
+    void LiegroupSpace::init (const LiegroupSpaceWkPtr_t weak)
+    {
+      weak_ = weak;
+    }
+
     LiegroupSpacePtr_t operator*
     (const LiegroupSpacePtr_t& sp1, const LiegroupSpacePtr_t& sp2)
     {
@@ -137,8 +156,8 @@ namespace hpp {
       res->nq_ = sp1->nq_ + sp2->nq_;
       res->nv_ = sp1->nv_ + sp2->nv_;
       res->neutral_.resize (res->nq_);
-      res->neutral_.head (sp1->nq ()) = sp1->neutral ();
-      res->neutral_.tail (sp2->nq ()) = sp2->neutral ();
+      res->neutral_.head (sp1->nq ()) = sp1->neutral ().vector ();
+      res->neutral_.tail (sp2->nq ()) = sp2->neutral ().vector ();
       res->name_ = sp1->name ();
       if (sp1->name () != "" && sp2->name () != "") res->name_ += "*";
       res->name_ += sp2->name ();

@@ -116,7 +116,7 @@ namespace hpp {
     typedef boost::shared_ptr<const GeomData>  GeomDataConstPtr_t;
 
     class LiegroupElement;
-    class LiegroupSpace;
+    HPP_PREDEF_CLASS (LiegroupSpace);
     typedef boost::shared_ptr <LiegroupSpace> LiegroupSpacePtr_t;
     typedef boost::shared_ptr <const LiegroupSpace> LiegroupSpaceConstPtr_t;
   } // namespace pinocchio

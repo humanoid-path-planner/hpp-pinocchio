@@ -100,20 +100,29 @@ namespace hpp {
       /// Create instance of vector space of given size
       static LiegroupSpacePtr_t create (const size_type& size)
       {
-        return LiegroupSpacePtr_t (new LiegroupSpace (size));
+        LiegroupSpace* ptr (new LiegroupSpace (size));
+        LiegroupSpacePtr_t shPtr (ptr);
+        ptr->init (shPtr);
+        return shPtr;
       }
 
       /// Create copy
       static LiegroupSpacePtr_t create (const LiegroupSpaceConstPtr_t& other)
       {
-        return LiegroupSpacePtr_t (new LiegroupSpace (*other));
+        LiegroupSpace* ptr (new LiegroupSpace (*other));
+        LiegroupSpacePtr_t shPtr (ptr);
+        ptr->init (shPtr);
+        return shPtr;
       }
 
       /// Create instance with one Elementary Lie group and a name
       static LiegroupSpacePtr_t create (const LiegroupType& type,
                                         const std::string& name)
       {
-        return LiegroupSpacePtr_t (new LiegroupSpace (type, name));
+        LiegroupSpace* ptr (new LiegroupSpace (type, name));
+        LiegroupSpacePtr_t shPtr (ptr);
+        ptr->init (shPtr);
+        return shPtr;
       }
 
       /// Dimension of the vector representation
@@ -134,7 +143,7 @@ namespace hpp {
       }
 
       /// Return the neutral element as a vector
-      vector_t neutral () const;
+      LiegroupElement neutral () const;
 
       /// Return name of Lie group
       const std::string& name () const
@@ -149,7 +158,7 @@ namespace hpp {
 
       /// Constructor of vector space of given size
       LiegroupSpace (const size_type& size) : nq_ (size), nv_ (size),
-                                              neutral_ (size)
+                                              neutral_ (size), weak_ ()
       {
         nq_ = nv_ = size;
         liegroupTypes_.push_back
@@ -160,12 +169,12 @@ namespace hpp {
       }
       LiegroupSpace (const LiegroupSpace& other) :
         liegroupTypes_ (other.liegroupTypes_), nq_ (other.nq_), nv_ (other.nv_),
-        neutral_ (other.neutral_), name_ (other.name_)
+        neutral_ (other.neutral_), name_ (other.name_), weak_ ()
       {
       }
 
       LiegroupSpace (const LiegroupType& type, const std::string& name) :
-        liegroupTypes_ (), neutral_ (), name_ (name)
+        liegroupTypes_ (), neutral_ (), name_ (name), weak_ ()
       {
         liegroupTypes_.push_back (type);
       }
@@ -174,9 +183,12 @@ namespace hpp {
       /// Private constructor
       ///
       /// dimensions not initialized.
-      LiegroupSpace () : liegroupTypes_ (), neutral_ (), name_ ()
+      LiegroupSpace () : liegroupTypes_ (), neutral_ (), name_ (), weak_ ()
       {
       }
+      /// Initialize weak pointer to itself
+      void init (const LiegroupSpaceWkPtr_t weak);
+
       typedef std::vector <LiegroupType> LiegroupTypes;
       LiegroupTypes liegroupTypes_;
       /// Size of vector representation and of Lie group tangent space
@@ -185,6 +197,8 @@ namespace hpp {
       vector_t neutral_;
       /// Name of the space
       std::string name_;
+      /// weak pointer to itself
+      LiegroupSpaceWkPtr_t weak_;
     }; // class LiegroupSpace
 
     /// Cartesian product between Lie groups

@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE (testR3SO3)
   // Test operator==
   BOOST_CHECK (*(R3xSO3) == *(R3xSO3));
   vector_t neutral (7); neutral << 0, 0, 0, 0, 0, 0, 1;
-  BOOST_CHECK (R3xSO3->neutral () == neutral);
+  BOOST_CHECK (R3xSO3->neutral ().vector () == neutral);
   LiegroupElement e (R3xSO3);
   e.setNeutral ();
   BOOST_CHECK (e. vector () == neutral);
