@@ -16,6 +16,7 @@
 
 #include <hpp/pinocchio/liegroup-element.hh>
 #include <hpp/pinocchio/liegroup-space.hh>
+#include "../src/comparison.hh"
 
 namespace hpp {
   namespace pinocchio {
@@ -103,6 +104,27 @@ namespace hpp {
     vector_t LiegroupSpace::neutral () const
     {
       return neutral_;
+    }
+
+    bool LiegroupSpace::operator== (const LiegroupSpace& other) const
+    {
+      if (liegroupTypes_.size () != other.liegroupTypes ().size ())
+        return false;
+      LiegroupTypes::const_iterator it1 (liegroupTypes_.begin ());
+      LiegroupTypes::const_iterator it2 (other.liegroupTypes ().begin ());
+      while (it1 != liegroupTypes_.end ()){
+        liegroup::level1::IsEqualVisitor v (*it2);
+        boost::apply_visitor (v, *it1);
+        if (!v.result) return false;
+        ++it1; ++it2;
+      }
+      return true;
+      //return (liegroupTypes_ == other.liegroupTypes ());
+    }
+
+    bool LiegroupSpace::operator!= (const LiegroupSpace& other) const
+    {
+      return !(operator== (other));
     }
 
     LiegroupSpacePtr_t operator*

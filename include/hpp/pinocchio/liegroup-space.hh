@@ -141,6 +141,10 @@ namespace hpp {
       {
         return name_;
       }
+
+      bool operator== (const LiegroupSpace& other) const;
+      bool operator!= (const LiegroupSpace& other) const;
+
     protected:
 
       /// Constructor of vector space of given size
@@ -173,7 +177,8 @@ namespace hpp {
       LiegroupSpace () : liegroupTypes_ (), neutral_ (), name_ ()
       {
       }
-      std::vector <LiegroupType> liegroupTypes_;
+      typedef std::vector <LiegroupType> LiegroupTypes;
+      LiegroupTypes liegroupTypes_;
       /// Size of vector representation and of Lie group tangent space
       size_type nq_, nv_;
       /// Neutral element of the Lie group
@@ -191,6 +196,7 @@ namespace hpp {
     {
       os << space.name (); return os;
     }
+
     /// \}
   } // namespace pinocchio
 } // namespace hpp

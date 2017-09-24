@@ -18,6 +18,8 @@
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
 SET(LIBRARY_SOURCES
+  comparison.hh
+  comparison.hxx
   device.cc
   humanoid-robot.cc
   joint.cc
