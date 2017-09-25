@@ -95,6 +95,13 @@ namespace hpp {
       /// Set element to neutral element
       void setNeutral ();
 
+      /// Check that size of vector fits size of space
+      /// \note only in debug mode
+      void check () const
+      {
+        assert (value_.size () == space_->nq ());
+      }
+
     private:
       vector_t value_;
       LiegroupSpacePtr_t space_;
