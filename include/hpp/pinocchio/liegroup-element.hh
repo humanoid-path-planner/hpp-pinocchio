@@ -31,6 +31,7 @@ namespace hpp {
     class LiegroupElement
     {
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       friend LiegroupElement operator+
       (const LiegroupElement& e, const vector_t& v);
       friend vector_t operator-

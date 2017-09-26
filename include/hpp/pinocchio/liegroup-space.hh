@@ -71,6 +71,7 @@ namespace hpp {
     class LiegroupSpace
     {
     public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
       friend LiegroupSpacePtr_t operator*
       (const LiegroupSpacePtr_t& sp1, const LiegroupSpacePtr_t& sp2);
       /// \name Elementary Lie groups
