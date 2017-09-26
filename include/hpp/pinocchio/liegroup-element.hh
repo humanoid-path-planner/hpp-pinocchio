@@ -82,7 +82,7 @@ namespace hpp {
       }
 
       /// Modifiable vector representation
-      vector_t&  vector ()
+      vectorOut_t vector ()
       {
         return value_;
       }
