@@ -487,6 +487,13 @@ namespace hpp {
     class ConfigSpaceVisitor : public boost::static_visitor <>
     {
     public:
+      // Initialize liegroupType_ since default constructor
+      // VectorSpaceOperation<-1, false> () make an assertion fail.
+      ConfigSpaceVisitor () : liegroupType_
+                              (liegroup::VectorSpaceOperation
+                               <Eigen::Dynamic, false> (0))
+      {
+      }
       template <typename JointModel> void operator () (JointModel&)
       {
         typename LieGroupTpl::operation <JointModel>::type tmp;
