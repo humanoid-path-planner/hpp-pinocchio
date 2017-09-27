@@ -108,7 +108,8 @@ namespace hpp {
       }
 
       /// Create copy
-      static LiegroupSpacePtr_t create (const LiegroupSpaceConstPtr_t& other)
+      static LiegroupSpacePtr_t createCopy
+      (const LiegroupSpaceConstPtr_t& other)
       {
         LiegroupSpace* ptr (new LiegroupSpace (*other));
         LiegroupSpacePtr_t shPtr (ptr);
@@ -116,11 +117,10 @@ namespace hpp {
         return shPtr;
       }
 
-      /// Create instance with one Elementary Lie group and a name
-      static LiegroupSpacePtr_t create (const LiegroupType& type,
-                                        const std::string& name)
+      /// Create instance with one Elementary Lie group
+      static LiegroupSpacePtr_t create (const LiegroupType& type)
       {
-        LiegroupSpace* ptr (new LiegroupSpace (type, name));
+        LiegroupSpace* ptr (new LiegroupSpace (type));
         LiegroupSpacePtr_t shPtr (ptr);
         ptr->init (shPtr);
         return shPtr;
@@ -147,10 +147,7 @@ namespace hpp {
       LiegroupElement neutral () const;
 
       /// Return name of Lie group
-      const std::string& name () const
-      {
-        return name_;
-      }
+      std::string name () const;
 
       bool operator== (const LiegroupSpace& other) const;
       bool operator!= (const LiegroupSpace& other) const;
@@ -164,18 +161,16 @@ namespace hpp {
         nq_ = nv_ = size;
         liegroupTypes_.push_back
           (liegroup::VectorSpaceOperation <Eigen::Dynamic, false> ((int) nq_));
-        std::ostringstream oss; oss << "R^" << nq_;
-        name_ = oss.str ();
         neutral_.setZero ();
       }
       LiegroupSpace (const LiegroupSpace& other) :
         liegroupTypes_ (other.liegroupTypes_), nq_ (other.nq_), nv_ (other.nv_),
-        neutral_ (other.neutral_), name_ (other.name_), weak_ ()
+        neutral_ (other.neutral_), weak_ ()
       {
       }
 
-      LiegroupSpace (const LiegroupType& type, const std::string& name) :
-        liegroupTypes_ (), neutral_ (), name_ (name), weak_ ()
+      LiegroupSpace (const LiegroupType& type) :
+        liegroupTypes_ (), neutral_ (), weak_ ()
       {
         liegroupTypes_.push_back (type);
       }
@@ -184,7 +179,7 @@ namespace hpp {
       /// Private constructor
       ///
       /// dimensions not initialized.
-      LiegroupSpace () : liegroupTypes_ (), neutral_ (), name_ (), weak_ ()
+      LiegroupSpace () : liegroupTypes_ (), neutral_ (), weak_ ()
       {
       }
       /// Initialize weak pointer to itself
@@ -196,8 +191,6 @@ namespace hpp {
       size_type nq_, nv_;
       /// Neutral element of the Lie group
       vector_t neutral_;
-      /// Name of the space
-      std::string name_;
       /// weak pointer to itself
       LiegroupSpaceWkPtr_t weak_;
     }; // class LiegroupSpace

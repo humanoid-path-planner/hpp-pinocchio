@@ -510,9 +510,8 @@ namespace hpp {
     LiegroupSpacePtr_t Joint::configurationSpace () const
     {
       ConfigSpaceVisitor v;
-      std::ostringstream oss; oss << "CS(" << jointModel ().classname () << ")";
       boost::apply_visitor (v, const_cast <JointModel&> (jointModel ()));
-      return LiegroupSpace::create (v.result (), oss.str ());
+      return LiegroupSpace::create (v.result ());
     }
 
     const JointModel& Joint::jointModel() const

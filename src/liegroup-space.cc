@@ -30,8 +30,6 @@ namespace hpp {
         (liegroup::VectorSpaceOperation <Eigen::Dynamic, false> ((int)n));
       S->nq_ = S->nv_ = n;
       S->neutral_.resize (S->nq_); S->neutral_.setZero ();
-      std::ostringstream oss; oss << "R^" << n;
-      S->name_ = oss.str ();
       return S;
     }
 
@@ -44,7 +42,6 @@ namespace hpp {
       S->liegroupTypes_.push_back (liegroup::VectorSpaceOperation <1, false> ());
       S->nq_ = S->nv_ = 1;
       S->neutral_.resize (S->nq_); S->neutral_.setZero ();
-      S->name_ = "R";
       return S;
     }
 
@@ -57,7 +54,6 @@ namespace hpp {
       S->liegroupTypes_.push_back (liegroup::VectorSpaceOperation <2, false> ());
       S->nq_ = S->nv_ = 2;
       S->neutral_.resize (S->nq_); S->neutral_.setZero ();
-      S->name_ = "R^2";
       return S;
     }
 
@@ -70,7 +66,6 @@ namespace hpp {
       S->liegroupTypes_.push_back (liegroup::VectorSpaceOperation <3, false> ());
       S->nq_ = S->nv_ = 3;
       S->neutral_.resize (S->nq_); S->neutral_.setZero ();
-      S->name_ = "R^3";
       return S;
     }
 
@@ -85,7 +80,6 @@ namespace hpp {
       S->nv_ = liegroup::SpecialOrthogonalOperation<2>::NV;
       S->neutral_.resize (S->nq_); S->neutral_.setZero ();
       S->neutral_ [0] = 1;
-      S->name_ = "SO(2)";
       return S;
     }
 
@@ -100,7 +94,6 @@ namespace hpp {
       S->nv_ = liegroup::SpecialOrthogonalOperation<3>::NV;
       S->neutral_.resize (S->nq_); S->neutral_.setZero ();
       S->neutral_ [3] = 1;
-      S->name_ = "SO(3)";
       return S;
       }
 
@@ -118,6 +111,33 @@ namespace hpp {
     LiegroupElement LiegroupSpace::neutral () const
     {
       return LiegroupElement (neutral_, weak_.lock ());
+    }
+
+    struct NameVisitor : public boost::static_visitor <>
+    {
+      template <typename LgT1> void operator () (const LgT1& lg1)
+      {
+        name = lg1.name ();
+      }
+      std::string name;
+    }; // struct NameVisitor
+
+    std::string LiegroupSpace::name () const
+    {
+      std::ostringstream oss;
+      std::size_t size (liegroupTypes_.size ());
+      if (size == 0) {
+        return std::string ("");
+      }
+      for (std::size_t i = 0; i < liegroupTypes_.size (); ++i) {
+        NameVisitor v;
+        boost::apply_visitor (v, liegroupTypes_ [i]);
+        oss << v.name;
+        if (i < liegroupTypes_.size () - 1) {
+          oss << "*";
+        }
+      }
+      return oss.str ();
     }
 
     bool LiegroupSpace::operator== (const LiegroupSpace& other) const
@@ -149,7 +169,7 @@ namespace hpp {
     LiegroupSpacePtr_t operator*
     (const LiegroupSpacePtr_t& sp1, const LiegroupSpacePtr_t& sp2)
     {
-      LiegroupSpacePtr_t res (LiegroupSpace::create (sp1));
+      LiegroupSpacePtr_t res (LiegroupSpace::createCopy (sp1));
       res->liegroupTypes_.insert (res->liegroupTypes_.end (),
                                   sp2->liegroupTypes_.begin (),
                                   sp2->liegroupTypes_.end ());
@@ -158,9 +178,6 @@ namespace hpp {
       res->neutral_.resize (res->nq_);
       res->neutral_.head (sp1->nq ()) = sp1->neutral ().vector ();
       res->neutral_.tail (sp2->nq ()) = sp2->neutral ().vector ();
-      res->name_ = sp1->name ();
-      if (sp1->name () != "" && sp2->name () != "") res->name_ += "*";
-      res->name_ += sp2->name ();
       return res;
     }
 
