@@ -25,7 +25,9 @@ namespace hpp {
   namespace pinocchio {
 
     HumanoidRobot::HumanoidRobot (const std::string& name)
-      : Device (name), weakPtr_ ()
+      : Device (name), weakPtr_ (),
+      gazeOrigin_ (0, 0, 0),
+      gazeDirection_ (1, 0, 0)
     {
     }
 
