@@ -64,6 +64,10 @@ namespace hpp
 			   const std::string& urdfSuffix,
 			   const std::string& srdfSuffix);
 
+      /// Set the special joints of the robot (chest, waist...)
+      /// and initialize the gaze origin and direction
+      void setupHumanoidRobot (const HumanoidRobotPtr_t& robot);
+
       /// Load humanoid robot model by name
       ///
       /// \param robot Empty robot created before calling the function.

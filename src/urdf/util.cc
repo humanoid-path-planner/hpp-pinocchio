@@ -262,6 +262,14 @@ namespace hpp {
             makeModelPath(package, "srdf", modelName, srdfSuffix));
       }
 
+      void setupHumanoidRobot (const HumanoidRobotPtr_t& robot)
+      {
+	// Look for special joints and attach them to the model.
+	setSpecialJoints (robot, "");
+	// Fill gaze position and direction.
+	fillGaze (robot);
+      }
+
       void loadHumanoidModel (const HumanoidRobotPtr_t& robot,
 			      const std::string& rootJointType,
 			      const std::string& package,
@@ -270,11 +278,7 @@ namespace hpp {
 			      const std::string& srdfSuffix)
       {
         loadRobotModel(robot, rootJointType, package, modelName, urdfSuffix, srdfSuffix);
-
-	// Look for special joints and attach them to the model.
-	setSpecialJoints (robot, "");
-	// Fill gaze position and direction.
-	fillGaze (robot);
+        setupHumanoidRobot(robot);
       }
 
       void loadHumanoidModel (const HumanoidRobotPtr_t& robot,
@@ -287,11 +291,7 @@ namespace hpp {
 			      const std::string& srdfSuffix)
       {
         loadRobotModel(robot, baseJoint, prefix, rootJointType, package, modelName, urdfSuffix, srdfSuffix);
-
-	// Look for special joints and attach them to the model.
-	setSpecialJoints (robot, prefix);
-	// Fill gaze position and direction.
-	fillGaze (robot);
+        setupHumanoidRobot(robot);
       }
 
       void loadUrdfModel (const DevicePtr_t& robot,
