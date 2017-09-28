@@ -128,7 +128,7 @@ namespace hpp
       /// This is the base function which is called by the other function.
       /// It reads a URDF file, and optionnally a SRDF file, and build the
       /// robot.
-      template <bool LoadSRDF>
+      /// \param srdfString if empty, do not try to parse SRDF.
       void loadModel (const DevicePtr_t& robot,
                       const JointIndex&  baseJoint,
                       const std::string& prefix,
@@ -137,7 +137,7 @@ namespace hpp
                       const std::string& srdfPath);
 
       /// Read URDF and, optionnally SRDF, as XML string.
-      template <bool LoadSRDF>
+      /// \param srdfString if empty, do not try to parse SRDF.
       void loadModelFromString (const DevicePtr_t& robot,
                                 const JointIndex&  baseJoint,
                                 const std::string& prefix,

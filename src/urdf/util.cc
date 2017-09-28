@@ -186,7 +186,7 @@ namespace hpp {
             (model, geomModel, srdf, verbose);
         }
 
-        template <bool LoadSRDF, bool srdfAsXmlString, typename InType>
+        template <bool srdfAsXmlString, typename InType>
         void _loadModel (const DevicePtr_t& robot,
                         const JointIndex&  baseJoint,
                         const std::string& prefix,
@@ -214,7 +214,7 @@ namespace hpp {
           se3::urdf::buildGeom(model, urdf, se3::COLLISION, geomModel, baseDirs);
           geomModel.addAllCollisionPairs();
 
-          if (LoadSRDF) {
+          if (!srdf.empty()) {
             _removeCollisionPairs<srdfAsXmlString>
               (model, geomModel, srdf, verbose);
           }
@@ -241,7 +241,7 @@ namespace hpp {
 			   const std::string& urdfSuffix,
                            const std::string& srdfSuffix)
       {
-        loadModel <true> (robot, 0, "", rootJointType,
+        loadModel (robot, 0, "", rootJointType,
             makeModelPath(package, "urdf", modelName, urdfSuffix),
             makeModelPath(package, "srdf", modelName, srdfSuffix));
       }
@@ -255,7 +255,7 @@ namespace hpp {
 			   const std::string& urdfSuffix,
                            const std::string& srdfSuffix)
       {
-        loadModel <true> (robot, baseJoint, 
+        loadModel (robot, baseJoint, 
             (prefix.empty() ? "" : prefix + "/"),
             rootJointType,
             makeModelPath(package, "urdf", modelName, urdfSuffix),
@@ -301,7 +301,7 @@ namespace hpp {
 			  const std::string& package,
 			  const std::string& filename)
       {
-        loadModel<false> (robot, baseJoint,
+        loadModel (robot, baseJoint,
             (prefix.empty() ? "" : prefix + "/"),
             rootJointType,
             makeModelPath(package, "urdf", filename), "");
@@ -312,11 +312,10 @@ namespace hpp {
 			  const std::string& package,
 			  const std::string& filename)
       {
-        loadModel<false> (robot, 0, "", rootType,
+        loadModel (robot, 0, "", rootType,
             makeModelPath(package, "urdf", filename), "");
       }
 
-        template <bool LoadSRDF>
         void loadModel (const DevicePtr_t& robot,
                         const JointIndex&  baseJoint,
                         const std::string& prefix,
@@ -333,7 +332,7 @@ namespace hpp {
           }
 
           std::string srdfFileName;
-          if (LoadSRDF) {
+          if (!srdfPath.empty()) {
             srdfFileName = se3::retrieveResourcePath(srdfPath, baseDirs);
             if (srdfFileName == "") {
               throw std::invalid_argument (std::string ("Unable to retrieve ") +
@@ -341,11 +340,10 @@ namespace hpp {
             }
           }
 
-          _loadModel <LoadSRDF, false> (robot, baseJoint, prefix, rootType,
+          _loadModel <false> (robot, baseJoint, prefix, rootType,
               urdfFileName, srdfFileName);
         }
 
-        template <bool LoadSRDF>
         void loadModelFromString (const DevicePtr_t& robot,
                                   const JointIndex&  baseJoint,
                                   const std::string& prefix,
@@ -357,14 +355,9 @@ namespace hpp {
           if (!urdfTree) {
             throw std::invalid_argument ("Unable to parse the input URDF string");
           }
-          _loadModel <LoadSRDF, true> (robot, baseJoint, prefix, rootType,
+          _loadModel <true> (robot, baseJoint, prefix, rootType,
               urdfTree, srdfString);
         }
-
-        template void loadModel<true> (const DevicePtr_t&, const JointIndex&, const std::string&, const std::string&, const std::string&, const std::string&);
-        template void loadModel<false>(const DevicePtr_t&, const JointIndex&, const std::string&, const std::string&, const std::string&, const std::string&);
-        template void loadModelFromString<true> (const DevicePtr_t&, const JointIndex&, const std::string&, const std::string&, const std::string&, const std::string&);
-        template void loadModelFromString<false>(const DevicePtr_t&, const JointIndex&, const std::string&, const std::string&, const std::string&, const std::string&);
     } // end of namespace urdf.
   } // end of namespace pinocchio.
 } // end of namespace  hpp.
