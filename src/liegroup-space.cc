@@ -17,95 +17,80 @@
 #include <hpp/pinocchio/liegroup-element.hh>
 #include <hpp/pinocchio/liegroup-space.hh>
 #include "../src/comparison.hh"
+#include "../src/size-visitor.hh"
 
 namespace hpp {
   namespace pinocchio {
 
     LiegroupSpacePtr_t LiegroupSpace::Rn (const size_type& n)
     {
-      LiegroupSpace* ptr (new LiegroupSpace ());
-      LiegroupSpacePtr_t  S (ptr);
-      ptr->init (S);
-      S->liegroupTypes_.push_back
-        (liegroup::VectorSpaceOperation <Eigen::Dynamic, false> ((int)n));
-      S->nq_ = S->nv_ = n;
-      S->neutral_.resize (S->nq_); S->neutral_.setZero ();
-      return S;
+      LiegroupSpace* ptr (new LiegroupSpace (n));
+      LiegroupSpacePtr_t  shPtr (ptr);
+      ptr->init (shPtr);
+      return shPtr;
     }
 
     /// Return \f$\mathbf{R}\f$ as a Lie group
     LiegroupSpacePtr_t LiegroupSpace::R1 ()
     {
-      LiegroupSpace* ptr (new LiegroupSpace ());
-      LiegroupSpacePtr_t  S (ptr);
-      ptr->init (S);
-      S->liegroupTypes_.push_back (liegroup::VectorSpaceOperation <1, false> ());
-      S->nq_ = S->nv_ = 1;
-      S->neutral_.resize (S->nq_); S->neutral_.setZero ();
-      return S;
+      LiegroupSpace* ptr (new LiegroupSpace
+                          (liegroup::VectorSpaceOperation <1, false> ()));
+      LiegroupSpacePtr_t  shPtr (ptr);
+      ptr->init (shPtr);
+      return shPtr;
     }
 
     /// Return \f$\mathbf{R}^2\f$ as a Lie group
     LiegroupSpacePtr_t LiegroupSpace::R2 ()
     {
-      LiegroupSpace* ptr (new LiegroupSpace ());
-      LiegroupSpacePtr_t  S (ptr);
-      ptr->init (S);
-      S->liegroupTypes_.push_back (liegroup::VectorSpaceOperation <2, false> ());
-      S->nq_ = S->nv_ = 2;
-      S->neutral_.resize (S->nq_); S->neutral_.setZero ();
-      return S;
+      LiegroupSpace* ptr (new LiegroupSpace
+                          (liegroup::VectorSpaceOperation <2, false> ()));
+      LiegroupSpacePtr_t  shPtr (ptr);
+      ptr->init (shPtr);
+      return shPtr;
     }
 
-      /// Return \f$\mathbf{R}^3\f$ as a Lie group
+    /// Return \f$\mathbf{R}^3\f$ as a Lie group
     LiegroupSpacePtr_t LiegroupSpace::R3 ()
     {
-      LiegroupSpace* ptr (new LiegroupSpace ());
-      LiegroupSpacePtr_t  S (ptr);
-      ptr->init (S);
-      S->liegroupTypes_.push_back (liegroup::VectorSpaceOperation <3, false> ());
-      S->nq_ = S->nv_ = 3;
-      S->neutral_.resize (S->nq_); S->neutral_.setZero ();
-      return S;
+      LiegroupSpace* ptr (new LiegroupSpace
+                          (liegroup::VectorSpaceOperation <3, false> ()));
+      LiegroupSpacePtr_t  shPtr (ptr);
+      ptr->init (shPtr);
+      return shPtr;
     }
 
-    /// Return \f$SO(2)\f$
-    LiegroupSpacePtr_t LiegroupSpace::SO2 ()
+    /// Return \f$R^2\times SO(2)\f$
+    LiegroupSpacePtr_t LiegroupSpace::R2xSO2 ()
     {
-      LiegroupSpace* ptr (new LiegroupSpace ());
-      LiegroupSpacePtr_t  S (ptr);
-      ptr->init (S);
-      S->liegroupTypes_.push_back (liegroup::SpecialOrthogonalOperation<2> ());
-      S->nq_ = liegroup::SpecialOrthogonalOperation<2>::NQ;
-      S->nv_ = liegroup::SpecialOrthogonalOperation<2>::NV;
-      S->neutral_.resize (S->nq_); S->neutral_.setZero ();
-      S->neutral_ [0] = 1;
-      return S;
+      LiegroupSpace* ptr (new LiegroupSpace
+                          (liegroup::CartesianProductOperation<
+                           liegroup::VectorSpaceOperation<2, false>,
+                           liegroup::SpecialOrthogonalOperation<2> > ()));
+      LiegroupSpacePtr_t  shPtr (ptr);
+      ptr->init (shPtr);
+      return shPtr;
     }
 
-    /// Return \f$SO(3)\f$
-    LiegroupSpacePtr_t LiegroupSpace::SO3 ()
+    /// Return \f$R^3\times SO(3)\f$
+    LiegroupSpacePtr_t LiegroupSpace::R3xSO3 ()
     {
-      LiegroupSpace* ptr (new LiegroupSpace ());
-      LiegroupSpacePtr_t  S (ptr);
-      ptr->init (S);
-      S->liegroupTypes_.push_back (liegroup::SpecialOrthogonalOperation<3> ());
-      S->nq_ = liegroup::SpecialOrthogonalOperation<3>::NQ;
-      S->nv_ = liegroup::SpecialOrthogonalOperation<3>::NV;
-      S->neutral_.resize (S->nq_); S->neutral_.setZero ();
-      S->neutral_ [3] = 1;
-      return S;
-      }
+      LiegroupSpace* ptr (new LiegroupSpace
+                          (liegroup::CartesianProductOperation<
+                           liegroup::VectorSpaceOperation<3, false>,
+                           liegroup::SpecialOrthogonalOperation<3> > ()));
+      LiegroupSpacePtr_t  shPtr (ptr);
+      ptr->init (shPtr);
+      return shPtr;
+    }
 
     /// Return empty Lie group
     LiegroupSpacePtr_t LiegroupSpace::empty ()
     {
       LiegroupSpace* ptr (new LiegroupSpace ());
-      LiegroupSpacePtr_t  S (ptr);
-      ptr->init (S);
-      S->nq_ = S->nv_ = 0;
-      S->neutral_.resize (S->nq_);
-      return S;
+      LiegroupSpacePtr_t  shPtr (ptr);
+      ptr->init (shPtr);
+      return shPtr;
     }
 
     LiegroupElement LiegroupSpace::neutral () const
@@ -159,6 +144,63 @@ namespace hpp {
     bool LiegroupSpace::operator!= (const LiegroupSpace& other) const
     {
       return !(operator== (other));
+    }
+
+    // Constructors
+    LiegroupSpace::LiegroupSpace (const size_type& size) :
+      nq_ (0), nv_ (0), neutral_ (), weak_ ()
+    {
+      liegroupTypes_.push_back
+        (liegroup::VectorSpaceOperation <Eigen::Dynamic, false> ((int) size));
+      computeSize ();
+      neutral_.resize (nq_);
+      neutral_.setZero ();
+    }
+
+    LiegroupSpace::LiegroupSpace (const LiegroupSpace& other) :
+      liegroupTypes_ (other.liegroupTypes_), nq_ (other.nq_), nv_ (other.nv_),
+      neutral_ (other.neutral_), weak_ ()
+    {
+    }
+
+    LiegroupSpace::LiegroupSpace (const LiegroupType& type) :
+      liegroupTypes_ (), neutral_ (), weak_ ()
+    {
+      liegroupTypes_.push_back (type);
+      computeSize ();
+      computeNeutral ();
+    }
+
+    LiegroupSpace::LiegroupSpace () : liegroupTypes_ (), neutral_ (), weak_ ()
+    {
+      computeSize ();
+      computeNeutral ();
+    }
+
+    void LiegroupSpace::computeSize ()
+    {
+      nq_ = nv_ = 0;
+      for (LiegroupTypes::const_iterator it = liegroupTypes_.begin ();
+           it != liegroupTypes_.end (); ++it) {
+        liegroupType::SizeVisitor v;
+        boost::apply_visitor (v, *it);
+        nq_ += v.nq;
+        nv_ += v.nv;
+      }
+    }
+
+    void LiegroupSpace::computeNeutral ()
+    {
+      neutral_.resize (nq_);
+      size_type start = 0;
+      for (LiegroupTypes::const_iterator it = liegroupTypes_.begin ();
+           it != liegroupTypes_.end (); ++it) {
+        liegroupType::NeutralVisitor v;
+        boost::apply_visitor (v, *it);
+        neutral_.segment (start, v.neutral.size ()) = v.neutral;
+        start += v.neutral.size ();
+      }
+      assert (start == nq_);
     }
 
     void LiegroupSpace::init (const LiegroupSpaceWkPtr_t weak)

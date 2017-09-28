@@ -15,20 +15,11 @@
 // hpp-pinocchio. If not, see <http://www.gnu.org/licenses/>.
 
 #include <hpp/pinocchio/liegroup-element.hh>
+#include "../src/size-visitor.hh"
 
 namespace hpp {
   namespace pinocchio {
     namespace liegroupType {
-      struct DimensionVisitor : public boost::static_visitor <>
-      {
-        template <typename LiegroupType> void operator () (LiegroupType& op)
-        {
-          nq = op.nq ();
-          nv = op.nv ();
-        }
-        size_type nq, nv;
-      }; // struct DimensionVisitor
-
       struct AdditionVisitor : public boost::static_visitor <>
       {
         AdditionVisitor (const vector_t& e, const vector_t& v) :
@@ -74,7 +65,7 @@ namespace hpp {
       for (LiegroupTypes::const_iterator it =
              e.space ()->liegroupTypes ().begin ();
            it != e.space ()->liegroupTypes ().end (); ++it) {
-        liegroupType::DimensionVisitor dv;
+        liegroupType::SizeVisitor dv;
         boost::apply_visitor (dv, *it);
 
         liegroupType::AdditionVisitor av (e.value_.segment (iq, dv.nq),
@@ -101,7 +92,7 @@ namespace hpp {
 
       while ((it1 != e1.space ()->liegroupTypes ().end ()) &&
              (it2 != e2.space ()->liegroupTypes ().end ())) {
-        liegroupType::DimensionVisitor dv;
+        liegroupType::SizeVisitor dv;
         boost::apply_visitor (dv, *it1);
 
         liegroupType::SubstractionVisitor sv (e1.value_.segment (iq, dv.nq),

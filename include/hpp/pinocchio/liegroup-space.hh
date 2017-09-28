@@ -91,9 +91,9 @@ namespace hpp {
       /// Return \f$SE(3)\f$
       static LiegroupSpacePtr_t SE3 ();
       /// Return \f$SO(2)\f$
-      static LiegroupSpacePtr_t SO2 ();
+      static LiegroupSpacePtr_t R2xSO2 ();
       /// Return \f$SO(3)\f$
-      static LiegroupSpacePtr_t SO3 ();
+      static LiegroupSpacePtr_t R3xSO3 ();
       /// Return empty Lie group
       static LiegroupSpacePtr_t empty ();
       /// \}
@@ -155,36 +155,21 @@ namespace hpp {
     protected:
 
       /// Constructor of vector space of given size
-      LiegroupSpace (const size_type& size) : nq_ (size), nv_ (size),
-                                              neutral_ (size), weak_ ()
-      {
-        nq_ = nv_ = size;
-        liegroupTypes_.push_back
-          (liegroup::VectorSpaceOperation <Eigen::Dynamic, false> ((int) nq_));
-        neutral_.setZero ();
-      }
-      LiegroupSpace (const LiegroupSpace& other) :
-        liegroupTypes_ (other.liegroupTypes_), nq_ (other.nq_), nv_ (other.nv_),
-        neutral_ (other.neutral_), weak_ ()
-      {
-      }
-
-      LiegroupSpace (const LiegroupType& type) :
-        liegroupTypes_ (), neutral_ (), weak_ ()
-      {
-        liegroupTypes_.push_back (type);
-      }
+      LiegroupSpace (const size_type& size);
+      LiegroupSpace (const LiegroupSpace& other);
+      LiegroupSpace (const LiegroupType& type);
 
     private:
       /// Private constructor
       ///
       /// dimensions not initialized.
-      LiegroupSpace () : liegroupTypes_ (), neutral_ (), weak_ ()
-      {
-      }
+      LiegroupSpace ();
       /// Initialize weak pointer to itself
       void init (const LiegroupSpaceWkPtr_t weak);
-
+      /// Compute size of space
+      void computeSize ();
+      /// Compute neutral element as a vector
+      void computeNeutral ();
       typedef std::vector <LiegroupType> LiegroupTypes;
       LiegroupTypes liegroupTypes_;
       /// Size of vector representation and of Lie group tangent space

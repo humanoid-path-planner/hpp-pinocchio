@@ -33,6 +33,7 @@ SET(LIBRARY_SOURCES
   simple-device.cc
   liegroup-element.cc
   liegroup-space.cc
+  size-visitor.hh
   urdf/util.cc
   )
 

@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE (testR3SO3)
 {
   vector_t u1 (7), u3 (7);
   vector_t velocity (6);
-  LiegroupSpacePtr_t R3xSO3 (LiegroupSpace::R3 () * LiegroupSpace::SO3 ());
+  LiegroupSpacePtr_t R3xSO3 (LiegroupSpace::R3xSO3 ());
 
   // Test operator==
   BOOST_CHECK (*(R3xSO3) == *(R3xSO3));
@@ -131,21 +131,34 @@ BOOST_AUTO_TEST_CASE (comparison)
   BOOST_CHECK (*(LiegroupSpace::Rn (3)) == *(LiegroupSpace::R3 ()));
   BOOST_CHECK (*(LiegroupSpace::Rn (2)) == *(LiegroupSpace::R2 ()));
   BOOST_CHECK (*(LiegroupSpace::Rn (1)) == *(LiegroupSpace::R1 ()));
-  BOOST_CHECK (*(LiegroupSpace::SO2 ()) == *(LiegroupSpace::SO2 ()));
-  BOOST_CHECK (*(LiegroupSpace::SO3 ()) == *(LiegroupSpace::SO3 ()));
+  BOOST_CHECK (*(LiegroupSpace::R2xSO2 ()) == *(LiegroupSpace::R2xSO2 ()));
+  BOOST_CHECK (*(LiegroupSpace::R3xSO3 ()) == *(LiegroupSpace::R3xSO3 ()));
 
   BOOST_CHECK (*(LiegroupSpace::Rn (3)) != *(LiegroupSpace::R2 ()));
   BOOST_CHECK (*(LiegroupSpace::R2 ()) != *(LiegroupSpace::Rn (3)));
   BOOST_CHECK (*(LiegroupSpace::Rn (3)) != *(LiegroupSpace::Rn (2)));
   BOOST_CHECK (*(LiegroupSpace::Rn (2)) != *(LiegroupSpace::Rn (3)));
-  BOOST_CHECK (*(LiegroupSpace::SO2 ()) != *(LiegroupSpace::SO3 ()));
-  BOOST_CHECK (*(LiegroupSpace::SO3 ()) != *(LiegroupSpace::SO2 ()));
-  BOOST_CHECK (*(LiegroupSpace::SO3 ()) != *(LiegroupSpace::R3 ()));
-  BOOST_CHECK (*(LiegroupSpace::R3 ()) != *(LiegroupSpace::SO3 ()));
-  BOOST_CHECK (*(LiegroupSpace::SO3 ()) != *(LiegroupSpace::Rn (3)));
-  BOOST_CHECK (*(LiegroupSpace::Rn (3)) != *(LiegroupSpace::SO3 ()));
-  BOOST_CHECK (*(LiegroupSpace::SO2 ()) != *(LiegroupSpace::Rn (3)));
-  BOOST_CHECK (*(LiegroupSpace::Rn (3)) != *(LiegroupSpace::SO2 ()));
-  BOOST_CHECK (*(LiegroupSpace::SO2 ()) != *(LiegroupSpace::Rn (2)));
-  BOOST_CHECK (*(LiegroupSpace::Rn (2)) != *(LiegroupSpace::SO2 ()));
+  BOOST_CHECK (*(LiegroupSpace::R2xSO2 ()) != *(LiegroupSpace::R3xSO3 ()));
+  BOOST_CHECK (*(LiegroupSpace::R3xSO3 ()) != *(LiegroupSpace::R2xSO2 ()));
+  BOOST_CHECK (*(LiegroupSpace::R3xSO3 ()) != *(LiegroupSpace::R3 ()));
+  BOOST_CHECK (*(LiegroupSpace::R3 ()) != *(LiegroupSpace::R3xSO3 ()));
+  BOOST_CHECK (*(LiegroupSpace::R3xSO3 ()) != *(LiegroupSpace::Rn (3)));
+  BOOST_CHECK (*(LiegroupSpace::Rn (3)) != *(LiegroupSpace::R3xSO3 ()));
+  BOOST_CHECK (*(LiegroupSpace::R2xSO2 ()) != *(LiegroupSpace::Rn (3)));
+  BOOST_CHECK (*(LiegroupSpace::Rn (3)) != *(LiegroupSpace::R2xSO2 ()));
+  BOOST_CHECK (*(LiegroupSpace::R2xSO2 ()) != *(LiegroupSpace::Rn (2)));
+  BOOST_CHECK (*(LiegroupSpace::Rn (2)) != *(LiegroupSpace::R2xSO2 ()));
+}
+
+BOOST_AUTO_TEST_CASE (multiplication)
+{
+  LiegroupSpacePtr_t sp (LiegroupSpace::Rn (10) * LiegroupSpace::R3 () *
+                         LiegroupSpace::R3xSO3 ());
+  vector_t n; n.resize (20); n.setZero (); n [19] = 1;
+  BOOST_CHECK (sp->nq () == 20);
+  BOOST_CHECK (sp->nv () == 19);
+  BOOST_CHECK (sp->name () == "R^10*R^3*R^3*SO(3)");
+  BOOST_CHECK (sp->neutral ().vector () == n);
+  BOOST_CHECK (sp->neutral ().space () == sp);
+  BOOST_CHECK (sp == sp->neutral ().space ());
 }
