@@ -189,7 +189,7 @@ namespace hpp {
         template <bool srdfAsXmlString, typename InType>
         void _loadModel (const DevicePtr_t& robot,
                         const JointIndex&  baseJoint,
-                        const std::string& prefix,
+                        std::string prefix,
                         const std::string& rootType,
                         const InType& urdf,
                         const std::string& srdf)
@@ -219,7 +219,10 @@ namespace hpp {
               (model, geomModel, srdf, verbose);
           }
 
-          if (!prefix.empty()) setPrefix(prefix, model, geomModel, idFirstJoint, idFirstFrame);
+          if (!prefix.empty()) {
+            if (*prefix.rbegin() != '/') prefix += "/";
+            setPrefix(prefix, model, geomModel, idFirstJoint, idFirstFrame);
+          }
 
           // Update root joint bounds
           assert((rootType == "anchor")
