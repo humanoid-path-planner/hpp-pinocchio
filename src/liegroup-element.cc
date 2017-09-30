@@ -16,40 +16,13 @@
 
 #include <hpp/pinocchio/liegroup-element.hh>
 #include "../src/size-visitor.hh"
+#include "../src/addition-visitor.hh"
+#include "../src/substraction-visitor.hh"
+#include "../src/log-visitor.hh"
 
 namespace hpp {
   namespace pinocchio {
-    namespace liegroupType {
-      struct AdditionVisitor : public boost::static_visitor <>
-      {
-        AdditionVisitor (const vector_t& e, const vector_t& v) :
-          e_ (e), v_ (v), result (e.size ())
-        {
-        }
-        template <typename LiegroupType> void operator () (LiegroupType& op)
-        {
-          op.integrate_impl (e_, v_, result);
-        }
-        vector_t e_;
-        vector_t v_;
-        vector_t result;
-      }; // struct AdditionVisitor
-
-      struct SubstractionVisitor : public boost::static_visitor <>
-      {
-        SubstractionVisitor (const vector_t& e1, const vector_t& e2,
-                             const size_type& nv) :
-          e1_ (e1), e2_ (e2), result (nv)
-        {
-        }
-        template <typename LiegroupType> void operator () (LiegroupType& op)
-        {
-          op.difference_impl (e2_, e1_, result);
-        }
-        vector_t e1_, e2_;
-        vector_t result;
-      }; // struct SubstractionVisitor
-    } // namespace liegroupType
+    typedef std::vector <LiegroupType> LiegroupTypes;
 
     void LiegroupElement::setNeutral ()
     {
@@ -107,5 +80,21 @@ namespace hpp {
       return result;
     }
 
+    vector_t log (const LiegroupElement& lge)
+    {
+      using liegroupType::LogVisitor;
+      vector_t res (lge.space ()->nv ());
+      size_type iq = 0, iv = 0;
+      for (LiegroupTypes::const_iterator it =
+           lge.space ()->liegroupTypes ().begin ();
+           it != lge.space ()->liegroupTypes ().end (); ++it) {
+        liegroupType::SizeVisitor sizeVisitor;
+        boost::apply_visitor (sizeVisitor, *it);
+        LogVisitor logVisitor (lge.vector ().segment (iq, sizeVisitor.nq),
+                               res.segment (iv, sizeVisitor.nv));
+        boost::apply_visitor (logVisitor, *it);
+      }
+      return res;
+    }
   } // namespace pinocchio
 } // namespace hpp

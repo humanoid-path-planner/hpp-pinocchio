@@ -128,6 +128,9 @@ namespace hpp {
     vector_t operator- (const LiegroupElement& e1, const LiegroupElement& e2);
     /// \}
 
+    /// Compute the log as a tangent vector of a Lie group element
+    vector_t log (const LiegroupElement& lge);
+
     inline std::ostream& operator<< (std::ostream& os, const LiegroupElement& e)
     {
       os << "Lie group element in " << e.space () << "represented by vector ("

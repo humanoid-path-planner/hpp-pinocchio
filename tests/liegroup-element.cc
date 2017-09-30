@@ -162,3 +162,24 @@ BOOST_AUTO_TEST_CASE (multiplication)
   BOOST_CHECK (sp->neutral ().space () == sp);
   BOOST_CHECK (sp == sp->neutral ().space ());
 }
+
+BOOST_AUTO_TEST_CASE (log_)
+{
+  size_type n (10);
+  vector_t u; u.resize (n);
+
+  for (std::size_t i=0; i<100; ++i) {
+    u.setRandom ();
+    LiegroupElement e (u, LiegroupSpace::Rn (n));
+    BOOST_CHECK (hpp::pinocchio::log (e) == u);
+  }
+
+  LiegroupSpacePtr_t R6xSO3 (LiegroupSpace::R3 () * LiegroupSpace::R3xSO3 ());
+  LiegroupElement e (R6xSO3); e.setNeutral ();
+
+  BOOST_CHECK (R6xSO3->nq () == 10);
+  BOOST_CHECK (R6xSO3->nv () == 9);
+
+  vector_t zero (9); zero.setZero ();
+  BOOST_CHECK ((hpp::pinocchio::log (e) - zero).norm () < 1e-10);
+}

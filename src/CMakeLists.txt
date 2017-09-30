@@ -18,6 +18,7 @@
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
 SET(LIBRARY_SOURCES
+  addition-visitor.hh
   comparison.hh
   comparison.hxx
   device.cc
@@ -33,7 +34,9 @@ SET(LIBRARY_SOURCES
   simple-device.cc
   liegroup-element.cc
   liegroup-space.cc
+  log-visitor.hh
   size-visitor.hh
+  substraction-visitor.hh
   urdf/util.cc
   )
 
