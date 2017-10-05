@@ -47,7 +47,9 @@ namespace hpp {
           return robot->getJointByBodyName (linkName);
         }
 
-        void setSpecialJoints (const HumanoidRobotPtr_t& robot, const std::string& prefix) {
+        void setSpecialJoints (const HumanoidRobotPtr_t& robot, std::string prefix)
+        {
+          if (!prefix.empty() && *prefix.rbegin() != '/') prefix += "/";
           try {
             robot->waist (robot->getJointByName(prefix + "root_joint"));
           } catch (const std::exception&) {
@@ -265,10 +267,11 @@ namespace hpp {
             makeModelPath(package, "srdf", modelName, srdfSuffix));
       }
 
-      void setupHumanoidRobot (const HumanoidRobotPtr_t& robot)
+      void setupHumanoidRobot (const HumanoidRobotPtr_t& robot,
+          const std::string& prefix)
       {
 	// Look for special joints and attach them to the model.
-	setSpecialJoints (robot, "");
+	setSpecialJoints (robot, prefix);
 	// Fill gaze position and direction.
 	fillGaze (robot);
       }

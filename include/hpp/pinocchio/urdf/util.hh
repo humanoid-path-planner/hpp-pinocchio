@@ -66,7 +66,8 @@ namespace hpp
 
       /// Set the special joints of the robot (chest, waist...)
       /// and initialize the gaze origin and direction
-      void setupHumanoidRobot (const HumanoidRobotPtr_t& robot);
+      void setupHumanoidRobot (const HumanoidRobotPtr_t& robot,
+          const std::string& prefix = "");
 
       /// Load humanoid robot model by name
       ///
