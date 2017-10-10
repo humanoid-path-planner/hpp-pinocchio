@@ -148,7 +148,7 @@ namespace hpp {
 
     // Constructors
     LiegroupSpace::LiegroupSpace (const size_type& size) :
-      nq_ (0), nv_ (0), neutral_ (), weak_ ()
+      nq_ (0), nv_ (0), nqs_ (), nvs_ (), neutral_ (), weak_ ()
     {
       liegroupTypes_.push_back
         (liegroup::VectorSpaceOperation <Eigen::Dynamic, false> ((int) size));
@@ -159,19 +159,20 @@ namespace hpp {
 
     LiegroupSpace::LiegroupSpace (const LiegroupSpace& other) :
       liegroupTypes_ (other.liegroupTypes_), nq_ (other.nq_), nv_ (other.nv_),
-      neutral_ (other.neutral_), weak_ ()
+      nqs_ (other.nqs_), nvs_ (other.nvs_), neutral_ (other.neutral_), weak_ ()
     {
     }
 
     LiegroupSpace::LiegroupSpace (const LiegroupType& type) :
-      liegroupTypes_ (), neutral_ (), weak_ ()
+      liegroupTypes_ (), nqs_ (), nvs_ (), neutral_ (), weak_ ()
     {
       liegroupTypes_.push_back (type);
       computeSize ();
       computeNeutral ();
     }
 
-    LiegroupSpace::LiegroupSpace () : liegroupTypes_ (), neutral_ (), weak_ ()
+    LiegroupSpace::LiegroupSpace () : liegroupTypes_ (), nqs_ (), nvs_ (),
+                                      neutral_ (), weak_ ()
     {
       computeSize ();
       computeNeutral ();
@@ -186,6 +187,8 @@ namespace hpp {
         boost::apply_visitor (v, *it);
         nq_ += v.nq;
         nv_ += v.nv;
+        nqs_.push_back (v.nq);
+        nvs_.push_back (v.nv);
       }
     }
 
@@ -215,6 +218,8 @@ namespace hpp {
       res->liegroupTypes_.insert (res->liegroupTypes_.end (),
                                   sp2->liegroupTypes_.begin (),
                                   sp2->liegroupTypes_.end ());
+      res->nqs_.insert (res->nqs_.end (), sp2->nqs_.begin (), sp2->nqs_.end ());
+      res->nvs_.insert (res->nvs_.end (), sp2->nvs_.begin (), sp2->nvs_.end ());
       res->nq_ = sp1->nq_ + sp2->nq_;
       res->nv_ = sp1->nv_ + sp2->nv_;
       res->neutral_.resize (res->nq_);

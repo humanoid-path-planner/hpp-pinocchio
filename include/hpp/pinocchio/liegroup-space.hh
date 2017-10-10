@@ -136,6 +136,16 @@ namespace hpp {
       {
         return nv_;
       }
+      /// Dimension of elementary Liegroup at given rank
+      size_type nq (const std::size_t& rank) const
+      {
+        return nqs_ [rank];
+      }
+      /// Dimension of elementary Liegroup tangent space at given rank
+      size_type nv (const std::size_t& rank) const
+      {
+        return nvs_ [rank];
+      }
 
       /// Get reference to vector of elementary types
       const std::vector <LiegroupType>& liegroupTypes () const
@@ -174,6 +184,8 @@ namespace hpp {
       LiegroupTypes liegroupTypes_;
       /// Size of vector representation and of Lie group tangent space
       size_type nq_, nv_;
+      /// Sizes of elementary Lie group
+      std::vector <size_type> nqs_, nvs_;
       /// Neutral element of the Lie group
       vector_t neutral_;
       /// weak pointer to itself

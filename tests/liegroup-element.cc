@@ -53,6 +53,10 @@ BOOST_AUTO_TEST_CASE (testVectorSpace)
     vector_t diff (u1 - u2);
 
     LiegroupElement e1 (u1), e2 (u2);
+    BOOST_CHECK (e1.space ()->nq () == n);
+    BOOST_CHECK (e1.space ()->nv () == n);
+    BOOST_CHECK (e1.space ()->nq (0) == n);
+    BOOST_CHECK (e1.space ()->nv (0) == n);
     BOOST_CHECK (e1. vector ().rows () == n);
     BOOST_CHECK (e1. vector ().rows () == n);
     BOOST_CHECK ((e1 + u2). vector ().size () == n);
@@ -69,6 +73,11 @@ BOOST_AUTO_TEST_CASE (testR3SO3)
   vector_t velocity (6);
   LiegroupSpacePtr_t R3xSO3 (LiegroupSpace::R3xSO3 ());
 
+  // Test sizes
+  BOOST_CHECK (R3xSO3->nq () == 7);
+  BOOST_CHECK (R3xSO3->nv () == 6);
+  BOOST_CHECK (R3xSO3->nq (0) == 7);
+  BOOST_CHECK (R3xSO3->nv (0) == 6);
   // Test operator==
   BOOST_CHECK (*(R3xSO3) == *(R3xSO3));
   vector_t neutral (7); neutral << 0, 0, 0, 0, 0, 0, 1;
@@ -157,6 +166,12 @@ BOOST_AUTO_TEST_CASE (multiplication)
   vector_t n; n.resize (20); n.setZero (); n [19] = 1;
   BOOST_CHECK (sp->nq () == 20);
   BOOST_CHECK (sp->nv () == 19);
+  BOOST_CHECK (sp->nq (0) == 10);
+  BOOST_CHECK (sp->nv (0) == 10);
+  BOOST_CHECK (sp->nq (1) == 3);
+  BOOST_CHECK (sp->nv (1) == 3);
+  BOOST_CHECK (sp->nq (2) == 7);
+  BOOST_CHECK (sp->nv (2) == 6);
   BOOST_CHECK (sp->name () == "R^10*R^3*R^3*SO(3)");
   BOOST_CHECK (sp->neutral ().vector () == n);
   BOOST_CHECK (sp->neutral ().space () == sp);
@@ -179,6 +194,10 @@ BOOST_AUTO_TEST_CASE (log_)
 
   BOOST_CHECK (R6xSO3->nq () == 10);
   BOOST_CHECK (R6xSO3->nv () == 9);
+  BOOST_CHECK (R6xSO3->nq (0) == 3);
+  BOOST_CHECK (R6xSO3->nv (0) == 3);
+  BOOST_CHECK (R6xSO3->nq (1) == 7);
+  BOOST_CHECK (R6xSO3->nv (1) == 6);
 
   vector_t zero (9); zero.setZero ();
   BOOST_CHECK ((hpp::pinocchio::log (e) - zero).norm () < 1e-10);
