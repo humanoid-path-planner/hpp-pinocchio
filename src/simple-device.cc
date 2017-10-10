@@ -47,14 +47,16 @@ namespace hpp {
     }
 
     namespace unittest {
-      DevicePtr_t makeDevice (TestDeviceType type)
+      DevicePtr_t makeDevice (TestDeviceType type,
+                              const std::string& prefix)
       {
         switch (type) {
 #ifdef HPP_ENVIRONMENTS
           case CarLike:
             {
               DevicePtr_t robot  = Device::create("carlike");
-              urdf::loadRobotModel (robot, "planar", "hpp_environments", "buggy", "", "");
+              urdf::loadRobotModel (robot, 0, prefix, "planar",
+                                    "hpp_environments", "buggy", "", "");
               robot->model().lowerPositionLimit.head<2>().setConstant(-1);
               robot->model().upperPositionLimit.head<2>().setOnes();
               return robot;
@@ -62,7 +64,9 @@ namespace hpp {
           case ManipulatorArm2:
             {
               DevicePtr_t robot  = Device::create("arm");
-              urdf::loadRobotModel (robot, "anchor", "hpp_environments", "tests/baxter", "_simple", "_simple");
+              urdf::loadRobotModel (robot, 0, prefix, "anchor",
+                                    "hpp_environments", "tests/baxter",
+                                    "_simple", "_simple");
               return robot;
             }
 #else
@@ -75,7 +79,9 @@ namespace hpp {
 #ifdef ROMEO_DESCRIPTION
             {
               HumanoidRobotPtr_t robot  = HumanoidRobot::create("romeo");
-              urdf::loadHumanoidModel (robot, "freeflyer", "romeo_description", "romeo", "_small", "_small");
+              urdf::loadHumanoidModel (robot, 0, prefix, "freeflyer",
+                                       "romeo_description", "romeo", "_small",
+                                       "_small");
               robot->model().lowerPositionLimit.head<3>().setConstant(-1);
               robot->model().upperPositionLimit.head<3>().setOnes();
               return robot;

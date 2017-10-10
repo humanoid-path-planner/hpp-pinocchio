@@ -35,7 +35,8 @@ namespace hpp {
         ManipulatorArm2
       };
 
-      DevicePtr_t makeDevice (TestDeviceType type);
+      DevicePtr_t makeDevice (TestDeviceType type,
+                              const std::string& prefix = "");
     }
   } // namespace pinocchio
 } // namespace hpp
