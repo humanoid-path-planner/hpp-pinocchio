@@ -133,8 +133,8 @@ namespace hpp {
 
     inline std::ostream& operator<< (std::ostream& os, const LiegroupElement& e)
     {
-      os << "Lie group element in " << e.space () << "represented by vector ("
-         << e. vector ().transpose () << ")";
+      os << "Lie group element in " << *(e.space ())
+         << " represented by vector (" << e. vector ().transpose () << ")";
       return os;
     }
   } // namespace pinocchio
