@@ -98,6 +98,11 @@ namespace hpp {
       return LiegroupElement (neutral_, weak_.lock ());
     }
 
+    LiegroupElement LiegroupSpace::exp (vectorIn_t v) const
+    {
+      return neutral () + v;
+    }
+
     struct NameVisitor : public boost::static_visitor <>
     {
       template <typename LgT1> void operator () (const LgT1& lg1)

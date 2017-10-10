@@ -156,6 +156,9 @@ namespace hpp {
       /// Return the neutral element as a vector
       LiegroupElement neutral () const;
 
+      /// Return exponential of a tangent vector
+      LiegroupElement exp (vectorIn_t v) const;
+
       /// Return name of Lie group
       std::string name () const;
 
