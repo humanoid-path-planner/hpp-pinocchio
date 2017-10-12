@@ -54,6 +54,13 @@ namespace hpp {
       /// Frame transformation
       Transform3f currentTransformation () const;
 
+      /// Get const reference to Jacobian
+      /// \param localFrame if true, compute the jacobian (6d) in the local frame, 
+      /// whose linear part corresponds to the velocity of the center of the frame.
+      /// If false, the jacobian is expressed in the global frame and its linear part
+      /// corresponds to the value of the velocity vector field at the center of the world.
+      JointJacobian_t jacobian (const bool localFrame=true) const;
+
       ///\}
       // -----------------------------------------------------------------------
       /// \name Kinematic chain
