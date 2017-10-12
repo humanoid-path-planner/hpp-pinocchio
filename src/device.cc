@@ -26,6 +26,7 @@
 
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/algorithm/center-of-mass.hpp>
+#include <pinocchio/algorithm/frames.hpp>
 #include <pinocchio/algorithm/jacobian.hpp>
 #include <pinocchio/algorithm/kinematics.hpp>
 #include <pinocchio/algorithm/geometry.hpp>
@@ -71,6 +72,7 @@ namespace hpp {
       , currentVelocity_ (other.currentVelocity_)
       , currentAcceleration_ (other.currentAcceleration_)
       , upToDate_ (false)
+      , frameUpToDate_ (false)
       , geomUpToDate_ (false)
       , computationFlag_ (other.computationFlag_)
       , obstacles_()
@@ -353,6 +355,17 @@ namespace hpp {
         se3::computeJacobians(*model_,*data_,robotConf_);
 
       upToDate_ = true;
+    }
+
+    void Device::
+    computeFramesForwardKinematics ()
+    {
+      if(frameUpToDate_) return;
+      computeForwardKinematics();
+
+      se3::framesForwardKinematics (model(),data());
+
+      frameUpToDate_ = true;
     }
 
     void Device::

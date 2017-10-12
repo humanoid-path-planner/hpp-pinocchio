@@ -19,6 +19,7 @@
 # include <pinocchio/multibody/geometry.hpp>
 # include <pinocchio/multibody/joint/joint.hpp>
 # include <pinocchio/algorithm/jacobian.hpp>
+# include <pinocchio/algorithm/frames.hpp>
 
 # include <hpp/pinocchio/device.hh>
 # include <hpp/pinocchio/body.hh>
