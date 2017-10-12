@@ -95,6 +95,11 @@ namespace hpp {
       static DevicePtr_t createCopy (const DevicePtr_t& device);
       static DevicePtr_t createCopyConst (const DeviceConstPtr_t& device);
 
+      /// \}
+      // -----------------------------------------------------------------------
+      /// \name Access to pinocchio API
+      /// \{
+
       /// Set pinocchio model.
       void model( ModelPtr_t modelPtr ) { model_ = modelPtr; }
       /// Access to pinocchio model
