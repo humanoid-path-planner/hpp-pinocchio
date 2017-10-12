@@ -23,6 +23,7 @@
 # define HPP_PINOCCHIO_URDF_UTIL
 
 #include <hpp/pinocchio/fwd.hh>
+#include <hpp/pinocchio/deprecated.hh>
 
 namespace hpp
 {
@@ -89,6 +90,13 @@ namespace hpp
       /// package://${package}/urdf/${modelName}${urdfSuffix}.urdf
       /// \li
       /// package://${package}/srdf/${modelName}${srdfSuffix}.srdf
+      ///
+      /// \deprecated Use the following snippets instead:
+      /// \code
+      /// loadRobotModel(humanoidRobot, baseJoint, prefix, rootJointType,
+      ///                package, modelName, urdfSuffix, srdfSuffix);
+      /// setupHumanoidRobot (humanoidRobot, prefix);
+      /// \endcode
       void loadHumanoidModel (const HumanoidRobotPtr_t& robot,
                               const JointIndex&  baseJoint,
                               const std::string& prefix,
@@ -96,13 +104,13 @@ namespace hpp
 			      const std::string& package,
 			      const std::string& modelName,
 			      const std::string& urdfSuffix,
-			      const std::string& srdfSuffix);
+			      const std::string& srdfSuffix) HPP_PINOCCHIO_DEPRECATED;
       void loadHumanoidModel (const HumanoidRobotPtr_t& robot,
 			      const std::string& rootJointType,
 			      const std::string& package,
 			      const std::string& modelName,
 			      const std::string& urdfSuffix,
-			      const std::string& srdfSuffix);
+			      const std::string& srdfSuffix) HPP_PINOCCHIO_DEPRECATED;
 
       /// Load only urdf model file
       ///
