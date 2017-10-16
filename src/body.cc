@@ -32,7 +32,7 @@ namespace hpp {
   namespace pinocchio {
 
     Body::
-    Body (DevicePtr_t device, JointIndex joint) 
+    Body (DeviceWkPtr_t device, JointIndex joint) 
       : devicePtr(device),jointIndex(joint) ,frameIndexSet(false)
       , innerObjects_(device,joint,INNER)
       , outerObjects_(device,joint,OUTER)
@@ -42,15 +42,16 @@ namespace hpp {
 
     void Body::selfAssert() const 
     {
-      assert(devicePtr);
-      assert(devicePtr->modelPtr());
-      assert(devicePtr->model().joints.size()>std::size_t(jointIndex));
+      DevicePtr_t device = devicePtr.lock();
+      assert(device);
+      assert(device->modelPtr());
+      assert(device->model().joints.size()>std::size_t(jointIndex));
       if(frameIndexSet)
-        assert(devicePtr->model().frames.size()>std::size_t(frameIndex));
+        assert(device->model().frames.size()>std::size_t(frameIndex));
     }
 
-    const Model & Body::model() const { return devicePtr->model(); }
-    Model &       Body::model()       { return devicePtr->model(); }
+    const Model & Body::model() const { return devicePtr.lock()->model(); }
+    Model &       Body::model()       { return devicePtr.lock()->model(); }
     se3::Frame &       Body::frame()
     {
       searchFrameIndex();
@@ -66,7 +67,7 @@ namespace hpp {
     {
       if(frameIndexSet) return;
       frameIndex = 0;
-      BOOST_FOREACH(const se3::Frame & frame,devicePtr->model().frames)
+      BOOST_FOREACH(const se3::Frame & frame,model().frames)
         {
           if( (se3::BODY == frame.type) && (frame.parent == jointIndex) )
             break;
@@ -108,9 +109,10 @@ namespace hpp {
     value_type Body::radius () const
     {
       selfAssert();
-      assert(devicePtr->geomDataPtr());
-      assert(std::size_t(devicePtr->geomData().radius.size())==model().joints.size());
-      return devicePtr->geomData().radius[jointIndex]; 
+      DevicePtr_t device = devicePtr.lock();
+      assert(device->geomDataPtr());
+      assert(std::size_t(device->geomData().radius.size())==model().joints.size());
+      return device->geomData().radius[jointIndex]; 
     }
 
   } // namespace pinocchio
