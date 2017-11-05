@@ -84,6 +84,26 @@ namespace hpp {
       return shPtr;
     }
 
+    /// Return \f$SE(2)\f$
+    LiegroupSpacePtr_t LiegroupSpace::SE2 ()
+    {
+      LiegroupSpace* ptr (new LiegroupSpace
+                          (se3::SpecialEuclideanOperation <2>()));
+      LiegroupSpacePtr_t  shPtr (ptr);
+      ptr->init (shPtr);
+      return shPtr;
+    }
+
+    /// Return \f$SE(3)\f$
+    LiegroupSpacePtr_t LiegroupSpace::SE3 ()
+    {
+      LiegroupSpace* ptr (new LiegroupSpace
+                          (se3::SpecialEuclideanOperation <3>()));
+      LiegroupSpacePtr_t  shPtr (ptr);
+      ptr->init (shPtr);
+      return shPtr;
+    }
+
     /// Return empty Lie group
     LiegroupSpacePtr_t LiegroupSpace::empty ()
     {

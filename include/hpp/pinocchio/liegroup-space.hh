@@ -46,7 +46,9 @@ namespace hpp {
                               liegroup::VectorSpaceOperation<2, false>,
                               liegroup::SpecialOrthogonalOperation<2> >,
                             liegroup::SpecialOrthogonalOperation <2>,
-                            liegroup::SpecialOrthogonalOperation <3> >
+                            liegroup::SpecialOrthogonalOperation <3>,
+                            se3::SpecialEuclideanOperation <2>,
+                            se3::SpecialEuclideanOperation <3> >
     LiegroupType;
 
     /// Cartesian product of elementary Lie groups
