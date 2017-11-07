@@ -113,7 +113,7 @@ namespace hpp {
       ///\}
       // -----------------------------------------------------------------------
       /// \name Size and rank
-      ///\}
+      ///\{
 
       /// Return number of degrees of freedom
       size_type numberDof () const;
@@ -209,12 +209,12 @@ namespace hpp {
 
       /// Maximal distance of joint origin to parent origin
       const value_type& maximalDistanceToParent () const { return maximalDistanceToParent_; }
+
+      /// \}
     protected:
       /// Compute the maximal distance. \sa maximalDistanceToParent
       void computeMaximalDistanceToParent ();
     public:
-
-      /// \}
       // -----------------------------------------------------------------------
       /// \name Jacobian
       /// \{
