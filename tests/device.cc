@@ -20,6 +20,7 @@
 
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/simple-device.hh>
 #include <hpp/pinocchio/humanoid-robot.hh>
 #include <hpp/pinocchio/urdf/util.hh>
 
@@ -27,17 +28,14 @@ static bool verbose = true;
 
 using namespace hpp::pinocchio;
 
-/* Build a hpp::pinocchio::Device from urdf path. */
-DevicePtr_t createRobot()
-{
-  HumanoidRobotPtr_t robot  = HumanoidRobot::create("romeo");
-  urdf::loadHumanoidModel (robot,
-			   "freeflyer",
-			   "romeo_description",
-			   "romeo",
-			   "_small",
-			   "_small");
-  return robot;
+DevicePtr_t makeDeviceSafe (unittest::TestDeviceType type) {
+  try {
+    return unittest::makeDevice (unittest::HumanoidRomeo);
+  } catch (const std::invalid_argument&) {
+    // This is not treated as an error as it may simply be that the package
+    // was not found by CMake.
+    return DevicePtr_t();
+  }
 }
 
 void displayAABB(const fcl::AABB& aabb)
@@ -49,7 +47,8 @@ void displayAABB(const fcl::AABB& aabb)
 
 BOOST_AUTO_TEST_CASE (computeAABB)
 {
-  DevicePtr_t robot = createRobot();
+  DevicePtr_t robot = makeDeviceSafe(unittest::HumanoidRomeo);
+  BOOST_REQUIRE(robot);
 
   robot->rootJoint()->lowerBounds(vector3_t::Constant(-0));
   robot->rootJoint()->upperBounds(vector3_t::Constant( 0));
@@ -65,4 +64,11 @@ BOOST_AUTO_TEST_CASE (computeAABB)
   robot->rootJoint()->upperBounds(vector3_t(-1, -1, 0));
   fcl::AABB aabb2 = robot->computeAABB();
   if (verbose) displayAABB(aabb1);
+}
+/* -------------------------------------------------------------------------- */
+BOOST_AUTO_TEST_CASE (unit_test_device)
+{
+  makeDeviceSafe (unittest::HumanoidRomeo);
+  makeDeviceSafe (unittest::CarLike);
+  makeDeviceSafe (unittest::ManipulatorArm2);
 }

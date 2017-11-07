@@ -23,6 +23,7 @@
 # define HPP_PINOCCHIO_URDF_UTIL
 
 #include <hpp/pinocchio/fwd.hh>
+#include <hpp/pinocchio/deprecated.hh>
 
 namespace hpp
 {
@@ -64,6 +65,11 @@ namespace hpp
 			   const std::string& urdfSuffix,
 			   const std::string& srdfSuffix);
 
+      /// Set the special joints of the robot (chest, waist...)
+      /// and initialize the gaze origin and direction
+      void setupHumanoidRobot (const HumanoidRobotPtr_t& robot,
+          const std::string& prefix = "");
+
       /// Load humanoid robot model by name
       ///
       /// \param robot Empty robot created before calling the function.
@@ -84,6 +90,13 @@ namespace hpp
       /// package://${package}/urdf/${modelName}${urdfSuffix}.urdf
       /// \li
       /// package://${package}/srdf/${modelName}${srdfSuffix}.srdf
+      ///
+      /// \deprecated Use the following snippets instead:
+      /// \code
+      /// loadRobotModel(humanoidRobot, baseJoint, prefix, rootJointType,
+      ///                package, modelName, urdfSuffix, srdfSuffix);
+      /// setupHumanoidRobot (humanoidRobot, prefix);
+      /// \endcode
       void loadHumanoidModel (const HumanoidRobotPtr_t& robot,
                               const JointIndex&  baseJoint,
                               const std::string& prefix,
@@ -91,13 +104,13 @@ namespace hpp
 			      const std::string& package,
 			      const std::string& modelName,
 			      const std::string& urdfSuffix,
-			      const std::string& srdfSuffix);
+			      const std::string& srdfSuffix) HPP_PINOCCHIO_DEPRECATED;
       void loadHumanoidModel (const HumanoidRobotPtr_t& robot,
 			      const std::string& rootJointType,
 			      const std::string& package,
 			      const std::string& modelName,
 			      const std::string& urdfSuffix,
-			      const std::string& srdfSuffix);
+			      const std::string& srdfSuffix) HPP_PINOCCHIO_DEPRECATED;
 
       /// Load only urdf model file
       ///
@@ -128,13 +141,22 @@ namespace hpp
       /// This is the base function which is called by the other function.
       /// It reads a URDF file, and optionnally a SRDF file, and build the
       /// robot.
-      template <bool LoadSRDF>
+      /// \param srdfString if empty, do not try to parse SRDF.
       void loadModel (const DevicePtr_t& robot,
                       const JointIndex&  baseJoint,
                       const std::string& prefix,
                       const std::string& rootType,
                       const std::string& urdfPath,
                       const std::string& srdfPath);
+
+      /// Read URDF and, optionnally SRDF, as XML string.
+      /// \param srdfString if empty, do not try to parse SRDF.
+      void loadModelFromString (const DevicePtr_t& robot,
+                                const JointIndex&  baseJoint,
+                                const std::string& prefix,
+                                const std::string& rootType,
+                                const std::string& urdfString,
+                                const std::string& srdfString);
     } // end of namespace urdf.
   } // end of namespace pinocchio.
 } // end of namespace hpp.

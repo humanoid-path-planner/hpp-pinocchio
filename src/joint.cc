@@ -33,12 +33,12 @@
   (jointIndex > 0 ? model().joints[jointIndex].method() : valueIfZero);
 namespace hpp {
   namespace pinocchio {
-    Joint::Joint (DevicePtr_t device, JointIndex indexInJointList ) 
+    Joint::Joint (DeviceWkPtr_t device, JointIndex indexInJointList ) 
       :devicePtr(device)
       ,jointIndex(indexInJointList)
     {
-      assert (devicePtr);
-      assert (devicePtr->modelPtr());
+      assert (devicePtr.lock());
+      assert (robot()->modelPtr());
       assert (std::size_t(jointIndex)<model().joints.size());
       setChildList();
       computeMaximalDistanceToParent();
@@ -46,7 +46,7 @@ namespace hpp {
 
     void Joint::setChildList()
     {
-      assert(devicePtr->modelPtr()); assert(devicePtr->dataPtr());
+      assert(robot()->modelPtr()); assert(robot()->dataPtr());
       children.clear();
       for( JointIndex child=jointIndex+1;int(child)<=data().lastChild[jointIndex];++child )
         if( model().parents[child]==jointIndex ) children.push_back (child) ;
@@ -54,15 +54,16 @@ namespace hpp {
 
     void Joint::selfAssert() const 
     {
-      assert(devicePtr);
-      assert(devicePtr->modelPtr()); assert(devicePtr->dataPtr());
-      assert(devicePtr->model().joints.size()>std::size_t(jointIndex));
+      DevicePtr_t device = devicePtr.lock();
+      assert(device);
+      assert(device->modelPtr()); assert(device->dataPtr());
+      assert(device->model().joints.size()>std::size_t(jointIndex));
     }
 
-    Model&        Joint::model()       { selfAssert(); return devicePtr->model(); }
-    const Model&  Joint::model() const { selfAssert(); return devicePtr->model(); }
-    Data &        Joint::data()        { selfAssert(); return devicePtr->data (); }
-    const Data &  Joint::data()  const { selfAssert(); return devicePtr->data (); }
+    Model&        Joint::model()       { selfAssert(); return robot()->model(); }
+    const Model&  Joint::model() const { selfAssert(); return robot()->model(); }
+    Data &        Joint::data()        { selfAssert(); return robot()->data (); }
+    const Data &  Joint::data()  const { selfAssert(); return robot()->data (); }
     
 
     JointPtr_t Joint::parentJoint () const{
@@ -429,7 +430,7 @@ namespace hpp {
 
     BodyPtr_t  Joint::linkedBody () const 
     {
-      return BodyPtr_t( new Body(devicePtr,jointIndex) );
+      return BodyPtr_t( new Body(devicePtr.lock(),jointIndex) );
     }
 
     std::ostream& Joint::display (std::ostream& os) const 

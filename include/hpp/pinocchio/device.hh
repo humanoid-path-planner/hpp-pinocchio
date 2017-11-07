@@ -95,6 +95,11 @@ namespace hpp {
       static DevicePtr_t createCopy (const DevicePtr_t& device);
       static DevicePtr_t createCopyConst (const DeviceConstPtr_t& device);
 
+      /// \}
+      // -----------------------------------------------------------------------
+      /// \name Access to pinocchio API
+      /// \{
+
       /// Set pinocchio model.
       void model( ModelPtr_t modelPtr ) { model_ = modelPtr; }
       /// Access to pinocchio model
@@ -382,6 +387,8 @@ namespace hpp {
       }
       /// Compute forward kinematics
       void computeForwardKinematics ();
+      /// Compute frame forward kinematics
+      void computeFramesForwardKinematics ();
       /// Update the geometry placement to the currentConfiguration
       void updateGeometryPlacements ();
       /// \}
@@ -434,7 +441,7 @@ namespace hpp {
       GeomModelPtr_t geomModel_;
       GeomDataPtr_t geomData_;
 
-      inline void invalidate () { upToDate_ = false; geomUpToDate_ = false; }
+      inline void invalidate () { upToDate_ = false; frameUpToDate_ = false; geomUpToDate_ = false; }
 
       std::string name_;
       //DEPREC DistanceResults_t distances_;
@@ -451,7 +458,7 @@ namespace hpp {
       //DEPREC vector3_t com_;
       //DEPREC ComJacobian_t jacobianCom_;
       //DEPREC value_type mass_;
-      bool upToDate_, geomUpToDate_;
+      bool upToDate_, frameUpToDate_, geomUpToDate_;
       Computation_t computationFlag_;
       //DEPREC // Collision pairs between bodies
       //DEPREC CollisionPairs_t collisionPairs_;

@@ -52,7 +52,7 @@ namespace hpp {
       /// Constructor
       /// \param device pointer on the device the joint is belonging to.
       /// \param indexInJointList index of the joint, i.e. joint = device.model.joints[index]
-      Joint (DevicePtr_t device, JointIndex indexInJointList );
+      Joint (DeviceWkPtr_t device, JointIndex indexInJointList );
 
       //DEPREC /// Constructor
       //DEPREC /// \param initialPosition position of the joint before being inserted
@@ -242,9 +242,9 @@ namespace hpp {
       //DEPREC void robot (const DeviceWkPtr_t& device) {robot_ = device;}
 
       /// Access robot owning the object
-      DeviceConstPtr_t robot () const { selfAssert();  return devicePtr;}
+      DeviceConstPtr_t robot () const { selfAssert();  return devicePtr.lock();}
       /// Access robot owning the object
-      DevicePtr_t robot () { selfAssert(); return devicePtr;}
+      DevicePtr_t robot () { selfAssert(); return devicePtr.lock();}
 
       /// \name Body linked to the joint
       /// \{
@@ -297,7 +297,7 @@ namespace hpp {
     protected:
       value_type maximalDistanceToParent_;
       //DEPREC vector_t neutralConfiguration_;
-      DevicePtr_t devicePtr;
+      DeviceWkPtr_t devicePtr;
       mutable JointJacobian_t jacobian_;
       JointIndex jointIndex;
       std::vector<JointIndex> children;

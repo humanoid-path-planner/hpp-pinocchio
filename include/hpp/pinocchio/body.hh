@@ -52,7 +52,7 @@ namespace hpp {
       /// \name Construction and copy and destruction
       /// @{
       /// Constructor
-      Body (DevicePtr_t device, JointIndex joint);
+      Body (DeviceWkPtr_t device, JointIndex joint);
 
       //DEPREC /// Copy constructor
       //DEPREC Body (const Body& body);
@@ -193,7 +193,7 @@ namespace hpp {
       //DEPREC ObjectVector_t collisionOuterObjects_;
       //DEPREC ObjectVector_t distanceInnerObjects_;
       //DEPREC ObjectVector_t distanceOuterObjects_;
-      DevicePtr_t devicePtr;
+      DeviceWkPtr_t devicePtr;
       JointIndex jointIndex;
       mutable FrameIndex frameIndex; // In pinocchio, bodies are stored as frames of type BODY.
       mutable bool       frameIndexSet;
