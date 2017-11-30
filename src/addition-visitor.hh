@@ -28,17 +28,16 @@ namespace hpp {
       /// Addition visitor
       struct AdditionVisitor : public boost::static_visitor <>
       {
-        AdditionVisitor (const vector_t& e, const vector_t& v) :
-          e_ (e), v_ (v), result (e.size ())
+        AdditionVisitor (vectorOut_t e, vectorIn_t v) :
+          e_ (e), v_ (v)
         {
         }
         template <typename LiegroupType> void operator () (LiegroupType& op)
         {
-          op.integrate_impl (e_, v_, result);
+          op.integrate_impl (e_, v_, e_);
         }
-        vector_t e_;
-        vector_t v_;
-        vector_t result;
+        vectorOut_t e_;
+        vectorIn_t v_;
       }; // struct AdditionVisitor
 
     } // namespace liegroupType

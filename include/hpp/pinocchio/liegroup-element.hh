@@ -103,6 +103,9 @@ namespace hpp {
         assert (value_.size () == space_->nq ());
       }
 
+      /// Inplace integration of a velocity vector
+      LiegroupElement& operator+= (const vectorIn_t& v);
+
     private:
       vector_t value_;
       LiegroupSpacePtr_t space_;

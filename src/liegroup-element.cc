@@ -29,25 +29,30 @@ namespace hpp {
       value_ = space_->neutral ().vector ();
     }
 
-    LiegroupElement operator+ (const LiegroupElement& e, const vector_t& v)
+    LiegroupElement& LiegroupElement::operator+= (const vectorIn_t& v)
     {
-      assert (e.space ()->nv () == v.size ());
+      assert (space ()->nv () == v.size ());
       typedef std::vector <LiegroupType> LiegroupTypes;
-      LiegroupElement result (e);
       size_type iq = 0, iv = 0;
-      for (LiegroupTypes::const_iterator it =
-             e.space ()->liegroupTypes ().begin ();
-           it != e.space ()->liegroupTypes ().end (); ++it) {
+      for (LiegroupTypes::const_iterator it = space_->liegroupTypes ().begin ();
+           it != space_->liegroupTypes ().end (); ++it) {
         liegroupType::SizeVisitor dv;
         boost::apply_visitor (dv, *it);
 
-        liegroupType::AdditionVisitor av (e.value_.segment (iq, dv.nq),
+        liegroupType::AdditionVisitor av (value_.segment (iq, dv.nq),
                                           v.segment (iv, dv.nv));
         boost::apply_visitor (av, *it);
-        result.value_.segment (iq, dv.nq) = av.result;
+        // result.value_.segment (iq, dv.nq) = av.result;
         iq += dv.nq;
         iv += dv.nv;
       }
+      return *this;
+    }
+
+    LiegroupElement operator+ (const LiegroupElement& e, const vector_t& v)
+    {
+      LiegroupElement result (e);
+      result += v;
       return result;
     }
 
