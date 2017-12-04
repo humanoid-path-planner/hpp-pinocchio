@@ -135,6 +135,7 @@ namespace hpp {
       data_ = DataPtr_t( new Data(*model_) );
       // We assume that model is now complete and state can be resized.
       resizeState(); 
+      invalidate();
     }
 
     void Device::
@@ -142,6 +143,7 @@ namespace hpp {
     {
       geomData_ = GeomDataPtr_t( new GeomData(*geomModel_) );
       se3::computeBodyRadius(*model_,*geomModel_,*geomData_);
+      invalidate();
     }
     
     /* ---------------------------------------------------------------------- */
