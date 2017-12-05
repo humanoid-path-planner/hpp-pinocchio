@@ -188,12 +188,13 @@ namespace hpp {
             (model, geomModel, srdf, verbose);
         }
 
-        template <bool srdfAsXmlString, typename InType>
+        template <bool srdfAsXmlString>
         void _loadModel (const DevicePtr_t& robot,
                         const JointIndex&  baseJoint,
                         std::string prefix,
                         const std::string& rootType,
-                        const InType& urdf,
+                        const ::urdf::ModelInterfaceSharedPtr urdfTree,
+                        const std::istream& urdfStream,
                         const std::string& srdf)
         {
           if (baseJoint != 0)
@@ -203,9 +204,9 @@ namespace hpp {
           const JointIndex idFirstJoint = model.joints.size();
           const FrameIndex idFirstFrame = model.frames.size();
           if (rootType == "anchor")
-            se3::urdf::buildModel(urdf, model, verbose);
+            se3::urdf::buildModel(urdfTree, model, verbose);
           else
-            se3::urdf::buildModel(urdf, buildJoint(rootType), model, verbose);
+            se3::urdf::buildModel(urdfTree, buildJoint(rootType), model, verbose);
           robot->createData();
 
           hppDout (notice, "Finished parsing URDF file.");
@@ -213,7 +214,7 @@ namespace hpp {
           GeomModel geomModel;
 
           std::vector<std::string> baseDirs = se3::rosPaths();
-          se3::urdf::buildGeom(model, urdf, se3::COLLISION, geomModel, baseDirs);
+          se3::urdf::buildGeom(model, urdfStream, se3::COLLISION, geomModel, baseDirs);
           geomModel.addAllCollisionPairs();
 
           if (!srdf.empty()) {
@@ -346,8 +347,10 @@ namespace hpp {
             }
           }
 
+          ::urdf::ModelInterfaceSharedPtr urdfTree = ::urdf::parseURDFFile(urdfFileName);
+          std::ifstream urdfStream (urdfFileName.c_str());
           _loadModel <false> (robot, baseJoint, prefix, rootType,
-              urdfFileName, srdfFileName);
+              urdfTree, urdfStream, srdfFileName);
         }
 
         void loadModelFromString (const DevicePtr_t& robot,
@@ -358,11 +361,9 @@ namespace hpp {
                                   const std::string& srdfString)
         {
           ::urdf::ModelInterfaceSharedPtr urdfTree = ::urdf::parseURDF(urdfString);
-          if (!urdfTree) {
-            throw std::invalid_argument ("Unable to parse the input URDF string");
-          }
+          std::istringstream urdfStream (urdfString);
           _loadModel <true> (robot, baseJoint, prefix, rootType,
-              urdfTree, srdfString);
+              urdfTree, urdfStream, srdfString);
         }
     } // end of namespace urdf.
   } // end of namespace pinocchio.
