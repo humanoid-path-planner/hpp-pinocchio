@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with hpp-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 0.1)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 SET(CXX_DISABLE_WERROR TRUE)
 INCLUDE(cmake/base.cmake)
