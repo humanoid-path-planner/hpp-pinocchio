@@ -218,9 +218,9 @@ namespace hpp {
     }
 
     template<typename Joint>
-    value_type computeMaximalDistanceToParent( const se3::Model & model,
+    value_type computeMaximalDistanceToParent( const se3::Model & /*model*/,
                                                const se3::JointModelBase<Joint> & ,
-                                               const se3::SE3 & jointPlacement )
+                                               const se3::SE3 & /*jointPlacement*/ )
     {
       assert (false 
               && "The function <maximalDistance> as not been implemented for this class of joint");
@@ -239,16 +239,16 @@ namespace hpp {
 
     template<int AXIS>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelRevolute<AXIS> & , const se3::SE3 & jointPlacement )
+    ( const se3::Model & /*model*/, const se3::JointModelRevolute<AXIS> & , const se3::SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelRevoluteUnaligned &, const se3::SE3 & jointPlacement )
+    ( const se3::Model & /*model*/, const se3::JointModelRevoluteUnaligned &, const se3::SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
     template<int AXIS>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelRevoluteUnbounded<AXIS> & , 
+    ( const se3::Model & /*model*/, const se3::JointModelRevoluteUnbounded<AXIS> & , 
       const se3::SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
@@ -280,11 +280,11 @@ namespace hpp {
     }
 
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelSpherical& , const se3::SE3 & jointPlacement )
+    ( const se3::Model & /*model*/, const se3::JointModelSpherical& , const se3::SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelSphericalZYX& , const se3::SE3 & jointPlacement )
+    ( const se3::Model & /*model*/, const se3::JointModelSphericalZYX& , const se3::SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
     value_type computeMaximalDistanceToParent

@@ -25,6 +25,8 @@
 # include <hpp/pinocchio/device.hh>
 # include <hpp/pinocchio/collision-object.hh>
 
+# define UNUSED(x) (void)(x)
+
 namespace hpp {
   namespace pinocchio {
 
@@ -47,6 +49,7 @@ namespace hpp {
     {
       assert(device());
       assert(i<size());
+      UNUSED(i);
     }
 
     /* --- ObjectVector --------------------------------------------------------- */
@@ -70,6 +73,7 @@ namespace hpp {
       assert(device());
       assert(std::size_t(jointIndex)<device()->model().joints.size());
       assert(i<size());
+      UNUSED(i);
     }
 
     const ObjectVector::GeomIndexList & ObjectVector::geometries() const
@@ -99,6 +103,7 @@ namespace hpp {
       assert(device());
       assert(i>=ibegin());
       assert(i<iend());
+      UNUSED(i);
     }
   } // namespace pinocchio
 } // namespace hpp

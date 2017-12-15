@@ -139,10 +139,9 @@ namespace hpp {
     void CenterOfMassComputation::add (const JointPtr_t& j)
     {
       JointIndex jid = j->index();
-      const Model& model = robot_->model();
       BOOST_FOREACH( const JointIndex rootId,  roots_ )
         {
-          assert (std::size_t(rootId)<model.joints.size());
+          assert (std::size_t(rootId)<robot_->model().joints.size());
           // Assert that the new root is not in already-recorded subtrees.
           if( (jid >= rootId) && (data.lastChild[rootId] >= int(jid)) )
             // We are doing something stupid. Should we throw an error

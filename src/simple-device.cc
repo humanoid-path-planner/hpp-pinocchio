@@ -50,6 +50,7 @@ namespace hpp {
       DevicePtr_t makeDevice (TestDeviceType type,
                               const std::string& prefix)
       {
+        (void)prefix;
         switch (type) {
 #ifdef HPP_ENVIRONMENTS
           case CarLike:
