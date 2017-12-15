@@ -106,14 +106,21 @@ namespace hpp {
         return d.oMi[f.parent] * f.placement;
     }
 
-    JointJacobian_t Frame::jacobian (const bool local) const 
+    JointJacobian_t Frame::jacobian () const 
     {
       selfAssert();
       assert(robot()->computationFlag() & Device::JACOBIAN);
       JointJacobian_t jacobian = JointJacobian_t::Zero(6,model().nv);
-      if(local) se3::getFrameJacobian<true> (model(),data(),frameIndex_,jacobian);
-      else      se3::getFrameJacobian<false>(model(),data(),frameIndex_,jacobian);
+      se3::getFrameJacobian (model(),data(),frameIndex_,jacobian);
       return jacobian;
+    }
+
+    JointJacobian_t Frame::jacobian (const bool local) const 
+    {
+      if (!local)
+        throw std::invalid_argument ("Frame jacobian in the world frame is "
+            "not supported anymore");
+      return jacobian();
     }
 
     void Frame::setChildList()

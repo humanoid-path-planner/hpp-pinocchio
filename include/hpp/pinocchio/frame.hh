@@ -23,6 +23,7 @@
 # include <cstddef>
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/config.hh>
+# include <hpp/pinocchio/deprecated.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -55,11 +56,13 @@ namespace hpp {
       Transform3f currentTransformation () const;
 
       /// Get const reference to Jacobian
-      /// \param localFrame if true, compute the jacobian (6d) in the local frame, 
-      /// whose linear part corresponds to the velocity of the center of the frame.
-      /// If false, the jacobian is expressed in the global frame and its linear part
-      /// corresponds to the value of the velocity vector field at the center of the world.
-      JointJacobian_t jacobian (const bool localFrame=true) const;
+      ///
+      /// The jacobian (6d) is expressed in the local frame.
+      /// the linear part corresponds to the velocity of the center of the frame.
+      JointJacobian_t jacobian () const;
+
+      /// \deprecated use \ref jacobian()
+      JointJacobian_t jacobian (const bool localFrame) const HPP_PINOCCHIO_DEPRECATED;
 
       ///\}
       // -----------------------------------------------------------------------

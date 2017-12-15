@@ -33,6 +33,9 @@
   (jointIndex > 0 ? model().joints[jointIndex].method() : valueIfZero);
 namespace hpp {
   namespace pinocchio {
+    using se3::LOCAL;
+    using se3::WORLD;
+
     Joint::Joint (DeviceWkPtr_t device, JointIndex indexInJointList ) 
       :devicePtr(device)
       ,jointIndex(indexInJointList)
@@ -414,8 +417,8 @@ namespace hpp {
     {
       selfAssert(); assert(robot()->computationFlag() & Device::JACOBIAN);
       if( jacobian_.cols()!=model().nv)  jacobian_ = JointJacobian_t::Zero(6,model().nv);
-      if(local) se3::getJacobian<true> (model(),data(),jointIndex,jacobian_);
-      else      se3::getJacobian<false>(model(),data(),jointIndex,jacobian_);
+      if(local) se3::getJacobian <LOCAL> (model(),data(),jointIndex,jacobian_);
+      else      se3::getJacobian <WORLD> (model(),data(),jointIndex,jacobian_);
       return jacobian_;
     }
 
@@ -423,8 +426,8 @@ namespace hpp {
     {
       selfAssert(); assert(robot()->computationFlag() & Device::JACOBIAN);
       if( jacobian_.cols()!=model().nv)  jacobian_ = JointJacobian_t::Zero(6,model().nv);
-      if(local) se3::getJacobian<true> (model(),data(),jointIndex,jacobian_);
-      else      se3::getJacobian<false>(model(),data(),jointIndex,jacobian_);
+      if(local) se3::getJacobian <LOCAL> (model(),data(),jointIndex,jacobian_);
+      else      se3::getJacobian <WORLD> (model(),data(),jointIndex,jacobian_);
       return jacobian_;
     }
 
