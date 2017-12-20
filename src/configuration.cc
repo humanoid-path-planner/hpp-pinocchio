@@ -16,6 +16,8 @@
 
 #include <hpp/pinocchio/configuration.hh>
 
+#include <hpp/util/indent.hh>
+
 #include <pinocchio/algorithm/joint-configuration.hpp>
 #include <pinocchio/multibody/liegroup/liegroup.hpp>
 #include <hpp/pinocchio/device.hh>
@@ -179,6 +181,15 @@ namespace hpp {
         if (!ret) return false;
       }
       return true;
+    }
+
+    std::ostream& display (std::ostream& os, const se3::SE3& m)
+    {
+      os <<         "R = " << m.rotation().row(0)
+        << iendl << "    " << m.rotation().row(1)
+        << iendl << "    " << m.rotation().row(2)
+        << iendl << "p = " << m.translation().transpose();
+      return os;
     }
   } // namespace pinocchio
 } // namespace hpp
