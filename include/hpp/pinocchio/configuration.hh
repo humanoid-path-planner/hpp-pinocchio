@@ -17,8 +17,8 @@
 // hpp-model  If not, see
 // <http://www.gnu.org/licenses/>.
 
-#ifndef HPP_MODEL_CONFIGURATION_HH
-# define HPP_MODEL_CONFIGURATION_HH
+#ifndef HPP_PINOCCHIO_CONFIGURATION_HH
+# define HPP_PINOCCHIO_CONFIGURATION_HH
 
 # include <hpp/pinocchio/fwd.hh>
 
@@ -147,6 +147,9 @@ namespace hpp {
       oss << ")";
       return oss.str ();
     }
-  } // namespace model
+
+    /// Write a SE3 taking into account the indentation
+    std::ostream& display (std::ostream& os, const se3::SE3& m);
+  } // namespace pinocchio
 } // namespace hpp
-#endif // HPP_MODEL_CONFIGURATION_HH
+#endif // HPP_PINOCCHIO_CONFIGURATION_HH
