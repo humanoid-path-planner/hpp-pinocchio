@@ -110,7 +110,7 @@ namespace hpp {
           else if (type == "prismatic_x") return se3::JointModelPrismatic<0>();
           else if (type == "prismatic_y") return se3::JointModelPrismatic<1>();
           else                          throw  std::invalid_argument
-            ("Root joint type is currently not available.");
+            ("Root joint type \"" + type + "\" is currently not available.");
         }
 
         void setPrefix (const std::string& prefix,
