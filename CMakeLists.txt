@@ -82,6 +82,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/extra-config-space.hh
   include/hpp/pinocchio/center-of-mass-computation.hh
   include/hpp/pinocchio/simple-device.hh
+  include/hpp/pinocchio/util.hh
 
   include/hpp/pinocchio/liegroup.hh
   include/hpp/pinocchio/liegroup-element.hh

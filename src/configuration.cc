@@ -22,6 +22,7 @@
 #include <pinocchio/multibody/liegroup/liegroup.hpp>
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/liegroup.hh>
+#include <hpp/pinocchio/util.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -185,11 +186,7 @@ namespace hpp {
 
     std::ostream& display (std::ostream& os, const se3::SE3& m)
     {
-      os <<         "R = " << m.rotation().row(0)
-        << iendl << "    " << m.rotation().row(1)
-        << iendl << "    " << m.rotation().row(2)
-        << iendl << "p = " << m.translation().transpose();
-      return os;
+      return os << pretty_print(m);
     }
   } // namespace pinocchio
 } // namespace hpp

@@ -38,6 +38,7 @@ SET(LIBRARY_SOURCES
   size-visitor.hh
   substraction-visitor.hh
   urdf/util.cc
+  util.cc
   )
 
 IF(HPP_MODEL_FOUND)
