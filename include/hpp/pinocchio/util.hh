@@ -60,8 +60,8 @@ namespace hpp {
 
     /// Generic implementation for Eigen objects
     template <typename Derived, int Option>
-      struct HPP_PINOCCHIO_DLLAPI prettyPrint <Eigen::EigenBase<Derived>, Option> {
-        static inline std::ostream& run (std::ostream& os, const Eigen::EigenBase<Derived>& M)
+      struct HPP_PINOCCHIO_DLLAPI prettyPrintEigen {
+        static inline std::ostream& run (std::ostream& os, const Derived& M)
         {
           enum { Condensed = ((Option & OutputFormatBits) == OneLineOutput) || ((Option & OutputFormatBits) == CondensedOutput) };
           static const Eigen::IOFormat mfmt_py  = eigen_format< Condensed, true , false>::run();
@@ -75,14 +75,20 @@ namespace hpp {
              : (use_py_fmt ? mfmt_py : mfmt_raw));
           bool transpose = (Derived::ColsAtCompileTime == 1);
 
-          if (transpose) return os << M.derived().transpose().format(fmt);
-          else           return os << M.derived().format(fmt);
+          if (transpose) return os << M.transpose().format(fmt);
+          else           return os << M.format(fmt);
         }
       };
     /// FIXME All eigen object must be manually specialized as follow...
     template<typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols, int Option>
       struct HPP_PINOCCHIO_DLLAPI prettyPrint <Eigen::Matrix< _Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols >, Option>
-      : prettyPrint <Eigen::EigenBase<Eigen::Matrix< _Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols > >, Option> {};
+      : prettyPrintEigen <Eigen::Matrix< _Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols >, Option> {};
+    template<typename OtherDerived, int Size, int Option>
+      struct HPP_PINOCCHIO_DLLAPI prettyPrint <Eigen::VectorBlock< OtherDerived, Size >, Option>
+      : prettyPrintEigen <Eigen::VectorBlock< OtherDerived, Size >, Option > {};
+    template<typename XprType, int BlockRows, int BlockCols, bool InnerPanel, int Option>
+      struct HPP_PINOCCHIO_DLLAPI prettyPrint <Eigen::Block<XprType, BlockRows, BlockCols, InnerPanel>, Option>
+      : prettyPrintEigen <Eigen::Block<XprType, BlockRows, BlockCols, InnerPanel>, Option > {};
     /// \endcond
 
     // Set python formatting of vector and matrices
