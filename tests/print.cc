@@ -41,13 +41,13 @@ int main ()
   std::cout << unsetpyformat
     << hpp::iendl << pretty_print (v)
     << hpp::iendl << condensed (v)
-    << hpp::iendl << one_line (v)
+    << hpp::iendl << one_line (v.segment(0,2))
     << hpp::iendl;
 
   std::cout << setpyformat
     << hpp::iendl << pretty_print (m)
     << hpp::iendl << condensed (m)
-    << hpp::iendl << one_line (m)
+    << hpp::iendl << one_line (m.block(1,1,2,2))
     << hpp::iendl;
 
   return 0;
