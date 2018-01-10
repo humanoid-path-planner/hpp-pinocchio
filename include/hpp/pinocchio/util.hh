@@ -26,7 +26,6 @@
 # include <hpp/pinocchio/fwd.hh>
 
 namespace hpp {
-  namespace pinocchio {
     /// \addtogroup to_output_stream Printing to output stream
     /// \{
 
@@ -105,6 +104,5 @@ namespace hpp {
     template <typename T> inline PrettyPrint<T, OneLineOutput   > one_line     (const T& t) { return PrettyPrint<T, OneLineOutput   >(t); }
 
     /// \}
-  } // namespace pinocchio
 } // namespace hpp
 #endif // HPP_PINOCCHIO_UTIL_HH

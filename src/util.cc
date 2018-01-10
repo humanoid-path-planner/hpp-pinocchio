@@ -20,7 +20,6 @@
 #include <pinocchio/spatial/se3.hpp>
 
 namespace hpp {
-  namespace pinocchio {
     long& getpythonformat (std::ostream& o)
     {
       // The slot to store the current python format type.
@@ -85,5 +84,4 @@ namespace hpp {
     template struct HPP_PINOCCHIO_DLLAPI prettyPrint <se3::SE3, PrettyOutput    >;
     template struct HPP_PINOCCHIO_DLLAPI prettyPrint <se3::SE3, CondensedOutput >;
     template struct HPP_PINOCCHIO_DLLAPI prettyPrint <se3::SE3, OneLineOutput   >;
-  } // namespace pinocchio
 } // namespace hpp

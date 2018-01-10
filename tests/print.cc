@@ -19,36 +19,38 @@
 #include <hpp/pinocchio/fwd.hh>
 #include <pinocchio/spatial/se3.hpp>
 
-using namespace hpp::pinocchio;
+using namespace hpp;
+using hpp::pinocchio::vector_t;
+using hpp::pinocchio::matrix_t;
 
 int main ()
 {
-  std::cout << hpp::incindent
-    << hpp::iendl << pretty_print (se3::SE3::Identity())
-    << hpp::iendl << condensed (se3::SE3::Identity())
-    << hpp::iendl << one_line (se3::SE3::Identity())
-    << hpp::decindent << hpp::iendl;
+  std::cout << incindent
+    << iendl << pretty_print (se3::SE3::Identity())
+    << iendl << condensed (se3::SE3::Identity())
+    << iendl << one_line (se3::SE3::Identity())
+    << decindent << iendl;
 
   std::cout << setpyformat
-    << hpp::iendl << pretty_print (se3::SE3::Identity())
-    << hpp::iendl << condensed (se3::SE3::Identity())
-    << hpp::iendl << one_line (se3::SE3::Identity())
-    << hpp::iendl;
+    << iendl << pretty_print (se3::SE3::Identity())
+    << iendl << condensed (se3::SE3::Identity())
+    << iendl << one_line (se3::SE3::Identity())
+    << iendl;
 
   vector_t v = vector_t::Ones(2);
   matrix_t m = matrix_t::Identity(3,3);
 
   std::cout << unsetpyformat
-    << hpp::iendl << pretty_print (v)
-    << hpp::iendl << condensed (v)
-    << hpp::iendl << one_line (v.segment(0,2))
-    << hpp::iendl;
+    << iendl << pretty_print (v)
+    << iendl << condensed (v)
+    << iendl << one_line (v.segment(0,2))
+    << iendl;
 
   std::cout << setpyformat
-    << hpp::iendl << pretty_print (m)
-    << hpp::iendl << condensed (m)
-    << hpp::iendl << one_line (m.block(1,1,2,2))
-    << hpp::iendl;
+    << iendl << pretty_print (m)
+    << iendl << condensed (m)
+    << iendl << one_line (m.block(1,1,2,2))
+    << iendl;
 
   return 0;
 }
