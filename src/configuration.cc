@@ -39,6 +39,54 @@ namespace hpp {
       configuration.tail(d) = ecs.lower().cwiseMax(configuration.tail(d));
     }
 
+    bool saturate (const DevicePtr_t& robot,
+                   ConfigurationOut_t configuration,
+                   ArrayXb& saturation)
+    {
+      bool ret = false;
+      const se3::Model& model = robot->model();
+
+      for (std::size_t i = 1; i < model.joints.size(); ++i) {
+        const size_type nq = model.joints[i].nq();
+        const size_type nv = model.joints[i].nv();
+        const size_type idx_q = model.joints[i].idx_q();
+        const size_type idx_v = model.joints[i].idx_v();
+        for (size_type j = 0; j < nq; ++j) {
+          const size_type iq = idx_q + j;
+          const size_type iv = idx_v + std::min(j,nv-1);
+          if        (configuration[iq] > model.upperPositionLimit[iq]) {
+            saturation[iv] = true;
+            configuration[iq] = model.upperPositionLimit[iq];
+            ret = true;
+          } else if (configuration[iq] < model.lowerPositionLimit[iq]) {
+            saturation[iv] = true;
+            configuration[iq] = model.lowerPositionLimit[iq];
+            ret = true;
+          } else
+            saturation[iv] = false;
+        }
+      }
+
+      const ExtraConfigSpace& ecs = robot->extraConfigSpace();
+      const size_type& d = ecs.dimension();
+
+      for (size_type k = 0; k < d; ++k) {
+        const size_type iq = model.nq + k;
+        const size_type iv = model.nv + k;
+        if        (configuration[iq] > ecs.upper(k)) {
+          saturation[iv] = true;
+          configuration[iq] = ecs.upper(k);
+          ret = true;
+        } else if (configuration[iq] < ecs.lower(k)) {
+          saturation[iv] = true;
+          configuration[iq] = ecs.lower(k);
+          ret = true;
+        } else
+          saturation[iv] = false;
+      }
+      return ret;
+    }
+
     template<bool saturateConfig, typename LieGroup>
     void integrate (const DevicePtr_t& robot,
                     ConfigurationIn_t configuration,

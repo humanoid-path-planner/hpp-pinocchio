@@ -27,10 +27,19 @@ namespace hpp {
     /// Saturate joint parameter value so that they are not out of bounds.
     ///
     /// \param robot robot that describes the kinematic chain
-    /// \param configuration initial and result configurations
-    /// \retval result configuration reached after saturation.
+    /// \param[in,out] configuration initial and result configurations
+    /// \retval configuration reached after saturation.
     void saturate (const DevicePtr_t& robot,
                    ConfigurationOut_t configuration);
+
+    /// Saturate joint parameter value so that they are not out of bounds.
+    ///
+    /// \param robot robot that describes the kinematic chain
+    /// \param[in,out] configuration initial and result configurations
+    /// \retval saturation an array of boolean saying who saturated (size robot.numberDof()).
+    bool saturate (const DevicePtr_t& robot,
+                   ConfigurationOut_t configuration,
+                   ArrayXb& saturation);
 
     /// Integrate a constant velocity during unit time.
     ///

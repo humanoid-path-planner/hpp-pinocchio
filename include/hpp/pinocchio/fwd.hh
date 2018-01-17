@@ -65,6 +65,8 @@ namespace hpp {
     typedef se3::SE3            Transform3f;
     typedef se3::JointModel     JointModel;
 
+    typedef Eigen::Array <bool, Eigen::Dynamic, 1> ArrayXb;
+
     typedef double value_type;
     typedef Eigen::Matrix <value_type, Eigen::Dynamic, 1> vector_t;
     typedef vector_t Configuration_t;
