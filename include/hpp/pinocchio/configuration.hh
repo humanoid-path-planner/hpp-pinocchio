@@ -20,6 +20,7 @@
 #ifndef HPP_PINOCCHIO_CONFIGURATION_HH
 # define HPP_PINOCCHIO_CONFIGURATION_HH
 
+# include <iomanip>
 # include <hpp/pinocchio/fwd.hh>
 
 namespace hpp {
@@ -147,9 +148,9 @@ namespace hpp {
                        const value_type& eps);
 
     /// Write configuration in a string
-    inline std::string displayConfig (ConfigurationIn_t q)
+    inline std::string displayConfig (ConfigurationIn_t q, int precision = 20)
     {
-      std::ostringstream oss; oss << "(";
+      std::ostringstream oss; oss << "(" <<  std::setprecision (precision);
       for (size_type i=0; i < q.size (); ++i) {
 	oss << q [i] << ",";
       }
