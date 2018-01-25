@@ -88,6 +88,9 @@ namespace hpp {
     template<typename XprType, int BlockRows, int BlockCols, bool InnerPanel, int Option>
       struct HPP_PINOCCHIO_DLLAPI prettyPrint <Eigen::Block<XprType, BlockRows, BlockCols, InnerPanel>, Option>
       : prettyPrintEigen <Eigen::Block<XprType, BlockRows, BlockCols, InnerPanel>, Option > {};
+    template<typename _PlainObjectType, int _Options, typename _StrideType, int Option>
+      struct HPP_PINOCCHIO_DLLAPI prettyPrint <Eigen::Ref< _PlainObjectType, _Options, _StrideType>, Option>
+      : prettyPrintEigen <Eigen::Ref< _PlainObjectType, _Options, _StrideType>, Option> {};
     /// \endcond
 
     // Set python formatting of vector and matrices

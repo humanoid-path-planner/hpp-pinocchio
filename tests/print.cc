@@ -22,6 +22,8 @@
 using namespace hpp;
 using hpp::pinocchio::vector_t;
 using hpp::pinocchio::matrix_t;
+using hpp::pinocchio::vectorOut_t;
+using hpp::pinocchio::vectorIn_t;
 
 int main ()
 {
@@ -44,6 +46,8 @@ int main ()
     << iendl << pretty_print (v)
     << iendl << condensed (v)
     << iendl << one_line (v.segment(0,2))
+    << iendl << pretty_print (vectorOut_t(v))
+    << iendl << condensed (vectorIn_t(v))
     << iendl;
 
   std::cout << setpyformat
