@@ -35,6 +35,7 @@
 #include <hpp/pinocchio/humanoid-robot.hh>
 #include <hpp/pinocchio/configuration.hh>
 #include <hpp/pinocchio/liegroup.hh>
+#include <hpp/pinocchio/joint.hh>
 
 #include <hpp/pinocchio/simple-device.hh>
 
@@ -146,7 +147,6 @@ void test_difference_and_distance(DevicePtr_t robot)
   Configuration_t q1; q1.resize (robot->configSize ());
   Configuration_t q2; q2.resize (robot->configSize ());
   vector_t q1_minus_q0; q1_minus_q0.resize (robot->numberDof ());
-  const value_type eps_dist = (value_type)robot->numberDof() * sqrt(Eigen::NumTraits<value_type>::epsilon());
   for (size_type i=0; i<NB_CONF; ++i) {
     q0 = se3::randomConfiguration (robot->model());
     q1 = se3::randomConfiguration (robot->model());
@@ -185,7 +185,6 @@ void test_difference_and_integrate(DevicePtr_t robot)
   Configuration_t q1; q1.resize (robot->configSize ());
   Configuration_t q2; q2.resize (robot->configSize ());
   vector_t q1_minus_q0; q1_minus_q0.resize (robot->numberDof ());
-  const value_type eps_dist = (value_type)robot->numberDof() * sqrt(Eigen::NumTraits<value_type>::epsilon());
   for (size_type i=0; i<NB_CONF; ++i) {
     q0 = se3::randomConfiguration (robot->model());
     q1 = se3::randomConfiguration (robot->model());
@@ -224,7 +223,7 @@ void test_interpolate_and_integrate (DevicePtr_t robot)
   Configuration_t q2; q2.resize (robot->configSize ());
   Configuration_t q3; q3.resize (robot->configSize ());
   vector_t q1_minus_q0; q1_minus_q0.resize (robot->numberDof ());
-  const value_type eps_dist = robot->numberDof() * sqrt(Eigen::NumTraits<value_type>::epsilon());
+  const value_type eps_dist = value_type(robot->numberDof()) * sqrt(Eigen::NumTraits<value_type>::epsilon());
   value_type d0, d1;
   for (size_type i=0; i<NB_CONF; ++i) {
     q0 = se3::randomConfiguration (robot->model());
@@ -287,6 +286,80 @@ BOOST_AUTO_TEST_CASE(interpolate_and_integrate)
   for (std::size_t i = 0; i < robots.size(); ++i) {
     test_interpolate_and_integrate <se3::LieGroupTpl> (robots[i]);
     test_interpolate_and_integrate <     LieGroupTpl> (robots[i]);
+  }
+}
+
+void test_saturation (DevicePtr_t robot)
+{
+  Configuration_t q0; q0.resize (robot->configSize ());
+  Configuration_t q1; q1.resize (robot->configSize ());
+  Configuration_t q2; q2.resize (robot->configSize ());
+  vector_t v; v.resize (robot->numberDof ());
+  v.setOnes();
+  ArrayXb saturation (robot->numberDof());
+  ArrayXb expected_sat (robot->numberDof());
+
+  q0 = robot->model().upperPositionLimit;
+  normalize (robot, q0);
+
+  q1 = robot->model().lowerPositionLimit;
+  normalize (robot, q1);
+
+  BOOST_CHECK(isNormalized(robot, q0, eps));
+  BOOST_CHECK(isNormalized(robot, q1, eps));
+
+  integrate<false, se3::LieGroupTpl> (robot, q0, v, q2);
+  saturate (robot, q2);
+  BOOST_CHECK((q2.array() <= robot->model().upperPositionLimit.array()).all());
+  BOOST_CHECK((q2.array() >= robot->model().lowerPositionLimit.array()).all());
+
+  integrate<false, se3::LieGroupTpl> (robot, q1, -v, q2);
+  saturate (robot, q2);
+  BOOST_CHECK((q2.array() <= robot->model().upperPositionLimit.array()).all());
+  BOOST_CHECK((q2.array() >= robot->model().lowerPositionLimit.array()).all());
+
+  integrate<false, se3::LieGroupTpl> (robot, q0, v, q2);
+  expected_sat = (q2.array() > robot->model().upperPositionLimit.array())
+      || (q2.array() < robot->model().lowerPositionLimit.array());
+  BOOST_CHECK(saturate (robot, q2, saturation));
+  BOOST_CHECK((q2.array() <= robot->model().upperPositionLimit.array()).all());
+  BOOST_CHECK((q2.array() >= robot->model().lowerPositionLimit.array()).all());
+  if (robot->numberDof() == robot->configSize()) {
+    BOOST_CHECK_EQUAL(saturation.matrix(), expected_sat.matrix());
+  } else {
+    size_type iq = (robot->rootJoint()->configSize() == 4 ? 2 : 3);
+    size_type sq = robot->rootJoint()->configSize();
+    size_type sv = robot->rootJoint()->numberDof();
+
+    BOOST_CHECK_EQUAL(saturation.head(iq).matrix(), expected_sat.head(iq).matrix());
+    BOOST_CHECK_EQUAL(saturation.tail(robot->numberDof()-sv).matrix(),
+        expected_sat.tail(robot->configSize()-sq).matrix());
+  }
+
+  integrate<false, se3::LieGroupTpl> (robot, q1, -v, q2);
+  expected_sat = (q2.array() > robot->model().upperPositionLimit.array())
+      || (q2.array() < robot->model().lowerPositionLimit.array());
+  BOOST_CHECK(saturate (robot, q2, saturation));
+  BOOST_CHECK((q2.array() <= robot->model().upperPositionLimit.array()).all());
+  BOOST_CHECK((q2.array() >= robot->model().lowerPositionLimit.array()).all());
+  if (robot->numberDof() == robot->configSize()) {
+    BOOST_CHECK_EQUAL(saturation.matrix(), expected_sat.matrix());
+  } else {
+    size_type iq = (robot->rootJoint()->configSize() == 4 ? 2 : 3);
+    size_type sq = robot->rootJoint()->configSize();
+    size_type sv = robot->rootJoint()->numberDof();
+
+    BOOST_CHECK_EQUAL(saturation.head(iq).matrix(), expected_sat.head(iq).matrix());
+    BOOST_CHECK_EQUAL(saturation.tail(robot->numberDof()-sv).matrix(),
+        expected_sat.tail(robot->configSize()-sq).matrix());
+  }
+}
+
+BOOST_AUTO_TEST_CASE(saturation)
+{
+  Robots_t robots = createRobots ();
+  for (std::size_t i = 0; i < robots.size(); ++i) {
+    test_saturation (robots[i]);
   }
 }
 
