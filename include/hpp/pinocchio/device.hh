@@ -315,13 +315,6 @@ namespace hpp {
         return obstacles_;
       }
 
-      /// Get list of obstacles
-      /// \deprecated Use Device::obstacles() const
-      const ObjectVector_t& obstacles (Request_t /*type*/) const HPP_PINOCCHIO_DEPRECATED
-      {
-        return obstacles();
-      }
-
       /// Vector of inner objects of the device
       DeviceObjectVector& objectVector () {return objectVector_; }
       const DeviceObjectVector& objectVector () const { return objectVector_; }

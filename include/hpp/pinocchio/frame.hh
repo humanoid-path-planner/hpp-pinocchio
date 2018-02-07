@@ -61,9 +61,6 @@ namespace hpp {
       /// the linear part corresponds to the velocity of the center of the frame.
       JointJacobian_t jacobian () const;
 
-      /// \deprecated use \ref jacobian()
-      JointJacobian_t jacobian (const bool localFrame) const HPP_PINOCCHIO_DEPRECATED;
-
       ///\}
       // -----------------------------------------------------------------------
       /// \name Kinematic chain

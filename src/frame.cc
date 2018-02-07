@@ -115,14 +115,6 @@ namespace hpp {
       return jacobian;
     }
 
-    JointJacobian_t Frame::jacobian (const bool local) const 
-    {
-      if (!local)
-        throw std::invalid_argument ("Frame jacobian in the world frame is "
-            "not supported anymore");
-      return jacobian();
-    }
-
     void Frame::setChildList()
     {
       assert(devicePtr_->modelPtr()); assert(devicePtr_->dataPtr());
