@@ -18,6 +18,7 @@
 #include <hpp/pinocchio/liegroup-space.hh>
 #include "../src/comparison.hh"
 #include "../src/size-visitor.hh"
+#include "../src/jintegrate-visitor.hh"
 
 namespace hpp {
   namespace pinocchio {
@@ -121,6 +122,18 @@ namespace hpp {
     LiegroupElement LiegroupSpace::exp (vectorIn_t v) const
     {
       return neutral () + v;
+    }
+
+    void LiegroupSpace::Jintegrate (vectorIn_t v, matrixOut_t J) const
+    {
+      assert (v.size() == nv());
+      assert (J.rows() == nv());
+      size_type row = 0;
+      liegroupType::JintegrateVisitor jiv (v, J, row);
+      for (std::size_t i = 0; i < liegroupTypes_.size (); ++i) {
+        boost::apply_visitor (jiv, liegroupTypes_ [i]);
+      }
+      assert (row == nv());
     }
 
     struct NameVisitor : public boost::static_visitor <>
