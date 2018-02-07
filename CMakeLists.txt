@@ -57,8 +57,6 @@ ADD_REQUIRED_DEPENDENCY("hpp-util >= 3.2")
 ADD_REQUIRED_DEPENDENCY("hpp-fcl >= 0.4.3")
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.2.4")
 
-ADD_OPTIONAL_DEPENDENCY("hpp-model >= 3")
-ADD_OPTIONAL_DEPENDENCY("hpp-model-urdf >= 3")
 ADD_OPTIONAL_DEPENDENCY("romeo_description >= 0.2")
 ADD_OPTIONAL_DEPENDENCY("hpp_environments")
 
@@ -93,13 +91,6 @@ SET(${PROJECT_NAME}_HEADERS
 
   include/hpp/pinocchio/urdf/util.hh
   )
-
-IF(HPP_MODEL_FOUND)
-  LIST(APPEND ${PROJECT_NAME}_HEADERS
-    include/hpp/pinocchio/hpp-model/conversions.hh
-    include/hpp/pinocchio/hpp-model/model-loader.hh
-    )
-ENDIF(HPP_MODEL_FOUND)
 
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(tests)
