@@ -48,7 +48,6 @@ namespace hpp {
         const value_type&    mass        () const { return data.mass[0]; }
         const ComJacobian_t& jacobian    () const { return data.Jcom   ; }
         const JointRootIndexes_t & roots () const { return roots_; }
-        void computeMass ()  HPP_PINOCCHIO_DEPRECATED {}
 
         ~CenterOfMassComputation ();
 
