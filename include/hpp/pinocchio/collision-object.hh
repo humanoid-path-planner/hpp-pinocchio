@@ -44,13 +44,6 @@ namespace hpp {
       typedef std::vector<GeomIndex> GeomIndexList;
       typedef std::map < JointIndex, GeomIndexList > ObjectVec_t;
 
-      /// Construction from inner/outer list, using a joint index as reference.
-      /// \param geom: index of the object in either inner or outer objects of joint <joint>.
-      CollisionObject( DevicePtr_t device,
-                       const JointIndex joint,
-                       const GeomIndex geom,
-                       const InOutType inout = INNER ) HPP_PINOCCHIO_DEPRECATED;
-
       /// Construction from global collision-object list. The joint ID is recovered from
       /// the collision object in Pinocchio and InOut is set to INNER. The geomIndexInJoint
       /// is not defined (geomIndexInJointSet = false)

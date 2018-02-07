@@ -30,24 +30,6 @@ namespace hpp {
 
     CollisionObject::
     CollisionObject( DevicePtr_t device, 
-                     const JointIndex joint,
-                     const GeomIndex geom,
-                     const InOutType inout ) 
-      : devicePtr(device)
-      , geomModel_(devicePtr->geomModelPtr())
-      , geomData_(devicePtr->geomDataPtr())
-      , jointIndex_(joint)
-      , geomInModelIndex(0)
-      , inOutType(inout)
-    {
-      selfAssert(); 
-      assert(objectVec().at(jointIndex_).size()>geom);
-      geomInModelIndex = objectVec().at(jointIndex_)[geom];
-      selfAssert(); 
-    }
-
-    CollisionObject::
-    CollisionObject( DevicePtr_t device, 
                      const GeomIndex geomInModel )
       : devicePtr(device)
       , geomModel_(devicePtr->geomModelPtr())
