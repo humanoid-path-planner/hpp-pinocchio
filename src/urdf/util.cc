@@ -277,30 +277,6 @@ namespace hpp {
 	fillGaze (robot);
       }
 
-      void loadHumanoidModel (const HumanoidRobotPtr_t& robot,
-			      const std::string& rootJointType,
-			      const std::string& package,
-			      const std::string& modelName,
-			      const std::string& urdfSuffix,
-			      const std::string& srdfSuffix)
-      {
-        loadRobotModel(robot, rootJointType, package, modelName, urdfSuffix, srdfSuffix);
-        setupHumanoidRobot(robot);
-      }
-
-      void loadHumanoidModel (const HumanoidRobotPtr_t& robot,
-                              const JointIndex&  baseJoint,
-			      const std::string& prefix,
-			      const std::string& rootJointType,
-			      const std::string& package,
-			      const std::string& modelName,
-			      const std::string& urdfSuffix,
-			      const std::string& srdfSuffix)
-      {
-        loadRobotModel(robot, baseJoint, prefix, rootJointType, package, modelName, urdfSuffix, srdfSuffix);
-        setupHumanoidRobot(robot);
-      }
-
       void loadUrdfModel (const DevicePtr_t& robot,
                           const JointIndex&  baseJoint,
                           const std::string& prefix,

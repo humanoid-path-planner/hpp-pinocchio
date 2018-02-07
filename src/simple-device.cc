@@ -80,9 +80,10 @@ namespace hpp {
 #ifdef ROMEO_DESCRIPTION
             {
               HumanoidRobotPtr_t robot  = HumanoidRobot::create("romeo");
-              urdf::loadHumanoidModel (robot, 0, prefix, "freeflyer",
-                                       "romeo_description", "romeo", "_small",
-                                       "_small");
+              urdf::loadRobotModel (robot, 0, prefix, "freeflyer",
+                                    "romeo_description", "romeo", "_small",
+                                    "_small");
+              urdf::setupHumanoidRobot (robot, prefix);
               robot->model().lowerPositionLimit.head<3>().setConstant(-1);
               robot->model().upperPositionLimit.head<3>().setOnes();
               return robot;

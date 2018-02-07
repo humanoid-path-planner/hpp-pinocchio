@@ -24,6 +24,7 @@
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/humanoid-robot.hh>
 #include <hpp/pinocchio/frame.hh>
+#include <hpp/pinocchio/simple-device.hh>
 #include <hpp/pinocchio/urdf/util.hh>
 
 static bool verbose = false;
@@ -53,14 +54,7 @@ void check_children(const Model& model, const Frame& f, Strings_t expected_child
 /* Build a hpp::pinocchio::Device from urdf path. */
 DevicePtr_t hppPinocchio()
 {
-  HumanoidRobotPtr_t robot  = HumanoidRobot::create("romeo");
-  urdf::loadHumanoidModel (robot,
-			   "freeflyer",
-			   "romeo_description",
-			   "romeo",
-			   "_small",
-			   "_small");
-  return robot;
+  return unittest::makeDevice (unittest::HumanoidRomeo);
 }
 
 BOOST_AUTO_TEST_CASE (frame)

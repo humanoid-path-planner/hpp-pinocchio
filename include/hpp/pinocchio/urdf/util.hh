@@ -70,48 +70,6 @@ namespace hpp
       void setupHumanoidRobot (const HumanoidRobotPtr_t& robot,
           const std::string& prefix = "");
 
-      /// Load humanoid robot model by name
-      ///
-      /// \param robot Empty robot created before calling the function.
-      ///        Users can pass an instance of a class deriving from
-      ///        HumanoidRobot.
-      /// \param baseJoint joint to which the joint tree is added.
-      /// \param prefix string to insert before all names
-      ///               (joint, link, body names)
-      /// \param rootJointType type of root joint among "anchor", "freeflyer",
-      /// "planar",
-      /// \param package ros package containing the model
-      /// \param modelName robot model name
-      /// \param urdfSuffix suffix for urdf file
-      /// \param srdfSuffix suffix for srdf file
-
-      /// \note This function reads the following files:
-      /// \li
-      /// package://${package}/urdf/${modelName}${urdfSuffix}.urdf
-      /// \li
-      /// package://${package}/srdf/${modelName}${srdfSuffix}.srdf
-      ///
-      /// \deprecated Use the following snippets instead:
-      /// \code
-      /// loadRobotModel(humanoidRobot, baseJoint, prefix, rootJointType,
-      ///                package, modelName, urdfSuffix, srdfSuffix);
-      /// setupHumanoidRobot (humanoidRobot, prefix);
-      /// \endcode
-      void loadHumanoidModel (const HumanoidRobotPtr_t& robot,
-                              const JointIndex&  baseJoint,
-                              const std::string& prefix,
-			      const std::string& rootJointType,
-			      const std::string& package,
-			      const std::string& modelName,
-			      const std::string& urdfSuffix,
-			      const std::string& srdfSuffix) HPP_PINOCCHIO_DEPRECATED;
-      void loadHumanoidModel (const HumanoidRobotPtr_t& robot,
-			      const std::string& rootJointType,
-			      const std::string& package,
-			      const std::string& modelName,
-			      const std::string& urdfSuffix,
-			      const std::string& srdfSuffix) HPP_PINOCCHIO_DEPRECATED;
-
       /// Load only urdf model file
       ///
       /// \param robot Empty robot created before calling the function.
