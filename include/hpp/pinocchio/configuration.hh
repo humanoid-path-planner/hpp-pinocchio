@@ -111,8 +111,6 @@ namespace hpp {
     /// \param eps numerical threshold
     /// \return true if the configurations are closer than the numerical
     /// threshold
-    ///
-    /// \todo add precision argument in se3::isSameConfiguration
     bool isApprox (const DevicePtr_t& robot, ConfigurationIn_t q1,
                    ConfigurationIn_t q2, value_type eps);
 
