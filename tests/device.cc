@@ -30,7 +30,7 @@ using namespace hpp::pinocchio;
 
 DevicePtr_t makeDeviceSafe (unittest::TestDeviceType type) {
   try {
-    return unittest::makeDevice (unittest::HumanoidRomeo);
+    return unittest::makeDevice (type);
   } catch (const std::invalid_argument&) {
     // This is not treated as an error as it may simply be that the package
     // was not found by CMake.
