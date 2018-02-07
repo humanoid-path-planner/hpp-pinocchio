@@ -159,8 +159,6 @@ namespace hpp {
       /// Get root frame
       Frame rootFrame () const;
 
-      //DEPREC /// Register joint in internal containers
-      //DEPREC void registerJoint (const JointPtr_t& joint);
       /// Get vector of joints
       inline const JointVector& getJointVector () const { return jointVector_; }
       inline JointVector& getJointVector () { return jointVector_; }
@@ -324,34 +322,6 @@ namespace hpp {
         return obstacles();
       }
 
-      //DEPREC /// Add collision pairs between objects attached to two joints
-      //DEPREC ///
-      //DEPREC /// \param joint1 first joint
-      //DEPREC /// \param joint2 second joint
-      //DEPREC /// \param type collision or distance.
-      //DEPREC ///
-      //DEPREC /// Define collision pair between each object of joint 1 body and
-      //DEPREC /// each object of joint2 body.
-      //DEPREC virtual void addCollisionPairs (const JointPtr_t& joint1,
-      //DEPREC 				      const JointPtr_t& joint2,
-      //DEPREC 				      Request_t type);
-
-      //DEPREC /// Remove collision pairs between objects attached to two joints
-      //DEPREC ///
-      //DEPREC /// \param joint1 first joint
-      //DEPREC /// \param joint2 second joint
-      //DEPREC /// \param type collision or distance.
-      //DEPREC ///
-      //DEPREC /// remove collision between each object of joint 1 body and
-      //DEPREC /// each object of joint2 body
-      //DEPREC virtual void removeCollisionPairs(const JointPtr_t& joint1,
-      //DEPREC                                   const JointPtr_t& joint2,
-      //DEPREC 				        Request_t type);
-
-      /// Get list of collision or distance pairs
-      /// \param type collision or distance.
-      //DEPREC const CollisionPairs_t& collisionPairs (Request_t type) const;
-
       /// Vector of inner objects of the device
       DeviceObjectVector& objectVector () {return objectVector_; }
       const DeviceObjectVector& objectVector () const { return objectVector_; }
@@ -418,18 +388,10 @@ namespace hpp {
       ///
       void initCopy(const DeviceWkPtr_t& weakPtr, const Device& other);
 
-      //DEPREC /// Recompute the number of distance pairs and resize the vector of distance results.
-      //DEPREC void updateDistances ();
-
       /// \brief Copy Constructor
       Device(const Device& device);
 
     private:
-      //DEPREC void computeJointPositions ();
-      //DEPREC void computeJointJacobians ();
-      //DEPREC void computeMass ();
-      //DEPREC void computePositionCenterOfMass ();
-      //DEPREC void computeJacobianCenterOfMass ();
 
       /// Resize configuration when changing data or extra-config.
       void resizeState ();
@@ -444,29 +406,14 @@ namespace hpp {
       inline void invalidate () { upToDate_ = false; frameUpToDate_ = false; geomUpToDate_ = false; }
 
       std::string name_;
-      //DEPREC DistanceResults_t distances_;
-      //DEPREC JointByName_t jointByName_;
       JointVector jointVector_; // fake container with iterator mimicking hpp::model::JointVector_t
-      //DEPREC JointVector_t jointByConfigRank_;
-      //DEPREC JointVector_t jointByVelocityRank_;
-      //DEPREC JointPtr_t rootJoint_;
-      //DEPREC size_type numberDof_;
-      //DEPREC size_type configSize_;
       Configuration_t currentConfiguration_;
       vector_t currentVelocity_;
       vector_t currentAcceleration_;
-      //DEPREC vector3_t com_;
-      //DEPREC ComJacobian_t jacobianCom_;
-      //DEPREC value_type mass_;
       bool upToDate_, frameUpToDate_, geomUpToDate_;
       Computation_t computationFlag_;
-      //DEPREC // Collision pairs between bodies
-      //DEPREC CollisionPairs_t collisionPairs_;
-      //DEPREC CollisionPairs_t distancePairs_;
-      //DEPREC // Obstacles
+      // Obstacles
       ObjectVector_t obstacles_;
-      //DEPREC ObjectVector_t collisionObstacles_;
-      //DEPREC ObjectVector_t distanceObstacles_;
       DeviceObjectVector objectVector_;
       // Grippers
       Grippers_t grippers_;

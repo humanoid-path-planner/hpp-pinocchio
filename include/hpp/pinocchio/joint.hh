@@ -54,31 +54,11 @@ namespace hpp {
       /// \param indexInJointList index of the joint, i.e. joint = device.model.joints[index]
       Joint (DeviceWkPtr_t device, JointIndex indexInJointList );
 
-      //DEPREC /// Constructor
-      //DEPREC /// \param initialPosition position of the joint before being inserted
-      //DEPREC ///        in a kinematic chain,
-      //DEPREC /// \param configSize dimension of the configuration vector,
-      //DEPREC /// \param numberDof dimension of the velocity vector.
-      //DEPREC Joint (const Transform3f& initialPosition, size_type configSize,
-      //DEPREC	     size_type numberDof);
-      //DEPREC /// Copy constructor
-      //DEPREC ///
-      //DEPREC /// Clone body and therefore inner and outer objects (see Body::clone).
-      //DEPREC Joint (const Joint& joint);
-      //DEPREC /// Return pointer to copy of this
-      //DEPREC ///
-      //DEPREC /// Clone body and therefore inner and outer objects (see Body::clone).
-      //DEPREC  virtual JointPtr_t clone () const = 0;
-      //DEPREC virtual ~Joint ();
-
       ~Joint() {}
       /// \}
       // -----------------------------------------------------------------------
       /// \name Name
       /// \{
-
-      //DEPREC /// Set name
-      //DEPREC virtual inline void name(const std::string& name)
 
       /// Get name
       const std::string& name() const;
@@ -88,27 +68,8 @@ namespace hpp {
       /// \name Position
       /// \{
 
-      //DEPREC /// Joint initial position (when robot is in zero configuration)
-      //DEPREC const Transform3f& initialPosition () const;
-
       /// Joint transformation
       const Transform3f& currentTransformation () const;
-
-      //DEPREC /// Compute position of joint
-      //DEPREC /// \param configuration the configuration of the robot,
-      //DEPREC /// \param parentPosition position of parent joint,
-      //DEPREC /// \retval position position of this joint.
-      //DEPREC virtual void computePosition (ConfigurationIn_t configuration,
-      //DEPREC 				    const Transform3f& parentPosition,
-      //DEPREC 				    Transform3f& position) const = 0;
-      //DEPREC /// Compute position of this joint and all its descendents.
-      //DEPREC void recursiveComputePosition (ConfigurationIn_t configuration,
-      //DEPREC                const Transform3f& parentPosition) const;
-      //DEPREC /// Compute jacobian matrix of joint and all its descendents.
-      //DEPREC void computeJacobian ();
-
-      //DEPREC /// Get neutral configuration of joint
-      //DEPREC vector_t neutralConfiguration () const;
 
       ///\}
       // -----------------------------------------------------------------------
@@ -135,20 +96,6 @@ namespace hpp {
       /// Get a pointer to the parent joint (if any).
       JointPtr_t parentJoint () const;
 
-      //DEPREC /// Add child joint
-      //DEPREC /// \param joint child joint added to this one,
-      //DEPREC /// \param computePositionInParent whether to compute position of the
-      //DEPREC ///        child joint in this one's frame.
-      //DEPREC ///
-      //DEPREC /// \note When building a kinematic chain, we usually build the
-      //DEPREC /// joint in its initial position and compute the (constant)
-      //DEPREC /// position of the joint in its parent when adding the joint in
-      //DEPREC /// the kinematic chain. When copying a kinematic chain, we copy the
-      //DEPREC /// position of the joint in its parent frame and therefore we do
-      //DEPREC /// not update it when adding the joint in the kinematic chain.
-      //DEPREC void addChildJoint (JointPtr_t joint,
-      //DEPREC			  bool computePositionInParent = true);
-
       /// Number of child joints
       std::size_t numberChildJoints () const;
 
@@ -158,9 +105,6 @@ namespace hpp {
       /// Get (constant) placement of joint in parent frame, i.e. model.jointPlacement[idx]
       const Transform3f& positionInParentFrame () const;
 
-      //DEPREC /// Set position of joint in parent frame
-      //DEPREC /// Use Frame::positionInParentFrame instead
-      //DEPREC void positionInParentFrame (const Transform3f& p);
       ///\}
       // -----------------------------------------------------------------------
       /// \name Bounds
@@ -236,11 +180,6 @@ namespace hpp {
       /// \}
       // -----------------------------------------------------------------------
 
-      //DEPREC /// Access to configuration space
-      //DEPREC JointConfiguration* configuration () const {return configuration_;}
-      //DEPREC /// Set robot owning the kinematic chain
-      //DEPREC void robot (const DeviceWkPtr_t& device) {robot_ = device;}
-
       /// Access robot owning the object
       DeviceConstPtr_t robot () const { selfAssert();  return devicePtr.lock();}
       /// Access robot owning the object
@@ -252,29 +191,7 @@ namespace hpp {
       /// Get linked body
       BodyPtr_t linkedBody () const;
 
-      //DEPREC /// Set linked body
-      //DEPREC void setLinkedBody (const BodyPtr_t& body);
-
       /// \}
-
-      //DEPREC /// \name Compatibility with urdf
-      //DEPREC /// \{
-
-      //DEPREC /// Get urdf link position in joint frame
-      //DEPREC ///
-      //DEPREC /// When parsing urdf pinocchios, joint frames are reoriented in order
-      //DEPREC /// to rotate about their x-axis. For some applications, it is necessary
-      //DEPREC /// to be able to recover the position of the urdf link attached to
-      //DEPREC /// the joint.
-      //DEPREC const Transform3f& linkInJointFrame () const;
-      //DEPREC /// Set urdf link position in joint frame
-      //DEPREC void linkInJointFrame (const Transform3f& transform);
-      //DEPREC /// Get link name
-      //DEPREC const std::string& linkName () const;
-      //DEPREC /// Set link name
-      //DEPREC void linkName (const std::string& linkName)
-
-      //DEPREC /// \}
 
       /// Display joint
       virtual std::ostream& display (std::ostream& os) const;
@@ -296,7 +213,6 @@ namespace hpp {
 
     protected:
       value_type maximalDistanceToParent_;
-      //DEPREC vector_t neutralConfiguration_;
       DeviceWkPtr_t devicePtr;
       mutable JointJacobian_t jacobian_;
       JointIndex jointIndex;

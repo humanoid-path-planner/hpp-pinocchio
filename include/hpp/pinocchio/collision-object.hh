@@ -80,9 +80,6 @@ namespace hpp {
       JointPtr_t joint () ;
       JointConstPtr_t joint () const;
 
-      //DEPREC /// Set joint
-      //DEPREC void joint (const JointPtr_t joint);
-
       /// Return the position in the joint frame
       const Transform3f& positionInJointFrame () const;
 

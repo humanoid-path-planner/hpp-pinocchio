@@ -30,8 +30,6 @@
 
 namespace hpp {
   namespace pinocchio {
-    //DEPREC using fcl::Transform3f;
-
 
     /// Geometry associated to a Joint
     ///
@@ -54,22 +52,12 @@ namespace hpp {
       /// Constructor
       Body (DeviceWkPtr_t device, JointIndex joint);
 
-      //DEPREC /// Copy constructor
-      //DEPREC Body (const Body& body);
-      //DEPREC /// Clone body and attach to given joint
-      //DEPREC ///
-      //DEPREC /// inner and outer object lists are filled with copies of the objects
-      //DEPREC /// contained in the lists of this. (See CollisionObject::clone).
-      //DEPREC BodyPtr_t clone (const JointPtr_t& joint) const;
-
       virtual ~Body () {}
       /// @}
 
       /// \name Name
       /// \{
 
-      //DEPREC /// Set name
-      //DEPREC void name (const std::string& name);
       /// Get name
       const std::string & name () const;
       /// \}
@@ -77,38 +65,12 @@ namespace hpp {
       /// Get joint holding the body
       JointPtr_t joint () const;
 
-      //DEPREC /// Set joint holding the body
-      //DEPREC void joint (JointPtr_t joint) {joint_ = joint;}
-
       /// \name Inner/outer objects
       /// \{
-
-      //DEPREC /// Add an object to the body
-      //DEPREC /// \param object object to add. Position of object is expressed in
-      //DEPREC /// world frame.
-      //DEPREC /// \param collision whether this object should be considered for
-      //DEPREC ///        collision
-      //DEPREC /// \param distance  whether this object should be considered for
-      //DEPREC ///        distance computation
-      //DEPREC /// \note If object is already in body, do nothing.
-      //DEPREC virtual void addInnerObject (const CollisionObjectPtr_t& object,
-      //DEPREC                              bool collision, bool distance);
-
-      //DEPREC /// Remove an object to the body
-      //DEPREC ///
-      //DEPREC /// \param object object to remove
-      //DEPREC /// \param collision whether this object should be removed from
-      //DEPREC ///        list of collision objects
-      //DEPREC /// \param distance  whether this object should be removed from
-      //DEPREC ///        list of distance computation objects
-      //DEPREC /// \note If object is not in body, do nothing
-      //DEPREC virtual void removeInnerObject (const CollisionObjectPtr_t& object,
-      //DEPREC 				      bool collision, bool distance);
 
       /// Access to inner objects
       /// \param type Collision or distance
       const ObjectVector_t& innerObjects () const { return innerObjects_; }
-      //DEPREC const ObjectVector_t& innerObjects (Request_t type) const;
 
       /// Get radius
       ///
@@ -118,48 +80,11 @@ namespace hpp {
 
       /// \}
 
-      //DEPREC /// \name Outer objects
-      //DEPREC /// \{
-
-      //DEPREC /// Add an object as obstacle for this body
-      //DEPREC /// \param object object to add. Position of object is expressed in
-      //DEPREC /// world frame.
-      //DEPREC /// \param collision whether this object should be considered for
-      //DEPREC ///        collision
-      //DEPREC /// \param distance  whether this object should be considered for
-      //DEPREC ///        distance computation
-      //DEPREC /// \note If object is already in body, do nothing.
-      //DEPREC /// \warning Added objects by this method will be unknown from the
-      //DEPREC ///         Device and will not be reset by it
-      //DEPREC virtual void addOuterObject (const CollisionObjectPtr_t& object,
-      //DEPREC 				   bool collision, bool distance);
-      //DEPREC /// Remove an obstacle to the body
-      //DEPREC ///
-      //DEPREC /// \param object object to remove
-      //DEPREC /// \param collision whether this object should be removed from
-      //DEPREC ///        list of collision objects
-      //DEPREC /// \param distance  whether this object should be removed from
-      //DEPREC ///        list of distance computation objects
-      //DEPREC /// \note If object is not in body, do nothing
-      //DEPREC virtual void removeOuterObject (const CollisionObjectPtr_t& object,
-      //DEPREC 				      bool collision, bool distance);
-
       /// Access to outer objects
       /// \param type Collision or distance
       const ObjectVector_t& outerObjects () const { return outerObjects_; }
-      //DEPREC const ObjectVector_t& outerObjects (Request_t type) const;
       /// \}
 
-      //DEPREC /// \name Collision and distance computation
-      //DEPREC /// @{
-      //DEPREC /// Test for collision
-      //DEPREC /// \return true if collision, false if no collision
-      //DEPREC       bool collisionTest () const;
-      //DEPREC /// Compute distances between pairs of objects stored in bodies
-      //DEPREC void computeDistances (DistanceResults_t& results,
-      //DEPREC 			     DistanceResults_t::size_type& offset);
-
-      //DEPREC /// @}
       /// \name Inertial information
       /// @{
       /// Get position of center of mass in joint local reference frame.
@@ -168,14 +93,6 @@ namespace hpp {
       matrix3_t inertiaMatrix() const;
       /// Get mass.
       value_type mass() const;
-
-      //DEPREC /// Set postion of center of mass in joint reference frame.
-      //DEPREC inline  void localCenterOfMass (const fcl::Vec3f& localCenterOfMass);
-      //DEPREC /// Set inertia matrix.
-      //DEPREC inline  void inertiaMatrix(const matrix3_t& inertiaMatrix);
-      //DEPREC /// Set mass.
-      //DEPREC inline  void mass(value_type mass);
-
 
       ///  @}
     private:
@@ -189,23 +106,11 @@ namespace hpp {
       const se3::Frame & frame() const ;
       se3::Frame &       frame() ;
 
-      //DEPREC ObjectVector_t collisionInnerObjects_;
-      //DEPREC ObjectVector_t collisionOuterObjects_;
-      //DEPREC ObjectVector_t distanceInnerObjects_;
-      //DEPREC ObjectVector_t distanceOuterObjects_;
       DeviceWkPtr_t devicePtr;
       JointIndex jointIndex;
       mutable FrameIndex frameIndex; // In pinocchio, bodies are stored as frames of type BODY.
       mutable bool       frameIndexSet;
       ObjectVector innerObjects_,outerObjects_;
-      
-      //DEPREC JointPtr_t joint_;
-      //DEPREC std::string name_;
-      //DEPREC /// Inertial information
-      //DEPREC fcl::Vec3f localCom_;
-      //DEPREC matrix3_t inertiaMatrix_;
-      //DEPREC value_type mass_;
-      //DEPREC value_type radius_;
     }; // class Body
   } // namespace pinocchio
 } // namespace hpp

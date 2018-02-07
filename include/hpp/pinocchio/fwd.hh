@@ -43,7 +43,6 @@ namespace hpp {
     HPP_PREDEF_CLASS (Body);
     HPP_PREDEF_CLASS (CollisionObject);
     HPP_PREDEF_CLASS (Device);
-    //DEPREC HPP_PREDEF_CLASS (DistanceResult);
     HPP_PREDEF_CLASS (HumanoidRobot);
     HPP_PREDEF_CLASS (Joint);
     HPP_PREDEF_CLASS (JointConfiguration);
@@ -97,7 +96,6 @@ namespace hpp {
     typedef const fcl::CollisionObject * FclConstCollisionObjectPtr_t;
     typedef boost::shared_ptr<CollisionObject> CollisionObjectPtr_t;
     typedef boost::shared_ptr<const CollisionObject> CollisionObjectConstPtr_t;
-    //DEPREC typedef std::list <CollisionObjectPtr_t> ObjectVector_t;
     typedef boost::shared_ptr <Device> DevicePtr_t;
     typedef boost::shared_ptr <const Device> DeviceConstPtr_t;
     typedef std::vector <fcl::DistanceResult> DistanceResults_t;
