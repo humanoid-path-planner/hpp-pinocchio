@@ -39,6 +39,7 @@
 #include <hpp/pinocchio/gripper.hh>
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/liegroup.hh>
+#include <hpp/pinocchio/liegroup-space.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -252,6 +253,31 @@ namespace hpp {
     /* --- CONFIG ----------------------------------------------------------- */
     /* ---------------------------------------------------------------------- */
 
+    struct ConfigSpaceVisitor : public se3::fusion::JointModelVisitor<ConfigSpaceVisitor>
+    {
+      typedef boost::fusion::vector<LiegroupSpace&> ArgsType;
+
+      JOINT_MODEL_VISITOR_INIT(ConfigSpaceVisitor);
+
+      template<typename JointModel>
+      static void algo(const se3::JointModelBase<JointModel> &,
+                       LiegroupSpace& space)
+      {
+        typedef typename LieGroupTpl::operation<JointModel>::type LG_t;
+        space *= LiegroupSpace::create (LG_t());
+      }
+
+    };
+
+    template <>
+    void ConfigSpaceVisitor::algo<se3::JointModelComposite>(
+        const se3::JointModelBase<se3::JointModelComposite> & jmodel,
+        LiegroupSpace& space)
+    {
+      se3::details::Dispatch<ConfigSpaceVisitor>::run(jmodel,
+          ConfigSpaceVisitor::ArgsType(space));
+    }
+
     /* Previous implementation of resizeState in hpp::model:: was setting the
      * new part of the configuration to neutral configuration. This is not
      * working but for empty extra-config. The former behavior is therefore not
@@ -266,6 +292,14 @@ namespace hpp {
       // currentConfiguration_.resize(configSize());
       currentVelocity_.resize(numberDof());
       currentAcceleration_.resize(numberDof());
+
+      configSpace_ = LiegroupSpace::create();
+      const Model& m (model());
+      ConfigSpaceVisitor::ArgsType args (*configSpace_);
+      for (JointIndex i = 1; i < m.joints.size(); ++i)
+        ConfigSpaceVisitor::run(m.joints[i], args);
+      if (extraConfigSpace_.dimension() > 0)
+        *configSpace_ *= LiegroupSpace::create (extraConfigSpace_.dimension());
     }
 
     bool Device::

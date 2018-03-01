@@ -196,6 +196,9 @@ namespace hpp {
       /// space dimension
       size_type numberDof () const;
 
+      /// Returns a LiegroupSpace representing the configuration space.
+      LiegroupSpaceConstPtr_t configSpace () const { return configSpace_; }
+
       /// \}
       // -----------------------------------------------------------------------
       /// \name Extra configuration space
@@ -410,6 +413,7 @@ namespace hpp {
       DeviceObjectVector objectVector_;
       // Grippers
       Grippers_t grippers_;
+      LiegroupSpacePtr_t configSpace_;
       // Extra configuration space
       ExtraConfigSpace extraConfigSpace_;
       DeviceWkPtr_t weakPtr_;
