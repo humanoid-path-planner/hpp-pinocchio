@@ -98,6 +98,15 @@ namespace hpp {
       static LiegroupSpacePtr_t empty ();
       /// \}
 
+      /// Create instance of empty space
+      static LiegroupSpacePtr_t create ()
+      {
+        LiegroupSpace* ptr (new LiegroupSpace ());
+        LiegroupSpacePtr_t shPtr (ptr);
+        ptr->init (shPtr);
+        return shPtr;
+      }
+
       /// Create instance of vector space of given size
       static LiegroupSpacePtr_t create (const size_type& size)
       {
@@ -169,6 +178,8 @@ namespace hpp {
       /// Return name of Lie group
       std::string name () const;
 
+      void mergeVectorSpaces ();
+
       bool operator== (const LiegroupSpace& other) const;
       bool operator!= (const LiegroupSpace& other) const;
 
@@ -176,16 +187,14 @@ namespace hpp {
 
     protected:
 
+      /// Constructor of empty space
+      LiegroupSpace ();
       /// Constructor of vector space of given size
       LiegroupSpace (const size_type& size);
       LiegroupSpace (const LiegroupSpace& other);
       LiegroupSpace (const LiegroupType& type);
 
     private:
-      /// Private constructor
-      ///
-      /// dimensions not initialized.
-      LiegroupSpace ();
       /// Initialize weak pointer to itself
       void init (const LiegroupSpaceWkPtr_t weak);
       /// Compute size of space
@@ -203,10 +212,6 @@ namespace hpp {
       /// weak pointer to itself
       LiegroupSpaceWkPtr_t weak_;
     }; // class LiegroupSpace
-
-    /// Cartesian product between Lie groups
-    LiegroupSpacePtr_t operator*
-    (const LiegroupSpaceConstPtr_t& sp1, const LiegroupSpaceConstPtr_t& sp2);
     /// Writing in a stream
     inline std::ostream& operator<< (std::ostream& os,
                                      const LiegroupSpace& space)

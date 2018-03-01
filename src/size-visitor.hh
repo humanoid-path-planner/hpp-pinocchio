@@ -42,6 +42,22 @@ namespace hpp {
         vector_t neutral;
       }; // struct NeutralVisitor
 
+      /// Visitor to check if a LiegroupType is a vector space
+      struct IsVectorSpace : public boost::static_visitor <>
+      {
+        template <typename LiegroupType> void operator () (const LiegroupType&)
+        {
+          isVectorSpace = false;
+        }
+        template<int Size, bool rot>
+        void operator () (const liegroup::VectorSpaceOperation<Size,rot>&)
+        {
+          isVectorSpace = true;
+        }
+        bool isVectorSpace;
+      }; // struct SizeVisitor
+
+
     } // namespace liegroupType
   } // namespace pinocchio
 } // namespace hpp

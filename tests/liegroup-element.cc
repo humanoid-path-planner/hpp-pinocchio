@@ -164,18 +164,32 @@ BOOST_AUTO_TEST_CASE (multiplication)
   LiegroupSpacePtr_t sp (LiegroupSpace::Rn (10) * LiegroupSpace::R3 () *
                          LiegroupSpace::R3xSO3 ());
   vector_t n; n.resize (20); n.setZero (); n [19] = 1;
-  BOOST_CHECK (sp->nq () == 20);
-  BOOST_CHECK (sp->nv () == 19);
-  BOOST_CHECK (sp->nq (0) == 10);
-  BOOST_CHECK (sp->nv (0) == 10);
-  BOOST_CHECK (sp->nq (1) == 3);
-  BOOST_CHECK (sp->nv (1) == 3);
-  BOOST_CHECK (sp->nq (2) == 7);
-  BOOST_CHECK (sp->nv (2) == 6);
-  BOOST_CHECK (sp->name () == "R^10*R^3*R^3*SO(3)");
-  BOOST_CHECK (sp->neutral ().vector () == n);
-  BOOST_CHECK (sp->neutral ().space () == sp);
-  BOOST_CHECK (sp == sp->neutral ().space ());
+  BOOST_CHECK_EQUAL (sp->nq (), 20);
+  BOOST_CHECK_EQUAL (sp->nv (), 19);
+  BOOST_CHECK_EQUAL (sp->liegroupTypes().size(), 3);
+  BOOST_CHECK_EQUAL (sp->nq (0), 10);
+  BOOST_CHECK_EQUAL (sp->nv (0), 10);
+  BOOST_CHECK_EQUAL (sp->nq (1), 3);
+  BOOST_CHECK_EQUAL (sp->nv (1), 3);
+  BOOST_CHECK_EQUAL (sp->nq (2), 7);
+  BOOST_CHECK_EQUAL (sp->nv (2), 6);
+  BOOST_CHECK_EQUAL (sp->name (), "R^10*R^3*R^3*SO(3)");
+  BOOST_CHECK_EQUAL (sp->neutral ().vector (), n);
+  BOOST_CHECK_EQUAL (sp->neutral ().space (), sp);
+  BOOST_CHECK_EQUAL (sp, sp->neutral ().space ());
+
+  sp->mergeVectorSpaces ();
+  BOOST_CHECK_EQUAL (sp->nq (), 20);
+  BOOST_CHECK_EQUAL (sp->nv (), 19);
+  BOOST_CHECK_EQUAL (sp->liegroupTypes().size(), 2);
+  BOOST_CHECK_EQUAL (sp->nq (0), 13);
+  BOOST_CHECK_EQUAL (sp->nv (0), 13);
+  BOOST_CHECK_EQUAL (sp->nq (1), 7);
+  BOOST_CHECK_EQUAL (sp->nv (1), 6);
+  BOOST_CHECK_EQUAL (sp->name (), "R^13*R^3*SO(3)");
+  BOOST_CHECK_EQUAL (sp->neutral ().vector (), n);
+  BOOST_CHECK_EQUAL (sp->neutral ().space (), sp);
+  BOOST_CHECK_EQUAL (sp, sp->neutral ().space ());
 }
 
 BOOST_AUTO_TEST_CASE (log_)

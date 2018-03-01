@@ -185,6 +185,10 @@ namespace hpp {
     }
 
     // Constructors
+    LiegroupSpace::LiegroupSpace () :
+      nq_ (0), nv_ (0), nqs_ (), nvs_ (), neutral_ (), weak_ ()
+    {}
+
     LiegroupSpace::LiegroupSpace (const size_type& size) :
       nq_ (0), nv_ (0), nqs_ (), nvs_ (), neutral_ (), weak_ ()
     {
@@ -209,16 +213,11 @@ namespace hpp {
       computeNeutral ();
     }
 
-    LiegroupSpace::LiegroupSpace () : liegroupTypes_ (), nqs_ (), nvs_ (),
-                                      neutral_ (), weak_ ()
-    {
-      computeSize ();
-      computeNeutral ();
-    }
-
     void LiegroupSpace::computeSize ()
     {
       nq_ = nv_ = 0;
+      nqs_.clear();
+      nvs_.clear();
       for (LiegroupTypes::const_iterator it = liegroupTypes_.begin ();
            it != liegroupTypes_.end (); ++it) {
         liegroupType::SizeVisitor v;
@@ -247,6 +246,44 @@ namespace hpp {
     void LiegroupSpace::init (const LiegroupSpaceWkPtr_t weak)
     {
       weak_ = weak;
+    }
+
+    void LiegroupSpace::mergeVectorSpaces ()
+    {
+      if (liegroupTypes_.empty()) return;
+
+      LiegroupTypes newLgT;
+
+      liegroupType::IsVectorSpace ivs;
+      liegroupType::SizeVisitor curSizes;
+      size_type vsSize = 0;
+
+      for (LiegroupTypes::const_iterator _cur = liegroupTypes_.begin();
+          _cur != liegroupTypes_.end (); ++_cur) {
+        boost::apply_visitor (ivs, *_cur);
+        bool curIsVectorSpace = ivs.isVectorSpace;
+        if (curIsVectorSpace) {
+          boost::apply_visitor (curSizes, *_cur);
+        }
+        if (vsSize > 0 && curIsVectorSpace) {
+          // Update previous liegroup type (which is a vector space).
+          vsSize += curSizes.nq;
+          assert (!newLgT.empty());
+          switch (vsSize) {
+            case  1: newLgT.back() = liegroup::VectorSpaceOperation<             1, false> (); break;
+            case  2: newLgT.back() = liegroup::VectorSpaceOperation<             2, false> (); break;
+            case  3: newLgT.back() = liegroup::VectorSpaceOperation<             3, false> (); break;
+            default: newLgT.back() = liegroup::VectorSpaceOperation<Eigen::Dynamic, false> ((int)vsSize); break;
+          }
+        } else {
+          // No merge to do.
+          vsSize = (curIsVectorSpace ? curSizes.nq : 0);
+          newLgT.push_back (*_cur);
+        }
+      }
+      liegroupTypes_ = newLgT;
+      computeSize();
+      computeNeutral();
     }
 
     LiegroupSpacePtr_t LiegroupSpace::operator*= (const LiegroupSpaceConstPtr_t& o)
