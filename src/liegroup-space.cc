@@ -249,22 +249,30 @@ namespace hpp {
       weak_ = weak;
     }
 
-    LiegroupSpacePtr_t operator*
-    (const LiegroupSpacePtr_t& sp1, const LiegroupSpacePtr_t& sp2)
+    LiegroupSpacePtr_t LiegroupSpace::operator*= (const LiegroupSpaceConstPtr_t& o)
     {
-      LiegroupSpacePtr_t res (LiegroupSpace::createCopy (sp1));
-      res->liegroupTypes_.insert (res->liegroupTypes_.end (),
-                                  sp2->liegroupTypes_.begin (),
-                                  sp2->liegroupTypes_.end ());
-      res->nqs_.insert (res->nqs_.end (), sp2->nqs_.begin (), sp2->nqs_.end ());
-      res->nvs_.insert (res->nvs_.end (), sp2->nvs_.begin (), sp2->nvs_.end ());
-      res->nq_ = sp1->nq_ + sp2->nq_;
-      res->nv_ = sp1->nv_ + sp2->nv_;
-      res->neutral_.resize (res->nq_);
-      res->neutral_.head (sp1->nq ()) = sp1->neutral ().vector ();
-      res->neutral_.tail (sp2->nq ()) = sp2->neutral ().vector ();
-      return res;
+      liegroupTypes_.insert (liegroupTypes_.end (),
+          o->liegroupTypes_.begin (),
+          o->liegroupTypes_.end ());
+      nqs_.insert (nqs_.end (), o->nqs_.begin (), o->nqs_.end ());
+      nvs_.insert (nvs_.end (), o->nvs_.begin (), o->nvs_.end ());
+      nq_ += o->nq_;
+      nv_ += o->nv_;
+      neutral_.conservativeResize (nq_);
+      neutral_.tail (o->nq ()) = o->neutral ().vector ();
+      return weak_.lock();
     }
-
   } // namespace pinocchio
 } // namespace hpp
+
+namespace boost {
+  using namespace hpp::pinocchio;
+
+  LiegroupSpacePtr_t operator*
+  (const LiegroupSpaceConstPtr_t& sp1, const LiegroupSpaceConstPtr_t& sp2)
+  {
+    LiegroupSpacePtr_t res (LiegroupSpace::createCopy (sp1));
+    *res *= sp2;
+    return res;
+  }
+} // namespace boost

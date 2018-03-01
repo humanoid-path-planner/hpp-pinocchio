@@ -74,8 +74,6 @@ namespace hpp {
     {
     public:
       EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      friend LiegroupSpacePtr_t operator*
-      (const LiegroupSpacePtr_t& sp1, const LiegroupSpacePtr_t& sp2);
       /// \name Elementary Lie groups
       /// \{
 
@@ -174,6 +172,8 @@ namespace hpp {
       bool operator== (const LiegroupSpace& other) const;
       bool operator!= (const LiegroupSpace& other) const;
 
+      LiegroupSpacePtr_t operator*= (const LiegroupSpaceConstPtr_t& other);
+
     protected:
 
       /// Constructor of vector space of given size
@@ -217,5 +217,16 @@ namespace hpp {
     /// \}
   } // namespace pinocchio
 } // namespace hpp
+
+namespace boost {
+  /// \addtogroup liegroup
+  /// \{
+
+  /// Cartesian product between Lie groups
+  hpp::pinocchio::LiegroupSpacePtr_t operator* (
+      const hpp::pinocchio::LiegroupSpaceConstPtr_t& sp1,
+      const hpp::pinocchio::LiegroupSpaceConstPtr_t& sp2);
+  /// \}
+} // namespace boost
 
 #endif // HPP_PINOCCHIO_LIEGROUP_SPACE_HH
