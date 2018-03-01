@@ -300,6 +300,7 @@ namespace hpp {
         ConfigSpaceVisitor::run(m.joints[i], args);
       if (extraConfigSpace_.dimension() > 0)
         *configSpace_ *= LiegroupSpace::create (extraConfigSpace_.dimension());
+      configSpace_->mergeVectorSpaces();
     }
 
     bool Device::

@@ -70,20 +70,17 @@ BOOST_AUTO_TEST_CASE (computeAABB)
 BOOST_AUTO_TEST_CASE (unit_test_device)
 {
   DevicePtr_t robot;
-  LiegroupSpacePtr_t space;
+  LiegroupSpaceConstPtr_t space;
 
   robot = makeDeviceSafe (unittest::HumanoidRomeo);
-  space = LiegroupSpace::createCopy(robot->configSpace());
-  space->mergeVectorSpaces();
+  space = robot->configSpace();
   BOOST_CHECK_EQUAL (space->name(), "R^3*SO(3)*R^31");
 
   robot = makeDeviceSafe (unittest::CarLike);
-  space = LiegroupSpace::createCopy(robot->configSpace());
-  space->mergeVectorSpaces();
+  space = robot->configSpace();
   BOOST_CHECK_EQUAL (space->name(), "R^2*SO(2)*R^2");
 
   robot = makeDeviceSafe (unittest::ManipulatorArm2);
-  space = LiegroupSpace::createCopy(robot->configSpace());
-  space->mergeVectorSpaces();
+  space = robot->configSpace();
   BOOST_CHECK_EQUAL (space->name(), "R^19");
 }
