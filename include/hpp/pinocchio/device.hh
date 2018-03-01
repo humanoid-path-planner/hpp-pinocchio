@@ -197,7 +197,7 @@ namespace hpp {
       size_type numberDof () const;
 
       /// Returns a LiegroupSpace representing the configuration space.
-      LiegroupSpaceConstPtr_t configSpace () const { return configSpace_; }
+      const LiegroupSpacePtr_t& configSpace () const { return configSpace_; }
 
       /// \}
       // -----------------------------------------------------------------------
