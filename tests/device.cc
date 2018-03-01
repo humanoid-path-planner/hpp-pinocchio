@@ -23,6 +23,7 @@
 #include <hpp/pinocchio/simple-device.hh>
 #include <hpp/pinocchio/humanoid-robot.hh>
 #include <hpp/pinocchio/urdf/util.hh>
+#include <hpp/pinocchio/liegroup-space.hh>
 
 static bool verbose = true;
 
@@ -68,7 +69,21 @@ BOOST_AUTO_TEST_CASE (computeAABB)
 /* -------------------------------------------------------------------------- */
 BOOST_AUTO_TEST_CASE (unit_test_device)
 {
-  makeDeviceSafe (unittest::HumanoidRomeo);
-  makeDeviceSafe (unittest::CarLike);
-  makeDeviceSafe (unittest::ManipulatorArm2);
+  DevicePtr_t robot;
+  LiegroupSpacePtr_t space;
+
+  robot = makeDeviceSafe (unittest::HumanoidRomeo);
+  space = LiegroupSpace::createCopy(robot->configSpace());
+  space->mergeVectorSpaces();
+  BOOST_CHECK_EQUAL (space->name(), "R^3*SO(3)*R^31");
+
+  robot = makeDeviceSafe (unittest::CarLike);
+  space = LiegroupSpace::createCopy(robot->configSpace());
+  space->mergeVectorSpaces();
+  BOOST_CHECK_EQUAL (space->name(), "R^2*SO(2)*R^2");
+
+  robot = makeDeviceSafe (unittest::ManipulatorArm2);
+  space = LiegroupSpace::createCopy(robot->configSpace());
+  space->mergeVectorSpaces();
+  BOOST_CHECK_EQUAL (space->name(), "R^19");
 }
