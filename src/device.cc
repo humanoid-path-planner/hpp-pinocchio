@@ -293,7 +293,7 @@ namespace hpp {
       currentVelocity_.resize(numberDof());
       currentAcceleration_.resize(numberDof());
 
-      configSpace_ = LiegroupSpace::create();
+      configSpace_ = LiegroupSpace::empty();
       const Model& m (model());
       ConfigSpaceVisitor::ArgsType args (*configSpace_);
       for (JointIndex i = 1; i < m.joints.size(); ++i)

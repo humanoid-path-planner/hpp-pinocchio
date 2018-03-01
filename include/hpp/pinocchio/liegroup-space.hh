@@ -98,15 +98,6 @@ namespace hpp {
       static LiegroupSpacePtr_t empty ();
       /// \}
 
-      /// Create instance of empty space
-      static LiegroupSpacePtr_t create ()
-      {
-        LiegroupSpace* ptr (new LiegroupSpace ());
-        LiegroupSpacePtr_t shPtr (ptr);
-        ptr->init (shPtr);
-        return shPtr;
-      }
-
       /// Create instance of vector space of given size
       static LiegroupSpacePtr_t create (const size_type& size)
       {
@@ -187,14 +178,14 @@ namespace hpp {
 
     protected:
 
-      /// Constructor of empty space
-      LiegroupSpace ();
       /// Constructor of vector space of given size
       LiegroupSpace (const size_type& size);
       LiegroupSpace (const LiegroupSpace& other);
       LiegroupSpace (const LiegroupType& type);
 
     private:
+      /// Constructor of empty space
+      LiegroupSpace ();
       /// Initialize weak pointer to itself
       void init (const LiegroupSpaceWkPtr_t weak);
       /// Compute size of space
