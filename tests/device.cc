@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE (computeAABB)
   robot->rootJoint()->lowerBounds(vector3_t(-2, -2, 0));
   robot->rootJoint()->upperBounds(vector3_t(-1, -1, 0));
   fcl::AABB aabb2 = robot->computeAABB();
-  if (verbose) displayAABB(aabb1);
+  if (verbose) displayAABB(aabb2);
 }
 /* -------------------------------------------------------------------------- */
 BOOST_AUTO_TEST_CASE (unit_test_device)

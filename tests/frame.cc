@@ -27,8 +27,6 @@
 #include <hpp/pinocchio/simple-device.hh>
 #include <hpp/pinocchio/urdf/util.hh>
 
-static bool verbose = false;
-
 #define CHECK_TRANSFORM(M, Mexp) BOOST_CHECK((M.inverse() * Mexp).isIdentity())
 
 using namespace hpp::pinocchio;
@@ -99,8 +97,7 @@ BOOST_AUTO_TEST_CASE (frame)
     ImuTorsoGyr_M =  ImuTorsoGyr_F.positionInParentFrame(),
     TrunkYaw_M    =  TrunkYaw_F   .positionInParentFrame(),
     LHipYaw_M     =  LHipYaw_F    .positionInParentFrame(),
-    RHipYaw_M     =  RHipYaw_F    .positionInParentFrame(),
-    waist_M       =  waist        .positionInParentFrame();
+    RHipYaw_M     =  RHipYaw_F    .positionInParentFrame();
 
   Transform3f shift = Transform3f::Random();
   waist.positionInParentFrame(shift);
