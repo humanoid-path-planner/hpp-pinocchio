@@ -113,6 +113,9 @@ namespace hpp {
         LiegroupNonconstElementBase (const LiegroupElementBase<vector_type2>& other)
           : Base (other.vector(), other.space()) {}
 
+        /// Constructor of trivial element
+        LiegroupNonconstElementBase () : Base (vector_t(), LiegroupSpace::empty ()) {}
+
         /// Const vector representation
         const vector_type& vector () const
         {
