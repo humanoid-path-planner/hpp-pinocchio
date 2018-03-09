@@ -29,8 +29,8 @@ namespace hpp {
       {
         enum {
           BoundSize = LieGroup1::BoundSize + LieGroup2::BoundSize,
-          NR = LieGroup1::BoundSize + LieGroup2::BoundSize,
-          NT = LieGroup1::BoundSize + LieGroup2::BoundSize
+          NR = LieGroup1::NR + LieGroup2::NR,
+          NT = LieGroup1::NT + LieGroup2::NT
         };
 
         typedef se3::CartesianProductOperation<LieGroup1, LieGroup2> Base;
