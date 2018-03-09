@@ -22,6 +22,7 @@
 namespace hpp {
   namespace pinocchio {
     namespace liegroupType {
+      template <bool ApplyOnTheLeft>
       struct JdifferenceVisitor : public boost::static_visitor <>
       {
         JdifferenceVisitor (vectorIn_t& q0, vectorIn_t& q1,
@@ -44,10 +45,18 @@ namespace hpp {
               q1_.segment<LgT::NQ>(iq_, lg.nq()),
               J0int,
               J1int);
-          if (J0_.size() > 0)
-            J0_.middleRows<LgT::NV> (iv_, lg.nv()).applyOnTheLeft (J0int);
-          if (J1_.size() > 0)
-            J1_.middleRows<LgT::NV> (iv_, lg.nv()).applyOnTheLeft (J1int);
+          if (J0_.size() > 0) {
+            if (ApplyOnTheLeft)
+              J0_.middleRows<LgT::NV> (iv_, lg.nv()).applyOnTheLeft (J0int);
+            else
+              J0_.middleCols<LgT::NV> (iv_, lg.nv()).applyOnTheRight (J0int);
+          }
+          if (J1_.size() > 0) {
+            if (ApplyOnTheLeft)
+              J1_.middleRows<LgT::NV> (iv_, lg.nv()).applyOnTheLeft (J1int);
+            else
+              J1_.middleCols<LgT::NV> (iv_, lg.nv()).applyOnTheRight (J1int);
+          }
           iq_ += lg.nq();
           iv_ += lg.nv();
         }
