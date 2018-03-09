@@ -166,6 +166,17 @@ namespace hpp {
       /// \param[out] J the Jacobian of y
       void Jintegrate (vectorIn_t v, matrixOut_t J) const;
 
+      /// Compute the Jacobian of the difference operation.
+      /// Given \f$ v = q1 - q0 \f$,
+      ///
+      /// \param[in] q0,q1
+      /// \param[in] J0 the Jacobian of q0.
+      /// \param[in] J1 the Jacobian of q1.
+      /// \param[out] J0 the Jacobian of v with respect to q0.
+      /// \param[out] J1 the Jacobian of v with respect to q1.
+      /// \note to compute only one jacobian, provide for J0 or J1 an empty matrix.
+      void Jdifference (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0, matrixOut_t J1) const;
+
       /// Return name of Lie group
       std::string name () const;
 
