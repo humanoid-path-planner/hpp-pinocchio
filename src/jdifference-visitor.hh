@@ -64,6 +64,12 @@ namespace hpp {
         template <int N, bool rot>
         void operator () (const liegroup::VectorSpaceOperation<N,rot>& lg)
         {
+          if (J0_.size() > 0) {
+            if (ApplyOnTheLeft)
+              J0_.middleRows<N> (iv_, lg.nv()) *= -1;
+            else
+              J0_.middleCols<N> (iv_, lg.nv()) *= -1;
+          }
           iq_ += lg.nq();
           iv_ += lg.nv();
         }
