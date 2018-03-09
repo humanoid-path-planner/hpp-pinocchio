@@ -263,7 +263,7 @@ namespace hpp {
       static void algo(const se3::JointModelBase<JointModel> &,
                        LiegroupSpace& space)
       {
-        typedef typename LieGroupTpl::operation<JointModel>::type LG_t;
+        typedef typename DefaultLieGroupMap::operation<JointModel>::type LG_t;
         space *= LiegroupSpace::create (LG_t());
       }
 
@@ -300,7 +300,6 @@ namespace hpp {
         ConfigSpaceVisitor::run(m.joints[i], args);
       if (extraConfigSpace_.dimension() > 0)
         *configSpace_ *= LiegroupSpace::create (extraConfigSpace_.dimension());
-      configSpace_->mergeVectorSpaces();
     }
 
     bool Device::
