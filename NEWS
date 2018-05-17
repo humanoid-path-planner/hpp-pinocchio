@@ -1,0 +1,16 @@
+                                                                -*- outline -*-
+
+New in v3.3, 2018-05-17
+* Fix optional dependency to hpp-model-urdf.
+* Enhance documentation
+* Provide LiegroupSpace and LiegroupElement classes to represent configuration
+  spaces.
+* Add parentheses around configuration and precision parameter in displayConfig .
+* Frame::positionInParentFrame moves the geometry as well.
+* Remove dependency to resource_retriever.
+* Add method Device::computeAABB.
+* Add prismatic root joint type.
+* Remove dynamic allocation in Device::computeForwardKinematics
+* Expose urdf::loadModel
+* Body and Joint have a weak_ptr of device, not a shared_ptr.
+* Remove some deprecated methods and classes.
