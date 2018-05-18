@@ -116,7 +116,8 @@ namespace hpp {
     typedef boost::shared_ptr<GeomData>        GeomDataPtr_t;
     typedef boost::shared_ptr<const GeomData>  GeomDataConstPtr_t;
 
-    class LiegroupElement;
+    template <typename vector_type> class LiegroupNonconstElementBase;
+    typedef LiegroupNonconstElementBase<   vector_t> LiegroupElement;
     HPP_PREDEF_CLASS (LiegroupSpace);
     typedef boost::shared_ptr <LiegroupSpace> LiegroupSpacePtr_t;
     typedef boost::shared_ptr <const LiegroupSpace> LiegroupSpaceConstPtr_t;

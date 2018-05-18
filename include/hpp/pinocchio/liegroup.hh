@@ -23,6 +23,7 @@
 #include <hpp/pinocchio/liegroup/vector-space.hh>
 #include <hpp/pinocchio/liegroup/cartesian-product.hh>
 #include <hpp/pinocchio/liegroup/special-orthogonal.hh>
+#include <hpp/pinocchio/liegroup/special-euclidean.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -72,6 +73,48 @@ namespace hpp {
         liegroup::VectorSpaceOperation<2, false>,
         liegroup::SpecialOrthogonalOperation<2>
         > type;
+    };
+
+    // Default implementation is empty
+    struct DefaultLieGroupMap {
+      template<typename JointModel> struct operation {};
+    };
+    // JointModelRevolute, JointModelRevoluteUnbounded, JointModelRevoluteUnaligned
+    template<int Axis> struct DefaultLieGroupMap::operation <se3::JointModelRevolute<Axis> > {
+      typedef liegroup::VectorSpaceOperation<1, true> type;
+    };
+    template<int Axis> struct DefaultLieGroupMap::operation <se3::JointModelRevoluteUnbounded<Axis> > {
+      typedef liegroup::SpecialOrthogonalOperation<2> type;
+    };
+    template<> struct DefaultLieGroupMap::operation <se3::JointModelRevoluteUnaligned > {
+      typedef liegroup::VectorSpaceOperation<1, true> type;
+    };
+
+    // JointModelPrismatic, JointModelPrismaticUnaligned, JointModelTranslation
+    template<int Axis> struct DefaultLieGroupMap::operation <se3::JointModelPrismatic<Axis> > {
+      typedef liegroup::VectorSpaceOperation<1, false> type;
+    };
+    template<> struct DefaultLieGroupMap::operation <se3::JointModelPrismaticUnaligned > {
+      typedef liegroup::VectorSpaceOperation<1, false> type;
+    };
+    template<> struct DefaultLieGroupMap::operation <se3::JointModelTranslation > {
+      typedef liegroup::VectorSpaceOperation<3, false> type;
+    };
+
+    // JointModelSpherical, JointModelSphericalZYX,
+    template<> struct DefaultLieGroupMap::operation <se3::JointModelSpherical> {
+      typedef liegroup::SpecialOrthogonalOperation<3> type;
+    };
+    template<> struct DefaultLieGroupMap::operation <se3::JointModelSphericalZYX> {
+      typedef liegroup::VectorSpaceOperation<3, true> type;
+    };
+
+    // JointModelFreeFlyer, JointModelPlanar
+    template<> struct DefaultLieGroupMap::operation <se3::JointModelFreeFlyer> {
+      typedef liegroup::SpecialEuclideanOperation<3> type;
+    };
+    template<> struct DefaultLieGroupMap::operation <se3::JointModelPlanar> {
+      typedef liegroup::SpecialEuclideanOperation<2> type;
     };
   } // namespace pinocchio
 } // namespace hpp

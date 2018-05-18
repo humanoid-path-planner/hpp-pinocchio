@@ -24,22 +24,18 @@ namespace hpp {
   namespace pinocchio {
     typedef std::vector <LiegroupType> LiegroupTypes;
 
-    void LiegroupElement::setNeutral ()
+    template <typename vector_type>
+    LiegroupNonconstElementBase<vector_type>& LiegroupNonconstElementBase<vector_type>::operator+= (vectorIn_t v)
     {
-      value_ = space_->neutral ().vector ();
-    }
-
-    LiegroupElement& LiegroupElement::operator+= (const vectorIn_t& v)
-    {
-      assert (space ()->nv () == v.size ());
+      assert (this->space_->nv () == v.size ());
       typedef std::vector <LiegroupType> LiegroupTypes;
       size_type iq = 0, iv = 0;
-      for (LiegroupTypes::const_iterator it = space_->liegroupTypes ().begin ();
-           it != space_->liegroupTypes ().end (); ++it) {
+      for (LiegroupTypes::const_iterator it = this->space_->liegroupTypes ().begin ();
+           it != this->space_->liegroupTypes ().end (); ++it) {
         liegroupType::SizeVisitor dv;
         boost::apply_visitor (dv, *it);
 
-        liegroupType::AdditionVisitor av (value_.segment (iq, dv.nq),
+        liegroupType::AdditionVisitor av (this->value_.segment (iq, dv.nq),
                                           v.segment (iv, dv.nv));
         boost::apply_visitor (av, *it);
         // result.value_.segment (iq, dv.nq) = av.result;
@@ -49,14 +45,23 @@ namespace hpp {
       return *this;
     }
 
-    LiegroupElement operator+ (const LiegroupElement& e, const vector_t& v)
+    template LiegroupNonconstElementBase<vector_t   >& LiegroupNonconstElementBase<vector_t   >::operator+= (vectorIn_t);
+    template LiegroupNonconstElementBase<vectorOut_t>& LiegroupNonconstElementBase<vectorOut_t>::operator+= (vectorIn_t);
+
+    template <typename vector_type>
+    LiegroupElement operator+ (const LiegroupElementBase<vector_type>& e, vectorIn_t v)
     {
       LiegroupElement result (e);
       result += v;
       return result;
     }
 
-    vector_t operator- (const LiegroupElement& e1, const LiegroupElement& e2)
+    template LiegroupElement operator+ (const LiegroupElementBase<vector_t   >& e, vectorIn_t v);
+    template LiegroupElement operator+ (const LiegroupElementBase<vectorIn_t >& e, vectorIn_t v);
+    template LiegroupElement operator+ (const LiegroupElementBase<vectorOut_t>& e, vectorIn_t v);
+
+    template <typename vector_type1, typename vector_type2>
+    vector_t operator- (const LiegroupElementBase<vector_type1>& e1, const LiegroupElementBase<vector_type2>& e2)
     {
       assert (e1.space ()->nq () == e2.space ()->nq ());
       typedef std::vector <LiegroupType> LiegroupTypes;
@@ -73,8 +78,8 @@ namespace hpp {
         liegroupType::SizeVisitor dv;
         boost::apply_visitor (dv, *it1);
 
-        liegroupType::SubstractionVisitor sv (e1.value_.segment (iq, dv.nq),
-                                              e2.value_.segment (iq, dv.nq),
+        liegroupType::SubstractionVisitor sv (e1.vector().segment (iq, dv.nq),
+                                              e2.vector().segment (iq, dv.nq),
                                               e1.space ()->nv ());
         boost::apply_visitor (sv, *it1);
         result.segment (iv, dv.nv) = sv.result;
@@ -85,7 +90,18 @@ namespace hpp {
       return result;
     }
 
-    vector_t log (const LiegroupElement& lge)
+    template vector_t operator- (const LiegroupElementBase<vector_t   >& e1, const LiegroupElementBase<vector_t   >& e2);
+    template vector_t operator- (const LiegroupElementBase<vector_t   >& e1, const LiegroupElementBase<vectorIn_t >& e2);
+    template vector_t operator- (const LiegroupElementBase<vector_t   >& e1, const LiegroupElementBase<vectorOut_t>& e2);
+    template vector_t operator- (const LiegroupElementBase<vectorIn_t >& e1, const LiegroupElementBase<vector_t   >& e2);
+    template vector_t operator- (const LiegroupElementBase<vectorIn_t >& e1, const LiegroupElementBase<vectorIn_t >& e2);
+    template vector_t operator- (const LiegroupElementBase<vectorIn_t >& e1, const LiegroupElementBase<vectorOut_t>& e2);
+    template vector_t operator- (const LiegroupElementBase<vectorOut_t>& e1, const LiegroupElementBase<vector_t   >& e2);
+    template vector_t operator- (const LiegroupElementBase<vectorOut_t>& e1, const LiegroupElementBase<vectorIn_t >& e2);
+    template vector_t operator- (const LiegroupElementBase<vectorOut_t>& e1, const LiegroupElementBase<vectorOut_t>& e2);
+
+    template <typename vector_type>
+    vector_t log (const LiegroupElementBase<vector_type>& lge)
     {
       using liegroupType::LogVisitor;
       vector_t res (lge.space ()->nv ());
@@ -101,5 +117,9 @@ namespace hpp {
       }
       return res;
     }
+
+    template vector_t log (const LiegroupElementBase<vector_t   >& lge);
+    template vector_t log (const LiegroupElementBase<vectorIn_t >& lge);
+    template vector_t log (const LiegroupElementBase<vectorOut_t>& lge);
   } // namespace pinocchio
 } // namespace hpp

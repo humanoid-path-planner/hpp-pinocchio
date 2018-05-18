@@ -263,7 +263,7 @@ namespace hpp {
       static void algo(const se3::JointModelBase<JointModel> &,
                        LiegroupSpace& space)
       {
-        typedef typename LieGroupTpl::operation<JointModel>::type LG_t;
+        typedef typename DefaultLieGroupMap::operation<JointModel>::type LG_t;
         space *= LiegroupSpace::create (LG_t());
       }
 
@@ -293,7 +293,7 @@ namespace hpp {
       currentVelocity_.resize(numberDof());
       currentAcceleration_.resize(numberDof());
 
-      configSpace_ = LiegroupSpace::create();
+      configSpace_ = LiegroupSpace::empty();
       const Model& m (model());
       ConfigSpaceVisitor::ArgsType args (*configSpace_);
       for (JointIndex i = 1; i < m.joints.size(); ++i)

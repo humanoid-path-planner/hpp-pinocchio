@@ -25,49 +25,29 @@ namespace hpp {
     /// \addtogroup liegroup
     /// \{
 
-    /// Element of a Lie group
-    ///
-    /// See class LiegroupSpace.
-    class LiegroupElement
+    template <typename vector_type>
+    class LiegroupElementBase
     {
     public:
-      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-      friend LiegroupElement operator+
-      (const LiegroupElement& e, const vector_t& v);
-      friend vector_t operator-
-      (const LiegroupElement& e1, const LiegroupElement& e2);
-
       /// Constructor
       /// \param value vector representation,
       /// \param liegroupSpace space the element belongs to.
-      LiegroupElement (const vector_t& value,
-                       const LiegroupSpacePtr_t& liegroupSpace) :
-        value_ (value), space_ (liegroupSpace)
+      template <typename Derived>
+      LiegroupElementBase (const Eigen::EigenBase<Derived>& value,
+                           const LiegroupSpacePtr_t& liegroupSpace) :
+        value_ (value.derived()), space_ (liegroupSpace)
       {
-        assert (value_.size () == space_->nq ());
+        check();
       }
-      /// Constructor
-      /// \param liegroupSpace space the element belongs to.
-      LiegroupElement (const LiegroupSpacePtr_t& liegroupSpace) :
-        value_ (liegroupSpace->nq ()), space_ (liegroupSpace)
-      {
-        assert (value_.size () == space_->nq ());
-      }
+
       /// Constructor
       /// \param value vector representation,
       ///
       /// By default the space containing the value is a vector space.
-      explicit LiegroupElement (const vector_t& value) :
-        value_ (value), space_ (LiegroupSpace::create (value.size ()))
-      {
-      }
-
-      /// Constructor of trivial element
-      LiegroupElement () :
-        value_ (), space_ (LiegroupSpace::empty ())
-      {
-        value_.resize (0);
-      }
+      template <typename Derived>
+      explicit LiegroupElementBase (const Eigen::EigenBase<Derived>& value) :
+        value_ (value.derived()),
+        space_ (LiegroupSpace::create (value.derived().size ())) {}
 
       /// get reference to vector of Lie groups
       const LiegroupSpacePtr_t& space () const
@@ -76,13 +56,7 @@ namespace hpp {
       }
 
       /// Const vector representation
-      const vector_t&  vector () const
-      {
-        return value_;
-      }
-
-      /// Modifiable vector representation
-      vectorOut_t vector ()
+      const vector_type& vector () const
       {
         return value_;
       }
@@ -93,9 +67,6 @@ namespace hpp {
         return value_.size ();
       }
 
-      /// Set element to neutral element
-      void setNeutral ();
-
       /// Check that size of vector fits size of space
       /// \note only in debug mode
       void check () const
@@ -103,13 +74,75 @@ namespace hpp {
         assert (value_.size () == space_->nq ());
       }
 
-      /// Inplace integration of a velocity vector
-      LiegroupElement& operator+= (const vectorIn_t& v);
-
-    private:
-      vector_t value_;
+    protected:
+      vector_type value_;
       LiegroupSpacePtr_t space_;
-    }; // class LiegroupElement
+    };
+
+    typedef LiegroupElementBase<vectorIn_t> LiegroupConstElementRef;
+
+    template <typename vector_type>
+    class LiegroupNonconstElementBase : public LiegroupElementBase<vector_type>
+    {
+      public:
+        typedef LiegroupElementBase<vector_type> Base;
+
+        /// Constructor
+        /// \param value vector representation,
+        /// \param liegroupSpace space the element belongs to.
+        LiegroupNonconstElementBase (const vector_type& value,
+                                     const LiegroupSpacePtr_t& space)
+          : Base (value, space) {}
+
+        /// Constructor
+        /// \param value vector representation,
+        ///
+        /// By default the space containing the value is a vector space.
+        LiegroupNonconstElementBase (const LiegroupSpacePtr_t& space) :
+            Base (vector_t (space->nq ()), space) {}
+
+        /// Constructor
+        /// \param value vector representation,
+        ///
+        /// By default the space containing the value is a vector space.
+        explicit LiegroupNonconstElementBase (const vector_type& value)
+          : Base (value) {}
+
+        /// Copy constructor
+        template <typename vector_type2>
+        LiegroupNonconstElementBase (const LiegroupElementBase<vector_type2>& other)
+          : Base (other.vector(), other.space()) {}
+
+        /// Constructor of trivial element
+        LiegroupNonconstElementBase () : Base (vector_t(), LiegroupSpace::empty ()) {}
+
+        /// Const vector representation
+        const vector_type& vector () const
+        {
+          return Base::vector();
+        }
+
+        /// Modifiable vector representation
+        vector_type& vector ()
+        {
+          return this->value_;
+        }
+
+        /// Set element to neutral element
+        void setNeutral ()
+        {
+          this->value_ = this->space_->neutral ().vector ();
+        }
+
+        /// Inplace integration of a velocity vector
+        LiegroupNonconstElementBase& operator+= (vectorIn_t v);
+    };
+
+    /// Element of a Lie group
+    ///
+    /// See class LiegroupSpace.
+    typedef LiegroupNonconstElementBase<   vector_t> LiegroupElement;
+    typedef LiegroupNonconstElementBase<vectorOut_t> LiegroupElementRef;
 
     /// Integration of a velocity vector from a configuration
     ///
@@ -119,7 +152,8 @@ namespace hpp {
     ///
     /// By extension of the vector space case, we represent the integration
     /// of a constant velocity during unit time by an addition
-    LiegroupElement operator+ (const LiegroupElement& e, const vector_t& v);
+    template <typename vector_type>
+    LiegroupElement operator+ (const LiegroupElementBase<vector_type>& e, vectorIn_t v);
 
     /// Difference between two configurations
     ///
@@ -128,13 +162,16 @@ namespace hpp {
     ///
     /// By extension of the vector space case, we represent the integration
     /// of a constant velocity during unit time by an addition
-    vector_t operator- (const LiegroupElement& e1, const LiegroupElement& e2);
+    template <typename vector_type1, typename vector_type2>
+    vector_t operator- (const LiegroupElementBase<vector_type1>& e1, const LiegroupElementBase<vector_type2>& e2);
     /// \}
 
     /// Compute the log as a tangent vector of a Lie group element
-    vector_t log (const LiegroupElement& lge);
+    template <typename vector_type>
+    vector_t log (const LiegroupElementBase<vector_type>& lge);
 
-    inline std::ostream& operator<< (std::ostream& os, const LiegroupElement& e)
+    template <typename vector_type>
+    inline std::ostream& operator<< (std::ostream& os, const LiegroupElementBase<vector_type>& e)
     {
       os << "Lie group element in " << *(e.space ())
          << " represented by vector (" << e. vector ().transpose () << ")";

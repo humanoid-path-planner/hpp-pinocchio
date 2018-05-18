@@ -19,6 +19,7 @@
 #include "../src/comparison.hh"
 #include "../src/size-visitor.hh"
 #include "../src/jintegrate-visitor.hh"
+#include "../src/jdifference-visitor.hh"
 
 namespace hpp {
   namespace pinocchio {
@@ -135,6 +136,22 @@ namespace hpp {
       }
       assert (row == nv());
     }
+
+    template <bool ApplyOnTheLeft>
+    void LiegroupSpace::Jdifference (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0, matrixOut_t J1) const
+    {
+      assert (q0.size() == nq() && q1.size() == nq());
+
+      liegroupType::JdifferenceVisitor<ApplyOnTheLeft> jdv (q0,q1,J0,J1);
+      for (std::size_t i = 0; i < liegroupTypes_.size (); ++i) {
+        boost::apply_visitor (jdv, liegroupTypes_ [i]);
+      }
+      assert (jdv.iq_ == nq());
+      assert (jdv.iv_ == nv());
+    }
+
+    template void LiegroupSpace::Jdifference<true > (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0, matrixOut_t J1) const;
+    template void LiegroupSpace::Jdifference<false> (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0, matrixOut_t J1) const;
 
     struct NameVisitor : public boost::static_visitor <>
     {
