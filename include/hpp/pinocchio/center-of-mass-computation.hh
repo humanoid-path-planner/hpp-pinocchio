@@ -26,6 +26,18 @@
 
 namespace hpp {
   namespace pinocchio {
+    /// Computation of the center of mass of a subtree of a kinematic tree
+    ///
+    /// To use this class, create an instance using
+    /// CenterOfMassComputation::create method and call method
+    /// CenterOfMassComputation::add with parameter the root joint
+    /// of the subtree.
+    ///
+    /// In most cases, the root joint of the subtree is the root joint of
+    /// the robot (hpp::pinocchio::Device::rootJoint ()), but in a manipulation
+    /// context, the kinematic tree contains several robots and objects.
+    /// This class enables users to compute the center of mass of only one
+    /// robot or object.
     class CenterOfMassComputation
     {
       public:
@@ -36,17 +48,29 @@ namespace hpp {
         /// \endcond
 
       public:
-
+        /// Create instance and return shared pointer.
+        ///
+        /// Do not forget to call method add to specify the root joint of
+        /// relevant kinematic tree.
         static CenterOfMassComputationPtr_t create (const DevicePtr_t& device);
 
+        /// Add a subtree to the computation of the center of mass.
+        ///
+        /// When several subtrees are provided, method \c compute computes the
+        /// center of mass of the union of the subtrees.
         void add (const JointPtr_t& rootOfSubtree);
 
+        /// Compute the center of mass and Jacobian of the sub-trees.
         void compute (const Device::Computation_t& flag
             = Device::ALL);
 
+        /// Get center of mass of the subtree.
         const vector3_t&     com         () const { return data.com [0]; }
+        /// Get mass of the sub-tree.
         const value_type&    mass        () const { return data.mass[0]; }
+        /// Get Jacobian of center of mass of the sub-tree.
         const ComJacobian_t& jacobian    () const { return data.Jcom   ; }
+        /// Get const reference to the vector of sub-tree roots.
         const JointRootIndexes_t & roots () const { return roots_; }
 
         ~CenterOfMassComputation ();
