@@ -31,6 +31,7 @@ namespace hpp {
     namespace unittest {
       enum TestDeviceType {
         HumanoidRomeo,
+        HumanoidSimple,
         CarLike,
         ManipulatorArm2
       };

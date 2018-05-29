@@ -80,6 +80,8 @@ namespace hpp {
               robot->model().upperPositionLimit.head<3>().setOnes();
               return robot;
             }
+          case HumanoidSimple:
+            return humanoidSimple ("simple-humanoid", true);
           default:
             throw std::invalid_argument("Unknown robot type.");
         }
