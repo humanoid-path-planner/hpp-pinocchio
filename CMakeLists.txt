@@ -25,7 +25,7 @@ INCLUDE(cmake/test.cmake)
 
 SET(PROJECT_NAME hpp-pinocchio)
 SET(PROJECT_DESCRIPTION "Wrapping of the kinematic/dynamic chain Pinocchio for HPP.")
-SET(PROJECT_URL "No webpage yet.")
+SET(PROJECT_URL "https://github.com/humanoid-path-planner/hpp-pinocchio")
 
 SETUP_PROJECT()
 
