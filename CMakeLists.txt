@@ -28,6 +28,20 @@ SET(PROJECT_DESCRIPTION "Wrapping of the kinematic/dynamic chain Pinocchio for H
 SET(PROJECT_URL "https://github.com/humanoid-path-planner/hpp-pinocchio")
 OPTION(INSTALL_DOCUMENTATION "Generate and install the documentation" ON) 
 
+# Handle APPLE Cmake policy
+IF(APPLE)
+  SET(CMAKE_MACOSX_RPATH TRUE)
+  SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+  SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+  SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+  list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
+  if("${isSystemDir}" STREQUAL "-1")
+     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+  endif("${isSystemDir}" STREQUAL "-1")
+ENDIF(APPLE)
+
 SETUP_PROJECT()
 
 # Activate hpp-util logging if requested
