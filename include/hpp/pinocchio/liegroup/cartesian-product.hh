@@ -36,7 +36,7 @@ namespace hpp {
         typedef se3::CartesianProductOperation<LieGroup1, LieGroup2> Base;
 
         template <class ConfigL_t, class ConfigR_t>
-          static double squaredDistance(
+          double squaredDistance(
               const Eigen::MatrixBase<ConfigL_t> & q0,
               const Eigen::MatrixBase<ConfigR_t> & q1)
           {
@@ -44,13 +44,13 @@ namespace hpp {
           }
 
         template <class ConfigL_t, class ConfigR_t>
-          static double squaredDistance(
+          double squaredDistance(
               const Eigen::MatrixBase<ConfigL_t> & q0,
               const Eigen::MatrixBase<ConfigR_t> & q1,
               const typename ConfigL_t::Scalar& w)
           {
-            return LieGroup1::squaredDistance(q0.template head<LieGroup1::NQ>(), q1.template head<LieGroup1::NQ>(), w)
-              +    LieGroup2::squaredDistance(q0.template tail<LieGroup2::NQ>(), q1.template tail<LieGroup2::NQ>(), w);
+            return LieGroup1().squaredDistance(q0.template head<LieGroup1::NQ>(), q1.template head<LieGroup1::NQ>(), w)
+              +    LieGroup2().squaredDistance(q0.template tail<LieGroup2::NQ>(), q1.template tail<LieGroup2::NQ>(), w);
           }
 
         template <class ConfigIn_t, class ConfigOut_t>

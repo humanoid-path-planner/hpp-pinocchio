@@ -33,7 +33,7 @@ namespace hpp {
         };
 
         template <class ConfigL_t, class ConfigR_t>
-          static double squaredDistance(
+          double squaredDistance(
               const Eigen::MatrixBase<ConfigL_t> & q0,
               const Eigen::MatrixBase<ConfigR_t> & q1)
           {
@@ -41,7 +41,7 @@ namespace hpp {
           }
 
         template <class ConfigL_t, class ConfigR_t>
-        static double squaredDistance(
+        double squaredDistance(
             const Eigen::MatrixBase<ConfigL_t> & q0,
             const Eigen::MatrixBase<ConfigR_t> & q1,
             const typename ConfigL_t::Scalar& w)

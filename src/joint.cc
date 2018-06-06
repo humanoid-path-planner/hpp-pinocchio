@@ -240,35 +240,37 @@ namespace hpp {
           jointPlacement);
     }
 
-    template<int AXIS>
+    template<typename Scalar, int Options, int Axis>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & /*model*/, const se3::JointModelRevolute<AXIS> & , const se3::SE3 & jointPlacement )
+    ( const se3::Model & /*model*/, const se3::JointModelRevoluteTpl<Scalar, Options, Axis> & , const se3::SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
+    template<typename Scalar, int Options>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & /*model*/, const se3::JointModelRevoluteUnaligned &, const se3::SE3 & jointPlacement )
+    ( const se3::Model & /*model*/, const se3::JointModelRevoluteUnalignedTpl<Scalar, Options> &, const se3::SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
-    template<int AXIS>
+    template<typename Scalar, int Options, int Axis>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & /*model*/, const se3::JointModelRevoluteUnbounded<AXIS> & , 
+    ( const se3::Model & /*model*/, const se3::JointModelRevoluteUnboundedTpl<Scalar, Options, Axis> & , 
       const se3::SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
-    template<int AXIS>
+    template<typename Scalar, int Options, int Axis>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelPrismatic<AXIS> & jmodel, 
+    ( const se3::Model & model, const se3::JointModelPrismatic<Scalar, Options, Axis> & jmodel, 
       const se3::SE3 & jointPlacement )
     {
       return computeMaximalDistanceToParentForAlignedTranslation
-        <AXIS == 0, AXIS == 1, AXIS == 2>(
+        <Axis == 0, Axis == 1, Axis == 2>(
           model.lowerPositionLimit.segment<1>(jmodel.idx_q()),
           model.upperPositionLimit.segment<1>(jmodel.idx_q()),
           jointPlacement);
     }
 
+    template<typename Scalar, int Options>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelPrismaticUnaligned& jmodel, 
+    ( const se3::Model & model, const se3::JointModelPrismaticUnalignedTpl<Scalar, Options>& jmodel, 
       const se3::SE3 & jointPlacement )
     {
       if( std::isinf (model.lowerPositionLimit[jmodel.idx_q()])
@@ -282,16 +284,19 @@ namespace hpp {
                         jointPlacement.act(pmax).norm() );
     }
 
+    template<typename Scalar, int Options>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & /*model*/, const se3::JointModelSpherical& , const se3::SE3 & jointPlacement )
+    ( const se3::Model & /*model*/, const se3::JointModelSphericalTpl<Scalar, Options>& , const se3::SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
+    template<typename Scalar, int Options>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & /*model*/, const se3::JointModelSphericalZYX& , const se3::SE3 & jointPlacement )
+    ( const se3::Model & /*model*/, const se3::JointModelSphericalZYXTpl<Scalar, Options>& , const se3::SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
+    template<typename Scalar, int Options>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelTranslation& jmodel, const se3::SE3 & jointPlacement )
+    ( const se3::Model & model, const se3::JointModelTranslationTpl<Scalar, Options>& jmodel, const se3::SE3 & jointPlacement )
     {
       const size_type& i = jmodel.idx_q();
       return computeMaximalDistanceToParentForAlignedTranslation<true, true, true>(
@@ -301,8 +306,9 @@ namespace hpp {
     }
     // TODO (really?): handle the case where the translation is bounded.
 
+    template<typename Scalar, int Options>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelPlanar& jmodel, const se3::SE3 & jointPlacement )
+    ( const se3::Model & model, const se3::JointModelPlanarTpl<Scalar, Options>& jmodel, const se3::SE3 & jointPlacement )
     {
       const size_type& i = jmodel.idx_q();
       return computeMaximalDistanceToParentForAlignedTranslation <true, true, false> (
@@ -344,19 +350,26 @@ namespace hpp {
               && "The function <upperBoundLinearVel> as not been implemented for this class of joint");
       return 0.0;
     }
-    value_type upperBoundLinearVelocity( const se3::JointModelFreeFlyer & )                  { return 1.0; }
-    template<int AXIS>
-    value_type upperBoundLinearVelocity( const se3::JointModelRevolute<AXIS> & )             { return 0.0; }
-    value_type upperBoundLinearVelocity( const se3::JointModelRevoluteUnaligned & )          { return 0.0; }
-    template<int AXIS>
-    value_type upperBoundLinearVelocity( const se3::JointModelRevoluteUnbounded<AXIS> & )    { return 0.0; }
-    template<int AXIS>
-    value_type upperBoundLinearVelocity( const se3::JointModelPrismatic<AXIS> & )            { return 1.0; }
-    value_type upperBoundLinearVelocity( const se3::JointModelPrismaticUnaligned & )         { return 1.0; }
-    value_type upperBoundLinearVelocity( const se3::JointModelSpherical & )                  { return 0.0; }
-    value_type upperBoundLinearVelocity( const se3::JointModelSphericalZYX & )               { return 0.0; }
-    value_type upperBoundLinearVelocity( const se3::JointModelTranslation & )                { return 1.0; }
-    value_type upperBoundLinearVelocity( const se3::JointModelPlanar & )                     { return 1.0; }
+    template<typename Scalar, int Options>
+    value_type upperBoundLinearVelocity( const se3::JointModelFreeFlyerTpl<Scalar, Options> & )                  { return 1.0; }
+    template<typename Scalar, int Options, int AXIS>
+    value_type upperBoundLinearVelocity( const se3::JointModelRevoluteTpl<Scalar, Options, AXIS> & )             { return 0.0; }
+    template<typename Scalar, int Options>
+    value_type upperBoundLinearVelocity( const se3::JointModelRevoluteUnalignedTpl<Scalar, Options> & )          { return 0.0; }
+    template<typename Scalar, int Options, int AXIS>
+    value_type upperBoundLinearVelocity( const se3::JointModelRevoluteUnboundedTpl<Scalar, Options, AXIS> & )    { return 0.0; }
+    template<typename Scalar, int Options, int AXIS>
+    value_type upperBoundLinearVelocity( const se3::JointModelPrismatic<Scalar, Options, AXIS> & )            { return 1.0; }
+    template<typename Scalar, int Options>
+    value_type upperBoundLinearVelocity( const se3::JointModelPrismaticUnalignedTpl<Scalar, Options> & )         { return 1.0; }
+    template<typename Scalar, int Options>
+    value_type upperBoundLinearVelocity( const se3::JointModelSphericalTpl<Scalar, Options> & )                  { return 0.0; }
+    template<typename Scalar, int Options>
+    value_type upperBoundLinearVelocity( const se3::JointModelSphericalZYXTpl<Scalar, Options> & )               { return 0.0; }
+    template<typename Scalar, int Options>
+    value_type upperBoundLinearVelocity( const se3::JointModelTranslationTpl<Scalar, Options> & )                { return 1.0; }
+    template<typename Scalar, int Options>
+    value_type upperBoundLinearVelocity( const se3::JointModelPlanarTpl<Scalar, Options> & )                     { return 1.0; }
 
 
     struct VisitUpperBoundLinearVelocity : public boost::static_visitor<value_type> 
@@ -383,19 +396,26 @@ namespace hpp {
               && "The function <upperBoundAngularVel> as not been implemented for this class of joint");
       return 0.0;
     }
-    value_type upperBoundAngularVelocity( const se3::JointModelFreeFlyer & )                  { return 1.0; }
-    template<int AXIS>
-    value_type upperBoundAngularVelocity( const se3::JointModelRevolute<AXIS> & )             { return 1.0; }
-    value_type upperBoundAngularVelocity( const se3::JointModelRevoluteUnaligned & )          { return 1.0; }
-    template<int AXIS>
-    value_type upperBoundAngularVelocity( const se3::JointModelRevoluteUnbounded<AXIS> & )    { return 1.0; }
-    template<int AXIS>
-    value_type upperBoundAngularVelocity( const se3::JointModelPrismatic<AXIS> & )            { return 0.0; }
-    value_type upperBoundAngularVelocity( const se3::JointModelPrismaticUnaligned & )         { return 0.0; }
-    value_type upperBoundAngularVelocity( const se3::JointModelSpherical & )                  { return 1.0; }
-    value_type upperBoundAngularVelocity( const se3::JointModelSphericalZYX & )               { return 1.0; }
-    value_type upperBoundAngularVelocity( const se3::JointModelTranslation & )                { return 0.0; }
-    value_type upperBoundAngularVelocity( const se3::JointModelPlanar & )                     { return 1.0; }
+    template<typename Scalar, int Options>
+    value_type upperBoundAngularVelocity( const se3::JointModelFreeFlyerTpl<Scalar, Options> & )                  { return 1.0; }
+    template<typename Scalar, int Options, int AXIS>
+    value_type upperBoundAngularVelocity( const se3::JointModelRevoluteTpl<Scalar, Options, AXIS> & )             { return 1.0; }
+    template<typename Scalar, int Options>
+    value_type upperBoundAngularVelocity( const se3::JointModelRevoluteUnalignedTpl<Scalar, Options> & )          { return 1.0; }
+    template<typename Scalar, int Options, int AXIS>
+    value_type upperBoundAngularVelocity( const se3::JointModelRevoluteUnboundedTpl<Scalar, Options, AXIS> & )    { return 1.0; }
+    template<typename Scalar, int Options, int AXIS>
+    value_type upperBoundAngularVelocity( const se3::JointModelPrismatic<Scalar, Options, AXIS> & )            { return 0.0; }
+    template<typename Scalar, int Options>
+    value_type upperBoundAngularVelocity( const se3::JointModelPrismaticUnalignedTpl<Scalar, Options> & )         { return 0.0; }
+    template<typename Scalar, int Options>
+    value_type upperBoundAngularVelocity( const se3::JointModelSphericalTpl<Scalar, Options> & )                  { return 1.0; }
+    template<typename Scalar, int Options>
+    value_type upperBoundAngularVelocity( const se3::JointModelSphericalZYXTpl<Scalar, Options> & )               { return 1.0; }
+    template<typename Scalar, int Options>
+    value_type upperBoundAngularVelocity( const se3::JointModelTranslationTpl<Scalar, Options> & )                { return 0.0; }
+    template<typename Scalar, int Options>
+    value_type upperBoundAngularVelocity( const se3::JointModelPlanarTpl<Scalar, Options> & )                     { return 1.0; }
 
     struct VisitUpperBoundAngularVelocity : public boost::static_visitor<value_type> 
     {

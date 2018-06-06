@@ -107,8 +107,8 @@ namespace hpp {
         {
           if (type == "freeflyer")        return se3::JointModelFreeFlyer();
           else if (type == "planar")      return se3::JointModelPlanar();
-          else if (type == "prismatic_x") return se3::JointModelPrismatic<0>();
-          else if (type == "prismatic_y") return se3::JointModelPrismatic<1>();
+          else if (type == "prismatic_x") return se3::JointModelPrismatic<value_type, 0, 0>();
+          else if (type == "prismatic_y") return se3::JointModelPrismatic<value_type, 0, 1>();
           else                          throw  std::invalid_argument
             ("Root joint type \"" + type + "\" is currently not available.");
         }

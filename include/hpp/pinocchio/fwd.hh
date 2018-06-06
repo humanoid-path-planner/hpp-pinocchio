@@ -31,13 +31,6 @@
 # include <pinocchio/multibody/fwd.hpp>
 # include <pinocchio/multibody/joint/fwd.hpp>
 
-/*# define HPP_PREDEF_CLASS_AND_POINTERS(NAME)                          \
-  HPP_PREDEF_CLASS(NAME);                                               \
-  typedef boost::shared_ptr<NAME> NAME##Ptr_t;                          \
-  typedef boost::shared_ptr<const NAME> NAME##ConstPtr_t;               \
-  struct e_n_d__w_i_t_h__s_e_m_i_c_o_l_o_n
-*/
-
 namespace hpp {
   namespace pinocchio {
     HPP_PREDEF_CLASS (Body);

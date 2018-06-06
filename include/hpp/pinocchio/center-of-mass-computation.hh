@@ -19,7 +19,7 @@
 
 # include <list>
 
-# include <pinocchio/multibody/model.hpp> // se3::Data
+# include <pinocchio/multibody/data.hpp> // se3::Data
 
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/device.hh>

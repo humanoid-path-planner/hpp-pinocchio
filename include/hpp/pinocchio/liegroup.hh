@@ -32,43 +32,53 @@ namespace hpp {
       template<typename JointModel> struct operation {};
     };
     // JointModelRevolute, JointModelRevoluteUnbounded, JointModelRevoluteUnaligned
-    template<int Axis> struct LieGroupTpl::operation <se3::JointModelRevolute<Axis> > {
+    template<typename Scalar, int Options, int Axis>
+    struct LieGroupTpl::operation <se3::JointModelRevoluteTpl<Scalar, Options, Axis> > {
       typedef liegroup::VectorSpaceOperation<1, true> type;
     };
-    template<int Axis> struct LieGroupTpl::operation <se3::JointModelRevoluteUnbounded<Axis> > {
+    template<typename Scalar, int Options, int Axis>
+    struct LieGroupTpl::operation <se3::JointModelRevoluteUnboundedTpl<Scalar, Options, Axis> > {
       typedef liegroup::SpecialOrthogonalOperation<2> type;
     };
-    template<> struct LieGroupTpl::operation <se3::JointModelRevoluteUnaligned > {
+    template<typename Scalar, int Options>
+    struct LieGroupTpl::operation <se3::JointModelRevoluteUnalignedTpl<Scalar, Options> > {
       typedef liegroup::VectorSpaceOperation<1, true> type;
     };
 
     // JointModelPrismatic, JointModelPrismaticUnaligned, JointModelTranslation
-    template<int Axis> struct LieGroupTpl::operation <se3::JointModelPrismatic<Axis> > {
+    template<typename Scalar, int Options, int Axis>
+    struct LieGroupTpl::operation <se3::JointModelPrismatic<Scalar, Options, Axis> > {
       typedef liegroup::VectorSpaceOperation<1, false> type;
     };
-    template<> struct LieGroupTpl::operation <se3::JointModelPrismaticUnaligned > {
+    template<typename Scalar, int Options>
+    struct LieGroupTpl::operation <se3::JointModelPrismaticUnalignedTpl<Scalar, Options> > {
       typedef liegroup::VectorSpaceOperation<1, false> type;
     };
-    template<> struct LieGroupTpl::operation <se3::JointModelTranslation > {
+    template<typename Scalar, int Options>
+    struct LieGroupTpl::operation <se3::JointModelTranslationTpl<Scalar, Options> > {
       typedef liegroup::VectorSpaceOperation<3, false> type;
     };
 
     // JointModelSpherical, JointModelSphericalZYX,
-    template<> struct LieGroupTpl::operation <se3::JointModelSpherical> {
+    template<typename Scalar, int Options>
+    struct LieGroupTpl::operation <se3::JointModelSphericalTpl<Scalar, Options> > {
       typedef liegroup::SpecialOrthogonalOperation<3> type;
     };
-    template<> struct LieGroupTpl::operation <se3::JointModelSphericalZYX> {
+    template<typename Scalar, int Options>
+    struct LieGroupTpl::operation <se3::JointModelSphericalZYXTpl<Scalar, Options> > {
       typedef liegroup::VectorSpaceOperation<3, true> type;
     };
 
     // JointModelFreeFlyer, JointModelPlanar
-    template<> struct LieGroupTpl::operation <se3::JointModelFreeFlyer> {
+    template<typename Scalar, int Options>
+    struct LieGroupTpl::operation <se3::JointModelFreeFlyerTpl<Scalar, Options> > {
       typedef liegroup::CartesianProductOperation<
         liegroup::VectorSpaceOperation<3, false>,
         liegroup::SpecialOrthogonalOperation<3>
         > type;
     };
-    template<> struct LieGroupTpl::operation <se3::JointModelPlanar> {
+    template<typename Scalar, int Options>
+    struct LieGroupTpl::operation <se3::JointModelPlanarTpl<Scalar, Options> > {
       typedef liegroup::CartesianProductOperation<
         liegroup::VectorSpaceOperation<2, false>,
         liegroup::SpecialOrthogonalOperation<2>
@@ -80,40 +90,50 @@ namespace hpp {
       template<typename JointModel> struct operation {};
     };
     // JointModelRevolute, JointModelRevoluteUnbounded, JointModelRevoluteUnaligned
-    template<int Axis> struct DefaultLieGroupMap::operation <se3::JointModelRevolute<Axis> > {
+    template<typename Scalar, int Options, int Axis>
+    struct DefaultLieGroupMap::operation <se3::JointModelRevoluteTpl<Scalar, Options, Axis> > {
       typedef liegroup::VectorSpaceOperation<1, true> type;
     };
-    template<int Axis> struct DefaultLieGroupMap::operation <se3::JointModelRevoluteUnbounded<Axis> > {
+    template<typename Scalar, int Options, int Axis>
+    struct DefaultLieGroupMap::operation <se3::JointModelRevoluteUnboundedTpl<Scalar, Options, Axis> > {
       typedef liegroup::SpecialOrthogonalOperation<2> type;
     };
-    template<> struct DefaultLieGroupMap::operation <se3::JointModelRevoluteUnaligned > {
+    template<typename Scalar, int Options>
+    struct DefaultLieGroupMap::operation <se3::JointModelRevoluteUnalignedTpl<Scalar, Options> > {
       typedef liegroup::VectorSpaceOperation<1, true> type;
     };
 
     // JointModelPrismatic, JointModelPrismaticUnaligned, JointModelTranslation
-    template<int Axis> struct DefaultLieGroupMap::operation <se3::JointModelPrismatic<Axis> > {
+    template<typename Scalar, int Options, int Axis>
+    struct DefaultLieGroupMap::operation <se3::JointModelPrismatic<Scalar, Options, Axis> > {
       typedef liegroup::VectorSpaceOperation<1, false> type;
     };
-    template<> struct DefaultLieGroupMap::operation <se3::JointModelPrismaticUnaligned > {
+    template<typename Scalar, int Options>
+    struct DefaultLieGroupMap::operation <se3::JointModelPrismaticUnalignedTpl<Scalar, Options> > {
       typedef liegroup::VectorSpaceOperation<1, false> type;
     };
-    template<> struct DefaultLieGroupMap::operation <se3::JointModelTranslation > {
+    template<typename Scalar, int Options>
+    struct DefaultLieGroupMap::operation <se3::JointModelTranslationTpl<Scalar, Options> > {
       typedef liegroup::VectorSpaceOperation<3, false> type;
     };
 
     // JointModelSpherical, JointModelSphericalZYX,
-    template<> struct DefaultLieGroupMap::operation <se3::JointModelSpherical> {
+    template<typename Scalar, int Options>
+    struct DefaultLieGroupMap::operation <se3::JointModelSphericalTpl<Scalar, Options> > {
       typedef liegroup::SpecialOrthogonalOperation<3> type;
     };
-    template<> struct DefaultLieGroupMap::operation <se3::JointModelSphericalZYX> {
+    template<typename Scalar, int Options>
+    struct DefaultLieGroupMap::operation <se3::JointModelSphericalZYXTpl<Scalar, Options> > {
       typedef liegroup::VectorSpaceOperation<3, true> type;
     };
 
     // JointModelFreeFlyer, JointModelPlanar
-    template<> struct DefaultLieGroupMap::operation <se3::JointModelFreeFlyer> {
+    template<typename Scalar, int Options>
+    struct DefaultLieGroupMap::operation <se3::JointModelFreeFlyerTpl<Scalar, Options> > {
       typedef liegroup::SpecialEuclideanOperation<3> type;
     };
-    template<> struct DefaultLieGroupMap::operation <se3::JointModelPlanar> {
+    template<typename Scalar, int Options>
+    struct DefaultLieGroupMap::operation <se3::JointModelPlanarTpl<Scalar, Options> > {
       typedef liegroup::SpecialEuclideanOperation<2> type;
     };
   } // namespace pinocchio
