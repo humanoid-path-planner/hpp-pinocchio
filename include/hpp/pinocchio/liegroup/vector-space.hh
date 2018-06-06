@@ -29,8 +29,8 @@ namespace hpp {
       namespace details {
         template <bool Test> struct assign_if {
           template <class D1, class D2> static void run(
-              const Eigen::MatrixBase<D1> & Jin,
-              const Eigen::MatrixBase<D2> & Jout)
+              const Eigen::MatrixBase<D1> & /*Jin*/,
+              const Eigen::MatrixBase<D2> & /*Jout*/)
           {}
         };
         template <> struct assign_if<true> {
