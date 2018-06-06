@@ -1,4 +1,4 @@
-# Copyright 2016 CNRS-LAAS
+# Copyright 2016-2018 CNRS-LAAS
 #
 # Author: Joseph Mirabel, Nicolas Mansard from Antonio El Khoury
 #
@@ -26,6 +26,7 @@ INCLUDE(cmake/test.cmake)
 SET(PROJECT_NAME hpp-pinocchio)
 SET(PROJECT_DESCRIPTION "Wrapping of the kinematic/dynamic chain Pinocchio for HPP.")
 SET(PROJECT_URL "https://github.com/humanoid-path-planner/hpp-pinocchio")
+OPTION(INSTALL_DOCUMENTATION "Generate and install the documentation" ON) 
 
 SETUP_PROJECT()
 
