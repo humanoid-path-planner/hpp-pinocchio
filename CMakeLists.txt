@@ -44,6 +44,9 @@ ENDIF(APPLE)
 
 SETUP_PROJECT()
 
+# --- OPTIONS ----------------------------------------
+OPTION (BUILD_UNIT_TESTS "Build the unitary tests" ON) 
+
 # Activate hpp-util logging if requested
 SET (HPP_DEBUG FALSE CACHE BOOL "trigger hpp-util debug output")
 IF (HPP_DEBUG)
