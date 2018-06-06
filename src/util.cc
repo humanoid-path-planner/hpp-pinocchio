@@ -29,23 +29,6 @@ namespace hpp {
     std::ostream&   setpyformat (std::ostream& o) { getpythonformat(o) = 1; return o; }
     std::ostream& unsetpyformat (std::ostream& o) { getpythonformat(o) = 0; return o; }
 
-    template <bool OneLine, bool PythonStyle, bool Vector> const Eigen::IOFormat&
-      eigen_format<OneLine, PythonStyle, Vector>::run() {
-        static const Eigen::IOFormat fmt(
-            (PythonStyle ? Eigen::FullPrecision : Eigen::StreamPrecision),
-            0,
-            ", ",                                 // Coeff separator
-            (PythonStyle                          // Row separator
-             ? (OneLine ? ", ": ",\n" )
-             : (OneLine ? "; ": "\n"  )),
-            (PythonStyle ? "("  : ""),            // row prefix
-            (PythonStyle ? ",)" : ""),            // row suffix
-            (PythonStyle && !Vector ? "( " : ""), // mat prefix
-            (PythonStyle && !Vector ? ", )" : "") // mat suffix
-            );
-        return fmt;
-      }
-
     // se3::SE3
     template <int Option> struct HPP_PINOCCHIO_DLLAPI prettyPrint <se3::SE3, Option> {
       static std::ostream& run (std::ostream& os, const se3::SE3& M)
