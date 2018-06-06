@@ -510,7 +510,7 @@ namespace hpp {
       // TODO this should for but I did not test it.
       hppDout(warning, "Computing AABB of JointModelComposite should work but has never been tested");
       if (initializeAABB)  {
-        typename se3::JointModelComposite::JointDataDerived data = jmodel.createData();
+        se3::JointModelComposite::JointDataDerived data = jmodel.createData();
         jmodel.calc(data, q);
         aabb = fcl::AABB(data.M.translation());
       }
