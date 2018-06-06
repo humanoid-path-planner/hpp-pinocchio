@@ -46,6 +46,24 @@ namespace hpp {
 
     template <bool OneLine, bool PythonStyle, bool Vector>
     struct HPP_PINOCCHIO_DLLAPI eigen_format { static const Eigen::IOFormat run(); };
+  
+  // Default implementation
+  template <bool OneLine, bool PythonStyle, bool Vector> const Eigen::IOFormat
+  eigen_format<OneLine, PythonStyle, Vector>::run() {
+    static const Eigen::IOFormat fmt(
+                                     (PythonStyle ? Eigen::FullPrecision : Eigen::StreamPrecision),
+                                     0,
+                                     ", ",                                 // Coeff separator
+                                     (PythonStyle                          // Row separator
+                                      ? (OneLine ? ", ": ",\n" )
+                                      : (OneLine ? "; ": "\n"  )),
+                                     (PythonStyle ? "("  : ""),            // row prefix
+                                     (PythonStyle ? ",)" : ""),            // row suffix
+                                     (PythonStyle && !Vector ? "( " : ""), // mat prefix
+                                     (PythonStyle && !Vector ? ", )" : "") // mat suffix
+                                     );
+    return fmt;
+  }
 
     template <typename T, int Option> struct PrettyPrint {
       const T& value;
