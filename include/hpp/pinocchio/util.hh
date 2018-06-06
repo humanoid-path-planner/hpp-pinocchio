@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2017 CNRS
+// Copyright (c) 2017-2018 CNRS
 // Author: Joseph Mirabel
 //
 //
@@ -44,7 +44,8 @@ namespace hpp {
     /// \cond
     HPP_PINOCCHIO_DLLAPI long& getpythonformat (std::ostream& o);
 
-    template <bool OneLine, bool PythonStyle, bool Vector> struct eigen_format { static const Eigen::IOFormat& run(); };
+    template <bool OneLine, bool PythonStyle, bool Vector>
+    struct HPP_PINOCCHIO_DLLAPI eigen_format { static const Eigen::IOFormat run(); };
 
     template <typename T, int Option> struct PrettyPrint {
       const T& value;

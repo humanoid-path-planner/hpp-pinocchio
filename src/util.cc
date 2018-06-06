@@ -1,4 +1,4 @@
-// Copyright (c) 2017, Joseph Mirabel
+// Copyright (c) 2017-2018, Joseph Mirabel
 // Authors: Joseph Mirabel (joseph.mirabel@laas.fr)
 //
 // This file is part of hpp-pinocchio.
@@ -54,10 +54,10 @@ namespace hpp {
           OneLine = ((Option & OutputFormatBits) == OneLineOutput),
           Condensed = ((Option & OutputFormatBits) == CondensedOutput)
         };
-        static const Eigen::IOFormat& mfmt_py  = eigen_format< OneLine || Condensed, true , false>::run();
-        static const Eigen::IOFormat& vfmt_py  = eigen_format< OneLine || Condensed, true , true >::run();
-        static const Eigen::IOFormat& mfmt_raw = eigen_format< OneLine || Condensed, false, false>::run();
-        static const Eigen::IOFormat& vfmt_raw = eigen_format< OneLine || Condensed, false, true >::run();
+        static const Eigen::IOFormat mfmt_py  = eigen_format< OneLine || Condensed, true , false>::run();
+        static const Eigen::IOFormat vfmt_py  = eigen_format< OneLine || Condensed, true , true >::run();
+        static const Eigen::IOFormat mfmt_raw = eigen_format< OneLine || Condensed, false, false>::run();
+        static const Eigen::IOFormat vfmt_raw = eigen_format< OneLine || Condensed, false, true >::run();
         bool use_py_fmt = (getpythonformat(os) != 0);
         const Eigen::IOFormat& mfmt = (use_py_fmt ? mfmt_py : mfmt_raw);
         const Eigen::IOFormat& vfmt = (use_py_fmt ? vfmt_py : vfmt_raw);
