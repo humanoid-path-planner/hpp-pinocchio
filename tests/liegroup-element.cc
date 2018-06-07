@@ -213,6 +213,5 @@ BOOST_AUTO_TEST_CASE (log_)
   BOOST_CHECK (R6xSO3->nq (1) == 7);
   BOOST_CHECK (R6xSO3->nv (1) == 6);
 
-  vector_t zero (9); zero.setZero ();
-  BOOST_CHECK ((hpp::pinocchio::log (e) - zero).norm () < 1e-10);
+  BOOST_CHECK ((hpp::pinocchio::log(e).isZero(1e-10)));
 }
