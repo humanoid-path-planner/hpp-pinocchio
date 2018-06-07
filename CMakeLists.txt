@@ -21,7 +21,6 @@ SET(CXX_DISABLE_WERROR TRUE)
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/ros.cmake)
-INCLUDE(cmake/test.cmake)
 
 SET(PROJECT_NAME hpp-pinocchio)
 SET(PROJECT_DESCRIPTION "Wrapping of the kinematic/dynamic chain Pinocchio for HPP.")
