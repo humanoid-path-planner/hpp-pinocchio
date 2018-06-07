@@ -15,6 +15,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with hpp-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
 
+IF(NOT BUILD_UNIT_TESTS)
+  SET(DISABLE_TESTS ON)
+ENDIF(NOT BUILD_UNIT_TESTS)
+
 # Add Boost path to include directories.
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
