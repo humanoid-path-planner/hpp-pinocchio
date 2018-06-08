@@ -21,12 +21,18 @@ SET(CXX_DISABLE_WERROR TRUE)
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/ros.cmake)
+INCLUDE(cmake/apple.cmake)
 INCLUDE(cmake/test.cmake)
 
 SET(PROJECT_NAME hpp-pinocchio)
 SET(PROJECT_DESCRIPTION "Wrapping of the kinematic/dynamic chain Pinocchio for HPP.")
 SET(PROJECT_URL "https://github.com/humanoid-path-planner/hpp-pinocchio")
 OPTION(INSTALL_DOCUMENTATION "Generate and install the documentation" ON) 
+
+# Handle APPLE Cmake policy
+IF(APPLE)
+  APPLY_DEFAULT_APPLE_CONFIGURATION()
+ENDIF(APPLE)
 
 SETUP_PROJECT()
 
