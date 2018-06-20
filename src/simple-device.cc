@@ -37,8 +37,8 @@ namespace hpp {
       robot->currentConfiguration(robot->neutralConfiguration());
       robot->computeForwardKinematics();
 
-      const value_type max = std::numeric_limits<value_type>::max();
-      const value_type min = std::numeric_limits<value_type>::max();
+      const value_type max =  std::numeric_limits<value_type>::max();
+      const value_type min = -std::numeric_limits<value_type>::max();
       robot->model().lowerPositionLimit.segment<3>(0).setConstant(min);
       robot->model().upperPositionLimit.segment<3>(0).setConstant(max);
       robot->model().lowerPositionLimit.segment<4>(3).setConstant(-1.01);
