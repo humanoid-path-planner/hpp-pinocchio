@@ -98,18 +98,38 @@ namespace hpp {
         }
       };
     /// FIXME All eigen object must be manually specialized as follow...
+
+    /// Pretty printer for Eigen::Matrix
     template<typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols, int Option>
       struct HPP_PINOCCHIO_DLLAPI prettyPrint <Eigen::Matrix< _Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols >, Option>
       : prettyPrintEigen <Eigen::Matrix< _Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols >, Option> {};
+
+    /// Pretty printer for Eigen::VectorBlock
     template<typename OtherDerived, int Size, int Option>
       struct HPP_PINOCCHIO_DLLAPI prettyPrint <Eigen::VectorBlock< OtherDerived, Size >, Option>
       : prettyPrintEigen <Eigen::VectorBlock< OtherDerived, Size >, Option > {};
+
+    /// Pretty printer for Eigen::Block
     template<typename XprType, int BlockRows, int BlockCols, bool InnerPanel, int Option>
       struct HPP_PINOCCHIO_DLLAPI prettyPrint <Eigen::Block<XprType, BlockRows, BlockCols, InnerPanel>, Option>
       : prettyPrintEigen <Eigen::Block<XprType, BlockRows, BlockCols, InnerPanel>, Option > {};
+
+    /// Pretty printer for Eigen::Ref
     template<typename _PlainObjectType, int _Options, typename _StrideType, int Option>
       struct HPP_PINOCCHIO_DLLAPI prettyPrint <Eigen::Ref< _PlainObjectType, _Options, _StrideType>, Option>
       : prettyPrintEigen <Eigen::Ref< _PlainObjectType, _Options, _StrideType>, Option> {};
+
+    /// Pretty printer for Eigen::Quaternion
+    template<typename _Scalar, int _Options, int Option>
+      struct HPP_PINOCCHIO_DLLAPI prettyPrint <Eigen::Quaternion< _Scalar, _Options>, Option>
+      {
+        typedef Eigen::Quaternion< _Scalar, _Options> Derived;
+        typedef typename Eigen::internal::traits<Derived>::Coefficients Coefficients;
+        static inline std::ostream& run (std::ostream& os, const Derived& M)
+        {
+          return prettyPrint<Coefficients, Option>::run (os, M.coeffs());
+        }
+      };
     /// \endcond
 
     // Set python formatting of vector and matrices

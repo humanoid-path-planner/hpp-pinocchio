@@ -47,10 +47,10 @@ namespace hpp {
 
         switch (Option & OutputFormatBits) {
           case OneLineOutput:
-            return os <<  "R = " << M.rotation().format(mfmt)
+            return os <<  "q = " << one_line (se3::SE3::Quaternion_t(M.rotation()))
               << ", p = " << M.translation().transpose().format(vfmt);
           case CondensedOutput:
-            return os <<  "R = " << M.rotation().format(mfmt)
+            return os <<  "q = " << one_line (se3::SE3::Quaternion_t(M.rotation()))
               << iendl << "p = " << M.translation().transpose().format(vfmt);
           case PrettyOutput:
           default:
