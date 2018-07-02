@@ -30,7 +30,9 @@ namespace hpp {
         template <typename LgT> void operator () (const LgT& lg)
         {
           typename LgT::JacobianMatrix_t Jint (lg.nv(), lg.nv());
-          lg.Jintegrate (v_.segment<LgT::NV>(row_, lg.nv()), Jint);
+          typename LgT::JacobianMatrix_t Jv (lg.nv(), lg.nv());
+          LiegroupElement q(lg.neutral());
+          lg.Jintegrate (q.vector(), v_.segment<LgT::NV>(row_, lg.nv()), Jint, Jv);
           J_.middleRows<LgT::NV> (row_, lg.nv()).applyOnTheLeft (Jint);
           row_ += lg.nv();
         }

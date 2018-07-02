@@ -166,6 +166,22 @@ namespace hpp {
       /// \param[out] J the Jacobian of y
       void Jintegrate (vectorIn_t v, matrixOut_t J) const;
 
+      /// Compute the Jacobians of the integration operation
+      /// with respect to q.
+      /// Given \f$ y = x + v \f$,
+      ///
+      /// \param[in] Jq the Jacobian of x
+      /// \param[out] J the Jacobian of y
+      void dIntegrate_dq (LiegroupElement q, vectorIn_t v, matrixOut_t Jq) const;
+
+      /// Compute the Jacobians of the integration operation
+      /// with respect to v.
+      /// Given \f$ y = x + v \f$,
+      ///
+      /// \param[in] Jv the Jacobian of v
+      /// \param[out] J the Jacobian of y
+      void dIntegrate_dv (LiegroupElement q, vectorIn_t v, matrixOut_t Jv) const;
+
       /// Compute the Jacobian of the difference operation.
       /// Given \f$ v = q1 - q0 \f$,
       ///

@@ -18,7 +18,7 @@
 #include <hpp/pinocchio/liegroup-space.hh>
 #include "../src/comparison.hh"
 #include "../src/size-visitor.hh"
-#include "../src/jintegrate-visitor.hh"
+#include "../src/dintegrate-visitor.hh"
 #include "../src/jdifference-visitor.hh"
 
 namespace hpp {
@@ -135,6 +135,36 @@ namespace hpp {
         boost::apply_visitor (jiv, liegroupTypes_ [i]);
       }
       assert (row == nv());
+    }
+
+    void LiegroupSpace::dIntegrate_dq (LiegroupElement q, vectorIn_t v, matrixOut_t Jq) const
+    {
+      assert (q.size() == nq());
+      assert (v.size() == nv());
+      assert (Jq.rows() == nv());
+      size_type row = 0;
+      size_type configRow = 0;
+      liegroupType::dIntegrateVisitor_dq jiv (q, v, Jq, row, configRow);
+      for (std::size_t i = 0; i < liegroupTypes_.size (); ++i) {
+        boost::apply_visitor (jiv, liegroupTypes_ [i]);
+      }
+      assert (row == nv());
+      assert (configRow == nq());
+    }
+
+    void LiegroupSpace::dIntegrate_dv (LiegroupElement q, vectorIn_t v, matrixOut_t Jv) const
+    {
+      assert (q.size() == nq());
+      assert (v.size() == nv());
+      assert (Jv.rows() == nv());
+      size_type row = 0;
+      size_type configRow = 0;
+      liegroupType::dIntegrateVisitor_dv jiv (q, v, Jv, row, configRow);
+      for (std::size_t i = 0; i < liegroupTypes_.size (); ++i) {
+        boost::apply_visitor (jiv, liegroupTypes_ [i]);
+      }
+      assert (row == nv());
+      assert (configRow == nq());
     }
 
     template <bool ApplyOnTheLeft>
