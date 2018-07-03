@@ -508,41 +508,37 @@ namespace hpp {
       return os;
     }
 
-    class ConfigSpaceVisitor : public boost::static_visitor <>
+    struct ConfigSpaceVisitor : public se3::fusion::JointModelVisitor<ConfigSpaceVisitor>
     {
-    public:
-      // Initialize liegroupType_ since default constructor
-      // VectorSpaceOperation<-1, false> () make an assertion fail.
-      ConfigSpaceVisitor () : liegroupType_
-                              (liegroup::VectorSpaceOperation
-                               <Eigen::Dynamic, false> (0))
+      typedef boost::fusion::vector<LiegroupSpace&> ArgsType;
+
+      JOINT_MODEL_VISITOR_INIT(ConfigSpaceVisitor);
+
+      template<typename JointModel>
+      static void algo(const se3::JointModelBase<JointModel> &,
+                       LiegroupSpace& space)
       {
-      }
-      template <typename JointModel> void operator () (JointModel&)
-      {
-        typename LieGroupTpl::operation <JointModel>::type tmp;
-        liegroupType_ = LiegroupType (tmp);
+        typedef typename DefaultLieGroupMap::operation<JointModel>::type LG_t;
+        space *= LiegroupSpace::create (LG_t());
       }
 
-      void operator () (se3::JointModelComposite&)
-      {
-        assert (false && "Method Joint::configurationSpace is not implemented "
-                "for JointComposite");
-      }
+    };
 
-      const LiegroupType& result () const
-      {
-        return liegroupType_;
-      }
-    private:
-      LiegroupType liegroupType_;
-    }; // class configSpaceVisitor
+    template <>
+    void ConfigSpaceVisitor::algo<se3::JointModelComposite>(
+        const se3::JointModelBase<se3::JointModelComposite> & jmodel,
+        LiegroupSpace& space)
+    {
+      se3::details::Dispatch<ConfigSpaceVisitor>::run(jmodel,
+          ConfigSpaceVisitor::ArgsType(space));
+    }
 
     LiegroupSpacePtr_t Joint::configurationSpace () const
     {
-      ConfigSpaceVisitor v;
-      boost::apply_visitor (v, const_cast <JointModel&> (jointModel ()));
-      return LiegroupSpace::create (v.result ());
+      LiegroupSpacePtr_t res = LiegroupSpace::empty();
+      ConfigSpaceVisitor::ArgsType args(*res);
+      ConfigSpaceVisitor::run (jointModel(), args);
+      return res;
     }
 
     const JointModel& Joint::jointModel() const

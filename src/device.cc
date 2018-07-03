@@ -252,31 +252,6 @@ namespace hpp {
     /* --- CONFIG ----------------------------------------------------------- */
     /* ---------------------------------------------------------------------- */
 
-    struct ConfigSpaceVisitor : public se3::fusion::JointModelVisitor<ConfigSpaceVisitor>
-    {
-      typedef boost::fusion::vector<LiegroupSpace&> ArgsType;
-
-      JOINT_MODEL_VISITOR_INIT(ConfigSpaceVisitor);
-
-      template<typename JointModel>
-      static void algo(const se3::JointModelBase<JointModel> &,
-                       LiegroupSpace& space)
-      {
-        typedef typename DefaultLieGroupMap::operation<JointModel>::type LG_t;
-        space *= LiegroupSpace::create (LG_t());
-      }
-
-    };
-
-    template <>
-    void ConfigSpaceVisitor::algo<se3::JointModelComposite>(
-        const se3::JointModelBase<se3::JointModelComposite> & jmodel,
-        LiegroupSpace& space)
-    {
-      se3::details::Dispatch<ConfigSpaceVisitor>::run(jmodel,
-          ConfigSpaceVisitor::ArgsType(space));
-    }
-
     /* Previous implementation of resizeState in hpp::model:: was setting the
      * new part of the configuration to neutral configuration. This is not
      * working but for empty extra-config. The former behavior is therefore not
@@ -294,9 +269,8 @@ namespace hpp {
 
       configSpace_ = LiegroupSpace::empty();
       const Model& m (model());
-      ConfigSpaceVisitor::ArgsType args (*configSpace_);
       for (JointIndex i = 1; i < m.joints.size(); ++i)
-        ConfigSpaceVisitor::run(m.joints[i], args);
+        *configSpace_ *= Joint(weakPtr_, i).configurationSpace();
       if (extraConfigSpace_.dimension() > 0)
         *configSpace_ *= LiegroupSpace::create (extraConfigSpace_.dimension());
     }
