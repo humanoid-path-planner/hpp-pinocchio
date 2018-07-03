@@ -30,8 +30,7 @@ namespace hpp {
         template <typename LgT> void operator () (const LgT& lg)
         {
           typename LgT::JacobianMatrix_t JqInt (lg.nv(), lg.nv());
-          typename LgT::JacobianMatrix_t JvInt (lg.nv(), lg.nv());
-          lg.Jintegrate (q_.vector().segment<LgT::NQ>(configRow_, lg.nq()), v_.segment<LgT::NV>(row_, lg.nv()), JqInt, JvInt);
+          lg.dIntegrate_dq (q_.vector().segment<LgT::NQ>(configRow_, lg.nq()), v_.segment<LgT::NV>(row_, lg.nv()), JqInt);
           Jq_.middleRows<LgT::NV> (row_, lg.nv()).applyOnTheLeft (JqInt);
           row_ += lg.nv();
           configRow_ += lg.nq();
@@ -57,9 +56,8 @@ namespace hpp {
 
         template <typename LgT> void operator () (const LgT& lg)
         {
-          typename LgT::JacobianMatrix_t JqInt (lg.nv(), lg.nv());
           typename LgT::JacobianMatrix_t JvInt (lg.nv(), lg.nv());
-          lg.Jintegrate (q_.vector().segment<LgT::NQ>(configRow_, lg.nq()), v_.segment<LgT::NV>(row_, lg.nv()), JqInt, JvInt);
+          lg.dIntegrate_dv (q_.vector().segment<LgT::NQ>(configRow_, lg.nq()), v_.segment<LgT::NV>(row_, lg.nv()), JvInt);
           Jv_.middleRows<LgT::NV> (row_, lg.nv()).applyOnTheLeft (JvInt);
           row_ += lg.nv();
           configRow_ += lg.nq();

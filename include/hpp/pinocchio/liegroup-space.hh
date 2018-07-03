@@ -159,13 +159,6 @@ namespace hpp {
       /// Return exponential of a tangent vector
       LiegroupElement exp (vectorIn_t v) const;
 
-      /// Compute the Jacobian of the integration operation.
-      /// Given \f$ y = x + v \f$,
-      ///
-      /// \param[in] J the Jacobian of x
-      /// \param[out] J the Jacobian of y
-      void Jintegrate (vectorIn_t v, matrixOut_t J) const;
-
       /// Compute the Jacobians of the integration operation
       /// with respect to q.
       /// Given \f$ y = x + v \f$,
