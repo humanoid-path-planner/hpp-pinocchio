@@ -39,7 +39,8 @@ namespace hpp {
     ///
     /// Objects moved by a robot joint. They can collide each other and
     /// distance computation can be computed between them.
-    struct HPP_PINOCCHIO_DLLAPI CollisionObject {
+    class HPP_PINOCCHIO_DLLAPI CollisionObject {
+    public:
 
       typedef std::vector<GeomIndex> GeomIndexList;
       typedef std::map < JointIndex, GeomIndexList > ObjectVec_t;
