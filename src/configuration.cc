@@ -116,11 +116,11 @@ namespace hpp {
                                    ConfigurationIn_t configuration,
                                    vectorIn_t velocity, ConfigurationOut_t result);
     // TODO remove me. This is kept for backward compatibility
-    template void integrate<true,  se3::LieGroupTpl>
+    template void integrate<true,  se3::LieGroupMap>
                                   (const DevicePtr_t& robot,
                                    ConfigurationIn_t configuration,
                                    vectorIn_t velocity, ConfigurationOut_t result);
-    template void integrate<false, se3::LieGroupTpl>
+    template void integrate<false, se3::LieGroupMap>
                                   (const DevicePtr_t& robot,
                                    ConfigurationIn_t configuration,
                                    vectorIn_t velocity, ConfigurationOut_t result);
@@ -150,7 +150,7 @@ namespace hpp {
                                                    const value_type& u,
                                                    ConfigurationOut_t result);
     // TODO remove me. This is kept for backward compatibility
-    template void interpolate<se3::LieGroupTpl> (const DevicePtr_t& robot,
+    template void interpolate<se3::LieGroupMap> (const DevicePtr_t& robot,
                                                  ConfigurationIn_t q0,
                                                  ConfigurationIn_t q1,
                                                  const value_type& u,
@@ -177,12 +177,12 @@ namespace hpp {
     template void difference <DefaultLieGroupMap> (const DevicePtr_t& robot,
 						   ConfigurationIn_t q1,
 						   ConfigurationIn_t q2,
-						   vectorOut_t result);
+                           vectorOut_t result);
     // TODO remove me. This is kept for backward compatibility
-    template void difference <se3::LieGroupTpl> (const DevicePtr_t& robot,
-						 ConfigurationIn_t q1,
-						 ConfigurationIn_t q2,
-						 vectorOut_t result);
+    template void difference <se3::LieGroupMap> (const DevicePtr_t& robot,
+                         ConfigurationIn_t q1,
+                         ConfigurationIn_t q2,
+                         vectorOut_t result);
 
     void difference (const DevicePtr_t& robot, ConfigurationIn_t q1,
                      ConfigurationIn_t q2, vectorOut_t result)
@@ -193,7 +193,7 @@ namespace hpp {
     bool isApprox (const DevicePtr_t& robot, ConfigurationIn_t q1,
 			  ConfigurationIn_t q2, value_type eps)
     {
-      if (!se3::isSameConfiguration<se3::LieGroupTpl>(robot->model(), q1, q2, eps)) return false;
+      if (!se3::isSameConfiguration<se3::LieGroupMap>(robot->model(), q1, q2, eps)) return false;
       const size_type& dim = robot->extraConfigSpace().dimension();
       return q2.tail (dim).isApprox (q1.tail (dim), eps);
     }
@@ -201,7 +201,7 @@ namespace hpp {
     value_type distance (const DevicePtr_t& robot, ConfigurationIn_t q1,
                          ConfigurationIn_t q2)
     {
-      vector_t dist = se3::squaredDistance<se3::LieGroupTpl>(robot->model(), q1, q2);
+      vector_t dist = se3::squaredDistance<se3::LieGroupMap>(robot->model(), q1, q2);
       const size_type& dim = robot->extraConfigSpace().dimension();
       if (dim == 0) return sqrt(dist.sum());
       else return sqrt (dist.sum() + (q2.tail (dim) - q1.tail (dim)).squaredNorm ());
