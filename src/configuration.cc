@@ -169,7 +169,7 @@ namespace hpp {
     void difference (const DevicePtr_t& robot, ConfigurationIn_t q1,
                      ConfigurationIn_t q2, vectorOut_t result)
     {
-      result = se3::differentiate<LieGroup> (robot->model(), q2, q1);
+      result = se3::difference<LieGroup> (robot->model(), q2, q1);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = q1.tail (dim) - q2.tail (dim);
     }
