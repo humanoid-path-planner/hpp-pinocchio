@@ -270,7 +270,11 @@ void test_interpolate_and_integrate (DevicePtr_t robot)
     BOOST_CHECK(isNormalized(robot, q2, eps));
     BOOST_CHECK(isNormalized(robot, q3, eps));
 
-    BOOST_CHECK(isApprox(robot, q2, q3, eps));
+    BOOST_CHECK_MESSAGE (isApprox(robot, q2, q3, eps),
+                         "computation of q0 + 0.5 * (q1 - q0) does not yield "
+                         "the same result with interpolate: "
+                         << displayConfig (q2) << " as with integrate: "
+                         << displayConfig (q3));
 
     d0 = distance (robot, q0, q2);
     d1 = distance (robot, q1, q2);
