@@ -62,7 +62,7 @@ namespace hpp {
                     ConfigurationIn_t configuration,
                     vectorIn_t velocity, ConfigurationOut_t result);
 
-    /// Same as integrate<true, hpp::pinocchio::LieGroupTpl>
+    /// Same as integrate<true, DefaultLieGroupMap>
     void integrate (const DevicePtr_t& robot,
                     ConfigurationIn_t configuration,
                     vectorIn_t velocity, ConfigurationOut_t result);
