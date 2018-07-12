@@ -1,4 +1,4 @@
-// Copyright (c) 2017, CNRS
+// Copyright (c) 2017-2018, CNRS
 // Authors: Florent Lamiraux
 //
 // This file is part of hpp-pinocchio.
@@ -15,6 +15,12 @@
 // hpp-pinocchio. If not, see <http://www.gnu.org/licenses/>.
 
 #define BOOST_TEST_MODULE tframe
+
+// Specific to CLANG to remove bad C99-extensions warning
+#if __clang__
+#include <boost/variant.hpp>
+#endif
+
 #include <boost/test/unit_test.hpp>
 #include <boost/assign/list_of.hpp>
 #include <hpp/pinocchio/liegroup-element.hh>
