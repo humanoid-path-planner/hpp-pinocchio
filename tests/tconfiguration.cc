@@ -154,7 +154,7 @@ void test_difference_and_distance(DevicePtr_t robot)
     BOOST_CHECK(isNormalized(robot, q0, eps));
     BOOST_CHECK(isNormalized(robot, q1, eps));
 
-    difference<se3::LieGroupTpl> (robot, q1, q0, q1_minus_q0);
+    difference<se3::LieGroupMap> (robot, q1, q0, q1_minus_q0);
 
     // Check that the distance is the norm of the difference
     value_type d = distance (robot, q0, q1);
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE(difference_and_integrate)
 {
   Robots_t robots = createRobots ();
   for (std::size_t i = 0; i < robots.size(); ++i) {
-    test_difference_and_integrate<se3::LieGroupTpl> (robots[i]);
+    test_difference_and_integrate<se3::LieGroupMap> (robots[i]);
     test_difference_and_integrate<     LieGroupTpl> (robots[i]);
   }
 }
@@ -226,8 +226,8 @@ void test_interpolate_and_integrate (DevicePtr_t robot)
   const value_type eps_dist = value_type(robot->numberDof()) * sqrt(Eigen::NumTraits<value_type>::epsilon());
   value_type d0, d1;
   for (size_type i=0; i<NB_CONF; ++i) {
-    q0 = se3::randomConfiguration (robot->model());
-    q1 = se3::randomConfiguration (robot->model());
+    q0 = se3::randomConfiguration <LieGroup> (robot->model());
+    q1 = se3::randomConfiguration <LieGroup> (robot->model());
 
     BOOST_CHECK(isNormalized(robot, q0, eps));
     BOOST_CHECK(isNormalized(robot, q1, eps));
@@ -261,7 +261,11 @@ void test_interpolate_and_integrate (DevicePtr_t robot)
         );
 
     interpolate<LieGroup> (robot, q0, q1, 0.5, q2);
-    integrate<true, LieGroup> (robot, q0, 0.5 * q1_minus_q0, q3);
+    // FIXME For SE(3) and SE(2) joints, with se3::LieGroupMap
+    // (or DefaultLieGroupMap), there is no guaranty that the interpolation
+    // between two configuration within bounds will be within bounds.
+    // So we should not saturate the configuration.
+    integrate<false, LieGroup> (robot, q0, 0.5 * q1_minus_q0, q3);
 
     BOOST_CHECK(isNormalized(robot, q2, eps));
     BOOST_CHECK(isNormalized(robot, q3, eps));
@@ -284,7 +288,7 @@ BOOST_AUTO_TEST_CASE(interpolate_and_integrate)
 {
   Robots_t robots = createRobots ();
   for (std::size_t i = 0; i < robots.size(); ++i) {
-    test_interpolate_and_integrate <se3::LieGroupTpl> (robots[i]);
+    test_interpolate_and_integrate <se3::LieGroupMap> (robots[i]);
     test_interpolate_and_integrate <     LieGroupTpl> (robots[i]);
   }
 }
@@ -308,17 +312,17 @@ void test_saturation (DevicePtr_t robot)
   BOOST_CHECK(isNormalized(robot, q0, eps));
   BOOST_CHECK(isNormalized(robot, q1, eps));
 
-  integrate<false, se3::LieGroupTpl> (robot, q0, v, q2);
+  integrate<false, se3::LieGroupMap> (robot, q0, v, q2);
   saturate (robot, q2);
   BOOST_CHECK((q2.array() <= robot->model().upperPositionLimit.array()).all());
   BOOST_CHECK((q2.array() >= robot->model().lowerPositionLimit.array()).all());
 
-  integrate<false, se3::LieGroupTpl> (robot, q1, -v, q2);
+  integrate<false, se3::LieGroupMap> (robot, q1, -v, q2);
   saturate (robot, q2);
   BOOST_CHECK((q2.array() <= robot->model().upperPositionLimit.array()).all());
   BOOST_CHECK((q2.array() >= robot->model().lowerPositionLimit.array()).all());
 
-  integrate<false, se3::LieGroupTpl> (robot, q0, v, q2);
+  integrate<false, se3::LieGroupMap> (robot, q0, v, q2);
   expected_sat = (q2.array() > robot->model().upperPositionLimit.array())
       || (q2.array() < robot->model().lowerPositionLimit.array());
   BOOST_CHECK(saturate (robot, q2, saturation));
@@ -336,7 +340,7 @@ void test_saturation (DevicePtr_t robot)
         expected_sat.tail(robot->configSize()-sq).matrix());
   }
 
-  integrate<false, se3::LieGroupTpl> (robot, q1, -v, q2);
+  integrate<false, se3::LieGroupMap> (robot, q1, -v, q2);
   expected_sat = (q2.array() > robot->model().upperPositionLimit.array())
       || (q2.array() < robot->model().lowerPositionLimit.array());
   BOOST_CHECK(saturate (robot, q2, saturation));
@@ -389,7 +393,7 @@ BOOST_AUTO_TEST_CASE(successive_interpolation)
 {
   Robots_t robots = createRobots ();
   for (std::size_t i = 0; i < robots.size(); ++i) {
-    test_successive_interpolation <se3::LieGroupTpl> (robots[i]);
+    test_successive_interpolation <se3::LieGroupMap> (robots[i]);
     test_successive_interpolation <     LieGroupTpl> (robots[i]);
   }
 }
