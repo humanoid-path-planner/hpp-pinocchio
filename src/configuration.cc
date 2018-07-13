@@ -99,11 +99,11 @@ namespace hpp {
       if (saturateConfig) saturate(robot, result);
     }
 
-    template void integrate<true,  LieGroupTpl>
+    template void integrate<true,  RnxSOnLieGroupMap>
                                   (const DevicePtr_t& robot,
                                    ConfigurationIn_t configuration,
                                    vectorIn_t velocity, ConfigurationOut_t result);
-    template void integrate<false, LieGroupTpl>
+    template void integrate<false, RnxSOnLieGroupMap>
                                   (const DevicePtr_t& robot,
                                    ConfigurationIn_t configuration,
                                    vectorIn_t velocity, ConfigurationOut_t result);
@@ -112,15 +112,6 @@ namespace hpp {
                                    ConfigurationIn_t configuration,
                                    vectorIn_t velocity, ConfigurationOut_t result);
     template void integrate<false, DefaultLieGroupMap>
-                                  (const DevicePtr_t& robot,
-                                   ConfigurationIn_t configuration,
-                                   vectorIn_t velocity, ConfigurationOut_t result);
-    // TODO remove me. This is kept for backward compatibility
-    template void integrate<true,  se3::LieGroupMap>
-                                  (const DevicePtr_t& robot,
-                                   ConfigurationIn_t configuration,
-                                   vectorIn_t velocity, ConfigurationOut_t result);
-    template void integrate<false, se3::LieGroupMap>
                                   (const DevicePtr_t& robot,
                                    ConfigurationIn_t configuration,
                                    vectorIn_t velocity, ConfigurationOut_t result);
@@ -162,7 +153,7 @@ namespace hpp {
                       const value_type& u,
                       ConfigurationOut_t result)
     {
-      interpolate<LieGroupTpl> (robot, q0, q1, u, result);
+      interpolate<RnxSOnLieGroupMap> (robot, q0, q1, u, result);
     }
 
     template <typename LieGroup>
@@ -187,7 +178,7 @@ namespace hpp {
     void difference (const DevicePtr_t& robot, ConfigurationIn_t q1,
                      ConfigurationIn_t q2, vectorOut_t result)
     {
-      difference <LieGroupTpl> (robot, q1, q2, result);
+      difference <RnxSOnLieGroupMap> (robot, q1, q2, result);
     }
 
     bool isApprox (const DevicePtr_t& robot, ConfigurationIn_t q1,
@@ -226,7 +217,7 @@ namespace hpp {
                        const value_type & eps,
                        bool & ret)
       {
-        typedef typename LieGroupTpl::operation<JointModel>::type LG_t;
+        typedef typename RnxSOnLieGroupMap::operation<JointModel>::type LG_t;
         ret = ret && LG_t::isNormalized(jmodel.jointConfigSelector(q), eps);
       }
     };

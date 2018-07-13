@@ -20,6 +20,8 @@
 #include <pinocchio/multibody/joint/fwd.hpp>
 // #include <pinocchio/multibody/liegroup/liegroup.hpp>
 
+#include <hpp/pinocchio/deprecated.hh>
+
 #include <hpp/pinocchio/liegroup/vector-space.hh>
 #include <hpp/pinocchio/liegroup/cartesian-product.hh>
 #include <hpp/pinocchio/liegroup/special-orthogonal.hh>
@@ -27,68 +29,85 @@
 
 namespace hpp {
   namespace pinocchio {
-    // Default implementation is empty
-    struct LieGroupTpl {
+    /// This class maps at compile time a joint type to a lie group type.
+    ///
+    /// JointModelPlanar (JointModelFreeFlyer resp.) maps to
+    /// \f$ R^2 \times SO(2) \f$ (resp. \f$ R^3 \times SO(3) \f$)
+    ///
+    /// Unknown joint types map to an empty operation (compile time failure).
+    struct RnxSOnLieGroupMap {
       template<typename JointModel> struct operation {};
     };
+    /// \deprecated Use RnxSOnLieGroupMap
+    typedef HPP_PINOCCHIO_DEPRECATED RnxSOnLieGroupMap LieGroupTpl;
+
+    /// This class maps at compile time a joint type to a lie group type.
+    ///
+    /// JointModelPlanar (JointModelFreeFlyer resp.) maps to
+    /// \f$ SE(2) \f$ (resp. \f$ SE(3) \f$).
+    ///
+    /// Unknown joint types map to an empty operation (compile time failure).
+    struct DefaultLieGroupMap {
+      template<typename JointModel> struct operation {};
+    };
+
+    //---------------- RnxSOnLieGroupMap -------------------------------//
     // JointModelRevolute, JointModelRevoluteUnbounded, JointModelRevoluteUnaligned
     template<typename Scalar, int Options, int Axis>
-    struct LieGroupTpl::operation <se3::JointModelRevoluteTpl<Scalar, Options, Axis> > {
+    struct RnxSOnLieGroupMap::operation <se3::JointModelRevoluteTpl<Scalar, Options, Axis> > {
       typedef liegroup::VectorSpaceOperation<1, true> type;
     };
     template<typename Scalar, int Options, int Axis>
-    struct LieGroupTpl::operation <se3::JointModelRevoluteUnboundedTpl<Scalar, Options, Axis> > {
+    struct RnxSOnLieGroupMap::operation <se3::JointModelRevoluteUnboundedTpl<Scalar, Options, Axis> > {
       typedef liegroup::SpecialOrthogonalOperation<2> type;
     };
     template<typename Scalar, int Options>
-    struct LieGroupTpl::operation <se3::JointModelRevoluteUnalignedTpl<Scalar, Options> > {
+    struct RnxSOnLieGroupMap::operation <se3::JointModelRevoluteUnalignedTpl<Scalar, Options> > {
       typedef liegroup::VectorSpaceOperation<1, true> type;
     };
 
     // JointModelPrismatic, JointModelPrismaticUnaligned, JointModelTranslation
     template<typename Scalar, int Options, int Axis>
-    struct LieGroupTpl::operation <se3::JointModelPrismatic<Scalar, Options, Axis> > {
+    struct RnxSOnLieGroupMap::operation <se3::JointModelPrismatic<Scalar, Options, Axis> > {
       typedef liegroup::VectorSpaceOperation<1, false> type;
     };
     template<typename Scalar, int Options>
-    struct LieGroupTpl::operation <se3::JointModelPrismaticUnalignedTpl<Scalar, Options> > {
+    struct RnxSOnLieGroupMap::operation <se3::JointModelPrismaticUnalignedTpl<Scalar, Options> > {
       typedef liegroup::VectorSpaceOperation<1, false> type;
     };
     template<typename Scalar, int Options>
-    struct LieGroupTpl::operation <se3::JointModelTranslationTpl<Scalar, Options> > {
+    struct RnxSOnLieGroupMap::operation <se3::JointModelTranslationTpl<Scalar, Options> > {
       typedef liegroup::VectorSpaceOperation<3, false> type;
     };
 
     // JointModelSpherical, JointModelSphericalZYX,
     template<typename Scalar, int Options>
-    struct LieGroupTpl::operation <se3::JointModelSphericalTpl<Scalar, Options> > {
+    struct RnxSOnLieGroupMap::operation <se3::JointModelSphericalTpl<Scalar, Options> > {
       typedef liegroup::SpecialOrthogonalOperation<3> type;
     };
     template<typename Scalar, int Options>
-    struct LieGroupTpl::operation <se3::JointModelSphericalZYXTpl<Scalar, Options> > {
+    struct RnxSOnLieGroupMap::operation <se3::JointModelSphericalZYXTpl<Scalar, Options> > {
       typedef liegroup::VectorSpaceOperation<3, true> type;
     };
 
     // JointModelFreeFlyer, JointModelPlanar
     template<typename Scalar, int Options>
-    struct LieGroupTpl::operation <se3::JointModelFreeFlyerTpl<Scalar, Options> > {
+    struct RnxSOnLieGroupMap::operation <se3::JointModelFreeFlyerTpl<Scalar, Options> > {
       typedef liegroup::CartesianProductOperation<
         liegroup::VectorSpaceOperation<3, false>,
         liegroup::SpecialOrthogonalOperation<3>
         > type;
     };
     template<typename Scalar, int Options>
-    struct LieGroupTpl::operation <se3::JointModelPlanarTpl<Scalar, Options> > {
+    struct RnxSOnLieGroupMap::operation <se3::JointModelPlanarTpl<Scalar, Options> > {
       typedef liegroup::CartesianProductOperation<
         liegroup::VectorSpaceOperation<2, false>,
         liegroup::SpecialOrthogonalOperation<2>
         > type;
     };
 
-    // Default implementation is empty
-    struct DefaultLieGroupMap {
-      template<typename JointModel> struct operation {};
-    };
+    //---------------- DefaultLieGroupMap ------------------------------------//
+
     // JointModelRevolute, JointModelRevoluteUnbounded, JointModelRevoluteUnaligned
     template<typename Scalar, int Options, int Axis>
     struct DefaultLieGroupMap::operation <se3::JointModelRevoluteTpl<Scalar, Options, Axis> > {
