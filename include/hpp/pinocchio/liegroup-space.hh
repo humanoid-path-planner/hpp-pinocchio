@@ -159,28 +159,44 @@ namespace hpp {
       /// Return exponential of a tangent vector
       LiegroupElement exp (vectorIn_t v) const;
 
-      /// Compute the Jacobians of the integration operation
-      /// with respect to q.
-      /// Given \f$ y = x + v \f$,
+      /// Compute the Jacobian of the integration operation with respect to q.
       ///
-      /// \param[in] Jq the Jacobian of x
-      /// \param[out] J the Jacobian of y
+      /// Given \f$ \mathbf{p} = \mathbf{q} + \mathbf{v} \f$,
+      /// compute \f$J_{\mathbf{q}}\f$ such that
+      ///
+      /// \f{equation}
+      /// \dot{\mathbf{p}} = J_{\mathbf{q}}\dot{\mathbf{q}} + \mathbf{v}
+      /// \f}
+      /// for constant \f$\mathbf{v}\f$
+      ///
+      /// \param q, the configuration,
+      /// \param v, the velocity vector,
+      /// \retval Jq the Jacobian
       void dIntegrate_dq (LiegroupElement q, vectorIn_t v, matrixOut_t Jq) const;
 
-      /// Compute the Jacobians of the integration operation
-      /// with respect to v.
-      /// Given \f$ y = x + v \f$,
+      /// Compute the Jacobian of the integration operation with respect to v.
       ///
-      /// \param[in] Jv the Jacobian of v
-      /// \param[out] J the Jacobian of y
+      /// Given \f$ \mathbf{p} = \mathbf{q} + \mathbf{v} \f$,
+      /// compute \f$J_{\mathbf{v}}\f$ such that
+      ///
+      /// \f{equation}
+      /// \dot{\mathbf{p}} = \mathbf{q} + J_{\mathbf{v}}\dot{\mathbf{v}}
+      /// \f}
+      /// for constant \f$\mathbf{q}\f$
+      ///
+      /// \param q, the configuration,
+      /// \param v, the velocity vector,
+      /// \retval Jv the Jacobian
       void dIntegrate_dv (LiegroupElement q, vectorIn_t v, matrixOut_t Jv) const;
 
-      /// Compute the Jacobian of the difference operation.
-      /// Given \f$ v = q1 - q0 \f$,
+      /// Compute the Jacobian matrices of the difference operation.
+      /// Given \f$ \mathbf{v} = \mathbf{q}_1 - \mathbf{q}_0 \f$,
       ///
-      /// \param[in] q0,q1
-      /// \param[in] J0 the Jacobian of q0.
-      /// \param[in] J1 the Jacobian of q1.
+      /// Compute matrices \f$J_{0}\f$ and \f$J_{1}\f$ such that
+      /// \f{equation}
+      /// \dot{\mathbf{v}} = J_{0}\dot{\mathbf{q}_0} + J_{1}\dot{\mathbf{q}_1}
+      /// \f}
+      /// \param[in] q0,q1 Lie group elements,
       /// \param[out] J0 the Jacobian of v with respect to q0.
       /// \param[out] J1 the Jacobian of v with respect to q1.
       /// \note to compute only one jacobian, provide for J0 or J1 an empty matrix.

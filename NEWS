@@ -1,6 +1,12 @@
                                                                 -*- outline -*-
-
-New in v3.3, 2018-05-17
+New in v4.2,
+* Update to API changes in pinocchio: se3::LieGroupTpl -> se3::LieGroupMap.
+* Rename hpp::pinocchio::LieGroupTpl -> hpp::pinocchio::RnxSOnLieGroupMap.
+* Device::getFrameByName accepts all frame types.
+* Add optional doc generation.
+* Replace Jintegrate by dIntegrate_dq and dIntegrate_dv in LiegroupSpace.
+* Set Device::clone() method as const.
+New in v4.1, 2018-05-17
 * Fix optional dependency to hpp-model-urdf.
 * Enhance documentation
 * Provide LiegroupSpace and LiegroupElement classes to represent configuration
