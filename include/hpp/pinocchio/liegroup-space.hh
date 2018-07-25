@@ -259,6 +259,10 @@ namespace boost {
   hpp::pinocchio::LiegroupSpacePtr_t operator* (
       const hpp::pinocchio::LiegroupSpaceConstPtr_t& sp1,
       const hpp::pinocchio::LiegroupSpaceConstPtr_t& sp2);
+  /// Cartesian power by an integer
+  hpp::pinocchio::LiegroupSpacePtr_t operator^
+  (const hpp::pinocchio::LiegroupSpaceConstPtr_t& sp,
+   hpp::pinocchio::size_type n);
   /// \}
 } // namespace boost
 
