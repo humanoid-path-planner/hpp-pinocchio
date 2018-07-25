@@ -1,6 +1,10 @@
 hpp-pinocchio
 ========
 
+[![Building Status](https://travis-ci.org/humanoid-path-planner/hpp-pinocchio.svg?branch=master)](https://travis-ci.org/humanoid-path-planner/hpp-pinocchio)
+[![Pipeline status](https://gepgitlab.laas.fr/humanoid-path-planner/hpp-pinocchio/badges/master/pipeline.svg)](https://gepgitlab.laas.fr/humanoid-path-planner/hpp-pinocchio/commits/master)
+[![Coverage report](https://gepgitlab.laas.fr/humanoid-path-planner/hpp-pinocchio/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/gepetto/doc/humanoid-path-planner/hpp-pinocchio/master/coverage/)
+
 This package implements a library that wraps the [Pinocchio](http://stack-of-tasks.github.io/pinocchio/) library to be used in the [Humanoid Path Planner](https://humanoid-path-planner.github.io/hpp-doc/) framework.
 
 Setup
