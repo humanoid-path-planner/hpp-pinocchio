@@ -114,6 +114,7 @@ namespace hpp {
         LogVisitor logVisitor (lge.vector ().segment (iq, sizeVisitor.nq),
                                res.segment (iv, sizeVisitor.nv));
         boost::apply_visitor (logVisitor, *it);
+        iq += sizeVisitor.nq; iv += sizeVisitor.nv;
       }
       return res;
     }
