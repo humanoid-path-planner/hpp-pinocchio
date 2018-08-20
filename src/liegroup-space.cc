@@ -347,4 +347,16 @@ namespace boost {
     *res *= sp2;
     return res;
   }
+  /// Cartesian power by an integer
+  LiegroupSpacePtr_t operator^ (const LiegroupSpaceConstPtr_t& sp, size_type n)
+  {
+    assert (n >= 0);
+    if (n==0) return LiegroupSpace::empty ();
+    LiegroupSpacePtr_t result (LiegroupSpace::createCopy (sp)); --n;
+    while (n > 0) {
+      result = result * sp; --n;
+    }
+    result->mergeVectorSpaces ();
+    return result;
+  }
 } // namespace boost

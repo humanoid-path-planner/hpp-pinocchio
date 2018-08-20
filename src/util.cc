@@ -42,7 +42,6 @@ namespace hpp {
         static const Eigen::IOFormat mfmt_raw = eigen_format< OneLine || Condensed, false, false>::run();
         static const Eigen::IOFormat vfmt_raw = eigen_format< OneLine || Condensed, false, true >::run();
         bool use_py_fmt = (getpythonformat(os) != 0);
-        const Eigen::IOFormat& mfmt = (use_py_fmt ? mfmt_py : mfmt_raw);
         const Eigen::IOFormat& vfmt = (use_py_fmt ? vfmt_py : vfmt_raw);
 
         switch (Option & OutputFormatBits) {

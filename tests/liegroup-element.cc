@@ -33,6 +33,7 @@ using hpp::pinocchio::LiegroupElement;
 using hpp::pinocchio::LiegroupType;
 using hpp::pinocchio::LiegroupSpace;
 using hpp::pinocchio::LiegroupSpacePtr_t;
+using hpp::pinocchio::LiegroupSpaceConstPtr_t;
 
 static bool sameR3xSO3 (const LiegroupElement& e1, const LiegroupElement& e2,
                         const value_type& eps)
@@ -196,6 +197,47 @@ BOOST_AUTO_TEST_CASE (multiplication)
   BOOST_CHECK_EQUAL (sp->neutral ().vector (), n);
   BOOST_CHECK_EQUAL (sp->neutral ().space (), sp);
   BOOST_CHECK_EQUAL (sp, sp->neutral ().space ());
+}
+
+BOOST_AUTO_TEST_CASE (Cartesian_power_1)
+{
+  LiegroupSpaceConstPtr_t sp1 (LiegroupSpace::Rn (10));
+  LiegroupSpacePtr_t sp2 (sp1 ^ 4);
+
+  BOOST_CHECK_EQUAL (sp2->nq (), 40);
+  BOOST_CHECK_EQUAL (sp2->nv (), 40);
+  BOOST_CHECK_EQUAL (sp2->liegroupTypes().size(), 1);
+  BOOST_CHECK_EQUAL (sp2->nq (0), 40);
+  BOOST_CHECK_EQUAL (sp2->nv (0), 40);
+  BOOST_CHECK_EQUAL (sp2->name (), "R^40");
+}
+
+BOOST_AUTO_TEST_CASE (Cartesian_power_2)
+{
+  LiegroupSpaceConstPtr_t sp1 (LiegroupSpace::SE3 () * LiegroupSpace::Rn (10));
+  LiegroupSpacePtr_t sp2 (sp1 ^ 6);
+
+  BOOST_CHECK_EQUAL (sp2->nq (), 17 * 6);
+  BOOST_CHECK_EQUAL (sp2->nv (), 16 * 6);
+  BOOST_CHECK_EQUAL (sp2->liegroupTypes().size(), 2 * 6);
+  for (std::size_t i=0; i < 6; ++i) {
+    BOOST_CHECK_EQUAL (sp2->nq (2*i), 7);
+    BOOST_CHECK_EQUAL (sp2->nv (2*i), 6);
+    BOOST_CHECK_EQUAL (sp2->nq (2*i+1), 10);
+    BOOST_CHECK_EQUAL (sp2->nv (2*i+1), 10);
+  }
+  BOOST_CHECK_EQUAL (sp2->name (), "SE(3)*R^10*SE(3)*R^10*SE(3)*R^10*"
+                                   "SE(3)*R^10*SE(3)*R^10*SE(3)*R^10");
+}
+
+BOOST_AUTO_TEST_CASE (Cartesian_power_3)
+{
+  LiegroupSpaceConstPtr_t sp1 (LiegroupSpace::SE3 () * LiegroupSpace::Rn (10));
+  LiegroupSpacePtr_t sp2 (sp1 ^ 0);
+  LiegroupSpacePtr_t sp3 (sp1 ^ 1);
+
+  BOOST_CHECK_EQUAL (*sp1, *sp3);
+  BOOST_CHECK_EQUAL (*sp2, *(LiegroupSpace::empty ()));
 }
 
 BOOST_AUTO_TEST_CASE (log_)

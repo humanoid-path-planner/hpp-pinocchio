@@ -171,7 +171,14 @@ namespace hpp {
       ///
       /// \param q, the configuration,
       /// \param v, the velocity vector,
-      /// \retval Jq the Jacobian
+      /// \retval Jq the Jacobian (initialized as identity)
+      ///
+      /// \note For each elementary Lie group in q.space (), ranging
+      ///       over indices \f$[iq, iq+nq-1]\f$, the Jacobian
+      ///       \f$J_{Lg} (q [iq:iq+nq])\f$ is computed by method
+      ///       se3::LieGroupBase::dIntegrate_dq.
+      /// lines \f$[iq:iq+nq]\f$ of Jq are then left multiplied by
+      /// \f$J_{Lg} (q [iq:iq+nq])\f$.
       void dIntegrate_dq (LiegroupElement q, vectorIn_t v, matrixOut_t Jq) const;
 
       /// Compute the Jacobian of the integration operation with respect to v.
@@ -186,7 +193,13 @@ namespace hpp {
       ///
       /// \param q, the configuration,
       /// \param v, the velocity vector,
-      /// \retval Jv the Jacobian
+      /// \retval Jv the Jacobian (initialized to identity)
+      /// \note For each elementary Lie group in q.space (), ranging
+      ///       over indices \f$[iv, iv+nv-1]\f$, the Jacobian
+      ///       \f$J_{Lg} (q [iv:iv+nv])\f$ is computed by method
+      ///       se3::LieGroupBase::dIntegrate_dq.
+      /// lines \f$[iv:iv+nv]\f$ of Jv are then left multiplied by
+      /// \f$J_{Lg} (q [iv:iv+nv])\f$.
       void dIntegrate_dv (LiegroupElement q, vectorIn_t v, matrixOut_t Jv) const;
 
       /// Compute the Jacobian matrices of the difference operation.
@@ -259,6 +272,10 @@ namespace boost {
   hpp::pinocchio::LiegroupSpacePtr_t operator* (
       const hpp::pinocchio::LiegroupSpaceConstPtr_t& sp1,
       const hpp::pinocchio::LiegroupSpaceConstPtr_t& sp2);
+  /// Cartesian power by an integer
+  hpp::pinocchio::LiegroupSpacePtr_t operator^
+  (const hpp::pinocchio::LiegroupSpaceConstPtr_t& sp,
+   hpp::pinocchio::size_type n);
   /// \}
 } // namespace boost
 
