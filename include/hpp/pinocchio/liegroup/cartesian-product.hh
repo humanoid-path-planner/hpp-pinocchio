@@ -74,7 +74,7 @@ namespace hpp {
                                 oout. template tail<LieGroup2::NQ>());
           } else {
             HPP_THROW(std::invalid_argument,
-                "Expected vector of size " << BoundSize << " or " << Base::NQ
+                "Expected vector of size " << (int)BoundSize << " or " << (int)Base::NQ
                 << ", got size " << bound.size());
           }
         }

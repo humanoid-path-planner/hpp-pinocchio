@@ -57,7 +57,7 @@ namespace hpp {
           if (bound.size() == 0) return;
           if (bound.size() != Base::NQ) {
             HPP_THROW(std::invalid_argument, "Expected vector of size 0 or "
-                << Base::NQ << ", got size " << bound.size());
+                << (int)Base::NQ << ", got size " << bound.size());
           }
           const_cast<Eigen::MatrixBase<ConfigOut_t>&>(out).head(bound.size()) = bound;
         }

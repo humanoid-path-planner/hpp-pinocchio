@@ -85,7 +85,7 @@ namespace hpp {
         {
           if (bounds.size() != BoundSize) {
             HPP_THROW(std::invalid_argument, "Expected vector of size " <<
-                BoundSize << ", got size " << bounds.size());
+                (int)BoundSize << ", got size " << bounds.size());
           }
           const_cast<Eigen::MatrixBase<ConfigOut_t>&> (out) = bounds;
         }
