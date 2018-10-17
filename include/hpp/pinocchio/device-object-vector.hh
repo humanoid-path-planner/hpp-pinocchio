@@ -90,7 +90,7 @@ namespace hpp {
       virtual size_type iend() const ;
 
       void selfAssert(size_type i = 0) const;
-    };
+    } HPP_PINOCCHIO_DEPRECATED;
   } // namespace pinocchio
 } // namespace hpp
 

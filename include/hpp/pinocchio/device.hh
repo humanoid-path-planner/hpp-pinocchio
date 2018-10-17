@@ -160,8 +160,14 @@ namespace hpp {
       Frame rootFrame () const;
 
       /// Get vector of joints
-      inline const JointVector& getJointVector () const { return jointVector_; }
-      inline JointVector& getJointVector () { return jointVector_; }
+      inline const JointVector& getJointVector () const HPP_PINOCCHIO_DEPRECATED { return jointVector_; }
+      inline JointVector& getJointVector () HPP_PINOCCHIO_DEPRECATED { return jointVector_; }
+
+      /// Get number of joints
+      size_type nbJoints () const;
+
+      /// Access i-th joint
+      JointPtr_t jointAt (const size_type& i) const;
 
       /// Get the joint at configuration rank r
       /// \return  joint j such that j->rankInConfiguration () <=

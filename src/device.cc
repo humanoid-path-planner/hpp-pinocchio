@@ -163,6 +163,17 @@ namespace hpp {
       return Frame(weakPtr_.lock(), model().getFrameId("root_joint", type));
     }
 
+    size_type Device::nbJoints () const
+    {
+      return size_type(model().joints.size() - 1);
+    }
+
+    JointPtr_t Device::jointAt (const size_type& i) const
+    {
+      assert (i < nbJoints());
+      return JointPtr_t(new Joint(weakPtr_.lock(),i+1));
+    }
+
     JointPtr_t Device::
     getJointAtConfigRank (const size_type& r) const
     {
