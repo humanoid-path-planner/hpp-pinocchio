@@ -372,7 +372,7 @@ namespace hpp {
       if(frameUpToDate_) return;
       computeForwardKinematics();
 
-      se3::framesForwardKinematics (model(),data());
+      se3::updateFramePlacements (model(),data());
 
       frameUpToDate_ = true;
     }

@@ -111,7 +111,7 @@ namespace hpp {
       selfAssert();
       assert(robot()->computationFlag() & Device::JACOBIAN);
       JointJacobian_t jacobian = JointJacobian_t::Zero(6,model().nv);
-      se3::getFrameJacobian (model(),data(),frameIndex_,jacobian);
+      se3::getFrameJacobian<se3::LOCAL> (model(),data(),frameIndex_,jacobian);
       return jacobian;
     }
 
