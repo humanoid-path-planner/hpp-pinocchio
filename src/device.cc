@@ -36,6 +36,7 @@
 //#include <hpp/pinocchio/distance-result.hh>
 #include <hpp/pinocchio/body.hh>
 #include <hpp/pinocchio/extra-config-space.hh>
+#include <hpp/pinocchio/collision-object.hh>
 #include <hpp/pinocchio/gripper.hh>
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/liegroup.hh>
@@ -397,6 +398,17 @@ namespace hpp {
     /* ---------------------------------------------------------------------- */
     /* --- COLLISIONS ------------------------------------------------------- */
     /* ---------------------------------------------------------------------- */
+
+    size_type Device::nbObjects() const
+    {
+      return (size_type)geomModel().geometryObjects.size();
+    }
+
+    CollisionObjectPtr_t Device::objectAt (const size_type& i) const
+    {
+      assert (i < nbObjects());
+      return CollisionObjectPtr_t (new CollisionObject(weakPtr_.lock(),i));
+    }
 
     bool Device::collisionTest (const bool stopAtFirstCollision)
     {

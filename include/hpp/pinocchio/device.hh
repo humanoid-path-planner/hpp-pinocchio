@@ -319,8 +319,16 @@ namespace hpp {
       }
 
       /// Vector of inner objects of the device
-      DeviceObjectVector& objectVector () {return objectVector_; }
-      const DeviceObjectVector& objectVector () const { return objectVector_; }
+      /// \deprecated Use Device::nbObjects and Device::objectAt
+      DeviceObjectVector& objectVector () HPP_PINOCCHIO_DEPRECATED {return objectVector_; }
+      const DeviceObjectVector& objectVector () const HPP_PINOCCHIO_DEPRECATED { return objectVector_; }
+
+      /// Number of objects
+      size_type nbObjects () const;
+
+      /// Access the i-th object.
+      /// \sa Device::nbObjects() const
+      CollisionObjectPtr_t objectAt (const size_type& i) const;
 
       /// Test collision of current configuration
       /// \param stopAtFirstCollision act as named

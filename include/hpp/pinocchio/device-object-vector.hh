@@ -23,12 +23,14 @@
 # include <vector>
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/config.hh>
+# include <hpp/pinocchio/deprecated.hh>
 # include <hpp/pinocchio/fake-container.hh>
 
 namespace hpp {
   namespace pinocchio {
 
     /// Iterator over all inner objects of a Device.
+    /// \deprecated Use Device::nbObjects and Device::objectAt
     struct  DeviceObjectVector
       : public FakeContainer<CollisionObjectPtr_t,CollisionObjectConstPtr_t>
     {
@@ -41,7 +43,7 @@ namespace hpp {
       virtual size_type size() const ;
 
       void selfAssert(size_type i = 0) const;
-    }; // struct DeviceObjectVector
+    } HPP_PINOCCHIO_DEPRECATED; // struct DeviceObjectVector
 
     /* --- CONTAINER -------------------------------------------------------- */
     struct ObjectVector 
@@ -66,7 +68,7 @@ namespace hpp {
       private:
       typedef std::vector<se3::GeomIndex> GeomIndexList;
       const GeomIndexList & geometries() const;
-    };
+    } HPP_PINOCCHIO_DEPRECATED;
 
     /** Fake std::vector<Joint>, used to comply with the actual structure of hpp::model.
      *
