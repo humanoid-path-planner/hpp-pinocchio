@@ -36,7 +36,6 @@ namespace hpp {
       , geomData_(devicePtr->geomDataPtr())
       , jointIndex_(0)
       , geomInModelIndex(geomInModel)
-      , inOutType(INNER)
     {
       jointIndex_ = pinocchio().parentJoint;
       selfAssert();
@@ -51,23 +50,9 @@ namespace hpp {
       , geomData_(geomData)
       , jointIndex_(0)
       , geomInModelIndex(geomInModel)
-      , inOutType(INNER)
     {
       jointIndex_ = pinocchio().parentJoint;
       selfAssert();
-    }
-
-    CollisionObject::ObjectVec_t & 
-    CollisionObject::objectVec()
-    {
-      if(inOutType==INNER) return geomData_->innerObjects;
-      else                 return geomData_->outerObjects;
-    }
-    const CollisionObject::ObjectVec_t & 
-    CollisionObject::objectVec() const
-    {
-      if(inOutType==INNER) return geomData_->innerObjects;
-      else                 return geomData_->outerObjects;
     }
     
     const std::string& CollisionObject::name () const { return pinocchio().name; }

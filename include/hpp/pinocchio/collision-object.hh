@@ -101,17 +101,12 @@ namespace hpp {
       /// Assert that the members of the struct are valid (no null pointer, etc).
       void selfAssert() const;
 
-      /// Get the reference to INNER|OUTER object container (marginally used).
-      ObjectVec_t &       objectVec();
-      const ObjectVec_t & objectVec() const;
-
     private:
       DevicePtr_t devicePtr;
       GeomModelPtr_t geomModel_;
       GeomDataPtr_t  geomData_;
       JointIndex  jointIndex_;
       GeomIndex   geomInModelIndex;     // Index in global model list.
-      InOutType   inOutType;            // Object in Inner or Outer object list.
     }; // class CollisionObject
   } // namespace pinocchio
 } // namespace hpp
