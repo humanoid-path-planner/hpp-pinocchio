@@ -132,6 +132,21 @@ namespace hpp {
       return device->geomData().radius[jointIndex]; 
     }
 
+    size_type Body::nbOuterObjects () const
+    {
+      selfAssert();
+      DevicePtr_t device = devicePtr.lock();
+      return (size_type)device->geomData().outerObjects[jointIndex].size();
+    }
+
+    CollisionObjectPtr_t Body::outerObjectAt (const size_type& i) const
+    {
+      selfAssert();
+      assert (0 <= i && i < nbOuterObjects());
+      DevicePtr_t device = devicePtr.lock();
+      return CollisionObjectPtr_t(new CollisionObject(device,
+            device->geomData().outerObjects[jointIndex][i]));
+    }
   } // namespace pinocchio
 } // namespace hpp
 
