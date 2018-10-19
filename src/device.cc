@@ -52,9 +52,7 @@ namespace hpp {
       , geomModel_(new GeomModel())
       , geomData_ ()
       , name_ (name)
-      , jointVector_()
       , computationFlag_ (Computation_t(JOINT_POSITION | JACOBIAN))
-      , objectVector_ ()
       , weakPtr_()
     {
       invalidate();
@@ -68,7 +66,6 @@ namespace hpp {
       , geomModel_(other.geomModel_)
       , geomData_ (new GeomData (other.geomData()))
       , name_ (other.name_)
-      , jointVector_()
       , currentConfiguration_ (other.currentConfiguration_)
       , currentVelocity_ (other.currentVelocity_)
       , currentAcceleration_ (other.currentAcceleration_)
@@ -76,7 +73,6 @@ namespace hpp {
       , frameUpToDate_ (false)
       , geomUpToDate_ (false)
       , computationFlag_ (other.computationFlag_)
-      , objectVector_ ()
       , grippers_ ()
       , extraConfigSpace_ (other.extraConfigSpace_)
       , weakPtr_()
@@ -116,8 +112,6 @@ namespace hpp {
     {
       weakPtr_ = weakPtr;
       DevicePtr_t self (weakPtr_.lock());
-      jointVector_ = JointVector(self);
-      objectVector_ = DeviceObjectVector(self);
     }
 
     void Device::initCopy(const DeviceWkPtr_t& weakPtr, const Device& other)
@@ -398,8 +392,8 @@ namespace hpp {
     std::ostream& Device::
     print (std::ostream& os) const
     {
-      for (JointVector::const_iterator it = jointVector_.begin (); it != jointVector_.end (); ++it) 
-        (*it)->display(os);
+      for (size_type i = 0; i < nbJoints(); ++i)
+        jointAt(i)->display(os);
       return os;
     }
 

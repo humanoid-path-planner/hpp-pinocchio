@@ -31,7 +31,6 @@
 # include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/deprecated.hh>
 # include <hpp/pinocchio/extra-config-space.hh>
-# include <hpp/pinocchio/device-object-vector.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -158,10 +157,6 @@ namespace hpp {
 
       /// Get root frame
       Frame rootFrame () const;
-
-      /// Get vector of joints
-      inline const JointVector& getJointVector () const HPP_PINOCCHIO_DEPRECATED { return jointVector_; }
-      inline JointVector& getJointVector () HPP_PINOCCHIO_DEPRECATED { return jointVector_; }
 
       /// Get number of joints
       size_type nbJoints () const;
@@ -323,11 +318,6 @@ namespace hpp {
       /// pinocchio.
       BodyPtr_t obstacles () const;
 
-      /// Vector of inner objects of the device
-      /// \deprecated Use Device::nbObjects and Device::objectAt
-      DeviceObjectVector& objectVector () HPP_PINOCCHIO_DEPRECATED {return objectVector_; }
-      const DeviceObjectVector& objectVector () const HPP_PINOCCHIO_DEPRECATED { return objectVector_; }
-
       /// Number of objects
       size_type nbObjects () const;
 
@@ -415,14 +405,11 @@ namespace hpp {
       inline void invalidate () { upToDate_ = false; frameUpToDate_ = false; geomUpToDate_ = false; }
 
       std::string name_;
-      JointVector jointVector_; // fake container with iterator mimicking hpp::model::JointVector_t
       Configuration_t currentConfiguration_;
       vector_t currentVelocity_;
       vector_t currentAcceleration_;
       bool upToDate_, frameUpToDate_, geomUpToDate_;
       Computation_t computationFlag_;
-      // Obstacles
-      DeviceObjectVector objectVector_;
       // Grippers
       Grippers_t grippers_;
       LiegroupSpacePtr_t configSpace_;
