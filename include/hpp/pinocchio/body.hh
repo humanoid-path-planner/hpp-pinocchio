@@ -68,9 +68,14 @@ namespace hpp {
       /// \name Inner/outer objects
       /// \{
 
-      /// Access to inner objects
-      /// \param type Collision or distance
-      const ObjectVector_t& innerObjects () const { return innerObjects_; }
+      /// \deprecated Use nbInnerObjects and innerObjectAt instead
+      const ObjectVector_t& innerObjects () const HPP_PINOCCHIO_DEPRECATED { return innerObjects_; }
+
+      /// Number of inner objects.
+      size_type nbInnerObjects () const;
+
+      /// Access to an inner object.
+      CollisionObjectPtr_t innerObjectAt (const size_type& i) const;
 
       /// Get radius
       ///

@@ -54,7 +54,6 @@ namespace hpp {
       , name_ (name)
       , jointVector_()
       , computationFlag_ (Computation_t(JOINT_POSITION | JACOBIAN))
-      , obstacles_()
       , objectVector_ ()
       , weakPtr_()
     {
@@ -77,7 +76,6 @@ namespace hpp {
       , frameUpToDate_ (false)
       , geomUpToDate_ (false)
       , computationFlag_ (other.computationFlag_)
-      , obstacles_()
       , objectVector_ ()
       , grippers_ ()
       , extraConfigSpace_ (other.extraConfigSpace_)
@@ -119,7 +117,6 @@ namespace hpp {
       weakPtr_ = weakPtr;
       DevicePtr_t self (weakPtr_.lock());
       jointVector_ = JointVector(self);
-      obstacles_ = ObjectVector(self,0,INNER);
       objectVector_ = DeviceObjectVector(self);
     }
 
@@ -409,6 +406,11 @@ namespace hpp {
     /* ---------------------------------------------------------------------- */
     /* --- COLLISIONS ------------------------------------------------------- */
     /* ---------------------------------------------------------------------- */
+
+    BodyPtr_t Device::obstacles () const
+    {
+      return BodyPtr_t( new Body(weakPtr_.lock(),0) );
+    }
 
     size_type Device::nbObjects() const
     {

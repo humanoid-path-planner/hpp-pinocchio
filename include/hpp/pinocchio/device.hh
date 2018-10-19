@@ -318,11 +318,10 @@ namespace hpp {
       /// \name Collision and distance computation
       /// \{
 
-      /// Get list of obstacles
-      const ObjectVector_t& obstacles () const
-      {
-        return obstacles_;
-      }
+      /// Get the static obstacles
+      /// It corresponds to the geometries attached to the *universe* in
+      /// pinocchio.
+      BodyPtr_t obstacles () const;
 
       /// Vector of inner objects of the device
       /// \deprecated Use Device::nbObjects and Device::objectAt
@@ -423,7 +422,6 @@ namespace hpp {
       bool upToDate_, frameUpToDate_, geomUpToDate_;
       Computation_t computationFlag_;
       // Obstacles
-      ObjectVector_t obstacles_;
       DeviceObjectVector objectVector_;
       // Grippers
       Grippers_t grippers_;

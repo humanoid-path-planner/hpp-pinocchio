@@ -27,6 +27,7 @@
 
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/collision-object.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -104,6 +105,22 @@ namespace hpp {
     {
       selfAssert();
       return model().inertias[jointIndex].mass();
+    }
+
+    size_type Body::nbInnerObjects () const
+    {
+      selfAssert();
+      DevicePtr_t device = devicePtr.lock();
+      return (size_type)device->geomData().innerObjects[jointIndex].size();
+    }
+
+    CollisionObjectPtr_t Body::innerObjectAt (const size_type& i) const
+    {
+      selfAssert();
+      assert (0 <= i && i < nbInnerObjects());
+      DevicePtr_t device = devicePtr.lock();
+      return CollisionObjectPtr_t(new CollisionObject(device,
+            device->geomData().innerObjects[jointIndex][i]));
     }
 
     value_type Body::radius () const
