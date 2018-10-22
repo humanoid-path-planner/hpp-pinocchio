@@ -27,7 +27,7 @@ namespace hpp {
     DevicePtr_t humanoidSimple(
         const std::string& name,
         bool usingFF,
-        Device::Computation_t compFlags)
+        Computation_t compFlags)
     {
       DevicePtr_t robot = Device::create (name);
       se3::buildModels::humanoidSimple(robot->model(), usingFF);

@@ -33,7 +33,7 @@ namespace hpp {
       VELOCITY       = 0x4,
       ACCELERATION   = 0x8,
       COM            = 0x10,
-      ALL            = 0Xffff
+      COMPUTE_ALL    = 0Xffff
     };
 
     struct DeviceData

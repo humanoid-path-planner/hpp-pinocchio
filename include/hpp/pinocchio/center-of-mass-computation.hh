@@ -61,8 +61,7 @@ namespace hpp {
         void add (const JointPtr_t& rootOfSubtree);
 
         /// Compute the center of mass and Jacobian of the sub-trees.
-        void compute (const Device::Computation_t& flag
-            = Device::ALL);
+        void compute (const Computation_t& flag = COMPUTE_ALL);
 
         /// Get center of mass of the subtree.
         const vector3_t&     com         () const { return data.com [0]; }

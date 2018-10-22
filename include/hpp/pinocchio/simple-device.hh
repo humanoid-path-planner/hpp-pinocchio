@@ -25,7 +25,7 @@ namespace hpp {
     DevicePtr_t humanoidSimple(
         const std::string& name = "humanoidSimple",
         bool usingFF = true,
-        Device::Computation_t compFlags = (Device::Computation_t) (Device::JOINT_POSITION | Device::JACOBIAN)
+        Computation_t compFlags = (Computation_t) (JOINT_POSITION | JACOBIAN)
         );
 
     namespace unittest {

@@ -109,7 +109,7 @@ namespace hpp {
     JointJacobian_t Frame::jacobian () const 
     {
       selfAssert();
-      assert(robot()->computationFlag() & Device::JACOBIAN);
+      assert(robot()->computationFlag() & JACOBIAN);
       JointJacobian_t jacobian = JointJacobian_t::Zero(6,model().nv);
       se3::getFrameJacobian<se3::LOCAL> (model(),data(),frameIndex_,jacobian);
       return jacobian;
