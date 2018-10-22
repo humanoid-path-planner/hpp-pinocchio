@@ -114,7 +114,7 @@ namespace hpp {
     void Device::init(const DeviceWkPtr_t& weakPtr)
     {
       weakPtr_ = weakPtr;
-      d_.weakPtr_ = weakPtr;
+      d_.devicePtr_ = weakPtr;
       DevicePtr_t self (weakPtr_.lock());
     }
 

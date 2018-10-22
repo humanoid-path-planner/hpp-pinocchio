@@ -56,7 +56,7 @@ namespace hpp {
       vector_t currentAcceleration_;
       bool upToDate_, frameUpToDate_, geomUpToDate_;
       Computation_t computationFlag_;
-      DeviceWkPtr_t weakPtr_;
+      DeviceWkPtr_t devicePtr_;
 
       /// Temporary variable to avoid dynamic allocation
       Configuration_t modelConf_;

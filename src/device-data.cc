@@ -43,7 +43,7 @@ namespace hpp {
       , frameUpToDate_   (other.frameUpToDate_)
       , geomUpToDate_    (other.geomUpToDate_)
       , computationFlag_ (other.computationFlag_)
-      , weakPtr_  ()
+      , devicePtr_  ()
     {}
 
     void DeviceData::computeForwardKinematics (const ModelPtr_t& mptr)
