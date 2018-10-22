@@ -45,12 +45,12 @@ namespace hpp {
       typedef std::vector<GeomIndex> GeomIndexList;
       typedef std::map < JointIndex, GeomIndexList > ObjectVec_t;
 
-      /// Construction from global collision-object list. The joint ID is recovered from
-      /// the collision object in Pinocchio and InOut is set to INNER. The geomIndexInJoint
-      /// is not defined (geomIndexInJointSet = false)
+      /// Constructor for object of the device.
       CollisionObject( DevicePtr_t device,
                        const GeomIndex geom );
 
+      /// Constructor for obstacles (object attached to the environment)
+      /// It is not attached to a Device.
       CollisionObject( GeomModelPtr_t geomModel,
                        GeomDataPtr_t  geomData,
                        const GeomIndex geom );
@@ -66,6 +66,11 @@ namespace hpp {
       FclCollisionObjectPtr_t      fcl (      GeomData& data) const;
       FclConstCollisionObjectPtr_t fcl () const ;
       FclCollisionObjectPtr_t      fcl ();
+
+      /// Returns the FCL collision object.
+      /// \param d Ignored if this object represents an obstacle.
+      ///          Otherwise, a DeviceData for the internal device.
+      FclCollisionObjectPtr_t      fcl (DeviceData& d) const;
 
       /// Get joint index
       const JointIndex& jointIndex () const { return jointIndex_; }
@@ -84,6 +89,7 @@ namespace hpp {
       /// transform between hpp and fcl.
       const fcl::Transform3f& getFclTransform () const;
       const Transform3f&      getTransform () const;
+      const Transform3f&      getTransform (DeviceData& d) const;
 
       const GeomIndex& indexInModel () const
       {
@@ -102,8 +108,13 @@ namespace hpp {
       void selfAssert() const;
 
     private:
+      GeomData& geomData() const;
+      GeomData& geomData(DeviceData& d) const;
+
       DevicePtr_t devicePtr;
       GeomModelPtr_t geomModel_;
+      // If geomData_ is not null when the object is part of the environment.
+      // Otherwise, it is null.
       GeomDataPtr_t  geomData_;
       JointIndex  jointIndex_;
       GeomIndex   geomInModelIndex;     // Index in global model list.

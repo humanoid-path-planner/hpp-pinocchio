@@ -52,6 +52,7 @@ namespace hpp {
       friend class Joint;
       friend class Frame;
       friend class DeviceSync;
+      friend class CollisionObject;
     public:
       /// Collision pairs between bodies
       typedef std::pair <JointPtr_t, JointPtr_t> CollisionPair_t;
