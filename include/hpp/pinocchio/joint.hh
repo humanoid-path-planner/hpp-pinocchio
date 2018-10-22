@@ -69,7 +69,10 @@ namespace hpp {
       /// \{
 
       /// Joint transformation
-      const Transform3f& currentTransformation () const;
+      const Transform3f& currentTransformation () const { return currentTransformation(data()); }
+
+      /// Joint transformation
+      const Transform3f& currentTransformation (const DeviceData& data) const;
 
       ///\}
       // -----------------------------------------------------------------------
@@ -163,19 +166,19 @@ namespace hpp {
       /// \name Jacobian
       /// \{
 
-      /// Get const reference to Jacobian
-      /// \param localFrame if true, compute the jacobian (6d) in the local frame, 
-      /// whose linear part corresponds to the velocity of the center of the frame.
-      /// If false, the jacobian is expressed in the global frame and its linear part
-      /// corresponds to the value of the velocity vector field at the center of the world.
-      const JointJacobian_t& jacobian (const bool localFrame=true) const;
-
       /// Get non const reference to Jacobian
       /// \param localFrame if true, compute the jacobian (6d) in the local frame, 
       /// whose linear part corresponds to the velocity of the center of the frame.
       /// If false, the jacobian is expressed in the global frame and its linear part
       /// corresponds to the value of the velocity vector field at the center of the world.
-      JointJacobian_t& jacobian (const bool localFrame=true);
+      JointJacobian_t& jacobian (const bool localFrame=true) const { return jacobian (data(), localFrame); }
+
+      /// Get reference to Jacobian
+      /// \param localFrame if true, compute the jacobian (6d) in the local frame, 
+      /// whose linear part corresponds to the velocity of the center of the frame.
+      /// If false, the jacobian is expressed in the global frame and its linear part
+      /// corresponds to the value of the velocity vector field at the center of the world.
+      JointJacobian_t& jacobian (DeviceData& data, const bool localFrame=true) const;
 
       /// \}
       // -----------------------------------------------------------------------
@@ -214,7 +217,6 @@ namespace hpp {
     protected:
       value_type maximalDistanceToParent_;
       DeviceWkPtr_t devicePtr;
-      mutable JointJacobian_t jacobian_;
       JointIndex jointIndex;
       std::vector<JointIndex> children;
 
@@ -222,8 +224,7 @@ namespace hpp {
       void setChildList();
       Model&        model() ;      
       const Model&  model() const ;
-      Data &        data()  ;      
-      const Data &  data()  const ;
+      DeviceData& data() const;
 
       /// Assert that the members of the struct are valid (no null pointer, etc).
       void selfAssert() const;
