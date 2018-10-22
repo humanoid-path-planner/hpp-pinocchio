@@ -80,12 +80,6 @@ namespace hpp {
       /// Returns true if this frame is the universe frame.
       bool isRootFrame () const;
 
-      /// Number of child frames
-      // std::size_t numberChildFrames () const;
-
-      /// Get child frame
-      // FramePtr_t childFrame (std::size_t rank) const;
-
       const std::vector<FrameIndex>& children () const
       {
         return children_;
@@ -106,14 +100,6 @@ namespace hpp {
       DeviceConstPtr_t robot () const { selfAssert();  return devicePtr_;}
       /// Access robot owning the object
       DevicePtr_t robot () { selfAssert(); return devicePtr_;}
-
-      /*
-      /// \name Body linked to the frame
-      /// \{
-      /// Get linked body
-      BodyPtr_t linkedBody () const;
-      /// \}
-      */
 
       /// Display frame
       virtual std::ostream& display (std::ostream& os) const;

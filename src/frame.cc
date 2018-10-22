@@ -154,20 +154,6 @@ namespace hpp {
       }
     }
 
-    /*
-    std::size_t  Frame::numberChildFrames () const
-    {
-      return children_.size();
-    }
-
-    FramePtr_t  Frame::childFrame (std::size_t rank) const
-    {
-      selfAssert();
-      assert(rank<children_.size());
-      return Frame (devicePtr_, children_[rank]);
-    }
-    */
-
     Transform3f Frame::positionInParentFrame () const
     {
       selfAssert();
@@ -215,24 +201,12 @@ namespace hpp {
       }
     }
 
-    /*
-    BodyPtr_t  Frame::linkedBody () const 
-    {
-      return BodyPtr_t( new Body(devicePtr_,frameIndex_) );
-    }
-    */
-
     std::ostream& Frame::display (std::ostream& os) const 
     {
       os
         << "Frame " << frameIndex_
         << (isFixed() ? " (Fixed)" : "")
         << " : " << name() << '\n';
-      // for (unsigned int iChild=0; iChild < numberChildFrames (); iChild++)
-      // {
-      // os << "\"" << name () << "\"->\"" << childFrame(iChild)->name () << "\""
-      // << std::endl;
-      // }
       return os << std::endl;
     }
 
