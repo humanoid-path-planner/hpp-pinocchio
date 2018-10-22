@@ -52,6 +52,8 @@ namespace hpp {
       invalidate();
       createData();
       createGeomData();
+
+      numberDeviceData(1);
     }
 
     Device::Device(const Device& other)
@@ -61,7 +63,10 @@ namespace hpp {
       , extraConfigSpace_ (other.extraConfigSpace_)
       , weakPtr_()
       , datasLastFree_ (0)
-    {}
+      , datas_ ()
+    {
+      numberDeviceData(other.datas_.size());
+    }
 
     Device::~Device ()
     {
@@ -76,10 +81,10 @@ namespace hpp {
             " of them are already in use.");
       size_type curSize = (size_type)datas_.size();
       // Delete if too many device data
-      for (size_type i = s; i < curSize; ++i) delete datas_[i];
+      for (size_type i = 0; i < curSize; ++i) delete datas_[i];
       datas_.resize(s);
       // Initialize if too few device data
-      for (size_type i = curSize; i < s; ++i) datas_[i] = new DeviceData (d_);
+      for (size_type i = 0; i < s; ++i) datas_[i] = new DeviceData (d_);
     }
 
     // static method
@@ -133,6 +138,7 @@ namespace hpp {
       // We assume that model is now complete and state can be resized.
       resizeState(); 
       d_.invalidate();
+      numberDeviceData(datas_.size());
     }
 
     void Device::
