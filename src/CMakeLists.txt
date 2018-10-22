@@ -22,6 +22,7 @@ SET(LIBRARY_SOURCES
   comparison.hh
   comparison.hxx
   device.cc
+  device-data.cc
   humanoid-robot.cc
   joint.cc
   frame.cc

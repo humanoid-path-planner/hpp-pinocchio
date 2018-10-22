@@ -31,9 +31,11 @@
 # include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/deprecated.hh>
 # include <hpp/pinocchio/extra-config-space.hh>
+# include <hpp/pinocchio/device-data.hh>
 
 namespace hpp {
   namespace pinocchio {
+
     /// \brief Robot with geometric and dynamic pinocchio
 
     /// The creation of the device is done by Device::create(const
@@ -46,19 +48,6 @@ namespace hpp {
       friend class Joint;
       friend class Frame;
     public:
-      /// Flags to select computation
-      /// To optimize computation time, computations performed by method
-      /// computeForwardKinematics can be selected by calling method
-      /// controlComputation.
-      enum Computation_t {
-	JOINT_POSITION = 0x1,
-	JACOBIAN       = 0x2,
-	VELOCITY       = 0x4,
-	ACCELERATION   = 0x8,
-	COM            = 0x10,
-	ALL            = 0Xffff
-      };
-
       /// Collision pairs between bodies
       typedef std::pair <JointPtr_t, JointPtr_t> CollisionPair_t;
       typedef std::list <CollisionPair_t> CollisionPairs_t;
@@ -122,28 +111,28 @@ namespace hpp {
       GeomModel &       geomModel() { assert(geomModel_); return *geomModel_; }
 
       /// Set Pinocchio data corresponding to model
-      void data( DataPtr_t dataPtr ) { data_ = dataPtr; resizeState(); }
+      void data( DataPtr_t dataPtr ) { d().data_ = dataPtr; resizeState(); }
       /// Access to Pinocchio data/
-      DataConstPtr_t    dataPtr() const { return data_; }
+      DataConstPtr_t    dataPtr() const { return d().data_; }
       /// Access to Pinocchio data/
-      DataPtr_t         dataPtr() { return data_; }
+      DataPtr_t         dataPtr() { return d().data_; }
       /// Access to Pinocchio data/
-      const Data & data() const { assert(data_); return *data_; }
+      const Data & data() const { assert(d().data_); return *d().data_; }
       /// Access to Pinocchio data/
-      Data &       data() { assert(data_); return *data_; }
+      Data &       data() { assert(d().data_); return *d().data_; }
       /// Create Pinocchio data from model.
       void createData();
 
       /// Set Pinocchio geomData corresponding to model
-      void geomData( GeomDataPtr_t geomDataPtr ) { geomData_ = geomDataPtr; resizeState(); }
+      void geomData( GeomDataPtr_t geomDataPtr ) { d().geomData_ = geomDataPtr; resizeState(); }
       /// Access to Pinocchio geomData/
-      GeomDataConstPtr_t       geomDataPtr() const { return geomData_; }
+      GeomDataConstPtr_t       geomDataPtr() const { return d().geomData_; }
       /// Access to Pinocchio geomData/
-      GeomDataPtr_t            geomDataPtr()       { return geomData_; }
+      GeomDataPtr_t            geomDataPtr()       { return d().geomData_; }
       /// Access to Pinocchio geomData/
-      const GeomData& geomData() const    { assert(geomData_); return *geomData_; }
+      const GeomData& geomData() const    { assert(d().geomData_); return *d().geomData_; }
       /// Access to Pinocchio geomData/
-      GeomData&       geomData()          { assert(geomData_); return *geomData_; }
+      GeomData&       geomData()          { assert(d().geomData_); return *d().geomData_; }
       /// Create Pinocchio geomData from model.
       void createGeomData();
 
@@ -236,7 +225,7 @@ namespace hpp {
       /// Get current configuration
       const Configuration_t& currentConfiguration () const
       {
-	return currentConfiguration_;
+	return d().currentConfiguration_;
       }
       /// Set current configuration
       /// \return True if the current configuration was modified and false if
@@ -249,27 +238,27 @@ namespace hpp {
       /// Get current velocity
       const vector_t& currentVelocity () const
       {
-	return currentVelocity_;
+	return d().currentVelocity_;
       }
 
       /// Set current velocity
       void currentVelocity (vectorIn_t velocity)
       {
-        invalidate();
-	currentVelocity_ = velocity;
+        d().invalidate();
+	d().currentVelocity_ = velocity;
       }
 
       /// Get current acceleration
       const vector_t& currentAcceleration () const
       {
-	return currentAcceleration_;
+	return d().currentAcceleration_;
       }
 
       /// Set current acceleration
       void currentAcceleration (vectorIn_t acceleration)
       {
-        invalidate();
-	currentAcceleration_ = acceleration;
+        d().invalidate();
+	d().currentAcceleration_ = acceleration;
       }
       /// \}
       // -----------------------------------------------------------------------
@@ -346,13 +335,13 @@ namespace hpp {
       /// method computeForwardKinematics.
       void controlComputation (const Computation_t& flag)
       {
-	computationFlag_ = flag;
-        invalidate();
+	d().computationFlag_ = flag;
+        d().invalidate();
       }
       /// Get computation flag
       Computation_t computationFlag () const
       {
-	return computationFlag_;
+	return d().computationFlag_;
       }
       /// Compute forward kinematics
       void computeForwardKinematics ();
@@ -398,27 +387,22 @@ namespace hpp {
     protected:
       // Pinocchio objects
       ModelPtr_t model_; 
-      DataPtr_t data_;
       GeomModelPtr_t geomModel_;
-      GeomDataPtr_t geomData_;
 
-      inline void invalidate () { upToDate_ = false; frameUpToDate_ = false; geomUpToDate_ = false; }
+      DeviceData d_;
+
+      virtual DeviceData      & d ()       { return d_; }
+      virtual DeviceData const& d () const { return d_; }
+
+      inline void invalidate () { d_.invalidate(); }
 
       std::string name_;
-      Configuration_t currentConfiguration_;
-      vector_t currentVelocity_;
-      vector_t currentAcceleration_;
-      bool upToDate_, frameUpToDate_, geomUpToDate_;
-      Computation_t computationFlag_;
       // Grippers
       Grippers_t grippers_;
       LiegroupSpacePtr_t configSpace_;
       // Extra configuration space
       ExtraConfigSpace extraConfigSpace_;
       DeviceWkPtr_t weakPtr_;
-
-      /// Temporary variable to avoid dynamic allocation
-      mutable Configuration_t robotConf_;
     }; // class Device
 
     inline std::ostream& operator<< (std::ostream& os, const hpp::pinocchio::Device& device)

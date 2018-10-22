@@ -69,6 +69,7 @@ ADD_OPTIONAL_DEPENDENCY("hpp_environments")
 SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/fwd.hh
   include/hpp/pinocchio/device.hh
+  include/hpp/pinocchio/device-data.hh
   include/hpp/pinocchio/humanoid-robot.hh
   include/hpp/pinocchio/joint.hh
   include/hpp/pinocchio/frame.hh

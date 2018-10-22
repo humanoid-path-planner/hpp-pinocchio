@@ -24,13 +24,10 @@
 
 #include <hpp/fcl/BV/AABB.h>
 
-#include <pinocchio/multibody/model.hpp>
-#include <pinocchio/algorithm/center-of-mass.hpp>
-#include <pinocchio/algorithm/frames.hpp>
-#include <pinocchio/algorithm/jacobian.hpp>
-#include <pinocchio/algorithm/kinematics.hpp>
 #include <pinocchio/algorithm/geometry.hpp>
 #include <pinocchio/algorithm/joint-configuration.hpp> // se3::details::Dispatch
+#include <pinocchio/multibody/geometry.hpp>
+#include <pinocchio/multibody/model.hpp>
 
 #include <hpp/pinocchio/fwd.hh>
 //#include <hpp/pinocchio/distance-result.hh>
@@ -48,11 +45,8 @@ namespace hpp {
     Device::
     Device(const std::string& name)
       : model_(new Model())
-      , data_ ()
       , geomModel_(new GeomModel())
-      , geomData_ ()
       , name_ (name)
-      , computationFlag_ (Computation_t(JOINT_POSITION | JACOBIAN))
       , weakPtr_()
     {
       invalidate();
@@ -62,22 +56,12 @@ namespace hpp {
 
     Device::Device(const Device& other)
       : model_(other.model_)
-      , data_ (new Data (other.data()))
       , geomModel_(other.geomModel_)
-      , geomData_ (new GeomData (other.geomData()))
       , name_ (other.name_)
-      , currentConfiguration_ (other.currentConfiguration_)
-      , currentVelocity_ (other.currentVelocity_)
-      , currentAcceleration_ (other.currentAcceleration_)
-      , upToDate_ (false)
-      , frameUpToDate_ (false)
-      , geomUpToDate_ (false)
-      , computationFlag_ (other.computationFlag_)
       , grippers_ ()
       , extraConfigSpace_ (other.extraConfigSpace_)
       , weakPtr_()
-    {
-    }
+    {}
 
     // static method
     DevicePtr_t Device::
@@ -111,6 +95,7 @@ namespace hpp {
     void Device::init(const DeviceWkPtr_t& weakPtr)
     {
       weakPtr_ = weakPtr;
+      d_.weakPtr_ = weakPtr;
       DevicePtr_t self (weakPtr_.lock());
     }
 
@@ -125,18 +110,18 @@ namespace hpp {
     void Device::
     createData()
     {
-      data_ = DataPtr_t( new Data(*model_) );
+      d_.data_ = DataPtr_t( new Data(model()) );
       // We assume that model is now complete and state can be resized.
       resizeState(); 
-      invalidate();
+      d_.invalidate();
     }
 
     void Device::
     createGeomData()
     {
-      geomData_ = GeomDataPtr_t( new GeomData(*geomModel_) );
-      se3::computeBodyRadius(*model_,*geomModel_,*geomData_);
-      invalidate();
+      d().geomData_ = GeomDataPtr_t( new GeomData(geomModel()) );
+      se3::computeBodyRadius(model(),geomModel(),geomData());
+      d().invalidate();
     }
     
     /* ---------------------------------------------------------------------- */
@@ -168,10 +153,9 @@ namespace hpp {
     JointPtr_t Device::
     getJointAtConfigRank (const size_type& r) const
     {
-      assert(model_);
       //BOOST_FOREACH( const se3::JointModel & j, // Skip "universe" joint
       //std::make_pair(model_->joints.begin()+1,model_->joints.end()) )
-      BOOST_FOREACH( const se3::JointModel & j, model_->joints )
+      BOOST_FOREACH( const se3::JointModel & j, model().joints )
         {
           if( j.id()==0 ) continue; // Skip "universe" joint
           const size_type iq = r - j.idx_q();
@@ -184,8 +168,7 @@ namespace hpp {
     JointPtr_t Device::
     getJointAtVelocityRank (const size_type& r) const
     {
-      assert(model_);
-      BOOST_FOREACH( const se3::JointModel & j,model_->joints )
+      BOOST_FOREACH( const se3::JointModel & j,model().joints )
         {
           if( j.id()==0 ) continue; // Skip "universe" joint
           const size_type iv = r - j.idx_v();
@@ -198,25 +181,23 @@ namespace hpp {
     JointPtr_t Device::
     getJointByName (const std::string& name) const
     {
-      assert(model_);
-      if(! model_->existJointName(name))
+      if(! model().existJointName(name))
 	throw std::runtime_error ("Device " + name_ +
 				  " does not have any joint named "
 				  + name);
-      JointIndex id = model_->getJointId(name);
+      JointIndex id = model().getJointId(name);
       return JointPtr_t( new Joint(weakPtr_.lock(),id) );
     }
 
     JointPtr_t Device::
     getJointByBodyName (const std::string& name) const
     {
-      assert(model_);
-      if (model_->existFrame(name)) {
-        se3::Model::FrameIndex bodyId = model_->getFrameId(name);
-        if (model_->frames[bodyId].type == se3::BODY) {
-          JointIndex jointId = model_->frames[bodyId].parent;
+      if (model().existFrame(name)) {
+        se3::Model::FrameIndex bodyId = model().getFrameId(name);
+        if (model().frames[bodyId].type == se3::BODY) {
+          JointIndex jointId = model().frames[bodyId].parent;
           //assert(jointId>=0);
-          assert((std::size_t)jointId<model_->joints.size());
+          assert((std::size_t)jointId<model().joints.size());
           return JointPtr_t( new Joint(weakPtr_.lock(),jointId) );
         }
       }
@@ -228,47 +209,34 @@ namespace hpp {
     Frame Device::
     getFrameByName (const std::string& name) const
     {
-      assert(model_);
-      if(! model_->existFrame(name))
+      if(! model().existFrame(name))
 	throw std::logic_error ("Device " + name_ +
 				" does not have any frame named "
 				+ name);
-      FrameIndex id = model_->getFrameId(name);
+      FrameIndex id = model().getFrameId(name);
       return Frame(weakPtr_.lock(), id);
     }
 
     size_type Device::
     configSize () const
     {
-      assert(model_);
-      return model_->nq + extraConfigSpace_.dimension();
+      return model().nq + extraConfigSpace_.dimension();
     }
 
     size_type Device::
     numberDof () const
     {
-      assert(model_);
-      return model_->nv + extraConfigSpace_.dimension();
+      return model().nv + extraConfigSpace_.dimension();
     }
 
     /* ---------------------------------------------------------------------- */
     /* --- CONFIG ----------------------------------------------------------- */
     /* ---------------------------------------------------------------------- */
 
-    /* Previous implementation of resizeState in hpp::model:: was setting the
-     * new part of the configuration to neutral configuration. This is not
-     * working but for empty extra-config. The former behavior is therefore not
-     * propagated here. The configuration is resized without setting the new
-     * memory.
-     */
     void Device::
     resizeState()
     {
-      // FIXME we should not use neutralConfiguration here.
-      currentConfiguration_ = neutralConfiguration();
-      // currentConfiguration_.resize(configSize());
-      currentVelocity_.resize(numberDof());
-      currentAcceleration_.resize(numberDof());
+      d_.resize(neutralConfiguration(), numberDof());
 
       configSpace_ = LiegroupSpace::empty();
       const Model& m (model());
@@ -281,10 +249,11 @@ namespace hpp {
     bool Device::
     currentConfiguration (ConfigurationIn_t configuration)
     {
-      if (configuration != currentConfiguration_)
+      DeviceData& data = d();
+      if (configuration != data.currentConfiguration_)
         {
-          invalidate();
-          currentConfiguration_ = configuration;
+          data.invalidate();
+          data.currentConfiguration_ = configuration;
           return true;
 	}
       return false;
@@ -294,7 +263,7 @@ namespace hpp {
     neutralConfiguration () const
     {
       Configuration_t n (configSize());
-      n.head(model_->nq) = model().neutralConfiguration;
+      n.head(model().nq) = model().neutralConfiguration;
       n.tail(extraConfigSpace_.dimension()).setZero();
       return n;
     }
@@ -302,91 +271,37 @@ namespace hpp {
     const value_type& Device::
     mass () const 
     { 
-      assert(data_);
-      return data_->mass[0];
+      return data().mass[0];
     }
     
     const vector3_t& Device::
     positionCenterOfMass () const
     {
-      assert(data_);
-      return data_->com[0];
+      return data().com[0];
     }
     
     const ComJacobian_t& Device::
     jacobianCenterOfMass () const
     {
-      assert(data_);
-      return data_->Jcom;
+      return data().Jcom;
     }
 
     void Device::
     computeForwardKinematics ()
     {
-      if(upToDate_) return;
-
-      assert(model_);
-      assert(data_);
-      // a IMPLIES b === (b || ~a)
-      // velocity IMPLIES position
-      assert( (computationFlag_&JOINT_POSITION) || (!(computationFlag_&VELOCITY)) );
-      // acceleration IMPLIES velocity
-      assert( (computationFlag_&VELOCITY) || (!(computationFlag_&ACCELERATION)) );
-      // com IMPLIES position
-      assert( (computationFlag_&JOINT_POSITION) || (!(computationFlag_&COM)) );
-      // jacobian IMPLIES position
-      assert( (computationFlag_&JOINT_POSITION) || (!(computationFlag_&JACOBIAN)) );
-
-      const size_type nq = model().nq;
-      const size_type nv = model().nv;
-
-      // TODO pinocchio does not allow to pass currentConfiguration_.head(nq) as
-      // a reference. This line avoids dynamic memory allocation
-      robotConf_ = currentConfiguration_.head(nq);
-
-      if (computationFlag_ & ACCELERATION )
-        se3::forwardKinematics(*model_,*data_,robotConf_,
-                               currentVelocity_.head(nv),currentAcceleration_.head(nv));
-      else if (computationFlag_ & VELOCITY )
-        se3::forwardKinematics(*model_,*data_,robotConf_,
-                               currentVelocity_.head(nv));
-      else if (computationFlag_ & JOINT_POSITION )
-        se3::forwardKinematics(*model_,*data_,robotConf_);
-
-      if (computationFlag_&COM)
-        {
-          if (computationFlag_|JACOBIAN) 
-            // TODO: Jcom should not recompute the kinematics (\sa pinocchio issue #219)
-            se3::jacobianCenterOfMass(*model_,*data_,robotConf_,true);
-          else 
-            // Compose Com position, but not velocity and acceleration.
-            se3::centerOfMass<true, false, false>(*model_,*data_,true);
-        }
-
-      if(computationFlag_&JACOBIAN)
-        se3::computeJointJacobians(*model_,*data_,robotConf_);
-
-      upToDate_ = true;
+      d().computeForwardKinematics (modelPtr());
     }
 
     void Device::
     computeFramesForwardKinematics ()
     {
-      if(frameUpToDate_) return;
-      computeForwardKinematics();
-
-      se3::updateFramePlacements (model(),data());
-
-      frameUpToDate_ = true;
+      d().computeFramesForwardKinematics(modelPtr());
     }
 
     void Device::
     updateGeometryPlacements ()
     {
-      if (!geomUpToDate_) {
-        se3::updateGeometryPlacements(model(),data(),geomModel(),geomData());
-        geomUpToDate_ = true;
-      }
+      d().updateGeometryPlacements (modelPtr(), geomModelPtr());
     }
 
     std::ostream& Device::
