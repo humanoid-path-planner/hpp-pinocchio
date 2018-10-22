@@ -44,10 +44,10 @@ namespace hpp {
 
     Device::
     Device(const std::string& name)
-      : model_(new Model())
-      , geomModel_(new GeomModel())
+      : AbstractDevice ()
       , name_ (name)
       , weakPtr_()
+      , datasLastFree_ (0)
     {
       invalidate();
       createData();
@@ -55,13 +55,32 @@ namespace hpp {
     }
 
     Device::Device(const Device& other)
-      : model_(other.model_)
-      , geomModel_(other.geomModel_)
+      : AbstractDevice (other.model_, other.geomModel_)
       , name_ (other.name_)
       , grippers_ ()
       , extraConfigSpace_ (other.extraConfigSpace_)
       , weakPtr_()
+      , datasLastFree_ (0)
     {}
+
+    Device::~Device ()
+    {
+      for (std::size_t i = 0; i < datas_.size(); ++i) delete datas_[i];
+    }
+
+    void Device::numberDeviceData (const size_type& s)
+    {
+      boost::mutex::scoped_lock lock (datasMutex_);
+      if (datasLastFree_ > 0)
+        throw std::logic_error ("Cannot set the number of device data when some"
+            " of them are already in use.");
+      size_type curSize = (size_type)datas_.size();
+      // Delete if too many device data
+      for (size_type i = s; i < curSize; ++i) delete datas_[i];
+      datas_.resize(s);
+      // Initialize if too few device data
+      for (size_type i = curSize; i < s; ++i) datas_[i] = new DeviceData (d_);
+    }
 
     // static method
     DevicePtr_t Device::
@@ -236,7 +255,9 @@ namespace hpp {
     void Device::
     resizeState()
     {
-      d_.resize(neutralConfiguration(), numberDof());
+      d_.currentConfiguration_ = neutralConfiguration();
+      d_.currentVelocity_      = vector_t::Zero(numberDof());
+      d_.currentAcceleration_  = vector_t::Zero(numberDof());
 
       configSpace_ = LiegroupSpace::empty();
       const Model& m (model());
@@ -246,19 +267,6 @@ namespace hpp {
         *configSpace_ *= LiegroupSpace::create (extraConfigSpace_.dimension());
     }
 
-    bool Device::
-    currentConfiguration (ConfigurationIn_t configuration)
-    {
-      DeviceData& data = d();
-      if (configuration != data.currentConfiguration_)
-        {
-          data.invalidate();
-          data.currentConfiguration_ = configuration;
-          return true;
-	}
-      return false;
-    }
-
     Configuration_t Device::
     neutralConfiguration () const
     {
@@ -266,42 +274,6 @@ namespace hpp {
       n.head(model().nq) = model().neutralConfiguration;
       n.tail(extraConfigSpace_.dimension()).setZero();
       return n;
-    }
-
-    const value_type& Device::
-    mass () const 
-    { 
-      return data().mass[0];
-    }
-    
-    const vector3_t& Device::
-    positionCenterOfMass () const
-    {
-      return data().com[0];
-    }
-    
-    const ComJacobian_t& Device::
-    jacobianCenterOfMass () const
-    {
-      return data().Jcom;
-    }
-
-    void Device::
-    computeForwardKinematics ()
-    {
-      d().computeForwardKinematics (modelPtr());
-    }
-
-    void Device::
-    computeFramesForwardKinematics ()
-    {
-      d().computeFramesForwardKinematics(modelPtr());
-    }
-
-    void Device::
-    updateGeometryPlacements ()
-    {
-      d().updateGeometryPlacements (modelPtr(), geomModelPtr());
     }
 
     std::ostream& Device::

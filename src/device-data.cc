@@ -36,6 +36,13 @@ namespace hpp {
     DeviceData::DeviceData (const DeviceData& other)
       : data_     (new Data     (*other.data_    ))
       , geomData_ (new GeomData (*other.geomData_))
+      , currentConfiguration_ (other.currentConfiguration_)
+      , currentVelocity_      (other.currentVelocity_)
+      , currentAcceleration_  (other.currentAcceleration_)
+      , upToDate_        (other.upToDate_)
+      , frameUpToDate_   (other.frameUpToDate_)
+      , geomUpToDate_    (other.geomUpToDate_)
+      , computationFlag_ (other.computationFlag_)
       , weakPtr_  ()
     {}
 

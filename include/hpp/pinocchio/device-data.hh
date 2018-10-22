@@ -41,13 +41,6 @@ namespace hpp {
       DeviceData ();
       DeviceData (const DeviceData& other);
 
-      void resize (const Configuration_t& n, const size_type& nDof)
-      {
-        currentConfiguration_ = n;
-        currentVelocity_    .resize(nDof);
-        currentAcceleration_.resize(nDof);
-      }
-
       inline void invalidate () { upToDate_ = false; frameUpToDate_ = false; geomUpToDate_ = false; }
 
       void computeForwardKinematics (const ModelPtr_t& m);
