@@ -555,6 +555,7 @@ namespace hpp {
       }
 
       // Compute AABB
+      Configuration_t q (neutralConfiguration());
       fcl::AABB aabb;
       for (std::size_t k = 0; k < rootIdxs.size(); ++k)
       {
@@ -563,7 +564,7 @@ namespace hpp {
 
         fcl::AABB aabb_subtree;
         AABBStep::run(m.joints[i],
-            AABBStep::ArgsType (m, currentConfiguration_, true, aabb_subtree));
+            AABBStep::ArgsType (m, q, true, aabb_subtree));
 
         // Move AABB
         fcl::rotate   (aabb_subtree, m.jointPlacements[i].rotation   ());
