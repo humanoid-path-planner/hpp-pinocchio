@@ -382,7 +382,7 @@ void test_successive_interpolation (DevicePtr_t robot)
   for (size_type i=0; i<NB_CONF; ++i) {
     q0 = se3::randomConfiguration (robot->model());
 
-    for (size_type i=0; i<NB_SUCCESSIVE_INTERPOLATION; ++i) {
+    for (size_type j=0; j<NB_SUCCESSIVE_INTERPOLATION; ++j) {
       q1 = se3::randomConfiguration (robot->model());
       BOOST_CHECK(isNormalized(robot, q1, eps));
       difference<LieGroup> (robot, q1, q0, q1_minus_q0);
