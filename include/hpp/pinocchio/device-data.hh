@@ -60,6 +60,8 @@ namespace hpp {
 
       /// Temporary variable to avoid dynamic allocation
       Configuration_t modelConf_;
+      /// Pool of joint jacobians
+      std::vector<JointJacobian_t> jointJacobians_;
     }; // struct DeviceData
   } // namespace pinocchio
 } // namespace hpp

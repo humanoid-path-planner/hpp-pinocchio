@@ -142,12 +142,12 @@ namespace hpp {
 
         virtual ~DeviceSync ();
 
+        DeviceData      & d ()       { return *d_; }
+        DeviceData const& d () const { return *d_; }
+
       private:
         DevicePtr_t device_;
         DeviceData* d_;
-
-        DeviceData      & d ()       { return *d_; }
-        DeviceData const& d () const { return *d_; }
     }; // class DeviceSync
   } // namespace pinocchio
 } // namespace hpp

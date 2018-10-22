@@ -258,6 +258,7 @@ namespace hpp {
       d_.currentConfiguration_ = neutralConfiguration();
       d_.currentVelocity_      = vector_t::Zero(numberDof());
       d_.currentAcceleration_  = vector_t::Zero(numberDof());
+      d_.jointJacobians_.resize (model().njoints);
 
       configSpace_ = LiegroupSpace::empty();
       const Model& m (model());

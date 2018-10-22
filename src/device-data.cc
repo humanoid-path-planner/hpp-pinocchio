@@ -44,6 +44,8 @@ namespace hpp {
       , geomUpToDate_    (other.geomUpToDate_)
       , computationFlag_ (other.computationFlag_)
       , devicePtr_  ()
+      , modelConf_      (other.modelConf_.size())
+      , jointJacobians_ (other.jointJacobians_.size())
     {}
 
     void DeviceData::computeForwardKinematics (const ModelPtr_t& mptr)
