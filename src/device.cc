@@ -62,8 +62,8 @@ namespace hpp {
       , grippers_ ()
       , extraConfigSpace_ (other.extraConfigSpace_)
       , weakPtr_()
-      , datasLastFree_ (0)
       , datas_ ()
+      , datasLastFree_ (0)
     {
       numberDeviceData(other.datas_.size());
     }
@@ -147,6 +147,7 @@ namespace hpp {
       d().geomData_ = GeomDataPtr_t( new GeomData(geomModel()) );
       se3::computeBodyRadius(model(),geomModel(),geomData());
       d().invalidate();
+      numberDeviceData(datas_.size());
     }
     
     /* ---------------------------------------------------------------------- */
