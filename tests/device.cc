@@ -48,7 +48,7 @@ void displayAABB(const fcl::AABB& aabb)
 
 BOOST_AUTO_TEST_CASE (computeAABB)
 {
-  DevicePtr_t robot = makeDeviceSafe(unittest::HumanoidRomeo);
+  DevicePtr_t robot = makeDeviceSafe(unittest::HumanoidSimple);
   BOOST_REQUIRE(robot);
 
   robot->rootJoint()->lowerBounds(vector3_t::Constant(-0));
@@ -72,10 +72,10 @@ BOOST_AUTO_TEST_CASE (unit_test_device)
   DevicePtr_t robot;
   LiegroupSpacePtr_t space;
 
-  robot = makeDeviceSafe (unittest::HumanoidRomeo);
+  robot = makeDeviceSafe (unittest::HumanoidSimple);
   space = LiegroupSpace::createCopy(robot->configSpace());
   space->mergeVectorSpaces();
-  BOOST_CHECK_EQUAL (space->name(), "SE(3)*R^31");
+  BOOST_CHECK_EQUAL (space->name(), "SE(3)*R^26");
 
   robot = makeDeviceSafe (unittest::CarLike);
   space = LiegroupSpace::createCopy(robot->configSpace());

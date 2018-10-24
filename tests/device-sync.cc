@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE (check_synchronization)
   const size_type Nthreads = 4;
   robot->numberDeviceData (4);
 
-  const std::size_t N = 10000;
+  const std::size_t N = 1000;
   // Generate N configurations
   std::vector<Configuration_t> qs (N);
   for (std::size_t i = 0; i < qs.size(); ++i) {
@@ -106,7 +106,6 @@ BOOST_AUTO_TEST_CASE (check_synchronization)
   bpt::ptime t1 = bpt::microsec_clock::local_time();
   BOOST_MESSAGE ("1 thread:  " << (t1-t0).total_milliseconds() << "ms");
 
-  // t0 = clock();
   t0 = bpt::microsec_clock::local_time();
   // In a multi threaded fashion, compute the joint positions
 #pragma omp parallel for
