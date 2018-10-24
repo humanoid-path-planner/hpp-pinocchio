@@ -104,7 +104,7 @@ typedef std::vector<DevicePtr_t> Robots_t;
 Robots_t createRobots()
 {
   Robots_t r;
-  r.push_back(unittest::makeDevice(unittest::HumanoidRomeo));
+  r.push_back(unittest::makeDevice(unittest::HumanoidSimple));
   r.push_back(unittest::makeDevice(unittest::CarLike));
   r.push_back(unittest::makeDevice(unittest::ManipulatorArm2));
   return r;
@@ -117,7 +117,7 @@ const value_type eps = sqrt(Eigen::NumTraits<value_type>::dummy_precision());
 BOOST_AUTO_TEST_CASE(is_valid_configuration)
 {
   DevicePtr_t robot;
-  robot = unittest::makeDevice(unittest::HumanoidRomeo);
+  robot = unittest::makeDevice(unittest::HumanoidSimple);
 
   Configuration_t q = robot->neutralConfiguration();
   BOOST_CHECK(isNormalized(robot, q, eps));
