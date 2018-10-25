@@ -103,26 +103,46 @@ namespace hpp {
       bool operator() () { return *lastFree_ < size_; }
     };
 
-    DeviceSync::DeviceSync (const DevicePtr_t& d)
+    DeviceSync::DeviceSync (const DevicePtr_t& d, bool acquireLock)
       : AbstractDevice (d->modelPtr(), d->geomModelPtr())
       , device_ (d)
       , d_ (NULL)
     {
-      boost::mutex::scoped_lock lock (device_->datasMutex_);
-      device_->datasCV_.wait (lock,
-          OneDeviceDataAvailable(&device_->datasLastFree_, device_->datas_.size()));
-      std::swap (d_, device_->datas_[device_->datasLastFree_]);
-      device_->datasLastFree_++;
+      if (acquireLock) lock();
     }
 
     DeviceSync::~DeviceSync ()
     {
-      boost::mutex::scoped_lock lock (device_->datasMutex_);
-      // This device owns one data thus at least one data is not free.
-      assert (device_->datasLastFree_ > 0);
-      device_->datas_[device_->datasLastFree_-1] = d_;
-      device_->datasLastFree_--;
-      device_->datasCV_.notify_one ();
+      if (isLocked())
+        unlock();
+    }
+
+    void DeviceSync::lock ()
+    {
+      if (!isLocked()) {
+        boost::mutex::scoped_lock lock (device_->datasMutex_);
+        device_->datasCV_.wait (lock,
+            OneDeviceDataAvailable(&device_->datasLastFree_, device_->datas_.size()));
+        std::swap (d_, device_->datas_[device_->datasLastFree_]);
+        device_->datasLastFree_++;
+      } else {
+        hppDout (warning, "Cannot lock a locked DeviceSync. You may a concurrency error.");
+      }
+    }
+
+    void DeviceSync::unlock ()
+    {
+      if (isLocked()) {
+        boost::mutex::scoped_lock lock (device_->datasMutex_);
+        // This device owns one data thus at least one data is not free.
+        assert (device_->datasLastFree_ > 0);
+        assert (device_->datas_[device_->datasLastFree_-1] == NULL);
+        device_->datas_[device_->datasLastFree_-1] = d_;
+        device_->datasLastFree_--;
+        device_->datasCV_.notify_one ();
+      } else {
+        hppDout (warning, "Cannot unlock an unlocked DeviceSync. You may a concurrency error.");
+      }
     }
   } // namespace pinocchio
 } // namespace hpp

@@ -248,9 +248,14 @@ namespace hpp {
       /// \}
       // -----------------------------------------------------------------------
       /// \name Multithreading
+      /// See DeviceSync for how to enable thread safety.
       /// \{
 
+      /// Set the maximum number of concurrent use of the Device.
       void numberDeviceData (const size_type& s);
+
+      /// Get the number of DeviceData.
+      size_type numberDeviceData () const;
 
       /// \}
       // -----------------------------------------------------------------------

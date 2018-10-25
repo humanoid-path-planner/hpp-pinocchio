@@ -36,6 +36,8 @@ namespace hpp {
       COMPUTE_ALL    = 0Xffff
     };
 
+    /// Struct containing the Device data.
+    /// Users normally do not need to access its attributes.
     struct DeviceData
     {
       DeviceData ();

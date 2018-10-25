@@ -25,6 +25,7 @@
 
 namespace hpp {
   namespace pinocchio {
+    /// Abstract class representing a Device.
     class HPP_PINOCCHIO_DLLAPI AbstractDevice
     {
       public:
@@ -135,15 +136,52 @@ namespace hpp {
         GeomModelPtr_t geomModel_;
     }; // class AbstractDevice
 
+    /// A thread-safe access to a Device.
+    ///
+    /// To ensure thread safety, one can do
+    /// \code{cpp}
+    /// // In some place of the code:
+    /// DevicePtr_t device = ...;
+    /// device->numberDeviceData (4);
+    ///
+    /// // Acquires a lock on the device.
+    /// DeviceSync deviceSync (device);
+    /// deviceSync.currentConfiguration(q);
+    /// deviceSync.computeForwardKinematics();
+    ///
+    /// JointPtr_t joint = ...;
+    /// joint->currentTransformation (deviceSync.d());
+    ///
+    /// CollisionObjectPtr_t body = ...;
+    /// body->fcl          (deviceSync.d());
+    /// body->getTransform (deviceSync.d());
+    ///
+    /// // The lock is release when deviceSync is destroyed.
+    /// \endcode
     class HPP_PINOCCHIO_DLLAPI DeviceSync : public AbstractDevice
     {
       public:
-        DeviceSync (const DevicePtr_t& d);
+        /// Constructor
+        /// \param lock whether to acquire the lock.
+        DeviceSync (const DevicePtr_t& d, bool lock = true);
 
+        /// Destructor.
+        /// The lock is released if necessary.
         virtual ~DeviceSync ();
 
-        DeviceData      & d ()       { return *d_; }
-        DeviceData const& d () const { return *d_; }
+        /// Accessor to the locked DeviceData.
+        /// \note this asserts that this isLocked()
+        DeviceData      & d ()       { assert (isLocked()); return *d_; }
+        /// Const accessor to the locked DeviceData.
+        /// \note this asserts that this isLocked()
+        DeviceData const& d () const { assert (isLocked()); return *d_; }
+
+        /// Lock the current DeviceData
+        void lock ();
+        /// Check if the current DeviceData is locked
+        bool isLocked () const { return d_ != NULL; }
+        /// Unlock the current DeviceData
+        void unlock ();
 
       private:
         DevicePtr_t device_;

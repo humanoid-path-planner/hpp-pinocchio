@@ -87,6 +87,11 @@ namespace hpp {
       for (size_type i = 0; i < s; ++i) datas_[i] = new DeviceData (d_);
     }
 
+    size_type Device::numberDeviceData () const
+    {
+      return (size_type)datas_.size();
+    }
+
     // static method
     DevicePtr_t Device::
     create (const std::string & name)
