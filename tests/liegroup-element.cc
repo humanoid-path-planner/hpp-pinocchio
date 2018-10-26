@@ -185,7 +185,9 @@ BOOST_AUTO_TEST_CASE (multiplication)
   BOOST_CHECK_EQUAL (sp->neutral ().space (), sp);
   BOOST_CHECK_EQUAL (sp, sp->neutral ().space ());
 
+  LiegroupSpacePtr_t sp_merged = sp->vectorSpacesMerged ();
   sp->mergeVectorSpaces ();
+  BOOST_CHECK_EQUAL (*sp, *sp_merged);
   BOOST_CHECK_EQUAL (sp->nq (), 20);
   BOOST_CHECK_EQUAL (sp->nv (), 19);
   BOOST_CHECK_EQUAL (sp->liegroupTypes().size(), 2);

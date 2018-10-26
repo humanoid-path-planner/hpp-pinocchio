@@ -321,6 +321,13 @@ namespace hpp {
       computeNeutral();
     }
 
+    LiegroupSpacePtr_t LiegroupSpace::vectorSpacesMerged () const
+    {
+      LiegroupSpacePtr_t other (createCopy(weak_.lock()));
+      other->mergeVectorSpaces();
+      return other;
+    }
+
     LiegroupSpacePtr_t LiegroupSpace::operator*= (const LiegroupSpaceConstPtr_t& o)
     {
       liegroupTypes_.insert (liegroupTypes_.end (),

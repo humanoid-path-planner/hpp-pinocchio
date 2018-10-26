@@ -221,6 +221,8 @@ namespace hpp {
 
       void mergeVectorSpaces ();
 
+      LiegroupSpacePtr_t vectorSpacesMerged () const;
+
       bool operator== (const LiegroupSpace& other) const;
       bool operator!= (const LiegroupSpace& other) const;
 
