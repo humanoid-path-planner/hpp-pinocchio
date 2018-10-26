@@ -164,6 +164,16 @@ BOOST_AUTO_TEST_CASE (comparison)
   BOOST_CHECK (*(LiegroupSpace::Rn (3)) != *(LiegroupSpace::R2xSO2 ()));
   BOOST_CHECK (*(LiegroupSpace::R2xSO2 ()) != *(LiegroupSpace::Rn (2)));
   BOOST_CHECK (*(LiegroupSpace::Rn (2)) != *(LiegroupSpace::R2xSO2 ()));
+
+  BOOST_CHECK (LiegroupSpace::R1()     ->isVectorSpace ());
+  BOOST_CHECK (LiegroupSpace::R2()     ->isVectorSpace ());
+  BOOST_CHECK (LiegroupSpace::R3()     ->isVectorSpace ());
+  BOOST_CHECK (LiegroupSpace::Rn(4)    ->isVectorSpace ());
+  BOOST_CHECK (LiegroupSpace::empty()  ->isVectorSpace ());
+  BOOST_CHECK (!LiegroupSpace::SE2()   ->isVectorSpace ());
+  BOOST_CHECK (!LiegroupSpace::SE3()   ->isVectorSpace ());
+  BOOST_CHECK (!LiegroupSpace::R2xSO2()->isVectorSpace ());
+  BOOST_CHECK (!LiegroupSpace::R3xSO3()->isVectorSpace ());
 }
 
 BOOST_AUTO_TEST_CASE (multiplication)

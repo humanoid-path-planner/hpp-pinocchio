@@ -328,6 +328,17 @@ namespace hpp {
       return other;
     }
 
+    bool LiegroupSpace::isVectorSpace () const
+    {
+      liegroupType::IsVectorSpace ivs;
+      for (LiegroupTypes::const_iterator _cur = liegroupTypes_.begin();
+          _cur != liegroupTypes_.end (); ++_cur) {
+        boost::apply_visitor (ivs, *_cur);
+        if (!ivs.isVectorSpace) return false;
+      }
+      return true;
+    }
+
     LiegroupSpacePtr_t LiegroupSpace::operator*= (const LiegroupSpaceConstPtr_t& o)
     {
       liegroupTypes_.insert (liegroupTypes_.end (),
