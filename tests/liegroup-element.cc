@@ -30,6 +30,8 @@ using hpp::pinocchio::size_type;
 using hpp::pinocchio::value_type;
 using hpp::pinocchio::vector_t;
 using hpp::pinocchio::LiegroupElement;
+using hpp::pinocchio::LiegroupElementRef;
+using hpp::pinocchio::LiegroupConstElementRef;
 using hpp::pinocchio::LiegroupType;
 using hpp::pinocchio::LiegroupSpace;
 using hpp::pinocchio::LiegroupSpacePtr_t;
@@ -43,6 +45,28 @@ static bool sameR3xSO3 (const LiegroupElement& e1, const LiegroupElement& e2,
   u2.tail <4> () *= -1;
   if ((u2-u1).norm () < eps) return true;
   return false;
+}
+
+void cast_into_LiegroupElementRef (LiegroupElementRef ref, const LiegroupElement& u)
+{
+  BOOST_CHECK_EQUAL(ref.vector(), u.vector());
+  BOOST_CHECK_EQUAL(ref.vector().data(), u.vector().data());
+}
+
+void cast_into_LiegroupConstElementRef (LiegroupConstElementRef ref, const LiegroupElement& u)
+{
+  BOOST_CHECK_EQUAL(ref.vector(), u.vector());
+  BOOST_CHECK_EQUAL(ref.vector().data(), u.vector().data());
+}
+
+BOOST_AUTO_TEST_CASE (casting)
+{
+  size_type n (10);
+  vector_t u (vector_t::Ones(n));
+  LiegroupElement e (u);
+
+  cast_into_LiegroupElementRef(e, e);
+  cast_into_LiegroupConstElementRef(e, e);
 }
 
 // Test that operator+ and operator- behave as expected for vector spaces

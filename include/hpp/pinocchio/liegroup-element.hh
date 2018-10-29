@@ -49,6 +49,14 @@ namespace hpp {
         value_ (value.derived()),
         space_ (LiegroupSpace::create (value.derived().size ())) {}
 
+      /// Constructor to allow *casting* LiegroupElement and LiegroupElementRef
+      /// into a LiegroupConstElementRef
+      template <typename vector_type2>
+      LiegroupConstElementBase (const LiegroupConstElementBase<vector_type2>& other):
+        value_ (other.vector()),
+        space_ (other.space ())
+      {}
+
       /// get reference to vector of Lie groups
       const LiegroupSpacePtr_t& space () const
       {
@@ -75,8 +83,19 @@ namespace hpp {
       }
 
     protected:
+      template <typename Derived>
+      LiegroupConstElementBase (const Eigen::EigenBase<Derived>& value,
+          const LiegroupSpacePtr_t& space,
+          void* /*to enable this constructor*/):
+        value_ (const_cast<Derived&>(value.derived())),
+        space_ (space)
+      {}
+
       vector_type value_;
       LiegroupSpacePtr_t space_;
+
+      template <typename vector_type2> friend class LiegroupConstElementBase;
+      template <typename vector_type2> friend class LiegroupElementBase;
     };
 
     typedef LiegroupConstElementBase<vectorIn_t> LiegroupConstElementRef;
@@ -91,8 +110,8 @@ namespace hpp {
         /// \param value vector representation,
         /// \param liegroupSpace space the element belongs to.
         LiegroupElementBase (const vector_type& value,
-                             const LiegroupSpacePtr_t& space)
-          : Base (value, space) {}
+                             const LiegroupSpacePtr_t& space) :
+          Base (value, space, NULL) {}
 
         /// Constructor
         /// \param value vector representation,
@@ -106,12 +125,26 @@ namespace hpp {
         ///
         /// By default the space containing the value is a vector space.
         explicit LiegroupElementBase (const vector_type& value) :
-          Base (value) {}
+          Base (value, LiegroupSpace::create (value.size ()), NULL) {}
 
-        /// Copy constructor
+        /// Copy constructor. Handles the following case:
+        /// \li LiegroupElement    <- LiegroupConstElementRef
         template <typename vector_type2>
-        LiegroupElementBase (const LiegroupConstElementBase<vector_type2>& other)
-          : Base (other.vector(), other.space()) {}
+        LiegroupElementBase (const LiegroupConstElementBase<vector_type2>& other):
+          Base (other.value_, other.space()) {}
+
+        /// Copy constructor. Handles the following cases:
+        /// \li LiegroupElement    <- LiegroupElement
+        /// \li LiegroupElementRef <- LiegroupElementRef
+        /// \li LiegroupElement    <- LiegroupElementRef
+        template <typename vector_type2>
+        LiegroupElementBase (const LiegroupElementBase<vector_type2>& other):
+          Base (other.value_, other.space()) {}
+
+        /// *Casting* operator from LiegroupElement to LiegroupElementRef
+        template <typename vector_type2>
+        LiegroupElementBase (LiegroupElementBase<vector_type2>& other):
+          Base (other.value_, other.space(), NULL) {}
 
         /// Constructor of trivial element
         LiegroupElementBase () : Base (vector_t(), LiegroupSpace::empty ()) {}
