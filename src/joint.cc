@@ -501,36 +501,50 @@ namespace hpp {
       return os;
     }
 
-    struct ConfigSpaceVisitor : public se3::fusion::JointModelVisitor<ConfigSpaceVisitor>
+    template <typename LieGroupMap_t>
+    struct ConfigSpaceVisitor : public se3::fusion::JointModelVisitor<ConfigSpaceVisitor<LieGroupMap_t> >
     {
       typedef boost::fusion::vector<LiegroupSpace&> ArgsType;
 
       JOINT_MODEL_VISITOR_INIT(ConfigSpaceVisitor);
 
       template<typename JointModel>
-      static void algo(const se3::JointModelBase<JointModel> &,
+      static void algo(const se3::JointModelBase<JointModel> & jmodel,
                        LiegroupSpace& space)
       {
-        typedef typename DefaultLieGroupMap::operation<JointModel>::type LG_t;
+        run (jmodel.derived(), space);
+      }
+
+      template<typename JointModel>
+      static void run (const se3::JointModelBase<JointModel> &,
+                       LiegroupSpace& space)
+      {
+        typedef typename LieGroupMap_t::template operation<JointModel>::type LG_t;
         space *= LiegroupSpace::create (LG_t());
+      }
+
+      static void run (const se3::JointModelComposite& jmodel,
+                       LiegroupSpace& space)
+      {
+        se3::details::Dispatch<ConfigSpaceVisitor>::run(jmodel,
+            ConfigSpaceVisitor::ArgsType(space));
       }
 
     };
 
-    template <>
-    void ConfigSpaceVisitor::algo<se3::JointModelComposite>(
-        const se3::JointModelBase<se3::JointModelComposite> & jmodel,
-        LiegroupSpace& space)
-    {
-      se3::details::Dispatch<ConfigSpaceVisitor>::run(jmodel,
-          ConfigSpaceVisitor::ArgsType(space));
-    }
-
     LiegroupSpacePtr_t Joint::configurationSpace () const
     {
       LiegroupSpacePtr_t res = LiegroupSpace::empty();
-      ConfigSpaceVisitor::ArgsType args(*res);
-      ConfigSpaceVisitor::run (jointModel(), args);
+      ConfigSpaceVisitor<DefaultLieGroupMap>::ArgsType args(*res);
+      ConfigSpaceVisitor<DefaultLieGroupMap>::run (jointModel(), args);
+      return res;
+    }
+
+    LiegroupSpacePtr_t Joint::RnxSOnConfigurationSpace () const
+    {
+      LiegroupSpacePtr_t res = LiegroupSpace::empty();
+      ConfigSpaceVisitor<RnxSOnLieGroupMap >::ArgsType args(*res);
+      ConfigSpaceVisitor<RnxSOnLieGroupMap >::run (jointModel(), args);
       return res;
     }
 

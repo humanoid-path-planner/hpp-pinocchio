@@ -280,6 +280,18 @@ namespace hpp {
         *configSpace_ *= LiegroupSpace::create (extraConfigSpace_.dimension());
     }
 
+    LiegroupSpacePtr_t Device::
+    RnxSOnConfigSpace () const
+    {
+      const Model& m (model());
+      LiegroupSpacePtr_t space (LiegroupSpace::empty());
+      for (JointIndex i = 1; i < m.joints.size(); ++i)
+        *space *= Joint(weakPtr_, i).RnxSOnConfigurationSpace();
+      if (extraConfigSpace_.dimension() > 0)
+        *space *= LiegroupSpace::create (extraConfigSpace_.dimension());
+      return space;
+    }
+
     Configuration_t Device::
     neutralConfiguration () const
     {

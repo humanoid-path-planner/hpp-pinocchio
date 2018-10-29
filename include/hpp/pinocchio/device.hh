@@ -163,6 +163,9 @@ namespace hpp {
       /// Returns a LiegroupSpace representing the configuration space.
       const LiegroupSpacePtr_t& configSpace () const { return configSpace_; }
 
+      /// See Joint::RnxSOnConfigurationSpace
+      LiegroupSpacePtr_t RnxSOnConfigSpace () const;
+
       /// Get the neutral configuration
       Configuration_t neutralConfiguration () const;
 

@@ -202,6 +202,10 @@ namespace hpp {
       /// Get configuration space of joint
       LiegroupSpacePtr_t configurationSpace () const;
 
+      /// Get configuration space of joint.
+      /// Use R^n x SO(n) instead of SE(n).
+      LiegroupSpacePtr_t RnxSOnConfigurationSpace () const;
+
       /// \name Pinocchio API
       /// \{
 
