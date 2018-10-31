@@ -31,7 +31,7 @@ using hpp::pinocchio::value_type;
 using hpp::pinocchio::vector_t;
 using hpp::pinocchio::LiegroupElement;
 using hpp::pinocchio::LiegroupElementRef;
-using hpp::pinocchio::LiegroupConstElementRef;
+using hpp::pinocchio::LiegroupElementConstRef;
 using hpp::pinocchio::LiegroupType;
 using hpp::pinocchio::LiegroupSpace;
 using hpp::pinocchio::LiegroupSpacePtr_t;
@@ -53,7 +53,7 @@ void cast_into_LiegroupElementRef (LiegroupElementRef ref, const LiegroupElement
   BOOST_CHECK_EQUAL(ref.vector().data(), u.vector().data());
 }
 
-void cast_into_LiegroupConstElementRef (LiegroupConstElementRef ref, const LiegroupElement& u)
+void cast_into_LiegroupElementConstRef (LiegroupElementConstRef ref, const LiegroupElement& u)
 {
   BOOST_CHECK_EQUAL(ref.vector(), u.vector());
   BOOST_CHECK_EQUAL(ref.vector().data(), u.vector().data());
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE (casting)
   LiegroupElement e (u);
 
   cast_into_LiegroupElementRef(e, e);
-  cast_into_LiegroupConstElementRef(e, e);
+  cast_into_LiegroupElementConstRef(e, e);
 }
 
 // Test that operator+ and operator- behave as expected for vector spaces

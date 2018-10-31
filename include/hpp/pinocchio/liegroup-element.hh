@@ -26,14 +26,14 @@ namespace hpp {
     /// \{
 
     template <typename vector_type>
-    class LiegroupConstElementBase
+    class LiegroupElementConstBase
     {
     public:
       /// Constructor
       /// \param value vector representation,
       /// \param liegroupSpace space the element belongs to.
       template <typename Derived>
-      LiegroupConstElementBase (const Eigen::EigenBase<Derived>& value,
+      LiegroupElementConstBase (const Eigen::EigenBase<Derived>& value,
                            const LiegroupSpacePtr_t& liegroupSpace) :
         value_ (value.derived()), space_ (liegroupSpace)
       {
@@ -45,14 +45,14 @@ namespace hpp {
       ///
       /// By default the space containing the value is a vector space.
       template <typename Derived>
-      explicit LiegroupConstElementBase (const Eigen::EigenBase<Derived>& value) :
+      explicit LiegroupElementConstBase (const Eigen::EigenBase<Derived>& value) :
         value_ (value.derived()),
         space_ (LiegroupSpace::create (value.derived().size ())) {}
 
       /// Constructor to allow *casting* LiegroupElement and LiegroupElementRef
-      /// into a LiegroupConstElementRef
+      /// into a LiegroupElementConstRef
       template <typename vector_type2>
-      LiegroupConstElementBase (const LiegroupConstElementBase<vector_type2>& other):
+      LiegroupElementConstBase (const LiegroupElementConstBase<vector_type2>& other):
         value_ (other.vector()),
         space_ (other.space ())
       {}
@@ -84,7 +84,7 @@ namespace hpp {
 
     protected:
       template <typename Derived>
-      LiegroupConstElementBase (const Eigen::EigenBase<Derived>& value,
+      LiegroupElementConstBase (const Eigen::EigenBase<Derived>& value,
           const LiegroupSpacePtr_t& space,
           void* /*to enable this constructor*/):
         value_ (const_cast<Derived&>(value.derived())),
@@ -94,17 +94,17 @@ namespace hpp {
       vector_type value_;
       LiegroupSpacePtr_t space_;
 
-      template <typename vector_type2> friend class LiegroupConstElementBase;
+      template <typename vector_type2> friend class LiegroupElementConstBase;
       template <typename vector_type2> friend class LiegroupElementBase;
     };
 
-    typedef LiegroupConstElementBase<vectorIn_t> LiegroupConstElementRef;
+    typedef LiegroupElementConstBase<vectorIn_t> LiegroupElementConstRef;
 
     template <typename vector_type>
-    class LiegroupElementBase : public LiegroupConstElementBase<vector_type>
+    class LiegroupElementBase : public LiegroupElementConstBase<vector_type>
     {
       public:
-        typedef LiegroupConstElementBase<vector_type> Base;
+        typedef LiegroupElementConstBase<vector_type> Base;
 
         /// Constructor
         /// \param value vector representation,
@@ -128,9 +128,9 @@ namespace hpp {
           Base (value, LiegroupSpace::create (value.size ()), NULL) {}
 
         /// Copy constructor. Handles the following case:
-        /// \li LiegroupElement    <- LiegroupConstElementRef
+        /// \li LiegroupElement    <- LiegroupElementConstRef
         template <typename vector_type2>
-        LiegroupElementBase (const LiegroupConstElementBase<vector_type2>& other):
+        LiegroupElementBase (const LiegroupElementConstBase<vector_type2>& other):
           Base (other.value_, other.space()) {}
 
         /// Copy constructor. Handles the following cases:
@@ -186,7 +186,7 @@ namespace hpp {
     /// By extension of the vector space case, we represent the integration
     /// of a constant velocity during unit time by an addition
     template <typename vector_type>
-    LiegroupElement operator+ (const LiegroupConstElementBase<vector_type>& e, vectorIn_t v);
+    LiegroupElement operator+ (const LiegroupElementConstBase<vector_type>& e, vectorIn_t v);
 
     /// Difference between two configurations
     ///
@@ -196,15 +196,15 @@ namespace hpp {
     /// By extension of the vector space case, we represent the integration
     /// of a constant velocity during unit time by an addition
     template <typename vector_type1, typename vector_type2>
-    vector_t operator- (const LiegroupConstElementBase<vector_type1>& e1, const LiegroupConstElementBase<vector_type2>& e2);
+    vector_t operator- (const LiegroupElementConstBase<vector_type1>& e1, const LiegroupElementConstBase<vector_type2>& e2);
     /// \}
 
     /// Compute the log as a tangent vector of a Lie group element
     template <typename vector_type>
-    vector_t log (const LiegroupConstElementBase<vector_type>& lge);
+    vector_t log (const LiegroupElementConstBase<vector_type>& lge);
 
     template <typename vector_type>
-    inline std::ostream& operator<< (std::ostream& os, const LiegroupConstElementBase<vector_type>& e)
+    inline std::ostream& operator<< (std::ostream& os, const LiegroupElementConstBase<vector_type>& e)
     {
       os << "Lie group element in " << *(e.space ())
          << " represented by vector (" << e. vector ().transpose () << ")";
