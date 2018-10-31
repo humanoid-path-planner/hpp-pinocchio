@@ -22,16 +22,27 @@
 namespace hpp {
   namespace pinocchio {
     namespace liegroupType {
-      struct dIntegrateVisitor_dq : public boost::static_visitor <>
+      template <int arg, DerivativeProduct side>
+      struct dIntegrateVisitor : public boost::static_visitor <>
       {
-        dIntegrateVisitor_dq (LiegroupElement q, vectorIn_t& v, matrixOut_t& Jq, size_type& row, size_type& configRow)
+        dIntegrateVisitor (const vectorIn_t& q, vectorIn_t& v, matrixOut_t& Jq, size_type& row, size_type& configRow)
           : q_(q), v_ (v), Jq_ (Jq), row_ (row), configRow_ (configRow) {}
 
         template <typename LgT> void operator () (const LgT& lg)
         {
-          typename LgT::JacobianMatrix_t JqInt (lg.nv(), lg.nv());
-          lg.dIntegrate_dq (q_.vector().segment<LgT::NQ>(configRow_, lg.nq()), v_.segment<LgT::NV>(row_, lg.nv()), JqInt);
-          Jq_.middleRows<LgT::NV> (row_, lg.nv()).applyOnTheLeft (JqInt);
+          // TODO add static asserts
+          assert (arg == 0 || arg == 1);
+          typename LgT::JacobianMatrix_t JInt (lg.nv(), lg.nv());
+          if (arg == 0)
+            lg.dIntegrate_dq (q_.segment<LgT::NQ>(configRow_, lg.nq()),
+                              v_.segment<LgT::NV>(      row_, lg.nv()),
+                              JInt);
+          else
+            lg.dIntegrate_dv (q_.segment<LgT::NQ>(configRow_, lg.nq()),
+                              v_.segment<LgT::NV>(      row_, lg.nv()),
+                              JInt);
+          if   (side == DerivativeTimesInput) Jq_.middleRows<LgT::NV> (row_, lg.nv()).applyOnTheLeft  (JInt);
+          else                                Jq_.middleRows<LgT::NV> (row_, lg.nv()).applyOnTheRight (JInt);
           row_ += lg.nv();
           configRow_ += lg.nq();
         }
@@ -42,39 +53,13 @@ namespace hpp {
           row_ += lg.nv();
           configRow_ += lg.nq();
         }
-        LiegroupElement q_;
+
+        const vectorIn_t& q_;
         vectorIn_t& v_;
         matrixOut_t& Jq_;
         size_type& row_;
         size_type& configRow_;
-      }; // struct dIntegrateVisitor_dq
-
-      struct dIntegrateVisitor_dv : public boost::static_visitor <>
-      {
-        dIntegrateVisitor_dv (LiegroupElement q, vectorIn_t& v, matrixOut_t& Jv, size_type& row, size_type& configRow)
-          : q_(q), v_ (v), Jv_ (Jv), row_ (row), configRow_ (configRow) {}
-
-        template <typename LgT> void operator () (const LgT& lg)
-        {
-          typename LgT::JacobianMatrix_t JvInt (lg.nv(), lg.nv());
-          lg.dIntegrate_dv (q_.vector().segment<LgT::NQ>(configRow_, lg.nq()), v_.segment<LgT::NV>(row_, lg.nv()), JvInt);
-          Jv_.middleRows<LgT::NV> (row_, lg.nv()).applyOnTheLeft (JvInt);
-          row_ += lg.nv();
-          configRow_ += lg.nq();
-        }
-
-        template <int N, bool rot>
-        void operator () (const liegroup::VectorSpaceOperation<N,rot>& lg)
-        {
-          row_ += lg.nv();
-          configRow_ += lg.nq();
-        }
-        LiegroupElement q_;
-        vectorIn_t& v_;
-        matrixOut_t& Jv_;
-        size_type& row_;
-        size_type& configRow_;
-      }; // struct dIntegrateVisitor_dv
+      }; // struct dIntegrateVisitor
     } // namespace liegroupType
   } // namespace pinocchio
 } // namespace hpp

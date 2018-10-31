@@ -141,14 +141,15 @@ namespace hpp {
       return neutral () + v;
     }
 
-    void LiegroupSpace::dIntegrate_dq (LiegroupElement q, vectorIn_t v, matrixOut_t Jq) const
+    template <DerivativeProduct side>
+    void LiegroupSpace::dIntegrate_dq (LiegroupElementConstRef q, vectorIn_t v, matrixOut_t Jq) const
     {
       assert (q.size() == nq());
       assert (v.size() == nv());
       assert (Jq.rows() == nv());
       size_type row = 0;
       size_type configRow = 0;
-      liegroupType::dIntegrateVisitor_dq jiv (q, v, Jq, row, configRow);
+      liegroupType::dIntegrateVisitor<0, side> jiv (q.vector(), v, Jq, row, configRow);
       for (std::size_t i = 0; i < liegroupTypes_.size (); ++i) {
         boost::apply_visitor (jiv, liegroupTypes_ [i]);
       }
@@ -156,20 +157,26 @@ namespace hpp {
       assert (configRow == nq());
     }
 
-    void LiegroupSpace::dIntegrate_dv (LiegroupElement q, vectorIn_t v, matrixOut_t Jv) const
+    template <DerivativeProduct side>
+    void LiegroupSpace::dIntegrate_dv (LiegroupElementConstRef q, vectorIn_t v, matrixOut_t Jv) const
     {
       assert (q.size() == nq());
       assert (v.size() == nv());
       assert (Jv.rows() == nv());
       size_type row = 0;
       size_type configRow = 0;
-      liegroupType::dIntegrateVisitor_dv jiv (q, v, Jv, row, configRow);
+      liegroupType::dIntegrateVisitor<1, side> jiv (q.vector(), v, Jv, row, configRow);
       for (std::size_t i = 0; i < liegroupTypes_.size (); ++i) {
         boost::apply_visitor (jiv, liegroupTypes_ [i]);
       }
       assert (row == nv());
       assert (configRow == nq());
     }
+
+    template void LiegroupSpace::dIntegrate_dq<DerivativeTimesInput> (LiegroupElementConstRef, vectorIn_t, matrixOut_t) const;
+    template void LiegroupSpace::dIntegrate_dq<InputTimesDerivative> (LiegroupElementConstRef, vectorIn_t, matrixOut_t) const;
+    template void LiegroupSpace::dIntegrate_dv<DerivativeTimesInput> (LiegroupElementConstRef, vectorIn_t, matrixOut_t) const;
+    template void LiegroupSpace::dIntegrate_dv<InputTimesDerivative> (LiegroupElementConstRef, vectorIn_t, matrixOut_t) const;
 
     template <bool ApplyOnTheLeft>
     void LiegroupSpace::Jdifference (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0, matrixOut_t J1) const
@@ -184,8 +191,30 @@ namespace hpp {
       assert (jdv.iv_ == nv());
     }
 
+    template <DerivativeProduct side>
+    void LiegroupSpace::dDifference_dq0 (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0) const
+    {
+      // TODO when updating to Pinocchio v2, use the correct API
+      matrix_t unused;
+      if      (side == DerivativeTimesInput) Jdifference <true > (q0, q1, J0, unused);
+      else if (side == InputTimesDerivative) Jdifference <false> (q0, q1, J0, unused);
+    }
+
+    template <DerivativeProduct side>
+    void LiegroupSpace::dDifference_dq1 (vectorIn_t q0, vectorIn_t q1, matrixOut_t J1) const
+    {
+      // TODO when updating to Pinocchio v2, use the correct API
+      matrix_t unused;
+      if      (side == DerivativeTimesInput) Jdifference <true > (q0, q1, unused, J1);
+      else if (side == InputTimesDerivative) Jdifference <false> (q0, q1, unused, J1);
+    }
+
     template void LiegroupSpace::Jdifference<true > (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0, matrixOut_t J1) const;
     template void LiegroupSpace::Jdifference<false> (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0, matrixOut_t J1) const;
+    template void LiegroupSpace::dDifference_dq0<DerivativeTimesInput> (vectorIn_t, vectorIn_t, matrixOut_t) const;
+    template void LiegroupSpace::dDifference_dq0<InputTimesDerivative> (vectorIn_t, vectorIn_t, matrixOut_t) const;
+    template void LiegroupSpace::dDifference_dq1<DerivativeTimesInput> (vectorIn_t, vectorIn_t, matrixOut_t) const;
+    template void LiegroupSpace::dDifference_dq1<InputTimesDerivative> (vectorIn_t, vectorIn_t, matrixOut_t) const;
 
     struct NameVisitor : public boost::static_visitor <>
     {

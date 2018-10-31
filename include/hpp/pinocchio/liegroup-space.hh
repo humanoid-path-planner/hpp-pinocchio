@@ -51,6 +51,11 @@ namespace hpp {
                             se3::SpecialEuclideanOperation <3> >
     LiegroupType;
 
+    enum DerivativeProduct {
+      DerivativeTimesInput,
+      InputTimesDerivative
+    };
+
     /// Cartesian product of elementary Lie groups
     ///
     /// Some values produced and manipulated by functions belong to Lie groups
@@ -159,7 +164,7 @@ namespace hpp {
       /// compute \f$J_{\mathbf{q}}\f$ such that
       ///
       /// \f{equation}
-      /// \dot{\mathbf{p}} = J_{\mathbf{q}}\dot{\mathbf{q}} + \mathbf{v}
+      /// \dot{\mathbf{p}} = J_{\mathbf{q}}\dot{\mathbf{q}}
       /// \f}
       /// for constant \f$\mathbf{v}\f$
       ///
@@ -173,7 +178,8 @@ namespace hpp {
       ///       se3::LieGroupBase::dIntegrate_dq.
       /// lines \f$[iq:iq+nq]\f$ of Jq are then left multiplied by
       /// \f$J_{Lg} (q [iq:iq+nq])\f$.
-      void dIntegrate_dq (LiegroupElement q, vectorIn_t v, matrixOut_t Jq) const;
+      template <DerivativeProduct side>
+      void dIntegrate_dq (LiegroupElementConstRef q, vectorIn_t v, matrixOut_t Jq) const;
 
       /// Compute the Jacobian of the integration operation with respect to v.
       ///
@@ -181,7 +187,7 @@ namespace hpp {
       /// compute \f$J_{\mathbf{v}}\f$ such that
       ///
       /// \f{equation}
-      /// \dot{\mathbf{p}} = \mathbf{q} + J_{\mathbf{v}}\dot{\mathbf{v}}
+      /// \dot{\mathbf{p}} = J_{\mathbf{v}}\dot{\mathbf{v}}
       /// \f}
       /// for constant \f$\mathbf{q}\f$
       ///
@@ -194,7 +200,12 @@ namespace hpp {
       ///       se3::LieGroupBase::dIntegrate_dq.
       /// lines \f$[iv:iv+nv]\f$ of Jv are then left multiplied by
       /// \f$J_{Lg} (q [iv:iv+nv])\f$.
-      void dIntegrate_dv (LiegroupElement q, vectorIn_t v, matrixOut_t Jv) const;
+      template <DerivativeProduct side>
+      void dIntegrate_dv (LiegroupElementConstRef q, vectorIn_t v, matrixOut_t Jv) const;
+
+      /// \deprecated Use dDifference_dq0 and dDifference_dq1
+      template <bool ApplyOnTheLeft>
+      void Jdifference (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0, matrixOut_t J1) const;
 
       /// Compute the Jacobian matrices of the difference operation.
       /// Given \f$ \mathbf{v} = \mathbf{q}_1 - \mathbf{q}_0 \f$,
@@ -205,10 +216,20 @@ namespace hpp {
       /// \f}
       /// \param[in] q0,q1 Lie group elements,
       /// \param[out] J0 the Jacobian of v with respect to q0.
+      template <DerivativeProduct side>
+      void dDifference_dq0 (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0) const;
+
+      /// Compute the Jacobian matrices of the difference operation.
+      /// Given \f$ \mathbf{v} = \mathbf{q}_1 - \mathbf{q}_0 \f$,
+      ///
+      /// Compute matrices \f$J_{0}\f$ and \f$J_{1}\f$ such that
+      /// \f{equation}
+      /// \dot{\mathbf{v}} = J_{0}\dot{\mathbf{q}_0} + J_{1}\dot{\mathbf{q}_1}
+      /// \f}
+      /// \param[in] q0,q1 Lie group elements,
       /// \param[out] J1 the Jacobian of v with respect to q1.
-      /// \note to compute only one jacobian, provide for J0 or J1 an empty matrix.
-      template <bool ApplyOnTheLeft>
-      void Jdifference (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0, matrixOut_t J1) const;
+      template <DerivativeProduct side>
+      void dDifference_dq1 (vectorIn_t q0, vectorIn_t q1, matrixOut_t J1) const;
 
       /// Return name of Lie group
       std::string name () const;
