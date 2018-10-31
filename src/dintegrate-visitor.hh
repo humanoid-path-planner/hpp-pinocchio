@@ -19,8 +19,6 @@
 
 # include <hpp/pinocchio/liegroup/vector-space.hh>
 
-# include <../src/eigen_fix.hh>
-
 namespace hpp {
   namespace pinocchio {
     namespace liegroupType {
@@ -32,14 +30,8 @@ namespace hpp {
         template <typename LgT> void operator () (const LgT& lg)
         {
           typename LgT::JacobianMatrix_t JqInt (lg.nv(), lg.nv());
-          lg.dIntegrate_dq (
-              //                    q_.vector().segment<LgT::NQ>(configRow_, lg.nq()),
-              _BLOCK_ACCESSOR_EIGEN(q_.vector(),segment,LgT::NQ, configRow_, lg.nq()),
-              //                    v_.segment<LgT::NV>(row_, lg.nv()),
-              _BLOCK_ACCESSOR_EIGEN(v_,segment,LgT::NV, row_, lg.nv()),
-              JqInt);
-          //                    Jq_.middleRows<LgT::NV> (row_, lg.nv()).applyOnTheLeft (JqInt);
-          _BLOCK_ACCESSOR_EIGEN(Jq_,middleRows,LgT::NV,  row_, lg.nv()).applyOnTheLeft (JqInt);
+          lg.dIntegrate_dq (q_.vector().segment<LgT::NQ>(configRow_, lg.nq()), v_.segment<LgT::NV>(row_, lg.nv()), JqInt);
+          Jq_.middleRows<LgT::NV> (row_, lg.nv()).applyOnTheLeft (JqInt);
           row_ += lg.nv();
           configRow_ += lg.nq();
         }
@@ -65,14 +57,8 @@ namespace hpp {
         template <typename LgT> void operator () (const LgT& lg)
         {
           typename LgT::JacobianMatrix_t JvInt (lg.nv(), lg.nv());
-          lg.dIntegrate_dv (
-              //                    q_.vector().segment<LgT::NQ>(configRow_, lg.nq()),
-              _BLOCK_ACCESSOR_EIGEN(q_.vector(),segment,LgT::NQ, configRow_, lg.nq()),
-              //                    v_.segment<LgT::NV>(row_, lg.nv()),
-              _BLOCK_ACCESSOR_EIGEN(v_,segment,LgT::NV, row_, lg.nv()),
-              JvInt);
-          //                    Jv_.middleRows<LgT::NV> (row_, lg.nv()).applyOnTheLeft (JvInt);
-          _BLOCK_ACCESSOR_EIGEN(Jv_,middleRows,LgT::NV,  row_, lg.nv()).applyOnTheLeft (JvInt);
+          lg.dIntegrate_dv (q_.vector().segment<LgT::NQ>(configRow_, lg.nq()), v_.segment<LgT::NV>(row_, lg.nv()), JvInt);
+          Jv_.middleRows<LgT::NV> (row_, lg.nv()).applyOnTheLeft (JvInt);
           row_ += lg.nv();
           configRow_ += lg.nq();
         }
