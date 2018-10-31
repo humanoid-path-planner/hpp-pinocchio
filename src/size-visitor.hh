@@ -24,6 +24,7 @@ namespace hpp {
       /// Visitor to compute size of LiegroupType
       struct SizeVisitor : public boost::static_visitor <>
       {
+        inline SizeVisitor () : nq(-1), nv(-1) {}
         template <typename LiegroupType> void operator () (LiegroupType& op)
         {
           nq = op.nq ();
@@ -45,6 +46,7 @@ namespace hpp {
       /// Visitor to check if a LiegroupType is a vector space
       struct IsVectorSpace : public boost::static_visitor <>
       {
+        IsVectorSpace () : isVectorSpace (false) {}
         template <typename LiegroupType> void operator () (const LiegroupType&)
         {
           isVectorSpace = false;

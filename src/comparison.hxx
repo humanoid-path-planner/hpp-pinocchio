@@ -70,60 +70,20 @@ namespace hpp {
         return (lgt1.nq () == lgt2.nq ());
       }
 
-      template <bool rot>
+      template <int Size, bool rot>
       bool Comparison <VectorSpaceOperation <Eigen::Dynamic, rot>,
-                       VectorSpaceOperation <1, rot> >::operator ()
+                       VectorSpaceOperation <Size, rot> >::operator ()
         (const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt1,
-         const VectorSpaceOperation <1, rot>& lgt2)
+         const VectorSpaceOperation <Size, rot>& lgt2)
       {
         hppDout (info, "Comparison::operator () for vector spaces");
         return (lgt1.nq () == lgt2.nq ());
       }
 
-      template <bool rot>
-      bool Comparison <VectorSpaceOperation <1, rot>,
+      template <int Size, bool rot>
+      bool Comparison <VectorSpaceOperation <Size, rot>,
                        VectorSpaceOperation <Eigen::Dynamic, rot> >::operator ()
-        (const VectorSpaceOperation <1, rot>& lgt1,
-         const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt2)
-      {
-        hppDout (info, "Comparison::operator () for vector spaces");
-        return (lgt1.nq () == lgt2.nq ());
-      }
-
-      template <bool rot>
-      bool Comparison <VectorSpaceOperation <Eigen::Dynamic, rot>,
-                       VectorSpaceOperation <2, rot> >::operator ()
-        (const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt1,
-         const VectorSpaceOperation <2, rot>& lgt2)
-      {
-        hppDout (info, "Comparison::operator () for vector spaces");
-        return (lgt1.nq () == lgt2.nq ());
-      }
-
-      template <bool rot>
-      bool Comparison <VectorSpaceOperation <2, rot>,
-                       VectorSpaceOperation <Eigen::Dynamic, rot> >::operator ()
-        (const VectorSpaceOperation <2, rot>& lgt1,
-         const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt2)
-      {
-        hppDout (info, "Comparison::operator () for vector spaces");
-        return (lgt1.nq () == lgt2.nq ());
-      }
-
-      template <bool rot>
-      bool Comparison <VectorSpaceOperation <Eigen::Dynamic, rot>,
-                       VectorSpaceOperation <3, rot> >::operator ()
-        (const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt1,
-         const VectorSpaceOperation <3, rot>& lgt2)
-      {
-        hppDout (info, "Comparison::operator () for vector spaces");
-        return (lgt1.nq () == lgt2.nq ());
-      }
-
-      template <bool rot>
-      bool Comparison <VectorSpaceOperation <3, rot>,
-                       VectorSpaceOperation <Eigen::Dynamic, rot> >::operator ()
-        (const VectorSpaceOperation <3, rot>& lgt1,
+        (const VectorSpaceOperation <Size, rot>& lgt1,
          const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt2)
       {
         hppDout (info, "Comparison::operator () for vector spaces");

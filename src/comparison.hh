@@ -29,11 +29,11 @@ namespace hpp {
 
         struct IsEqualVisitor : public boost::static_visitor <>
         {
-          IsEqualVisitor (const LiegroupType& lg2);
-          template <typename LgT1> void operator () (const LgT1& lg1);
+          inline IsEqualVisitor (const LiegroupType& lg2);
+          template <typename LgT1> inline void operator () (const LgT1& lg1);
           bool result;
         private:
-          LiegroupType lg2_;
+          const LiegroupType& lg2_;
         }; // struct IsEqualVisitor
       } // namespace level1
 
@@ -41,11 +41,11 @@ namespace hpp {
         template <typename LgT1>
         struct IsEqualVisitor : public boost::static_visitor <>
         {
-          IsEqualVisitor (const LgT1& lg1);
-          template <typename LgT2> void operator () (const LgT2& lg2);
+          inline IsEqualVisitor (const LgT1& lg1);
+          template <typename LgT2> inline void operator () (const LgT2& lg2);
           bool result;
         private:
-          LgT1 lg1_;
+          const LgT1& lg1_;
         }; // struct IsEqualVisitor
       } // namespace level2
 
@@ -53,13 +53,13 @@ namespace hpp {
       template <typename LgT1, typename LgT2>
       struct Comparison
       {
-        bool operator () (const LgT1&, const LgT2&);
+        inline bool operator () (const LgT1&, const LgT2&);
       }; // class Comparison
 
       // Specialization for two instances of same type
       template <typename LgT> struct Comparison <LgT, LgT>
       {
-        bool operator () (const LgT&, const LgT&);
+        inline bool operator () (const LgT&, const LgT&);
       };
 
       // Specialization for vector spaces
@@ -67,62 +67,26 @@ namespace hpp {
       struct Comparison <VectorSpaceOperation <Eigen::Dynamic, rot>,
                          VectorSpaceOperation <Eigen::Dynamic, rot> >
       {
-        bool operator ()
+        inline bool operator ()
           (const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt1,
            const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt2);
       };
 
-      template <bool rot>
+      template <int Size, bool rot>
       struct Comparison <VectorSpaceOperation <Eigen::Dynamic, rot>,
-                         VectorSpaceOperation <1, rot> >
+                         VectorSpaceOperation <Size, rot> >
       {
-        bool operator ()
+        inline bool operator ()
           (const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt1,
-           const VectorSpaceOperation <1, rot>& lgt2);
+           const VectorSpaceOperation <Size, rot>& lgt2);
       };
 
-      template <bool rot>
-      struct Comparison <VectorSpaceOperation <Eigen::Dynamic, rot>,
-                         VectorSpaceOperation <2, rot> >
-      {
-        bool operator ()
-          (const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt1,
-           const VectorSpaceOperation <2, rot>& lgt2);
-      };
-
-      template <bool rot>
-      struct Comparison <VectorSpaceOperation <Eigen::Dynamic, rot>,
-                         VectorSpaceOperation <3, rot> >
-      {
-        bool operator ()
-          (const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt1,
-           const VectorSpaceOperation <3, rot>& lgt2);
-      };
-
-      template <bool rot>
-      struct Comparison <VectorSpaceOperation <1, rot>,
+      template <int Size, bool rot>
+      struct Comparison <VectorSpaceOperation <Size, rot>,
                          VectorSpaceOperation <Eigen::Dynamic, rot> >
       {
-        bool operator ()
-          (const VectorSpaceOperation <1, rot>& lgt1,
-           const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt2);
-      };
-
-      template <bool rot>
-      struct Comparison <VectorSpaceOperation <2, rot>,
-                         VectorSpaceOperation <Eigen::Dynamic, rot> >
-      {
-        bool operator ()
-          (const VectorSpaceOperation <2, rot>& lgt1,
-           const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt2);
-      };
-
-      template <bool rot>
-      struct Comparison <VectorSpaceOperation <3, rot>,
-                         VectorSpaceOperation <Eigen::Dynamic, rot> >
-      {
-        bool operator ()
-          (const VectorSpaceOperation <3, rot>& lgt1,
+        inline bool operator ()
+          (const VectorSpaceOperation <Size, rot>& lgt1,
            const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt2);
       };
 
