@@ -51,7 +51,7 @@ namespace hpp {
       setChildList();
     }
 
-    inline void Frame::selfAssert() const 
+    void Frame::selfAssert() const
     {
       assert(devicePtr_);
       assert(devicePtr_->modelPtr()); assert(devicePtr_->dataPtr());
