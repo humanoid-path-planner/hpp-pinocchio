@@ -25,6 +25,9 @@ namespace hpp {
     /// \addtogroup liegroup
     /// \{
 
+    /// Const reference to a \ref LiegroupElement
+    ///
+    /// \sa LiegroupSpace, LiegroupElementConstRef
     template <typename vector_type>
     class LiegroupElementConstBase
     {
@@ -98,8 +101,9 @@ namespace hpp {
       template <typename vector_type2> friend class LiegroupElementBase;
     };
 
-    typedef LiegroupElementConstBase<vectorIn_t> LiegroupElementConstRef;
-
+    /// Writable element of a Lie group
+    ///
+    /// \sa LiegroupSpace, LiegroupElement, LiegroupElementRef
     template <typename vector_type>
     class LiegroupElementBase : public LiegroupElementConstBase<vector_type>
     {
@@ -108,15 +112,13 @@ namespace hpp {
 
         /// Constructor
         /// \param value vector representation,
-        /// \param liegroupSpace space the element belongs to.
+        /// \param space space the element belongs to.
         LiegroupElementBase (const vector_type& value,
                              const LiegroupSpacePtr_t& space) :
           Base (value, space, NULL) {}
 
         /// Constructor
-        /// \param value vector representation,
-        ///
-        /// By default the space containing the value is a vector space.
+        /// \param space space the element belongs to.
         LiegroupElementBase (const LiegroupSpacePtr_t& space) :
           Base (vector_t (space->nq ()), space) {}
 
@@ -170,12 +172,6 @@ namespace hpp {
         /// Inplace integration of a velocity vector
         LiegroupElementBase& operator+= (vectorIn_t v);
     };
-
-    /// Element of a Lie group
-    ///
-    /// See class LiegroupSpace.
-    typedef LiegroupElementBase<   vector_t> LiegroupElement;
-    typedef LiegroupElementBase<vectorOut_t> LiegroupElementRef;
 
     /// Integration of a velocity vector from a configuration
     ///

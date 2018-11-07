@@ -114,8 +114,11 @@ namespace hpp {
 
     template <typename vector_type> class LiegroupElementConstBase;
     template <typename vector_type> class LiegroupElementBase;
+    /// Const reference to a \ref LiegroupElement
     typedef LiegroupElementConstBase< vectorIn_t> LiegroupElementConstRef;
+    /// Element of a Lie group
     typedef LiegroupElementBase     <   vector_t> LiegroupElement;
+    /// Writable reference to a \ref LiegroupElement
     typedef LiegroupElementBase     <vectorOut_t> LiegroupElementRef;
 
     HPP_PREDEF_CLASS (LiegroupSpace);

@@ -44,7 +44,7 @@ namespace hpp {
 
     /// Integrate a constant velocity during unit time.
     ///
-    /// \param saturateConfig when true, calls saturate at the end
+    /// \tparam saturateConfig when true, calls saturate at the end
     /// \param robot robot that describes the kinematic chain
     /// \param configuration initial and result configurations
     /// \param velocity velocity vector
@@ -69,7 +69,7 @@ namespace hpp {
 
     /// Interpolate between two configurations of the robot
     /// \param robot robot that describes the kinematic chain
-    /// \param q0, q1, two configurations to interpolate
+    /// \param q0, q1 two configurations to interpolate
     /// \param u in [0,1] position along the interpolation: q0 for u=0,
     /// q1 for u=1
     /// \retval result interpolated configuration

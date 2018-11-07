@@ -168,8 +168,8 @@ namespace hpp {
       /// \f}
       /// for constant \f$\mathbf{v}\f$
       ///
-      /// \param q, the configuration,
-      /// \param v, the velocity vector,
+      /// \param q the configuration,
+      /// \param v the velocity vector,
       /// \retval Jq the Jacobian (initialized as identity)
       ///
       /// \note For each elementary Lie group in q.space (), ranging
@@ -191,8 +191,8 @@ namespace hpp {
       /// \f}
       /// for constant \f$\mathbf{q}\f$
       ///
-      /// \param q, the configuration,
-      /// \param v, the velocity vector,
+      /// \param q the configuration,
+      /// \param v the velocity vector,
       /// \retval Jv the Jacobian (initialized to identity)
       /// \note For each elementary Lie group in q.space (), ranging
       ///       over indices \f$[iv, iv+nv-1]\f$, the Jacobian

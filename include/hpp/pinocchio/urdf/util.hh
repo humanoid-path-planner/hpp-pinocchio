@@ -99,7 +99,7 @@ namespace hpp
       /// This is the base function which is called by the other function.
       /// It reads a URDF file, and optionnally a SRDF file, and build the
       /// robot.
-      /// \param srdfString if empty, do not try to parse SRDF.
+      /// \param srdfPath if empty, do not try to parse SRDF.
       void loadModel (const DevicePtr_t& robot,
                       const JointIndex&  baseJoint,
                       const std::string& prefix,

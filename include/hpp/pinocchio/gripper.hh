@@ -38,9 +38,8 @@ namespace hpp {
     {
       public:
         /// Return a shared pointer to new instance
-        /// \param joint joint of the robot that will hold handles,
-        /// \param objectPositionInJoint object position in the the grasping
-        ///        joint.
+        /// \param name of the gripper in the device,
+        /// \param device
         static GripperPtr_t create (const std::string& name,
             const DeviceWkPtr_t& device)
         {
