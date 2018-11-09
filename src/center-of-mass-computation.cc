@@ -37,12 +37,12 @@ namespace hpp {
       return CenterOfMassComputationPtr_t (new CenterOfMassComputation (d));
     }
 
-    void CenterOfMassComputation::compute (const Device::Computation_t& flag)
+    void CenterOfMassComputation::compute (const Computation_t& flag)
     {
       const Model& model = robot_->model();
 
-      bool computeCOM = (flag & Device::COM);
-      bool computeJac = (flag & Device::JACOBIAN);
+      bool computeCOM = (flag & COM);
+      bool computeJac = (flag & JACOBIAN);
       assert(computeCOM && "This does nothing");
       assert (!(computeJac && !computeCOM)); // JACOBIAN => COM
 

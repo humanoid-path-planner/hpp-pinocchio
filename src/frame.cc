@@ -109,7 +109,7 @@ namespace hpp {
     JointJacobian_t Frame::jacobian () const 
     {
       selfAssert();
-      assert(robot()->computationFlag() & Device::JACOBIAN);
+      assert(robot()->computationFlag() & JACOBIAN);
       JointJacobian_t jacobian = JointJacobian_t::Zero(6,model().nv);
       se3::getFrameJacobian<se3::LOCAL> (model(),data(),frameIndex_,jacobian);
       return jacobian;
@@ -153,20 +153,6 @@ namespace hpp {
           children_.push_back(i);
       }
     }
-
-    /*
-    std::size_t  Frame::numberChildFrames () const
-    {
-      return children_.size();
-    }
-
-    FramePtr_t  Frame::childFrame (std::size_t rank) const
-    {
-      selfAssert();
-      assert(rank<children_.size());
-      return Frame (devicePtr_, children_[rank]);
-    }
-    */
 
     Transform3f Frame::positionInParentFrame () const
     {
@@ -215,24 +201,12 @@ namespace hpp {
       }
     }
 
-    /*
-    BodyPtr_t  Frame::linkedBody () const 
-    {
-      return BodyPtr_t( new Body(devicePtr_,frameIndex_) );
-    }
-    */
-
     std::ostream& Frame::display (std::ostream& os) const 
     {
       os
         << "Frame " << frameIndex_
         << (isFixed() ? " (Fixed)" : "")
         << " : " << name() << '\n';
-      // for (unsigned int iChild=0; iChild < numberChildFrames (); iChild++)
-      // {
-      // os << "\"" << name () << "\"->\"" << childFrame(iChild)->name () << "\""
-      // << std::endl;
-      // }
       return os << std::endl;
     }
 

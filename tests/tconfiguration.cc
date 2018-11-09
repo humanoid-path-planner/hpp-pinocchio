@@ -104,7 +104,7 @@ typedef std::vector<DevicePtr_t> Robots_t;
 Robots_t createRobots()
 {
   Robots_t r;
-  r.push_back(unittest::makeDevice(unittest::HumanoidRomeo));
+  r.push_back(unittest::makeDevice(unittest::HumanoidSimple));
   r.push_back(unittest::makeDevice(unittest::CarLike));
   r.push_back(unittest::makeDevice(unittest::ManipulatorArm2));
   return r;
@@ -117,7 +117,7 @@ const value_type eps = sqrt(Eigen::NumTraits<value_type>::dummy_precision());
 BOOST_AUTO_TEST_CASE(is_valid_configuration)
 {
   DevicePtr_t robot;
-  robot = unittest::makeDevice(unittest::HumanoidRomeo);
+  robot = unittest::makeDevice(unittest::HumanoidSimple);
 
   Configuration_t q = robot->neutralConfiguration();
   BOOST_CHECK(isNormalized(robot, q, eps));
@@ -372,32 +372,42 @@ BOOST_AUTO_TEST_CASE(saturation)
 }
 
 template<typename LieGroup>
-void test_successive_interpolation (DevicePtr_t robot)
+int test_successive_interpolation (DevicePtr_t robot)
 {
-  Configuration_t q0; q0.resize (robot->configSize ());
-  Configuration_t q1; q1.resize (robot->configSize ());
+  int count = 0;
+  Configuration_t q0 (robot->configSize ());
+  Configuration_t q1 (robot->configSize ());
 
-  vector_t q1_minus_q0; q1_minus_q0.resize (robot->numberDof ());
+  vector_t q1_minus_q0 (robot->numberDof ());
 
   for (size_type i=0; i<NB_CONF; ++i) {
     q0 = se3::randomConfiguration (robot->model());
 
-    for (size_type i=0; i<NB_SUCCESSIVE_INTERPOLATION; ++i) {
+    for (size_type j=0; j<NB_SUCCESSIVE_INTERPOLATION; ++j) {
       q1 = se3::randomConfiguration (robot->model());
-      BOOST_CHECK(isNormalized(robot, q1, eps));
+      // BOOST_CHECK(isNormalized(robot, q1, eps));
+      if (!isNormalized(robot, q1, eps)) ++count;
       difference<LieGroup> (robot, q1, q0, q1_minus_q0);
 
       integrate<true, LieGroup> (robot, q0, 0.5 * q1_minus_q0, q0);
-      BOOST_CHECK(isNormalized(robot, q0, eps));
+      // BOOST_CHECK(isNormalized(robot, q0, eps));
+      if (!isNormalized(robot, q0, eps)) ++count;
     }
   }
+  return count;
 }
 
 BOOST_AUTO_TEST_CASE(successive_interpolation)
 {
   Robots_t robots = createRobots ();
+  std::vector <int> results (2*robots.size());
+#pragma omp parallel for
   for (std::size_t i = 0; i < robots.size(); ++i) {
-    test_successive_interpolation <DefaultLieGroupMap> (robots[i]);
-    test_successive_interpolation < RnxSOnLieGroupMap> (robots[i]);
+    results[2*i  ] = test_successive_interpolation <DefaultLieGroupMap> (robots[i]);
+    results[2*i+1] = test_successive_interpolation < RnxSOnLieGroupMap> (robots[i]);
+  }
+  for (std::size_t i = 0; i < robots.size(); ++i) {
+    BOOST_CHECK_MESSAGE(results[2*i  ]==0, "DefaultLieGroupMap failed on robot "<<robots[i]->name()<<".");
+    BOOST_CHECK_MESSAGE(results[2*i+1]==0, " RnxSOnLieGroupMap failed on robot "<<robots[i]->name()<<".");
   }
 }

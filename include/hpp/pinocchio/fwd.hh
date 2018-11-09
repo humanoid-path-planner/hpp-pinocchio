@@ -42,6 +42,9 @@ namespace hpp {
     HPP_PREDEF_CLASS (Gripper);
     HPP_PREDEF_CLASS (CenterOfMassComputation);
     class Frame;
+    class AbstractDevice;
+    class DeviceSync;
+    class DeviceData;
 
     enum Request_t {COLLISION, DISTANCE};
     enum InOutType { INNER, OUTER };

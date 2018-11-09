@@ -23,6 +23,7 @@
 # include <pinocchio/algorithm/jacobian.hpp>
 
 # include <hpp/pinocchio/device.hh>
+# include <hpp/pinocchio/device-data.hh>
 # include <hpp/pinocchio/body.hh>
 # include <hpp/pinocchio/frame.hh>
 # include <hpp/pinocchio/liegroup-space.hh>
@@ -50,8 +51,9 @@ namespace hpp {
     void Joint::setChildList()
     {
       assert(robot()->modelPtr()); assert(robot()->dataPtr());
+      const Data& data = robot()->data();
       children.clear();
-      for( JointIndex child=jointIndex+1;int(child)<=data().lastChild[jointIndex];++child )
+      for( JointIndex child=jointIndex+1;int(child)<=data.lastChild[jointIndex];++child )
         if( model().parents[child]==jointIndex ) children.push_back (child) ;
     }
 
@@ -65,11 +67,9 @@ namespace hpp {
 
     Model&        Joint::model()       { selfAssert(); return robot()->model(); }
     const Model&  Joint::model() const { selfAssert(); return robot()->model(); }
-    Data &        Joint::data()        { selfAssert(); return robot()->data (); }
-    const Data &  Joint::data()  const { selfAssert(); return robot()->data (); }
     
-
-    JointPtr_t Joint::parentJoint () const{
+    JointPtr_t Joint::parentJoint () const
+    {
         JointIndex idParent = model().parents[jointIndex];
         if(idParent == 0)
             return JointPtr_t();
@@ -79,17 +79,17 @@ namespace hpp {
         }
     }
 
-
     const std::string&  Joint::name() const 
     {
       selfAssert();
       return model().names[jointIndex];
     }
 
-    const Transform3f&  Joint::currentTransformation () const 
+    const Transform3f&  Joint::currentTransformation (const DeviceData& d) const
     {
       selfAssert();
-      return data().oMi[jointIndex];
+      assert(jointIndex > 0);
+      return d.data_->oMi[jointIndex];
     }
 
     size_type  Joint::numberDof () const 
@@ -433,22 +433,15 @@ namespace hpp {
       return boost::apply_visitor(VisitUpperBoundAngularVelocity(),jmv);
     }
 
-    const JointJacobian_t&  Joint::jacobian (const bool local) const
+    JointJacobian_t& Joint::jacobian (DeviceData& d, const bool local) const
     {
-      selfAssert(); assert(robot()->computationFlag() & Device::JACOBIAN);
-      if( jacobian_.cols()!=model().nv)  jacobian_ = JointJacobian_t::Zero(6,model().nv);
-      if(local) se3::getJointJacobian <LOCAL> (model(),data(),jointIndex,jacobian_);
-      else      se3::getJointJacobian <WORLD> (model(),data(),jointIndex,jacobian_);
-      return jacobian_;
-    }
-
-    JointJacobian_t&  Joint::jacobian (const bool local)
-    {
-      selfAssert(); assert(robot()->computationFlag() & Device::JACOBIAN);
-      if( jacobian_.cols()!=model().nv)  jacobian_ = JointJacobian_t::Zero(6,model().nv);
-      if(local) se3::getJointJacobian <LOCAL> (model(),data(),jointIndex,jacobian_);
-      else      se3::getJointJacobian <WORLD> (model(),data(),jointIndex,jacobian_);
-      return jacobian_;
+      selfAssert(); assert(robot()->computationFlag() & JACOBIAN);
+      assert(jointIndex > 0);
+      JointJacobian_t& jacobian (d.jointJacobians_[jointIndex-1]);
+      if( jacobian.cols()!=model().nv)  jacobian = JointJacobian_t::Zero(6,model().nv);
+      if(local) se3::getJointJacobian <LOCAL> (model(),*d.data_,jointIndex,jacobian);
+      else      se3::getJointJacobian <WORLD> (model(),*d.data_,jointIndex,jacobian);
+      return jacobian;
     }
 
     BodyPtr_t  Joint::linkedBody () const 
@@ -546,5 +539,9 @@ namespace hpp {
       return model().joints[index()];
     }
 
+    DeviceData& Joint::data() const
+    {
+      return devicePtr.lock()->d();
+    }
   } // namespace pinocchio
 } // namespace hpp

@@ -19,6 +19,8 @@
 
 # include <hpp/pinocchio/liegroup/vector-space.hh>
 
+# include <../src/eigen_fix.hh>
+
 namespace hpp {
   namespace pinocchio {
     namespace liegroupType {
@@ -41,21 +43,27 @@ namespace hpp {
           typename LgT::JacobianMatrix_t J1int (lg.nv(), lg.nv());
 
           lg.Jdifference (
-              q0_.segment<LgT::NQ>(iq_, lg.nq()),
-              q1_.segment<LgT::NQ>(iq_, lg.nq()),
+              //                    q0_.segment<LgT::NQ>(iq_, lg.nq()),
+              _BLOCK_ACCESSOR_EIGEN(q0_,segment,LgT::NQ, iq_, lg.nq()),
+              //                    q1_.segment<LgT::NQ>(iq_, lg.nq()),
+              _BLOCK_ACCESSOR_EIGEN(q1_,segment,LgT::NQ, iq_, lg.nq()),
               J0int,
               J1int);
           if (J0_.size() > 0) {
             if (ApplyOnTheLeft)
-              J0_.middleRows<LgT::NV> (iv_, lg.nv()).applyOnTheLeft (J0int);
+              //                    J0_.middleRows<LgT::NV> (iv_, lg.nv()).applyOnTheLeft (J0int);
+              _BLOCK_ACCESSOR_EIGEN(J0_,middleRows,LgT::NV,  iv_, lg.nv()).applyOnTheLeft (J0int);
             else
-              J0_.middleCols<LgT::NV> (iv_, lg.nv()).applyOnTheRight (J0int);
+              //                    J0_.middleCols<LgT::NV> (iv_, lg.nv()).applyOnTheRight (J0int);
+              _BLOCK_ACCESSOR_EIGEN(J0_,middleCols,LgT::NV,  iv_, lg.nv()).applyOnTheRight (J0int);
           }
           if (J1_.size() > 0) {
             if (ApplyOnTheLeft)
-              J1_.middleRows<LgT::NV> (iv_, lg.nv()).applyOnTheLeft (J1int);
+              //                    J1_.middleRows<LgT::NV> (iv_, lg.nv()).applyOnTheLeft (J1int);
+              _BLOCK_ACCESSOR_EIGEN(J1_,middleRows,LgT::NV,  iv_, lg.nv()).applyOnTheLeft (J1int);
             else
-              J1_.middleCols<LgT::NV> (iv_, lg.nv()).applyOnTheRight (J1int);
+              //                    J1_.middleCols<LgT::NV> (iv_, lg.nv()).applyOnTheRight (J1int);
+              _BLOCK_ACCESSOR_EIGEN(J1_,middleCols,LgT::NV,  iv_, lg.nv()).applyOnTheRight (J1int);
           }
           iq_ += lg.nq();
           iv_ += lg.nv();
@@ -66,9 +74,11 @@ namespace hpp {
         {
           if (J0_.size() > 0) {
             if (ApplyOnTheLeft)
-              J0_.middleRows<N> (iv_, lg.nv()) *= -1;
+              //                    J0_.middleRows<N> (iv_, lg.nv()) *= -1;
+              _BLOCK_ACCESSOR_EIGEN(J0_,middleRows,N,  iv_, lg.nv()) *= -1;
             else
-              J0_.middleCols<N> (iv_, lg.nv()) *= -1;
+              //                    J0_.middleCols<N> (iv_, lg.nv()) *= -1;
+              _BLOCK_ACCESSOR_EIGEN(J0_,middleCols,N,  iv_, lg.nv()) *= -1;
           }
           iq_ += lg.nq();
           iv_ += lg.nv();

@@ -68,9 +68,14 @@ namespace hpp {
       /// \name Inner/outer objects
       /// \{
 
-      /// Access to inner objects
-      /// \param type Collision or distance
-      const ObjectVector_t& innerObjects () const { return innerObjects_; }
+      /// \deprecated Use nbInnerObjects and innerObjectAt instead
+      const ObjectVector_t& innerObjects () const HPP_PINOCCHIO_DEPRECATED { return innerObjects_; }
+
+      /// Number of inner objects.
+      size_type nbInnerObjects () const;
+
+      /// Access to an inner object.
+      CollisionObjectPtr_t innerObjectAt (const size_type& i) const;
 
       /// Get radius
       ///
@@ -78,11 +83,14 @@ namespace hpp {
       /// the body to the origin of the joint that holds the body.
       value_type radius () const;
 
-      /// \}
+      /// \deprecated Use nbOuterObjects and outerObjectAt instead
+      const ObjectVector_t& outerObjects () const HPP_PINOCCHIO_DEPRECATED { return outerObjects_; }
 
-      /// Access to outer objects
-      /// \param type Collision or distance
-      const ObjectVector_t& outerObjects () const { return outerObjects_; }
+      /// Number of outer objects.
+      size_type nbOuterObjects () const;
+
+      /// Access to an outer object.
+      CollisionObjectPtr_t outerObjectAt (const size_type& i) const;
       /// \}
 
       /// \name Inertial information

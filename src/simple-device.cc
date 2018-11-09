@@ -27,7 +27,7 @@ namespace hpp {
     DevicePtr_t humanoidSimple(
         const std::string& name,
         bool usingFF,
-        Device::Computation_t compFlags)
+        Computation_t compFlags)
     {
       DevicePtr_t robot = Device::create (name);
       se3::buildModels::humanoidSimple(robot->model(), usingFF);
@@ -50,38 +50,37 @@ namespace hpp {
       DevicePtr_t makeDevice (TestDeviceType type,
                               const std::string& prefix)
       {
+        DevicePtr_t robot;
+        HumanoidRobotPtr_t hrobot;
         (void)prefix;
         switch (type) {
           case CarLike:
-            {
-              DevicePtr_t robot  = Device::create("carlike");
-              urdf::loadRobotModel (robot, 0, prefix, "planar",
-                                    "hpp_environments", "buggy", "", "");
-              robot->model().lowerPositionLimit.head<2>().setConstant(-1);
-              robot->model().upperPositionLimit.head<2>().setOnes();
-              return robot;
-            }
+            robot  = Device::create("carlike");
+            urdf::loadRobotModel (robot, 0, prefix, "planar",
+                "hpp_environments", "buggy", "", "");
+            robot->model().lowerPositionLimit.head<2>().setConstant(-1);
+            robot->model().upperPositionLimit.head<2>().setOnes();
+            return robot;
           case ManipulatorArm2:
-            {
-              DevicePtr_t robot  = Device::create("arm");
-              urdf::loadRobotModel (robot, 0, prefix, "anchor",
-                                    "hpp_environments", "tests/baxter",
-                                    "_simple", "_simple");
-              return robot;
-            }
+            robot  = Device::create("arm");
+            urdf::loadRobotModel (robot, 0, prefix, "anchor",
+                "hpp_environments", "tests/baxter",
+                "_simple", "_simple");
+            return robot;
           case HumanoidRomeo:
-            {
-              HumanoidRobotPtr_t robot  = HumanoidRobot::create("romeo");
-              urdf::loadRobotModel (robot, 0, prefix, "freeflyer",
-                                    "romeo_description", "romeo", "_small",
-                                    "_small");
-              urdf::setupHumanoidRobot (robot, prefix);
-              robot->model().lowerPositionLimit.head<3>().setConstant(-1);
-              robot->model().upperPositionLimit.head<3>().setOnes();
-              return robot;
-            }
+            hrobot  = HumanoidRobot::create("romeo");
+            urdf::loadRobotModel (hrobot, 0, prefix, "freeflyer",
+                                  "romeo_description", "romeo", "_small",
+                                  "_small");
+            urdf::setupHumanoidRobot (hrobot, prefix);
+            hrobot->model().lowerPositionLimit.head<3>().setConstant(-1);
+            hrobot->model().upperPositionLimit.head<3>().setOnes();
+            return hrobot;
           case HumanoidSimple:
-            return humanoidSimple ("simple-humanoid", true);
+            robot = humanoidSimple ("simple-humanoid", true);
+            robot->model().lowerPositionLimit.head<3>().setConstant(-1);
+            robot->model().upperPositionLimit.head<3>().setOnes();
+            return robot;
           default:
             throw std::invalid_argument("Unknown robot type.");
         }
