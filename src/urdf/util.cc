@@ -33,8 +33,6 @@
 namespace hpp {
   namespace pinocchio {
     namespace urdf {
-      using se3::FrameIndex;
-
       namespace {
 #ifdef HPP_DEBUG
         const bool verbose = true;
@@ -103,12 +101,12 @@ namespace hpp {
           robot->gaze (dir, origin);
         }
 
-        se3::JointModelVariant buildJoint (const std::string& type)
+        ::pinocchio::JointModelVariant buildJoint (const std::string& type)
         {
-          if (type == "freeflyer")        return se3::JointModelFreeFlyer();
-          else if (type == "planar")      return se3::JointModelPlanar();
-          else if (type == "prismatic_x") return se3::JointModelPrismatic<value_type, 0, 0>();
-          else if (type == "prismatic_y") return se3::JointModelPrismatic<value_type, 0, 1>();
+          if (type == "freeflyer")        return ::pinocchio::JointModelFreeFlyer();
+          else if (type == "planar")      return ::pinocchio::JointModelPlanar();
+          else if (type == "prismatic_x") return ::pinocchio::JointModelPrismaticTpl<value_type, 0, 0>();
+          else if (type == "prismatic_y") return ::pinocchio::JointModelPrismaticTpl<value_type, 0, 1>();
           else                          throw  std::invalid_argument
             ("Root joint type \"" + type + "\" is currently not available.");
         }
@@ -122,10 +120,10 @@ namespace hpp {
             model.names[i] = prefix + model.names[i];
           }
           for (FrameIndex i = idFirstFrame; i < model.frames.size(); ++i) {
-            se3::Frame& f = model.frames[i];
+            ::pinocchio::Frame& f = model.frames[i];
             f.name = prefix + f.name;
           }
-          BOOST_FOREACH(se3::GeometryObject& go, geomModel.geometryObjects) {
+          BOOST_FOREACH(::pinocchio::GeometryObject& go, geomModel.geometryObjects) {
             go.name = prefix + go.name;
           }
         }
@@ -173,7 +171,7 @@ namespace hpp {
             const std::string& srdf,
             bool verbose)
         {
-          se3::srdf::removeCollisionPairsFromSrdfString
+          ::pinocchio::srdf::removeCollisionPairsFromXML
             (model, geomModel, srdf, verbose);
         }
 
@@ -184,7 +182,7 @@ namespace hpp {
             const std::string& srdf,
             bool verbose)
         {
-          se3::srdf::removeCollisionPairsFromSrdf
+          ::pinocchio::srdf::removeCollisionPairs
             (model, geomModel, srdf, verbose);
         }
 
@@ -204,17 +202,17 @@ namespace hpp {
           const JointIndex idFirstJoint = model.joints.size();
           const FrameIndex idFirstFrame = model.frames.size();
           if (rootType == "anchor")
-            se3::urdf::buildModel(urdfTree, model, verbose);
+            ::pinocchio::urdf::buildModel(urdfTree, model, verbose);
           else
-            se3::urdf::buildModel(urdfTree, buildJoint(rootType), model, verbose);
+            ::pinocchio::urdf::buildModel(urdfTree, buildJoint(rootType), model, verbose);
           robot->createData();
 
           hppDout (notice, "Finished parsing URDF file.");
 
           GeomModel geomModel;
 
-          std::vector<std::string> baseDirs = se3::rosPaths();
-          se3::urdf::buildGeom(model, urdfStream, se3::COLLISION, geomModel, baseDirs);
+          std::vector<std::string> baseDirs = ::pinocchio::rosPaths();
+          ::pinocchio::urdf::buildGeom(model, urdfStream, ::pinocchio::COLLISION, geomModel, baseDirs);
           geomModel.addAllCollisionPairs();
 
           if (!srdf.empty()) {
@@ -232,7 +230,7 @@ namespace hpp {
               || (model.names[idFirstJoint] == prefix + "root_joint"));
           setRootJointBounds(model, idFirstJoint, rootType);
 
-          se3::appendGeometryModel(robot->geomModel(), geomModel);
+          ::pinocchio::appendGeometryModel(robot->geomModel(), geomModel);
           robot->createGeomData();
 
           hppDout (notice, "Finished parsing SRDF file.");
@@ -306,9 +304,9 @@ namespace hpp {
                         const std::string& urdfPath,
                         const std::string& srdfPath)
         {
-          std::vector<std::string> baseDirs = se3::rosPaths();
+          std::vector<std::string> baseDirs = ::pinocchio::rosPaths();
 
-          std::string urdfFileName = se3::retrieveResourcePath(urdfPath, baseDirs);
+          std::string urdfFileName = ::pinocchio::retrieveResourcePath(urdfPath, baseDirs);
           if (urdfFileName == "") {
             throw std::invalid_argument (std::string ("Unable to retrieve ") +
                 urdfPath);
@@ -316,7 +314,7 @@ namespace hpp {
 
           std::string srdfFileName;
           if (!srdfPath.empty()) {
-            srdfFileName = se3::retrieveResourcePath(srdfPath, baseDirs);
+            srdfFileName = ::pinocchio::retrieveResourcePath(srdfPath, baseDirs);
             if (srdfFileName == "") {
               throw std::invalid_argument (std::string ("Unable to retrieve ") +
                   srdfPath);

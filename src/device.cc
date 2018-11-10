@@ -25,7 +25,7 @@
 #include <hpp/fcl/BV/AABB.h>
 
 #include <pinocchio/algorithm/geometry.hpp>
-#include <pinocchio/algorithm/joint-configuration.hpp> // se3::details::Dispatch
+#include <pinocchio/algorithm/joint-configuration.hpp> // ::pinocchio::details::Dispatch
 #include <pinocchio/multibody/geometry.hpp>
 #include <pinocchio/multibody/model.hpp>
 
@@ -150,7 +150,7 @@ namespace hpp {
     createGeomData()
     {
       d().geomData_ = GeomDataPtr_t( new GeomData(geomModel()) );
-      se3::computeBodyRadius(model(),geomModel(),geomData());
+      ::pinocchio::computeBodyRadius(model(),geomModel(),geomData());
       d().invalidate();
       numberDeviceData(datas_.size());
     }
@@ -166,7 +166,7 @@ namespace hpp {
 
     Frame Device::rootFrame () const
     {
-      const se3::FrameType type = (se3::FrameType)(se3::JOINT | se3::FIXED_JOINT);
+      const ::pinocchio::FrameType type = (::pinocchio::FrameType)(::pinocchio::JOINT | ::pinocchio::FIXED_JOINT);
       return Frame(weakPtr_.lock(), model().getFrameId("root_joint", type));
     }
 
@@ -184,9 +184,9 @@ namespace hpp {
     JointPtr_t Device::
     getJointAtConfigRank (const size_type& r) const
     {
-      //BOOST_FOREACH( const se3::JointModel & j, // Skip "universe" joint
+      //BOOST_FOREACH( const JointModel & j, // Skip "universe" joint
       //std::make_pair(model_->joints.begin()+1,model_->joints.end()) )
-      BOOST_FOREACH( const se3::JointModel & j, model().joints )
+      BOOST_FOREACH( const JointModel & j, model().joints )
         {
           if( j.id()==0 ) continue; // Skip "universe" joint
           const size_type iq = r - j.idx_q();
@@ -199,7 +199,7 @@ namespace hpp {
     JointPtr_t Device::
     getJointAtVelocityRank (const size_type& r) const
     {
-      BOOST_FOREACH( const se3::JointModel & j,model().joints )
+      BOOST_FOREACH( const JointModel & j,model().joints )
         {
           if( j.id()==0 ) continue; // Skip "universe" joint
           const size_type iv = r - j.idx_v();
@@ -224,8 +224,8 @@ namespace hpp {
     getJointByBodyName (const std::string& name) const
     {
       if (model().existFrame(name)) {
-        se3::Model::FrameIndex bodyId = model().getFrameId(name);
-        if (model().frames[bodyId].type == se3::BODY) {
+        FrameIndex bodyId = model().getFrameId(name);
+        if (model().frames[bodyId].type == ::pinocchio::BODY) {
           JointIndex jointId = model().frames[bodyId].parent;
           //assert(jointId>=0);
           assert((std::size_t)jointId<model().joints.size());
@@ -334,7 +334,7 @@ namespace hpp {
       /* Following hpp::model API, the forward kinematics (joint placement) is
        * supposed to have already been computed. */
       updateGeometryPlacements();
-      return se3::computeCollisions(geomModel(), geomData(),stopAtFirstCollision);
+      return ::pinocchio::computeCollisions(geomModel(), geomData(),stopAtFirstCollision);
     }
 
     void Device::computeDistances ()
@@ -342,7 +342,7 @@ namespace hpp {
       /* Following hpp::model API, the forward kinematics (joint placement) is
        * supposed to have already been computed. */
       updateGeometryPlacements();
-      se3::computeDistances (geomModel(), geomData());
+      ::pinocchio::computeDistances (geomModel(), geomData());
     }
 
     const DistanceResults_t& Device::distanceResults () const
@@ -354,17 +354,15 @@ namespace hpp {
     /* --- Bounding box ----------------------------------------------------- */
     /* ---------------------------------------------------------------------- */
 
-    struct AABBStep : public se3::fusion::JointModelVisitor<AABBStep>
+    struct AABBStep : public ::pinocchio::fusion::JointVisitorBase<AABBStep>
     {
       typedef boost::fusion::vector<const Model&,
                                     Configuration_t,
                                     bool,
                                     fcl::AABB&> ArgsType;
 
-      JOINT_MODEL_VISITOR_INIT(AABBStep);
-
       template<typename JointModel>
-      static void algo(const se3::JointModelBase<JointModel> & jmodel,
+      static void algo(const ::pinocchio::JointModelBase<JointModel> & jmodel,
                        const Model& model,
                        Configuration_t q,
                        bool initializeAABB,
@@ -404,8 +402,8 @@ namespace hpp {
     };
 
     template <>
-    void AABBStep::algo<se3::JointModelComposite>(
-        const se3::JointModelBase<se3::JointModelComposite> & jmodel,
+    void AABBStep::algo< ::pinocchio::JointModelComposite >(
+        const ::pinocchio::JointModelBase< ::pinocchio::JointModelComposite > & jmodel,
         const Model& model,
         Configuration_t q,
         bool initializeAABB,
@@ -414,11 +412,11 @@ namespace hpp {
       // TODO this should for but I did not test it.
       hppDout(warning, "Computing AABB of JointModelComposite should work but has never been tested");
       if (initializeAABB)  {
-        se3::JointModelComposite::JointDataDerived data = jmodel.createData();
+        ::pinocchio::JointModelComposite::JointDataDerived data = jmodel.createData();
         jmodel.calc(data, q);
         aabb = fcl::AABB(data.M.translation());
       }
-      se3::details::Dispatch<AABBStep>::run(jmodel, AABBStep::ArgsType(model, q, false, aabb));
+      ::pinocchio::details::Dispatch<AABBStep>::run(jmodel.derived(), AABBStep::ArgsType(model, q, false, aabb));
     }
 
     fcl::AABB Device::computeAABB() const

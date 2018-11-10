@@ -23,9 +23,9 @@ namespace hpp {
   namespace pinocchio {
     namespace liegroup {
       template<int N>
-        struct SpecialEuclideanOperation : public se3::SpecialEuclideanOperation<N>
+        struct SpecialEuclideanOperation : public ::pinocchio::SpecialEuclideanOperationTpl<N, value_type>
       {
-        typedef se3::SpecialEuclideanOperation<N> Base;
+        typedef ::pinocchio::SpecialEuclideanOperationTpl<N, value_type> Base;
         enum {
           NT = N,
           NR = Base::NV - N,

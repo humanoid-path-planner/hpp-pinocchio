@@ -49,8 +49,6 @@ namespace hpp {
     struct ObjectVector 
       : public FakeContainer<CollisionObjectPtr_t,CollisionObjectConstPtr_t>
     {
-      typedef se3::JointIndex JointIndex;
-
       JointIndex jointIndex;
       InOutType inOutType;
 
@@ -66,7 +64,7 @@ namespace hpp {
       void selfAssert(size_type i = 0) const;
 
       private:
-      typedef std::vector<se3::GeomIndex> GeomIndexList;
+      typedef std::vector<GeomIndex> GeomIndexList;
       const GeomIndexList & geometries() const;
     } HPP_PINOCCHIO_DEPRECATED;
 

@@ -47,8 +47,8 @@ namespace hpp {
                               liegroup::SpecialOrthogonalOperation<2> >,
                             liegroup::SpecialOrthogonalOperation <2>,
                             liegroup::SpecialOrthogonalOperation <3>,
-                            se3::SpecialEuclideanOperation <2>,
-                            se3::SpecialEuclideanOperation <3> >
+                            liegroup::SpecialEuclideanOperation <2>,
+                            liegroup::SpecialEuclideanOperation <3> >
     LiegroupType;
 
     enum DerivativeProduct {
@@ -175,7 +175,7 @@ namespace hpp {
       /// \note For each elementary Lie group in q.space (), ranging
       ///       over indices \f$[iq, iq+nq-1]\f$, the Jacobian
       ///       \f$J_{Lg} (q [iq:iq+nq])\f$ is computed by method
-      ///       se3::LieGroupBase::dIntegrate_dq.
+      ///       ::pinocchio::LieGroupBase::dIntegrate_dq.
       /// lines \f$[iq:iq+nq]\f$ of Jq are then left multiplied by
       /// \f$J_{Lg} (q [iq:iq+nq])\f$.
       template <DerivativeProduct side>
@@ -197,7 +197,7 @@ namespace hpp {
       /// \note For each elementary Lie group in q.space (), ranging
       ///       over indices \f$[iv, iv+nv-1]\f$, the Jacobian
       ///       \f$J_{Lg} (q [iv:iv+nv])\f$ is computed by method
-      ///       se3::LieGroupBase::dIntegrate_dq.
+      ///       ::pinocchio::LieGroupBase::dIntegrate_dq.
       /// lines \f$[iv:iv+nv]\f$ of Jv are then left multiplied by
       /// \f$J_{Lg} (q [iv:iv+nv])\f$.
       template <DerivativeProduct side>

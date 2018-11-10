@@ -90,7 +90,7 @@ namespace hpp {
     LiegroupSpacePtr_t LiegroupSpace::SE2 ()
     {
       LiegroupSpace* ptr (new LiegroupSpace
-                          (se3::SpecialEuclideanOperation <2>()));
+                          (liegroup::SpecialEuclideanOperation <2>()));
       LiegroupSpacePtr_t  shPtr (ptr);
       ptr->init (shPtr);
       return shPtr;
@@ -100,7 +100,7 @@ namespace hpp {
     LiegroupSpacePtr_t LiegroupSpace::SE3 ()
     {
       LiegroupSpace* ptr (new LiegroupSpace
-                          (se3::SpecialEuclideanOperation <3>()));
+                          (liegroup::SpecialEuclideanOperation <3>()));
       LiegroupSpacePtr_t  shPtr (ptr);
       ptr->init (shPtr);
       return shPtr;

@@ -30,7 +30,7 @@ namespace hpp {
         Computation_t compFlags)
     {
       DevicePtr_t robot = Device::create (name);
-      se3::buildModels::humanoidSimple(robot->model(), usingFF);
+      ::pinocchio::buildModels::humanoidRandom(robot->model(), usingFF);
       robot->createData();
       robot->createGeomData();
       robot->controlComputation(compFlags);

@@ -25,7 +25,7 @@ namespace hpp {
   namespace pinocchio {
     namespace liegroup {
       template<typename LieGroup1, typename LieGroup2>
-        struct CartesianProductOperation : public se3::CartesianProductOperation<LieGroup1, LieGroup2>
+        struct CartesianProductOperation : public ::pinocchio::CartesianProductOperation<LieGroup1, LieGroup2>
       {
         enum {
           BoundSize = LieGroup1::BoundSize + LieGroup2::BoundSize,
@@ -33,7 +33,7 @@ namespace hpp {
           NT = LieGroup1::NT + LieGroup2::NT
         };
 
-        typedef se3::CartesianProductOperation<LieGroup1, LieGroup2> Base;
+        typedef ::pinocchio::CartesianProductOperation<LieGroup1, LieGroup2> Base;
 
         template <class ConfigL_t, class ConfigR_t>
           double squaredDistance(

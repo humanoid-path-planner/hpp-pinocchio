@@ -29,9 +29,9 @@ namespace hpp {
     std::ostream&   setpyformat (std::ostream& o) { getpythonformat(o) = 1; return o; }
     std::ostream& unsetpyformat (std::ostream& o) { getpythonformat(o) = 0; return o; }
 
-    // se3::SE3
-    template <int Option> struct HPP_PINOCCHIO_DLLAPI prettyPrint <se3::SE3, Option> {
-      static std::ostream& run (std::ostream& os, const se3::SE3& M)
+    // ::pinocchio::SE3
+    template <int Option> struct HPP_PINOCCHIO_DLLAPI prettyPrint <pinocchio::SE3, Option> {
+      static std::ostream& run (std::ostream& os, const ::pinocchio::SE3& M)
       {
         enum {
           OneLine = ((Option & OutputFormatBits) == OneLineOutput),
@@ -46,10 +46,10 @@ namespace hpp {
 
         switch (Option & OutputFormatBits) {
           case OneLineOutput:
-            return os <<  "q = " << one_line (se3::SE3::Quaternion_t(M.rotation()))
+            return os <<  "q = " << one_line (::pinocchio::SE3::Quaternion(M.rotation()))
               << ", p = " << M.translation().transpose().format(vfmt);
           case CondensedOutput:
-            return os <<  "q = " << one_line (se3::SE3::Quaternion_t(M.rotation()))
+            return os <<  "q = " << one_line (::pinocchio::SE3::Quaternion(M.rotation()))
               << iendl << "p = " << M.translation().transpose().format(vfmt);
           case PrettyOutput:
           default:
@@ -63,7 +63,7 @@ namespace hpp {
       }
     };
 
-    template struct HPP_PINOCCHIO_DLLAPI prettyPrint <se3::SE3, PrettyOutput    >;
-    template struct HPP_PINOCCHIO_DLLAPI prettyPrint <se3::SE3, CondensedOutput >;
-    template struct HPP_PINOCCHIO_DLLAPI prettyPrint <se3::SE3, OneLineOutput   >;
+    template struct HPP_PINOCCHIO_DLLAPI prettyPrint <pinocchio::SE3, PrettyOutput    >;
+    template struct HPP_PINOCCHIO_DLLAPI prettyPrint <pinocchio::SE3, CondensedOutput >;
+    template struct HPP_PINOCCHIO_DLLAPI prettyPrint <pinocchio::SE3, OneLineOutput   >;
 } // namespace hpp

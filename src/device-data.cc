@@ -51,7 +51,7 @@ namespace hpp {
     void DeviceData::computeForwardKinematics (const ModelPtr_t& mptr)
     {
       if(upToDate_) return;
-      const se3::Model& model = *mptr;
+      const Model& model = *mptr;
 
       // a IMPLIES b === (b || ~a)
       // velocity IMPLIES position
@@ -71,26 +71,26 @@ namespace hpp {
       modelConf_ = currentConfiguration_.head(nq);
 
       if (computationFlag_ & ACCELERATION )
-        se3::forwardKinematics(model,*data_,modelConf_,
+        ::pinocchio::forwardKinematics(model,*data_,modelConf_,
                                currentVelocity_.head(nv),currentAcceleration_.head(nv));
       else if (computationFlag_ & VELOCITY )
-        se3::forwardKinematics(model,*data_,modelConf_,
+        ::pinocchio::forwardKinematics(model,*data_,modelConf_,
                                currentVelocity_.head(nv));
       else if (computationFlag_ & JOINT_POSITION )
-        se3::forwardKinematics(model,*data_,modelConf_);
+        ::pinocchio::forwardKinematics(model,*data_,modelConf_);
 
       if (computationFlag_&COM)
         {
           if (computationFlag_|JACOBIAN) 
             // TODO: Jcom should not recompute the kinematics (\sa pinocchio issue #219)
-            se3::jacobianCenterOfMass(model,*data_,modelConf_,true);
+            ::pinocchio::jacobianCenterOfMass(model,*data_,modelConf_,true);
           else 
-            // Compose Com position, but not velocity and acceleration.
-            se3::centerOfMass<true, false, false>(model,*data_,true);
+            // 0 means Compose Com position, but not velocity and acceleration.
+            ::pinocchio::centerOfMass(model,*data_,0,true);
         }
 
       if(computationFlag_&JACOBIAN)
-        se3::computeJointJacobians(model,*data_,modelConf_);
+        ::pinocchio::computeJointJacobians(model,*data_,modelConf_);
 
       upToDate_ = true;
     }
@@ -100,7 +100,7 @@ namespace hpp {
       if(frameUpToDate_) return;
       computeForwardKinematics(mptr);
 
-      se3::updateFramePlacements (*mptr,*data_);
+      ::pinocchio::updateFramePlacements (*mptr,*data_);
 
       frameUpToDate_ = true;
     }
@@ -108,7 +108,7 @@ namespace hpp {
     void DeviceData::updateGeometryPlacements (const ModelPtr_t& m, const GeomModelPtr_t& gm)
     {
       if (!geomUpToDate_) {
-        se3::updateGeometryPlacements(*m,*data_,*gm,*geomData_);
+        ::pinocchio::updateGeometryPlacements(*m,*data_,*gm,*geomData_);
         geomUpToDate_ = true;
       }
     }

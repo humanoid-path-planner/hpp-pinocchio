@@ -23,15 +23,13 @@
 
 namespace hpp {
   namespace pinocchio {
-      struct SetBoundStep : public se3::fusion::JointModelVisitor<SetBoundStep>
+      struct SetBoundStep : public ::pinocchio::fusion::JointVisitorBase<SetBoundStep>
       {
         typedef boost::fusion::vector<const Configuration_t &,
                 Configuration_t &> ArgsType;
 
-        JOINT_MODEL_VISITOR_INIT(SetBoundStep);
-
         template<typename JointModel>
-        static void algo(const se3::JointModelBase<JointModel> & jmodel,
+        static void algo(const ::pinocchio::JointModelBase<JointModel> & jmodel,
             const Configuration_t & bounds,
             Configuration_t& out)
         {
@@ -42,12 +40,12 @@ namespace hpp {
       };
 
       template <>
-      void SetBoundStep::algo<se3::JointModelComposite>(
-          const se3::JointModelBase<se3::JointModelComposite> & jmodel,
+      void SetBoundStep::algo< ::pinocchio::JointModelComposite>(
+          const ::pinocchio::JointModelBase< ::pinocchio::JointModelComposite> & jmodel,
           const Configuration_t & bounds,
           Configuration_t & out)
       {
-        se3::details::Dispatch<SetBoundStep>::run(
+        ::pinocchio::details::Dispatch<SetBoundStep>::run(
             jmodel.derived(),
             ArgsType(bounds, out));
       }

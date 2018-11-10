@@ -44,9 +44,9 @@ namespace hpp {
       }
 
       template<int Size, bool rot>
-        struct VectorSpaceOperation : public se3::VectorSpaceOperation<Size>
+        struct VectorSpaceOperation : public ::pinocchio::VectorSpaceOperationTpl<Size, value_type>
       {
-        typedef se3::VectorSpaceOperation<Size> Base;
+        typedef ::pinocchio::VectorSpaceOperationTpl<Size, value_type> Base;
         enum {
           BoundSize = Size,
           NR = (rot ? Size : 0),
@@ -107,5 +107,12 @@ namespace hpp {
     } // namespace liegroup
   } // namespace pinocchio
 } // namespace hpp
+
+namespace pinocchio {
+  template<int Size, bool rot>
+  struct traits<hpp::pinocchio::liegroup::VectorSpaceOperation<Size, rot> > :
+    public traits<typename hpp::pinocchio::liegroup::VectorSpaceOperation<Size, rot>::Base>
+  {};
+}
 
 #endif // HPP_PINOCCHIO_LIEGROUP_VECTOR_SPACE_OPERATION_HH

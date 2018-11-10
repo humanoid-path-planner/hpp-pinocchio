@@ -18,7 +18,7 @@
 #include "pinocchio/multibody/model.hpp"
 #include "pinocchio/algorithm/jacobian.hpp"
 
-namespace se3
+namespace pinocchio
 {
 
   inline void
@@ -41,10 +41,10 @@ namespace se3
     // Nasty cast below, from (u-long) size_t to int.
     for( int root=int(roots.size()-1); root>=0; --root )
       {
-        se3::JointIndex rootId = roots[root];
+        JointIndex rootId = roots[root];
 
         // Backward loop on descendents
-        for( se3::JointIndex jid = data.lastChild[rootId];jid>=rootId;--jid )
+        for( JointIndex jid = data.lastChild[rootId];jid>=rootId;--jid )
           {
             const Model::JointIndex & parent = model.parents[jid];
             data.com [parent] += data.com [jid];
@@ -52,7 +52,7 @@ namespace se3
           } // end for jid
 
         // Backward loop on ancestors
-        se3::JointIndex jid = model.parents[rootId];
+        JointIndex jid = model.parents[rootId];
         rootId = (root>0) ? roots[root-1] : 0;
         while (jid>rootId) // stopping when meeting the next subtree
           {
@@ -87,13 +87,13 @@ namespace se3
     // Nasty cast below, from (u-long) size_t to int.
     for( int root=int(roots.size()-1); root>=0; --root )
       {
-        se3::JointIndex rootId = roots[root];
+        JointIndex rootId = roots[root];
 
         // Backward loop on descendents
-        for( se3::JointIndex jid = data.lastChild[rootId];jid>=rootId;--jid )
+        for( JointIndex jid = data.lastChild[rootId];jid>=rootId;--jid )
           {
             std::cout << "Bwd1 " << jid << std::endl;
-            se3::JacobianCenterOfMassBackwardStep
+            JacobianCenterOfMassBackwardStep
               ::run(model.joints[jid],data.joints[jid],
                     JacobianCenterOfMassBackwardStep::ArgsType(model,data,false));
             std::cout << data.oMi [jid] << std::endl;
@@ -102,12 +102,12 @@ namespace se3
           } // end for jid
 
         // Backward loop on ancestors
-        se3::JointIndex jid = model.parents[rootId];
+        JointIndex jid = model.parents[rootId];
         rootId = (root>0) ? roots[root-1] : 0;
         while (jid>rootId) // stopping when meeting the next subtree
           {
             std::cout << "Bwd2 " << jid << std::endl;
-            se3::JacobianCenterOfMassBackwardStep
+            JacobianCenterOfMassBackwardStep
               ::run(model.joints[jid],data.joints[jid],
                     JacobianCenterOfMassBackwardStep::ArgsType(model,data,false));
             
@@ -119,4 +119,4 @@ namespace se3
     data.Jcom    /= data.mass[0];
   }
 
-} // namespace se3
+} // namespace pinocchio

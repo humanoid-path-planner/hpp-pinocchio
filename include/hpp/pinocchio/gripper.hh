@@ -66,7 +66,7 @@ namespace hpp {
         }
 
         /// Get the frame Id of the gripper in the vector of frame of the Model
-        const se3::FrameIndex& frameId () const
+        const FrameIndex& frameId () const
         {
           return fid_;
         }
@@ -122,7 +122,7 @@ namespace hpp {
         DeviceWkPtr_t device_;
         /// Joint of the robot that holds handles.
         JointPtr_t joint_;
-        se3::FrameIndex fid_;
+        FrameIndex fid_;
         /// Clearance
         value_type clearance_;
         /// Weak pointer to itself

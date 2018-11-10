@@ -57,9 +57,9 @@ namespace hpp {
     const std::string& CollisionObject::name () const { return pinocchio().name; }
 
     // This function should rather return a shared_ptr<const>
-    const se3::GeometryObject & CollisionObject::pinocchio () const
+    const ::pinocchio::GeometryObject & CollisionObject::pinocchio () const
     { return geomModel_->geometryObjects[geomInModelIndex]; }
-    se3::GeometryObject & CollisionObject::pinocchio ()
+    ::pinocchio::GeometryObject & CollisionObject::pinocchio ()
     { return geomModel_->geometryObjects[geomInModelIndex]; }
 
     FclCollisionObjectPtr_t CollisionObject::fcl (GeomData& geomData) const

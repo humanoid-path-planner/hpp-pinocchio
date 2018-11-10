@@ -50,15 +50,16 @@ namespace hpp {
     enum InOutType { INNER, OUTER };
 
     // Pinocchio typedefs
-    typedef se3::JointIndex     JointIndex;
-    typedef se3::FrameIndex     FrameIndex;
-    typedef se3::GeomIndex      GeomIndex;
-    typedef se3::Model          Model;
-    typedef se3::Data           Data;
-    typedef se3::GeometryModel  GeomModel;
-    typedef se3::GeometryData   GeomData;
-    typedef se3::SE3            Transform3f;
-    typedef se3::JointModel     JointModel;
+    typedef ::pinocchio::JointIndex     JointIndex;
+    typedef ::pinocchio::FrameIndex     FrameIndex;
+    typedef ::pinocchio::GeomIndex      GeomIndex;
+    typedef ::pinocchio::Model          Model;
+    typedef ::pinocchio::Data           Data;
+    typedef ::pinocchio::GeometryModel  GeomModel;
+    typedef ::pinocchio::GeometryData   GeomData;
+    typedef ::pinocchio::SE3            Transform3f;
+    typedef ::pinocchio::SE3            SE3;
+    typedef ::pinocchio::JointModel     JointModel;
 
     typedef Eigen::Array <bool, Eigen::Dynamic, 1> ArrayXb;
 
