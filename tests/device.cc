@@ -29,16 +29,6 @@ static bool verbose = true;
 
 using namespace hpp::pinocchio;
 
-DevicePtr_t makeDeviceSafe (unittest::TestDeviceType type) {
-  try {
-    return unittest::makeDevice (type);
-  } catch (const std::invalid_argument&) {
-    // This is not treated as an error as it may simply be that the package
-    // was not found by CMake.
-    return DevicePtr_t();
-  }
-}
-
 void displayAABB(const fcl::AABB& aabb)
 {
     std::cout << "Bounding box is\n"
@@ -48,7 +38,7 @@ void displayAABB(const fcl::AABB& aabb)
 
 BOOST_AUTO_TEST_CASE (computeAABB)
 {
-  DevicePtr_t robot = makeDeviceSafe(unittest::HumanoidSimple);
+  DevicePtr_t robot = unittest::makeDevice(unittest::HumanoidSimple);
   BOOST_REQUIRE(robot);
 
   robot->rootJoint()->lowerBounds(vector3_t::Constant(-0));
@@ -72,7 +62,7 @@ BOOST_AUTO_TEST_CASE (unit_test_device)
   DevicePtr_t robot;
   LiegroupSpacePtr_t space;
 
-  robot = makeDeviceSafe (unittest::HumanoidSimple);
+  robot = unittest::makeDevice (unittest::HumanoidSimple);
   space = LiegroupSpace::createCopy(robot->configSpace());
   space->mergeVectorSpaces();
   BOOST_CHECK_EQUAL (space->name(), "SE(3)*R^26");
@@ -81,12 +71,12 @@ BOOST_AUTO_TEST_CASE (unit_test_device)
   space->mergeVectorSpaces();
   BOOST_CHECK_EQUAL (space->name(), "R^3*SO(3)*R^26");
 
-  robot = makeDeviceSafe (unittest::CarLike);
+  robot = unittest::makeDevice (unittest::CarLike);
   space = LiegroupSpace::createCopy(robot->configSpace());
   space->mergeVectorSpaces();
   BOOST_CHECK_EQUAL (space->name(), "SE(2)*R^2");
 
-  robot = makeDeviceSafe (unittest::ManipulatorArm2);
+  robot = unittest::makeDevice (unittest::ManipulatorArm2);
   space = LiegroupSpace::createCopy(robot->configSpace());
   space->mergeVectorSpaces();
   BOOST_CHECK_EQUAL (space->name(), "R^19");
