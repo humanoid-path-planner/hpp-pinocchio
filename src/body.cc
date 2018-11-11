@@ -26,6 +26,7 @@
 #include <pinocchio/multibody/geometry.hpp>
 
 #include <hpp/pinocchio/joint.hh>
+#include <hpp/pinocchio/joint-collection.hh>
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/collision-object.hh>
 

@@ -27,6 +27,7 @@
 # include <hpp/pinocchio/body.hh>
 # include <hpp/pinocchio/frame.hh>
 # include <hpp/pinocchio/liegroup-space.hh>
+# include <hpp/pinocchio/joint-collection.hh>
 
 # include "joint/bound.hh"
 
@@ -333,7 +334,7 @@ namespace hpp {
     {
       VisitMaximalDistanceToParent visitor(model(),
                                            model().jointPlacements[jointIndex]);
-      const ::pinocchio::JointModelVariant & jmv = model().joints[jointIndex];
+      const JointModelVariant & jmv = model().joints[jointIndex];
       maximalDistanceToParent_ = 
         boost::apply_visitor( visitor, jmv );
     }
@@ -382,7 +383,7 @@ namespace hpp {
     value_type  Joint::upperBoundLinearVelocity () const
     {
       VisitUpperBoundLinearVelocity visitor;
-      const ::pinocchio::JointModelVariant & jmv = model().joints[jointIndex];
+      const JointModelVariant & jmv = model().joints[jointIndex];
 
       //return boost::apply_visitor(visitor,jmv);
       return boost::apply_visitor(VisitUpperBoundLinearVelocity(),jmv);
@@ -427,7 +428,7 @@ namespace hpp {
     value_type  Joint::upperBoundAngularVelocity () const
     {
       VisitUpperBoundAngularVelocity visitor;
-      const ::pinocchio::JointModelVariant & jmv = model().joints[jointIndex];
+      const JointModelVariant & jmv = model().joints[jointIndex];
 
       //return boost::apply_visitor(visitor,jmv);
       return boost::apply_visitor(VisitUpperBoundAngularVelocity(),jmv);

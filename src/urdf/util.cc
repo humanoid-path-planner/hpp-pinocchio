@@ -27,6 +27,7 @@
 #include <hpp/util/debug.hh>
 
 #include <hpp/pinocchio/joint.hh>
+#include <hpp/pinocchio/joint-collection.hh>
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/humanoid-robot.hh>
 
@@ -101,12 +102,12 @@ namespace hpp {
           robot->gaze (dir, origin);
         }
 
-        ::pinocchio::JointModelVariant buildJoint (const std::string& type)
+        JointModelVariant buildJoint (const std::string& type)
         {
-          if (type == "freeflyer")        return ::pinocchio::JointModelFreeFlyer();
-          else if (type == "planar")      return ::pinocchio::JointModelPlanar();
-          else if (type == "prismatic_x") return ::pinocchio::JointModelPrismaticTpl<value_type, 0, 0>();
-          else if (type == "prismatic_y") return ::pinocchio::JointModelPrismaticTpl<value_type, 0, 1>();
+          if (type == "freeflyer")        return JointCollection::JointModelFreeFlyer();
+          else if (type == "planar")      return JointCollection::JointModelPlanar();
+          else if (type == "prismatic_x") return JointCollection::JointModelPX();
+          else if (type == "prismatic_y") return JointCollection::JointModelPY();
           else                          throw  std::invalid_argument
             ("Root joint type \"" + type + "\" is currently not available.");
         }

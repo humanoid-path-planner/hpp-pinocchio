@@ -28,6 +28,7 @@ namespace bpt = boost::posix_time;
 #include <hpp/pinocchio/util.hh>
 #include <hpp/pinocchio/device-sync.hh>
 #include <hpp/pinocchio/simple-device.hh>
+#include <hpp/pinocchio/joint-collection.hh>
 
 using namespace hpp;
 using namespace hpp::pinocchio;

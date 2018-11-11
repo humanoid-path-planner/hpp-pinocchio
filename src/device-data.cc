@@ -24,6 +24,8 @@
 #include <pinocchio/multibody/geometry.hpp>
 #include <pinocchio/multibody/model.hpp>
 
+#include <hpp/pinocchio/joint-collection.hh>
+
 namespace hpp {
   namespace pinocchio {
 

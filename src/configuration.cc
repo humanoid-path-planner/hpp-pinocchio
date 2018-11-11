@@ -23,6 +23,7 @@
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/liegroup.hh>
 #include <hpp/pinocchio/util.hh>
+#include <hpp/pinocchio/joint-collection.hh>
 
 namespace hpp {
   namespace pinocchio {

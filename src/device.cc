@@ -30,6 +30,7 @@
 #include <pinocchio/multibody/model.hpp>
 
 #include <hpp/pinocchio/fwd.hh>
+#include <hpp/pinocchio/joint-collection.hh>
 //#include <hpp/pinocchio/distance-result.hh>
 #include <hpp/pinocchio/body.hh>
 #include <hpp/pinocchio/extra-config-space.hh>

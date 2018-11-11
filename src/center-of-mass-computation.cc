@@ -25,6 +25,7 @@
 #include <hpp/util/exception-factory.hh>
 
 #include "hpp/pinocchio/joint.hh"
+#include <hpp/pinocchio/joint-collection.hh>
 #include "hpp/pinocchio/device.hh"
 
 namespace hpp {
@@ -81,7 +82,7 @@ namespace hpp {
       // TODO as of now, it is not possible to access the template parameter
       // JointCollectionTpl of Model so we use the default one.
       typedef ::pinocchio::JacobianCenterOfMassBackwardStep<Model::Scalar,
-              Model::Options, ::pinocchio::JointCollectionDefaultTpl> Pass;
+              Model::Options, JointCollectionTpl> Pass;
 
       // Assume root is sorted from smallest id.
       // Nasty cast below, from (u-long) size_t to int.

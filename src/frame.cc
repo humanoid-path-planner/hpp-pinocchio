@@ -24,6 +24,7 @@
 # include <hpp/pinocchio/device.hh>
 # include <hpp/pinocchio/body.hh>
 # include <hpp/pinocchio/joint.hh>
+# include <hpp/pinocchio/joint-collection.hh>
 
 namespace hpp {
   namespace pinocchio {
