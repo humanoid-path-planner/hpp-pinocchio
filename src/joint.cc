@@ -19,6 +19,8 @@
 
 # include <hpp/pinocchio/joint.hh>
 
+# include <limits>
+
 # include <pinocchio/multibody/joint/joint.hpp>
 # include <pinocchio/algorithm/jacobian.hpp>
 
@@ -45,7 +47,10 @@ namespace hpp {
       assert (robot()->modelPtr());
       assert (std::size_t(jointIndex)<model().joints.size());
       setChildList();
-      computeMaximalDistanceToParent();
+      if (jointIndex > 0)
+        computeMaximalDistanceToParent();
+      else
+        maximalDistanceToParent_ = std::numeric_limits<value_type>::quiet_NaN();
     }
 
     void Joint::setChildList()
@@ -88,6 +93,10 @@ namespace hpp {
     const Transform3f&  Joint::currentTransformation (const DeviceData& d) const
     {
       selfAssert();
+      if (jointIndex == 0) {
+        static const Transform3f id (Transform3f::Identity());
+        return id;
+      }
       assert(jointIndex > 0);
       return d.data_->oMi[jointIndex];
     }
@@ -136,6 +145,7 @@ namespace hpp {
     void Joint::isBounded (size_type rank, bool bounded)
     {
       const size_type idx = model().joints[jointIndex].idx_q() + rank;
+      assert(jointIndex > 0);
       assert(rank < configSize());
       if (!bounded) {
         const value_type& inf = std::numeric_limits<value_type>::infinity();
@@ -148,6 +158,7 @@ namespace hpp {
     }
     bool Joint::isBounded (size_type rank) const
     {
+      assert(jointIndex > 0);
       const size_type idx = model().joints[jointIndex].idx_q() + rank;
       assert(rank < configSize());
       return !std::isinf (model().lowerPositionLimit[idx])
@@ -155,35 +166,41 @@ namespace hpp {
     }
     value_type Joint::lowerBound (size_type rank) const
     {
+      assert(jointIndex > 0);
       const size_type idx = model().joints[jointIndex].idx_q() + rank;
       assert(rank < configSize());
       return model().lowerPositionLimit[idx];
     }
     value_type Joint::upperBound (size_type rank) const
     {
+      assert(jointIndex > 0);
       const size_type idx = model().joints[jointIndex].idx_q() + rank;
       assert(rank < configSize());
       return model().upperPositionLimit[idx];
     }
     void Joint::lowerBound (size_type rank, value_type lowerBound)
     {
+      assert(jointIndex > 0);
       const size_type idx = model().joints[jointIndex].idx_q() + rank;
       assert(rank < configSize());
       model().lowerPositionLimit[idx] = lowerBound;
     }
     void Joint::upperBound (size_type rank, value_type upperBound)
     {
+      assert(jointIndex > 0);
       const size_type idx = model().joints[jointIndex].idx_q() + rank;
       assert(rank < configSize());
       model().upperPositionLimit[idx] = upperBound;
     }
     void Joint::lowerBounds (vectorIn_t lowerBounds)
     {
+      assert(jointIndex > 0);
       SetBoundStep::run(model().joints[jointIndex],
           SetBoundStep::ArgsType(lowerBounds, model().lowerPositionLimit));
     }
     void Joint::upperBounds (vectorIn_t upperBounds)
     {
+      assert(jointIndex > 0);
       SetBoundStep::run(model().joints[jointIndex],
           SetBoundStep::ArgsType(upperBounds, model().upperPositionLimit));
     }
@@ -331,6 +348,7 @@ namespace hpp {
 
     void  Joint::computeMaximalDistanceToParent () 
     {
+      assert(jointIndex > 0);
       VisitMaximalDistanceToParent visitor(model(),
                                            model().jointPlacements[jointIndex]);
       const se3::JointModelVariant & jmv = model().joints[jointIndex];
@@ -381,6 +399,7 @@ namespace hpp {
 
     value_type  Joint::upperBoundLinearVelocity () const
     {
+      assert(jointIndex > 0);
       VisitUpperBoundLinearVelocity visitor;
       const se3::JointModelVariant & jmv = model().joints[jointIndex];
 
@@ -426,6 +445,7 @@ namespace hpp {
 
     value_type  Joint::upperBoundAngularVelocity () const
     {
+      assert(jointIndex > 0);
       VisitUpperBoundAngularVelocity visitor;
       const se3::JointModelVariant & jmv = model().joints[jointIndex];
 
@@ -550,6 +570,7 @@ namespace hpp {
 
     const JointModel& Joint::jointModel() const
     {
+      assert(jointIndex > 0);
       return model().joints[index()];
     }
 
