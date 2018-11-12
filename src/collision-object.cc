@@ -123,7 +123,10 @@ namespace hpp {
 
     GeomData& CollisionObject::geomData () const
     {
-      return geomData (devicePtr->d());
+      if (devicePtr) // Object of the robot.
+        return geomData (devicePtr->d());
+      else           // Object of the environment.
+        return *geomData_;
     }
 
     GeomData& CollisionObject::geomData (DeviceData& d) const

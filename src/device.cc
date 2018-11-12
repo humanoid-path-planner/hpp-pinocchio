@@ -42,6 +42,8 @@
 
 namespace hpp {
   namespace pinocchio {
+    const ::pinocchio::FrameType all_joint_type =
+      (::pinocchio::FrameType) (::pinocchio::JOINT | ::pinocchio::FIXED_JOINT);
 
     Device::
     Device(const std::string& name)
@@ -167,8 +169,7 @@ namespace hpp {
 
     Frame Device::rootFrame () const
     {
-      const ::pinocchio::FrameType type = (::pinocchio::FrameType)(::pinocchio::JOINT | ::pinocchio::FIXED_JOINT);
-      return Frame(weakPtr_.lock(), model().getFrameId("root_joint", type));
+      return Frame(weakPtr_.lock(), model().getFrameId("root_joint", all_joint_type));
     }
 
     size_type Device::nbJoints () const
@@ -241,11 +242,11 @@ namespace hpp {
     Frame Device::
     getFrameByName (const std::string& name) const
     {
-      if(! model().existFrame(name))
+      if(! model().existFrame(name, all_joint_type))
 	throw std::logic_error ("Device " + name_ +
 				" does not have any frame named "
 				+ name);
-      FrameIndex id = model().getFrameId(name);
+      FrameIndex id = model().getFrameId(name, all_joint_type);
       return Frame(weakPtr_.lock(), id);
     }
 
