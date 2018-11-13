@@ -155,6 +155,9 @@ namespace hpp {
       /// Return the neutral element as a vector
       LiegroupElement neutral () const;
 
+      /// Create a LiegroupElement from a configuration.
+      LiegroupElement element (vectorIn_t q) const;
+
       /// Return exponential of a tangent vector
       LiegroupElement exp (vectorIn_t v) const;
 
