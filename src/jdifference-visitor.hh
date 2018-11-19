@@ -21,42 +21,34 @@
 
 namespace hpp {
   namespace pinocchio {
+    using ::pinocchio::ArgumentPosition;
+    using ::pinocchio::ARG0;
+    using ::pinocchio::ARG1;
+
     namespace liegroupType {
-      template <bool ApplyOnTheLeft>
-      struct JdifferenceVisitor : public boost::static_visitor <>
+      template <ArgumentPosition arg, DerivativeProduct side>
+      struct dDifferenceVisitor : public boost::static_visitor <>
       {
-        JdifferenceVisitor (vectorIn_t& q0, vectorIn_t& q1,
-            matrixOut_t& J0, matrixOut_t& J1)
+        dDifferenceVisitor (vectorIn_t& q0, vectorIn_t& q1, matrixOut_t& J)
           : q0_ (q0)
           , q1_ (q1)
-          , J0_ (J0)
-          , J1_ (J1)
+          , J_ (J)
           , iq_ (0)
           , iv_ (0)
         {}
 
         template <typename LgT> void operator () (const LgT& lg)
         {
-          typename LgT::JacobianMatrix_t J0int (lg.nv(), lg.nv());
-          typename LgT::JacobianMatrix_t J1int (lg.nv(), lg.nv());
+          typename LgT::JacobianMatrix_t Jint (lg.nv(), lg.nv());
 
-          lg.Jdifference (
+          lg.template dDifference<arg> (
               q0_.segment<LgT::NQ>(iq_, lg.nq()),
               q1_.segment<LgT::NQ>(iq_, lg.nq()),
-              J0int,
-              J1int);
-          if (J0_.size() > 0) {
-            if (ApplyOnTheLeft)
-              J0_.middleRows<LgT::NV> (iv_, lg.nv()).applyOnTheLeft (J0int);
-            else
-              J0_.middleCols<LgT::NV> (iv_, lg.nv()).applyOnTheRight (J0int);
-          }
-          if (J1_.size() > 0) {
-            if (ApplyOnTheLeft)
-              J1_.middleRows<LgT::NV> (iv_, lg.nv()).applyOnTheLeft (J1int);
-            else
-              J1_.middleCols<LgT::NV> (iv_, lg.nv()).applyOnTheRight (J1int);
-          }
+              Jint);
+          if (side == DerivativeTimesInput)
+            J_.middleRows<LgT::NV> (iv_, lg.nv()).applyOnTheLeft (Jint);
+          else
+            J_.middleCols<LgT::NV> (iv_, lg.nv()).applyOnTheRight (Jint);
           iq_ += lg.nq();
           iv_ += lg.nv();
         }
@@ -64,19 +56,17 @@ namespace hpp {
         template <int N, bool rot>
         void operator () (const liegroup::VectorSpaceOperation<N,rot>& lg)
         {
-          if (J0_.size() > 0) {
-            if (ApplyOnTheLeft)
-              J0_.middleRows<N> (iv_, lg.nv()) *= -1;
-            else
-              J0_.middleCols<N> (iv_, lg.nv()) *= -1;
+          if (arg == ARG0) {
+            if (side == DerivativeTimesInput) J_.middleRows<N> (iv_, lg.nv()) *= -1;
+            else                              J_.middleCols<N> (iv_, lg.nv()) *= -1;
           }
           iq_ += lg.nq();
           iv_ += lg.nv();
         }
         vectorIn_t & q0_, q1_;
-        matrixOut_t& J0_, J1_;
+        matrixOut_t& J_;
         size_type iq_, iv_;
-      }; // struct JdifferenceVisitor
+      }; // struct dDifferenceVisitor
     } // namespace liegroupType
   } // namespace pinocchio
 } // namespace hpp
