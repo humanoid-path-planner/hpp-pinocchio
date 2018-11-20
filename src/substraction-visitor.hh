@@ -24,19 +24,28 @@ namespace hpp {
       typedef Eigen::Quaternion <value_type> quaternion_t;
 
       /// Substraction visitor
+      template <typename vector_type1, typename vector_type2>
       struct SubstractionVisitor : public boost::static_visitor <>
       {
-        SubstractionVisitor (const vector_t& e1, const vector_t& e2,
-                             const size_type& nv) :
-          e1_ (e1), e2_ (e2), result (nv)
-        {
-        }
+        SubstractionVisitor (const vector_type1& e1, const vector_type2& e2,
+            vector_t& res) :
+          e1_ (e1), e2_ (e2), result (res),
+          iq_(0), iv_(0)
+        {}
         template <typename LiegroupType> void operator () (LiegroupType& op)
         {
-          op.difference_impl (e2_, e1_, result);
+          op.difference (
+              e2_.template segment<LiegroupType::NQ>(iq_, op.nq()),
+              e1_.template segment<LiegroupType::NQ>(iq_, op.nq()),
+              result.segment<LiegroupType::NV>(iv_, op.nv()));
+
+          iq_ += op.nq();
+          iv_ += op.nv();
         }
-        vector_t e1_, e2_;
-        vector_t result;
+        const vector_type1& e1_;
+        const vector_type2& e2_;
+        vector_t& result;
+        size_type iq_, iv_;
       }; // struct SubstractionVisitor
     } // namespace liegroupType
   } // namespace pinocchio

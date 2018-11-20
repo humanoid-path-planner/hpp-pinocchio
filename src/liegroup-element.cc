@@ -28,20 +28,14 @@ namespace hpp {
     LiegroupElementBase<vector_type>& LiegroupElementBase<vector_type>::operator+= (vectorIn_t v)
     {
       assert (this->space_->nv () == v.size ());
-      typedef std::vector <LiegroupType> LiegroupTypes;
-      size_type iq = 0, iv = 0;
+
+      liegroupType::AdditionVisitor<vector_type> av (this->value_, v);
       for (LiegroupTypes::const_iterator it = this->space_->liegroupTypes ().begin ();
            it != this->space_->liegroupTypes ().end (); ++it) {
-        liegroupType::SizeVisitor dv;
-        boost::apply_visitor (dv, *it);
-
-        liegroupType::AdditionVisitor av (this->value_.segment (iq, dv.nq),
-                                          v.segment (iv, dv.nv));
         boost::apply_visitor (av, *it);
-        // result.value_.segment (iq, dv.nq) = av.result;
-        iq += dv.nq;
-        iv += dv.nv;
       }
+      assert (av.iq_ == this->space_->nq());
+      assert (av.iv_ == this->space_->nv());
       return *this;
     }
 
@@ -64,28 +58,15 @@ namespace hpp {
     vector_t operator- (const LiegroupElementConstBase<vector_type1>& e1, const LiegroupElementConstBase<vector_type2>& e2)
     {
       assert (e1.space ()->nq () == e2.space ()->nq ());
-      typedef std::vector <LiegroupType> LiegroupTypes;
       vector_t result (e1.space ()->nv ());
-      size_type iq = 0, iv = 0;
 
-      LiegroupTypes::const_iterator it1 =
-        e1.space ()->liegroupTypes ().begin ();
-      LiegroupTypes::const_iterator it2 =
-        e2.space ()->liegroupTypes ().begin ();
+      assert (*e1.space() == *e2.space());
 
-      while ((it1 != e1.space ()->liegroupTypes ().end ()) &&
-             (it2 != e2.space ()->liegroupTypes ().end ())) {
-        liegroupType::SizeVisitor dv;
-        boost::apply_visitor (dv, *it1);
-
-        liegroupType::SubstractionVisitor sv (e1.vector().segment (iq, dv.nq),
-                                              e2.vector().segment (iq, dv.nq),
-                                              e1.space ()->nv ());
-        boost::apply_visitor (sv, *it1);
-        result.segment (iv, dv.nv) = sv.result;
-        iq += dv.nq;
-        iv += dv.nv;
-        ++it1; ++it2;
+      liegroupType::SubstractionVisitor<vector_type1, vector_type2>
+        sv (e1.vector(), e2.vector(), result);
+      for (LiegroupTypes::const_iterator it = e1.space()->liegroupTypes ().begin ();
+           it != e1.space()->liegroupTypes ().end (); ++it) {
+        boost::apply_visitor (sv, *it);
       }
       return result;
     }

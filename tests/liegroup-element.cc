@@ -67,6 +67,10 @@ BOOST_AUTO_TEST_CASE (casting)
 
   cast_into_LiegroupElementRef(e, e);
   cast_into_LiegroupElementConstRef(e, e);
+
+  // Test assignment operator
+  e = vector_t::Zero(n);
+  e = LiegroupSpace::R2()->element (vector_t::Ones(2));
 }
 
 // Test that operator+ and operator- behave as expected for vector spaces

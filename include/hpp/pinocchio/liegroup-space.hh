@@ -158,6 +158,12 @@ namespace hpp {
       /// Create a LiegroupElement from a configuration.
       LiegroupElement element (vectorIn_t q) const;
 
+      /// Create a LiegroupElementRef from a configuration.
+      LiegroupElementRef elementRef (vectorOut_t q) const;
+
+      /// Create a LiegroupElementRef from a configuration.
+      LiegroupElementConstRef elementConstRef (vectorIn_t q) const;
+
       /// Return exponential of a tangent vector
       LiegroupElement exp (vectorIn_t v) const;
 

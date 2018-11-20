@@ -26,18 +26,26 @@ namespace hpp {
       typedef Eigen::Quaternion <value_type> quaternion_t;
 
       /// Addition visitor
+      template <typename vector_type>
       struct AdditionVisitor : public boost::static_visitor <>
       {
-        AdditionVisitor (vectorOut_t e, vectorIn_t v) :
-          e_ (e), v_ (v)
-        {
-        }
+        AdditionVisitor (vector_type& e, const vectorIn_t& v) :
+          e_ (e), v_ (v),
+          iq_(0), iv_(0)
+        {}
         template <typename LiegroupType> void operator () (LiegroupType& op)
         {
-          op.integrate_impl (e_, v_, e_);
+          op.integrate (
+              e_.template segment<LiegroupType::NQ>(iq_, op.nq()),
+              v_.         segment<LiegroupType::NV>(iv_, op.nv()),
+              e_.template segment<LiegroupType::NQ>(iq_, op.nq()));
+
+          iq_ += op.nq();
+          iv_ += op.nv();
         }
-        vectorOut_t e_;
-        vectorIn_t v_;
+        vector_type& e_;
+        const vectorIn_t& v_;
+        size_type iq_, iv_;
       }; // struct AdditionVisitor
 
     } // namespace liegroupType

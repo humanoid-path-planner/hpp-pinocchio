@@ -141,6 +141,16 @@ namespace hpp {
       return LiegroupElement (q, weak_.lock ());
     }
 
+    LiegroupElementRef LiegroupSpace::elementRef (vectorOut_t q) const
+    {
+      return LiegroupElementRef (q, weak_.lock ());
+    }
+
+    LiegroupElementConstRef LiegroupSpace::elementConstRef (vectorIn_t q) const
+    {
+      return LiegroupElementConstRef (q, weak_.lock ());
+    }
+
     LiegroupElement LiegroupSpace::exp (vectorIn_t v) const
     {
       return neutral () + v;
