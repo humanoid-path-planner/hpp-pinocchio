@@ -58,6 +58,7 @@ namespace hpp {
 
     Device::Device(const Device& other)
       : AbstractDevice (other.model_, other.geomModel_)
+      , d_ (other.d_)
       , name_ (other.name_)
       , grippers_ ()
       , extraConfigSpace_ (other.extraConfigSpace_)
