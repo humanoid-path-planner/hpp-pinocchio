@@ -16,7 +16,6 @@
 
 #define BOOST_TEST_MODULE tdevice-sync
 
-#include <omp.h>
 #include <ctime>
 #include <boost/test/unit_test.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
