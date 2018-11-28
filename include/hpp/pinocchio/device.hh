@@ -31,6 +31,7 @@
 
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/frame.hh>
+# include <hpp/pinocchio/pool.hh>
 # include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/deprecated.hh>
 # include <hpp/pinocchio/extra-config-space.hh>
@@ -312,10 +313,7 @@ namespace hpp {
       DeviceWkPtr_t weakPtr_;
 
     private:
-      boost::mutex datasMutex_;
-      boost::condition_variable datasCV_;
-      std::vector<DeviceData*> datas_;
-      std::size_t datasLastFree_;
+      Pool<DeviceData> datas_;
     }; // class Device
 
     inline std::ostream& operator<< (std::ostream& os, const hpp::pinocchio::Device& device)
