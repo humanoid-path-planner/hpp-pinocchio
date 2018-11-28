@@ -96,14 +96,6 @@ namespace hpp {
       , geomModel_(gm)
     {}
 
-    struct OneDeviceDataAvailable
-    {
-      std::size_t* lastFree_;
-      std::size_t size_;
-      OneDeviceDataAvailable (std::size_t* lf, const std::size_t& s) : lastFree_ (lf), size_ (s) {}
-      bool operator() () { return *lastFree_ < size_; }
-    };
-
     DeviceSync::DeviceSync (const DevicePtr_t& d, bool acquireLock)
       : AbstractDevice (d->modelPtr(), d->geomModelPtr())
       , device_ (d)
@@ -121,11 +113,7 @@ namespace hpp {
     void DeviceSync::lock ()
     {
       if (!isLocked()) {
-        boost::mutex::scoped_lock lock (device_->datasMutex_);
-        device_->datasCV_.wait (lock,
-            OneDeviceDataAvailable(&device_->datasLastFree_, device_->datas_.size()));
-        std::swap (d_, device_->datas_[device_->datasLastFree_]);
-        device_->datasLastFree_++;
+        d_ = device_->datas_.acquire();
       } else {
         hppDout (warning, "Cannot lock a locked DeviceSync. You may a concurrency error.");
       }
@@ -134,13 +122,8 @@ namespace hpp {
     void DeviceSync::unlock ()
     {
       if (isLocked()) {
-        boost::mutex::scoped_lock lock (device_->datasMutex_);
-        // This device owns one data thus at least one data is not free.
-        assert (device_->datasLastFree_ > 0);
-        assert (device_->datas_[device_->datasLastFree_-1] == NULL);
-        device_->datas_[device_->datasLastFree_-1] = d_;
-        device_->datasLastFree_--;
-        device_->datasCV_.notify_one ();
+        device_->datas_.release(d_);
+        d_ = NULL;
       } else {
         hppDout (warning, "Cannot unlock an unlocked DeviceSync. You may a concurrency error.");
       }

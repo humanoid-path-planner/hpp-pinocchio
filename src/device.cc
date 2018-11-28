@@ -50,7 +50,6 @@ namespace hpp {
       : AbstractDevice ()
       , name_ (name)
       , weakPtr_()
-      , datasLastFree_ (0)
     {
       invalidate();
       createData();
@@ -67,28 +66,23 @@ namespace hpp {
       , extraConfigSpace_ (other.extraConfigSpace_)
       , weakPtr_()
       , datas_ ()
-      , datasLastFree_ (0)
     {
       numberDeviceData(other.datas_.size());
     }
 
     Device::~Device ()
     {
-      for (std::size_t i = 0; i < datas_.size(); ++i) delete datas_[i];
+      datas_.clear();
     }
 
     void Device::numberDeviceData (const size_type& s)
     {
-      boost::mutex::scoped_lock lock (datasMutex_);
-      if (datasLastFree_ > 0)
-        throw std::logic_error ("Cannot set the number of device data when some"
-            " of them are already in use.");
-      size_type curSize = (size_type)datas_.size();
-      // Delete if too many device data
-      for (size_type i = 0; i < curSize; ++i) delete datas_[i];
-      datas_.resize(s);
-      // Initialize if too few device data
-      for (size_type i = 0; i < s; ++i) datas_[i] = new DeviceData (d_);
+      // Delete current device datas
+      datas_.clear();
+      // Create new device datas
+      std::vector<DeviceData*> datas (s);
+      for (size_type i = 0; i < s; ++i) datas[i] = new DeviceData (d_);
+      datas_.push_back (datas.begin(), datas.end());
     }
 
     size_type Device::numberDeviceData () const
