@@ -456,7 +456,7 @@ namespace hpp {
     JointJacobian_t& Joint::jacobian (DeviceData& d, const bool local) const
     {
       selfAssert(); assert(robot()->computationFlag() & JACOBIAN);
-      assert(jointIndex > 0);
+      assert(jointIndex > 0 && jointIndex - 1 < d.jointJacobians_.size());
       JointJacobian_t& jacobian (d.jointJacobians_[jointIndex-1]);
       if( jacobian.cols()!=model().nv)  jacobian = JointJacobian_t::Zero(6,model().nv);
       if(local) se3::getJointJacobian <LOCAL> (model(),*d.data_,jointIndex,jacobian);
