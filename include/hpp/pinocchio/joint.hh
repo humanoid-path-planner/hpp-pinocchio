@@ -49,6 +49,10 @@ namespace hpp {
       /// \name Construction and copy and destruction
       /// \{
 
+      /// Create a new joint
+      /// Returns a null pointer if indexInJointList is 0.
+      static JointPtr_t create (DeviceWkPtr_t device, JointIndex indexInJointList );
+
       /// Constructor
       /// \param device pointer on the device the joint is belonging to.
       /// \param indexInJointList index of the joint, i.e. joint = device.model.joints[index]
@@ -184,9 +188,9 @@ namespace hpp {
       // -----------------------------------------------------------------------
 
       /// Access robot owning the object
-      DeviceConstPtr_t robot () const { selfAssert();  return devicePtr.lock();}
+      DeviceConstPtr_t robot () const { return devicePtr.lock();}
       /// Access robot owning the object
-      DevicePtr_t robot () { selfAssert(); return devicePtr.lock();}
+      DevicePtr_t robot () { return devicePtr.lock();}
 
       /// \name Body linked to the joint
       /// \{

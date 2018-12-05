@@ -86,11 +86,11 @@ namespace hpp {
     
     /* Access to pinocchio index + 1 because pinocchio first joint is the universe. */
     JointPtr_t JointVector::at(const size_type i) 
-    { selfAssert(i); return JointPtr_t(new Joint(device(),i+1)); }
+    { selfAssert(i); return Joint::create(device(),i+1); }
     
     /* Access to pinocchio index + 1 because pinocchio first joint is the universe. */
     JointConstPtr_t JointVector::at(const size_type i) const 
-    { selfAssert(i); return JointConstPtr_t(new Joint(device(),i+1)); }
+    { selfAssert(i); return Joint::create(device(),i+1); }
 
     size_type JointVector::size() const 
     { return device()->model().joints.size() - 1; }

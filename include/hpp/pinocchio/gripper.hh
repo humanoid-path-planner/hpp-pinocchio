@@ -128,7 +128,11 @@ namespace hpp {
         /// Weak pointer to itself
         GripperWkPtr_t weakPtr_;
     }; // class Gripper
-    std::ostream& operator<< (std::ostream& os, const Gripper& gripper);
+
+    inline std::ostream& operator<< (std::ostream& os, const Gripper& gripper)
+    {
+      return gripper.print (os);
+    }
   } // namespace pinocchio
 } // namespace hpp
 

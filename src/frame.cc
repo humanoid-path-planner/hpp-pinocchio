@@ -76,12 +76,9 @@ namespace hpp {
       return pinocchio().type == se3::FIXED_JOINT;
     }
 
-    Joint Frame::joint () const
+    JointPtr_t Frame::joint () const
     {
-      // if (pinocchio().type == se3::FIXED_JOINT) {
-        // HPP_THROW(std::logic_error, "Frame " << name() << " is fixed");
-      // }
-      return Joint(devicePtr_, pinocchio().parent);
+      return Joint::create(devicePtr_, pinocchio().parent);
     }
 
     bool Frame::isRootFrame () const

@@ -34,10 +34,7 @@ namespace hpp {
     {
       DevicePtr_t d = this->device();
       fid_ = d->model().getFrameId (name);
-      // TODO as joint_ keeps a shared pointer to the device, the device will
-      // never be deleted.
-      joint_ = JointPtr_t (
-          new Joint(d, d->model().frames[fid_].parent));
+      joint_ = Joint::create(d, d->model().frames[fid_].parent);
     }
 
     const Transform3f& Gripper::objectPositionInJoint () const
@@ -54,14 +51,9 @@ namespace hpp {
     {
       os << "name :" << name () << std::endl;
       os << "Position in joint :" << objectPositionInJoint ();
-      os << "Joint :" << joint ()->name () << std::endl;
+      os << "Joint :" << (joint() ? joint ()->name () : "universe") << std::endl;
       os << std::endl;
       return os;
-    }
-
-    std::ostream& operator<< (std::ostream& os, const Gripper& gripper)
-    {
-      return gripper.print (os);
     }
 
     DevicePtr_t Gripper::device() const

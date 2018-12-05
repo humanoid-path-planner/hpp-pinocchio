@@ -156,7 +156,7 @@ namespace hpp {
 
     JointPtr_t Device::rootJoint () const
     {
-      return JointPtr_t( new Joint(weakPtr_.lock(),1) );
+      return Joint::create(weakPtr_.lock(),1);
     }
 
     Frame Device::rootFrame () const
@@ -173,7 +173,7 @@ namespace hpp {
     JointPtr_t Device::jointAt (const size_type& i) const
     {
       assert (i < nbJoints());
-      return JointPtr_t(new Joint(weakPtr_.lock(),i+1));
+      return Joint::create(weakPtr_.lock(),i+1);
     }
 
     JointPtr_t Device::
@@ -185,7 +185,7 @@ namespace hpp {
         {
           if( j.id()==0 ) continue; // Skip "universe" joint
           const size_type iq = r - j.idx_q();
-          if( 0 <= iq && iq < j.nq() ) return JointPtr_t( new Joint(weakPtr_.lock(),j.id()) );
+          if( 0 <= iq && iq < j.nq() ) return Joint::create(weakPtr_.lock(),j.id());
         }
       assert(false && "The joint at config rank has not been found");
       return JointPtr_t();
@@ -198,7 +198,7 @@ namespace hpp {
         {
           if( j.id()==0 ) continue; // Skip "universe" joint
           const size_type iv = r - j.idx_v();
-          if( 0 <= iv && iv < j.nv() ) return JointPtr_t( new Joint(weakPtr_.lock(),j.id()) );
+          if( 0 <= iv && iv < j.nv() ) return Joint::create(weakPtr_.lock(),j.id());
         }
       assert(false && "The joint at velocity rank has not been found");
       return JointPtr_t();
@@ -212,7 +212,7 @@ namespace hpp {
 				  " does not have any joint named "
 				  + name);
       JointIndex id = model().getJointId(name);
-      return JointPtr_t( new Joint(weakPtr_.lock(),id) );
+      return Joint::create(weakPtr_.lock(),id);
     }
 
     JointPtr_t Device::
@@ -224,7 +224,7 @@ namespace hpp {
           JointIndex jointId = model().frames[bodyId].parent;
           //assert(jointId>=0);
           assert((std::size_t)jointId<model().joints.size());
-          return JointPtr_t( new Joint(weakPtr_.lock(),jointId) );
+          return Joint::create(weakPtr_.lock(),jointId);
         }
       }
       throw std::runtime_error ("Device " + name_ +

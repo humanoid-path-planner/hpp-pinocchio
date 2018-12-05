@@ -83,13 +83,13 @@ namespace hpp {
     JointPtr_t      CollisionObject::joint ()
     {
       if (!devicePtr) return JointPtr_t();
-      return JointPtr_t (new Joint(devicePtr,jointIndex_));
+      return Joint::create (devicePtr,jointIndex_);
     }
 
     JointConstPtr_t CollisionObject::joint () const
     {
       if (!devicePtr) return JointConstPtr_t();
-      return JointConstPtr_t(new Joint(devicePtr,jointIndex_));
+      return Joint::create (devicePtr,jointIndex_);
     }
 
     const Transform3f& CollisionObject::

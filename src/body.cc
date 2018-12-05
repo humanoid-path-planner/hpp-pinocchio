@@ -87,7 +87,7 @@ namespace hpp {
     JointPtr_t Body::joint () const
     {
       selfAssert();
-      return JointPtr_t( new Joint(devicePtr,jointIndex) );
+      return Joint::create (devicePtr,jointIndex);
     }
 
 

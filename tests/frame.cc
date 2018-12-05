@@ -82,8 +82,9 @@ BOOST_AUTO_TEST_CASE (frame)
   check_children(pinocchio->model(), root , Strings_t());
 
   // Check position in parent frame.
-  Joint root_j = waist.joint();
-  BOOST_CHECK(root_j.name() == "root_joint");
+  JointPtr_t root_j = waist.joint();
+  BOOST_REQUIRE(root_j);
+  BOOST_CHECK(root_j->name() == "root_joint");
 
   Frame
     ImuTorsoAcc_F =  pinocchio->getFrameByName("ImuTorsoAccelerometer_joint"),

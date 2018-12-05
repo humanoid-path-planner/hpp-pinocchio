@@ -86,13 +86,13 @@ namespace hpp {
       // TODO the HumanoidRobot will be never be deleted as these joints have
       // a shared pointer to the device.
       DevicePtr_t d = weakPtr_.lock();
-      waist_      = JointPtr_t (new Joint (d, other.waist_     ->index()));
-      chest_      = JointPtr_t (new Joint (d, other.chest_     ->index()));
-      leftWrist_  = JointPtr_t (new Joint (d, other.leftWrist_ ->index()));
-      rightWrist_ = JointPtr_t (new Joint (d, other.rightWrist_->index()));
-      leftAnkle_  = JointPtr_t (new Joint (d, other.leftAnkle_ ->index()));
-      rightAnkle_ = JointPtr_t (new Joint (d, other.rightAnkle_->index()));
-      gazeJoint_  = JointPtr_t (new Joint (d, other.gazeJoint_ ->index()));
+      waist_      = Joint::create (d, other.waist_     ->index());
+      chest_      = Joint::create (d, other.chest_     ->index());
+      leftWrist_  = Joint::create (d, other.leftWrist_ ->index());
+      rightWrist_ = Joint::create (d, other.rightWrist_->index());
+      leftAnkle_  = Joint::create (d, other.leftAnkle_ ->index());
+      rightAnkle_ = Joint::create (d, other.rightAnkle_->index());
+      gazeJoint_  = Joint::create (d, other.gazeJoint_ ->index());
     }
 
     // ========================================================================

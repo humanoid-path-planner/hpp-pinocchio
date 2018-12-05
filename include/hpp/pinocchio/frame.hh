@@ -70,8 +70,7 @@ namespace hpp {
       bool isFixed () const;
 
       /// Returns the joint associated to this frame
-      // /// \throws std::logic_error is isFixed() returns true.
-      Joint joint () const;
+      JointPtr_t joint () const;
 
       /// Get the parent frame (if any).
       /// \warning the parent joint of the universe is the universe itself.
