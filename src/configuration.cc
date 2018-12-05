@@ -130,7 +130,8 @@ namespace hpp {
                       const value_type& u,
                       ConfigurationOut_t result)
     {
-      result = se3::interpolate<LieGroup>(robot->model(), q0, q1, u);
+      const Model& model = robot->model();
+      result.head(model.nq) = se3::interpolate<LieGroup>(model, q0, q1, u);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = u * q1.tail (dim) + (1-u) * q0.tail (dim);
     }
@@ -160,7 +161,8 @@ namespace hpp {
     void difference (const DevicePtr_t& robot, ConfigurationIn_t q1,
                      ConfigurationIn_t q2, vectorOut_t result)
     {
-      result = se3::difference<LieGroup> (robot->model(), q2, q1);
+      const Model& model = robot->model();
+      result.head(model.nv) = se3::difference<LieGroup> (model, q2, q1);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = q1.tail (dim) - q2.tail (dim);
     }

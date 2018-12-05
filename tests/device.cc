@@ -81,6 +81,14 @@ BOOST_AUTO_TEST_CASE (unit_test_device)
   space->mergeVectorSpaces();
   BOOST_CHECK_EQUAL (space->name(), "R^3*SO(3)*R^26");
 
+  robot->setDimensionExtraConfigSpace(3);
+  BOOST_CHECK_EQUAL(robot->numberDof(), 32+3);
+  BOOST_CHECK_EQUAL(robot->configSize(), 33+3);
+
+  space = LiegroupSpace::createCopy(robot->configSpace());
+  space->mergeVectorSpaces();
+  BOOST_CHECK_EQUAL (space->name(), "SE(3)*R^29");
+
   robot = makeDeviceSafe (unittest::CarLike);
   space = LiegroupSpace::createCopy(robot->configSpace());
   space->mergeVectorSpaces();

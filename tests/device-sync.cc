@@ -53,6 +53,16 @@ BOOST_AUTO_TEST_CASE (single_thread)
   BOOST_CHECK_EQUAL (data2, d1->dataPtr());
   delete d1;
   delete d2;
+
+  size_type nCfg = robot->configSize();
+  robot->setDimensionExtraConfigSpace(3);
+  BOOST_CHECK_EQUAL(robot->configSize(), nCfg+3);
+  d1 = new DeviceSync (robot);
+  d2 = new DeviceSync (robot);
+  BOOST_CHECK_EQUAL(d1->d().currentConfiguration_.size(), nCfg+3);
+  BOOST_CHECK_EQUAL(d2->d().currentConfiguration_.size(), nCfg+3);
+  delete d1;
+  delete d2;
 }
 
 typedef se3::container::aligned_vector<se3::SE3> SE3Vector_t;

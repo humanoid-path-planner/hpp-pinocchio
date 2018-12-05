@@ -137,8 +137,6 @@ namespace hpp {
       d_.data_ = DataPtr_t( new Data(model()) );
       // We assume that model is now complete and state can be resized.
       resizeState(); 
-      d_.invalidate();
-      numberDeviceData(datas_.size());
     }
 
     void Device::
@@ -263,6 +261,7 @@ namespace hpp {
     void Device::
     resizeState()
     {
+      d_.invalidate();
       d_.currentConfiguration_ = neutralConfiguration();
       d_.currentVelocity_      = vector_t::Zero(numberDof());
       d_.currentAcceleration_  = vector_t::Zero(numberDof());
@@ -274,6 +273,8 @@ namespace hpp {
         *configSpace_ *= Joint(weakPtr_, i).configurationSpace();
       if (extraConfigSpace_.dimension() > 0)
         *configSpace_ *= LiegroupSpace::create (extraConfigSpace_.dimension());
+
+      numberDeviceData(datas_.size());
     }
 
     LiegroupSpacePtr_t Device::
