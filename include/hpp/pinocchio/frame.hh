@@ -84,6 +84,9 @@ namespace hpp {
         return children_;
       }
 
+      /// Get (constant) placement of frame in parent joint
+      const Transform3f& positionInParentJoint () const;
+
       /// Get (constant) placement of frame in parent frame
       Transform3f positionInParentFrame () const;
 

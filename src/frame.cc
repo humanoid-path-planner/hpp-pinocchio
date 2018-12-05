@@ -151,6 +151,11 @@ namespace hpp {
       }
     }
 
+    const Transform3f& Frame::positionInParentJoint () const
+    {
+      return pinocchio().placement;
+    }
+
     Transform3f Frame::positionInParentFrame () const
     {
       selfAssert();
