@@ -121,11 +121,6 @@ namespace hpp {
             device->geomData().innerObjects[jointIndex][i]));
     }
 
-    ObjectVector_t Body::innerObjects () const
-    {
-      return ObjectVector_t (devicePtr, jointIndex, INNER);
-    }
-
     value_type Body::radius () const
     {
       selfAssert();
@@ -149,11 +144,6 @@ namespace hpp {
       DevicePtr_t device = devicePtr.lock();
       return CollisionObjectPtr_t(new CollisionObject(device,
             device->geomData().outerObjects[jointIndex][i]));
-    }
-
-    ObjectVector_t Body::outerObjects () const
-    {
-      return ObjectVector_t (devicePtr, jointIndex, OUTER);
     }
   } // namespace pinocchio
 } // namespace hpp

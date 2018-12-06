@@ -22,7 +22,7 @@
 template <typename T>
 void compute (T& t, std::size_t i)
 {
-  t = 2*i;
+  t = 2*(T)i;
 }
 
 template <typename T>

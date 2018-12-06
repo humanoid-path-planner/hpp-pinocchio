@@ -29,7 +29,6 @@ SET(LIBRARY_SOURCES
   frame.cc
   collision-object.cc
   body.cc
-  device-object-vector.cc
   gripper.cc
   center-of-mass-computation.cc
   configuration.cc
