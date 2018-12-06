@@ -5,6 +5,4 @@ FILE_PATTERNS          = *.cc *.hh *.hxx \
 INPUT                  = @CMAKE_SOURCE_DIR@/include \
                          @CMAKE_SOURCE_DIR@/doc
 
-GENERATE_TREEVIEW      = NO
-
-TAGFILES          = @PINOCCHIO_DOXYGENDOCDIR@/pinocchio.doxytag=@PINOCCHIO_DOXYGENDOCDIR@
+LAYOUT_FILE            = @CMAKE_SOURCE_DIR@/doc/layout.xml
