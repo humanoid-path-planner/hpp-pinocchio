@@ -5,6 +5,4 @@ FILE_PATTERNS          = *.cc *.hh *.hxx \
 INPUT                  = @CMAKE_SOURCE_DIR@/include \
                          @CMAKE_SOURCE_DIR@/doc
 
-LAYOUT_FILE            = @CMAKE_SOURCE_DIR@/doc/layout.xml
-
 PREDEFINED             = HPP_PINOCCHIO_PARSED_BY_DOXYGEN
