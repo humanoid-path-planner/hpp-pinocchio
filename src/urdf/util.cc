@@ -18,6 +18,8 @@
 
 #include <urdf_parser/urdf_parser.h>
 
+#include <hpp/fcl/mesh_loader/loader.h>
+
 #include <pinocchio/parsers/utils.hpp>
 #include <pinocchio/parsers/urdf.hpp>
 #include <pinocchio/multibody/geometry.hpp>
@@ -213,7 +215,8 @@ namespace hpp {
           GeomModel geomModel;
 
           std::vector<std::string> baseDirs = ::pinocchio::rosPaths();
-          ::pinocchio::urdf::buildGeom(model, urdfStream, ::pinocchio::COLLISION, geomModel, baseDirs);
+          fcl::MeshLoaderPtr_t loader (new fcl::CachedMeshLoader);
+          ::pinocchio::urdf::buildGeom(model, urdfStream, ::pinocchio::COLLISION, geomModel, baseDirs, loader);
           geomModel.addAllCollisionPairs();
 
           if (!srdf.empty()) {
