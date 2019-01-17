@@ -100,6 +100,8 @@ BOOST_AUTO_TEST_CASE (unit_test_device)
   BOOST_CHECK_EQUAL (space->name(), "R^19");
 }
 
+// TODO When neutral configuration can be read from XML string, this test should be updated in order to
+// read a URDF and SRDF string rather than a file in a different package.
 BOOST_AUTO_TEST_CASE(load_neutral_configuration){
   std::string robotName("romeo");
   std::string packageName("romeo_description");
