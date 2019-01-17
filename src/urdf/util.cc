@@ -220,6 +220,7 @@ namespace hpp {
           if (!srdf.empty()) {
             _removeCollisionPairs<srdfAsXmlString>
               (model, geomModel, srdf, verbose);
+            se3::srdf::getNeutralConfigurationFromSrdf(model,srdf);
           }
 
           if (!prefix.empty()) {
