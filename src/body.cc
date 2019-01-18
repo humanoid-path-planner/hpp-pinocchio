@@ -36,8 +36,6 @@ namespace hpp {
     Body::
     Body (DeviceWkPtr_t device, JointIndex joint) 
       : devicePtr(device),jointIndex(joint) ,frameIndexSet(false)
-      , innerObjects_(device,joint,INNER)
-      , outerObjects_(device,joint,OUTER)
     {
       selfAssert();
     }
@@ -88,7 +86,7 @@ namespace hpp {
     JointPtr_t Body::joint () const
     {
       selfAssert();
-      return JointPtr_t( new Joint(devicePtr,jointIndex) );
+      return Joint::create (devicePtr,jointIndex);
     }
 
 

@@ -25,6 +25,8 @@
 # include <boost/thread/mutex.hpp>
 # include <boost/thread/condition_variable.hpp>
 
+# include <hpp/pinocchio/config.hh>
+
 namespace hpp {
   namespace pinocchio {
 

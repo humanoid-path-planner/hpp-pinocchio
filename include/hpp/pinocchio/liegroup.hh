@@ -51,6 +51,7 @@ namespace hpp {
       template<typename JointModel> struct operation {};
     };
 
+    /// \cond
     //---------------- RnxSOnLieGroupMap -------------------------------//
     // JointModelRevolute, JointModelRevoluteUnbounded, JointModelRevoluteUnaligned
     template<typename Scalar, int Options, int Axis>
@@ -155,6 +156,7 @@ namespace hpp {
     struct DefaultLieGroupMap::operation < ::pinocchio::JointModelPlanarTpl<Scalar, Options> > {
       typedef liegroup::SpecialEuclideanOperation<2> type;
     };
+    /// \endcond
   } // namespace pinocchio
 } // namespace hpp
 

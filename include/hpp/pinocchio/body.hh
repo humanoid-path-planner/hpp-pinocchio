@@ -26,7 +26,6 @@
 
 # include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/fwd.hh>
-# include <hpp/pinocchio/device-object-vector.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -64,9 +63,6 @@ namespace hpp {
       /// \name Inner/outer objects
       /// \{
 
-      /// \deprecated Use nbInnerObjects and innerObjectAt instead
-      const ObjectVector_t& innerObjects () const HPP_PINOCCHIO_DEPRECATED { return innerObjects_; }
-
       /// Number of inner objects.
       size_type nbInnerObjects () const;
 
@@ -78,9 +74,6 @@ namespace hpp {
       /// Radius is defined as an upper-bound to the distance of all points of
       /// the body to the origin of the joint that holds the body.
       value_type radius () const;
-
-      /// \deprecated Use nbOuterObjects and outerObjectAt instead
-      const ObjectVector_t& outerObjects () const HPP_PINOCCHIO_DEPRECATED { return outerObjects_; }
 
       /// Number of outer objects.
       size_type nbOuterObjects () const;
@@ -114,7 +107,6 @@ namespace hpp {
       JointIndex jointIndex;
       mutable FrameIndex frameIndex; // In pinocchio, bodies are stored as frames of type BODY.
       mutable bool       frameIndexSet;
-      ObjectVector innerObjects_,outerObjects_;
     }; // class Body
   } // namespace pinocchio
 } // namespace hpp

@@ -31,7 +31,19 @@ namespace hpp {
     /// \addtogroup liegroup
     /// \{
 
+#ifdef HPP_PINOCCHIO_PARSED_BY_DOXYGEN
     /// Elementary Lie groups
+    /// A boost variant with the following classes:
+    /// \li \f$\mathbf{R}^n\f$, where \f$n\f$ is either 1, 2, 3 or dynamic,
+    /// \li \f$\mathbf{R}^n \times SO(n) \f$, where \f$n\f$ is either 2 or 3,
+    /// \li \f$SO(n) \f$, where \f$n\f$ is either 2 or 3,
+    /// \li \f$SE(n) \f$, where \f$n\f$ is either 2 or 3.
+    /// \sa hpp::pinocchio::liegroup::VectorSpaceOperation,
+    ///     hpp::pinocchio::liegroup::CartesianProductOperation,
+    ///     hpp::pinocchio::liegroup::SpecialOrthogonalOperation,
+    ///     hpp::pinocchio::liegroup::SpecialEuclideanOperation,
+    typedef ABoostVariant LiegroupType;
+#else
     typedef boost::variant <liegroup::VectorSpaceOperation
                             <Eigen::Dynamic, false>,
                             liegroup::VectorSpaceOperation <1, true>,
@@ -50,6 +62,7 @@ namespace hpp {
                             liegroup::SpecialEuclideanOperation <2>,
                             liegroup::SpecialEuclideanOperation <3> >
     LiegroupType;
+#endif
 
     enum DerivativeProduct {
       DerivativeTimesInput,

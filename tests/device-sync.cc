@@ -16,7 +16,6 @@
 
 #define BOOST_TEST_MODULE tdevice-sync
 
-#include <omp.h>
 #include <ctime>
 #include <boost/test/unit_test.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -53,6 +52,16 @@ BOOST_AUTO_TEST_CASE (single_thread)
   d2 = new DeviceSync (robot);
   BOOST_CHECK_EQUAL (data1, d2->dataPtr());
   BOOST_CHECK_EQUAL (data2, d1->dataPtr());
+  delete d1;
+  delete d2;
+
+  size_type nCfg = robot->configSize();
+  robot->setDimensionExtraConfigSpace(3);
+  BOOST_CHECK_EQUAL(robot->configSize(), nCfg+3);
+  d1 = new DeviceSync (robot);
+  d2 = new DeviceSync (robot);
+  BOOST_CHECK_EQUAL(d1->d().currentConfiguration_.size(), nCfg+3);
+  BOOST_CHECK_EQUAL(d2->d().currentConfiguration_.size(), nCfg+3);
   delete d1;
   delete d2;
 }

@@ -26,6 +26,7 @@
 namespace hpp {
   namespace pinocchio {
     namespace liegroup {
+      /// \cond
       namespace details {
         template <bool Test> struct assign_if {
           template <class D1, class D2> static void run(
@@ -42,6 +43,7 @@ namespace hpp {
           }
         };
       }
+      /// \endcond
 
       template<int Size, bool rot>
         struct VectorSpaceOperation : public ::pinocchio::VectorSpaceOperationTpl<Size, value_type>

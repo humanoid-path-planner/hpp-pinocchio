@@ -77,12 +77,9 @@ namespace hpp {
       return pinocchio().type == ::pinocchio::FIXED_JOINT;
     }
 
-    Joint Frame::joint () const
+    JointPtr_t Frame::joint () const
     {
-      // if (pinocchio().type == ::pinocchio::FIXED_JOINT) {
-        // HPP_THROW(std::logic_error, "Frame " << name() << " is fixed");
-      // }
-      return Joint(devicePtr_, pinocchio().parent);
+      return Joint::create(devicePtr_, pinocchio().parent);
     }
 
     bool Frame::isRootFrame () const
@@ -153,6 +150,11 @@ namespace hpp {
         if (k == frameIndex_)
           children_.push_back(i);
       }
+    }
+
+    const Transform3f& Frame::positionInParentJoint () const
+    {
+      return pinocchio().placement;
     }
 
     Transform3f Frame::positionInParentFrame () const
