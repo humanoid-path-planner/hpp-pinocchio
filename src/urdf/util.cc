@@ -198,6 +198,8 @@ namespace hpp {
                         const std::istream& urdfStream,
                         const std::string& srdf)
         {
+          if (!urdfTree)
+            throw std::invalid_argument ("Failed to parse URDF. Use check_urdf command to know what's wrong.");
           if (baseJoint != 0)
             throw std::invalid_argument ("Only appending robots at the world is supported.");
 
