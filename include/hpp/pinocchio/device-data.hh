@@ -32,7 +32,7 @@ namespace hpp {
       JACOBIAN       = 0x2,
       VELOCITY       = 0x4,
       ACCELERATION   = 0x8,
-      COM            = 0x10,
+      COM            = 0x16,
       COMPUTE_ALL    = 0Xffff
     };
 
