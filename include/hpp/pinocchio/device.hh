@@ -277,6 +277,8 @@ namespace hpp {
       /// - sum all the BB obtained.
       fcl::AABB computeAABB() const;
 
+      void controlComputation (const Computation_t& flag);
+
     protected:
       /// \brief Constructor
       Device(const std::string& name);

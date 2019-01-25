@@ -113,7 +113,7 @@ namespace hpp {
         /// Select computation
         /// Optimize computation time by selecting only necessary values in
         /// method computeForwardKinematics.
-        void controlComputation (const Computation_t& flag);
+        virtual void controlComputation (const Computation_t& flag);
         /// Get computation flag
         Computation_t computationFlag () const { return d().computationFlag_; }
         /// Compute forward kinematics
