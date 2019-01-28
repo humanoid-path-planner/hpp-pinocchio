@@ -106,10 +106,11 @@ namespace hpp {
 
         JointModelVariant buildJoint (const std::string& type)
         {
-          if (type == "freeflyer")        return JointCollection::JointModelFreeFlyer();
-          else if (type == "planar")      return JointCollection::JointModelPlanar();
-          else if (type == "prismatic_x") return JointCollection::JointModelPX();
-          else if (type == "prismatic_y") return JointCollection::JointModelPY();
+          if (type == "freeflyer")          return JointCollection::JointModelFreeFlyer();
+          else if (type == "planar")        return JointCollection::JointModelPlanar();
+          else if (type == "prismatic_x")   return JointCollection::JointModelPX();
+          else if (type == "prismatic_y")   return JointCollection::JointModelPY();
+          else if (type == "translation3d") return JointCollection::JointModelTranslation();
           else                          throw  std::invalid_argument
             ("Root joint type \"" + type + "\" is currently not available.");
         }
