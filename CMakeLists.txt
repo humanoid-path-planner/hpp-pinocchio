@@ -64,7 +64,7 @@ ADD_REQUIRED_DEPENDENCY("hpp-util >= 3.2")
 ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.2.4")
 
 ADD_OPTIONAL_DEPENDENCY("romeo_description >= 0.2")
-ADD_OPTIONAL_DEPENDENCY("hpp_environments")
+ADD_OPTIONAL_DEPENDENCY("hpp-environments")
 
 # Set header files.
 SET(${PROJECT_NAME}_HEADERS
