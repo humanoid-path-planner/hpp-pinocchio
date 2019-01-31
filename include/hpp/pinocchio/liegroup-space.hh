@@ -109,8 +109,12 @@ namespace hpp {
       /// Return \f$SE(3)\f$
       static LiegroupSpacePtr_t SE3 ();
       /// Return \f$SO(2)\f$
-      static LiegroupSpacePtr_t R2xSO2 ();
+      static LiegroupSpacePtr_t SO2 ();
       /// Return \f$SO(3)\f$
+      static LiegroupSpacePtr_t SO3 ();
+      /// Return \f$\mathbf{R}^2 \times SO(2)\f$
+      static LiegroupSpacePtr_t R2xSO2 ();
+      /// Return \f$\mathbf{R}^3 \times SO(3)\f$
       static LiegroupSpacePtr_t R3xSO3 ();
       /// Return empty Lie group
       static LiegroupSpacePtr_t empty ();

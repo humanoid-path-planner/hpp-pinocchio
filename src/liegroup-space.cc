@@ -62,6 +62,26 @@ namespace hpp {
       return shPtr;
     }
 
+    /// Return \f$SO(2)\f$
+    LiegroupSpacePtr_t LiegroupSpace::SO2 ()
+    {
+      LiegroupSpace* ptr (new LiegroupSpace
+                          (liegroup::SpecialOrthogonalOperation<2> ()));
+      LiegroupSpacePtr_t  shPtr (ptr);
+      ptr->init (shPtr);
+      return shPtr;
+    }
+
+    /// Return \f$SO(3)\f$
+    LiegroupSpacePtr_t LiegroupSpace::SO3 ()
+    {
+      LiegroupSpace* ptr (new LiegroupSpace
+                          (liegroup::SpecialOrthogonalOperation<3> ()));
+      LiegroupSpacePtr_t  shPtr (ptr);
+      ptr->init (shPtr);
+      return shPtr;
+    }
+
     /// Return \f$R^2\times SO(2)\f$
     LiegroupSpacePtr_t LiegroupSpace::R2xSO2 ()
     {
