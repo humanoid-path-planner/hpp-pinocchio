@@ -29,7 +29,7 @@ static bool verbose = true;
 
 using namespace hpp::pinocchio;
 
-void displayAABB(const fcl::AABB& aabb)
+void displayAABB(const hpp::fcl::AABB& aabb)
 {
     std::cout << "Bounding box is\n"
       << aabb.min_.transpose() << '\n'
@@ -43,17 +43,17 @@ BOOST_AUTO_TEST_CASE (computeAABB)
 
   robot->rootJoint()->lowerBounds(vector3_t::Constant(-0));
   robot->rootJoint()->upperBounds(vector3_t::Constant( 0));
-  fcl::AABB aabb0 = robot->computeAABB();
+  hpp::fcl::AABB aabb0 = robot->computeAABB();
   if (verbose) displayAABB(aabb0);
 
   robot->rootJoint()->lowerBounds(vector3_t(-1, -1, 0));
   robot->rootJoint()->upperBounds(vector3_t( 1,  1, 0));
-  fcl::AABB aabb1 = robot->computeAABB();
+  hpp::fcl::AABB aabb1 = robot->computeAABB();
   if (verbose) displayAABB(aabb1);
 
   robot->rootJoint()->lowerBounds(vector3_t(-2, -2, 0));
   robot->rootJoint()->upperBounds(vector3_t(-1, -1, 0));
-  fcl::AABB aabb2 = robot->computeAABB();
+  hpp::fcl::AABB aabb2 = robot->computeAABB();
   if (verbose) displayAABB(aabb2);
 }
 /* -------------------------------------------------------------------------- */
