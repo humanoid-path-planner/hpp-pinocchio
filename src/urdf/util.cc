@@ -220,6 +220,13 @@ namespace hpp {
           if (!srdf.empty()) {
             _removeCollisionPairs<srdfAsXmlString>
               (model, geomModel, srdf, verbose);
+            if(!srdfAsXmlString)
+              se3::srdf::getNeutralConfigurationFromSrdf(model,srdf);
+            else{
+              hppDout(warning,"Neutral configuration won't be extracted from SRDF string.");
+              //TODO : A method getNeutralConfigurationFromSrdfString must be added in Pinocchio,
+              // similarly to removeCollisionPairsFromSrdf / removeCollisionPairsFromSrdfString
+            }
           }
 
           if (!prefix.empty()) {
