@@ -24,7 +24,7 @@
 #include <hpp/pinocchio/humanoid-robot.hh>
 #include <hpp/pinocchio/urdf/util.hh>
 #include <hpp/pinocchio/liegroup-space.hh>
-
+#include <hpp/pinocchio/configuration.hh>
 static bool verbose = true;
 
 using namespace hpp::pinocchio;
@@ -89,3 +89,27 @@ BOOST_AUTO_TEST_CASE (unit_test_device)
   space->mergeVectorSpaces();
   BOOST_CHECK_EQUAL (space->name(), "R^19");
 }
+
+// TODO When neutral configuration can be read from XML string, this test should be updated in order to
+// read a URDF and SRDF string rather than a file in a different package.
+BOOST_AUTO_TEST_CASE(load_neutral_configuration){
+  std::string robotName("romeo");
+  std::string packageName("romeo_description");
+  std::string rootJointType("freeflyer");
+  std::string modelName("romeo");
+  std::string urdfSuffix("_small");
+  std::string srdfSuffix("");
+
+  DevicePtr_t device = Device::create(robotName);
+  urdf::loadRobotModel (device,
+             rootJointType,  packageName,modelName, urdfSuffix,srdfSuffix);
+  BOOST_CHECK(device);
+  BOOST_CHECK_EQUAL(device->neutralConfiguration().size(),device->configSize());
+  Eigen::VectorXd expected(device->configSize());
+  // values fond in the srdf file, if the file change this test need to be updated :
+  expected << 0,0,0,0,0,0,1,0,0,-0.3490658,0.6981317,-0.3490658,0,0,0,-0.3490658,0.6981317,-0.3490658,0,0,1.5,0.6,-0.5,-1.05,-0.4,-0.3,-0.2,0,0,0,0,1.5,-0.6,0.5,1.05,-0.4,-0.3,-0.2;
+  if(verbose)
+    std::cout<<"neutral configuration after loading romeo : "<<displayConfig(device->neutralConfiguration())<<std::endl;
+  BOOST_CHECK_MESSAGE(device->neutralConfiguration().isApprox(expected, 1e-12), "neutral configuration - wrong results");
+}
+
