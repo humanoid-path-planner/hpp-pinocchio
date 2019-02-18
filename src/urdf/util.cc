@@ -226,7 +226,7 @@ namespace hpp {
             _removeCollisionPairs<srdfAsXmlString>
               (model, geomModel, srdf, verbose);
             if(!srdfAsXmlString)
-              ::pinocchio::srdf::getNeutralConfiguration(model,srdf);
+              ::pinocchio::srdf::loadReferenceConfigurations(model,srdf,verbose);
             else{
               hppDout(warning,"Neutral configuration won't be extracted from SRDF string.");
               //TODO : A method getNeutralConfigurationFromSrdfString must be added in Pinocchio,

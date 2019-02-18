@@ -303,8 +303,9 @@ namespace hpp {
     Configuration_t Device::
     neutralConfiguration () const
     {
+      const Model& m (model());
       Configuration_t n (configSize());
-      n.head(model().nq) = model().neutralConfiguration;
+      ::pinocchio::neutral (m, n.head(m.nq));
       n.tail(extraConfigSpace_.dimension()).setZero();
       return n;
     }
