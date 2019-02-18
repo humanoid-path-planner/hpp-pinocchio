@@ -23,13 +23,14 @@
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/liegroup.hh>
 #include <hpp/pinocchio/util.hh>
+#include <hpp/pinocchio/joint-collection.hh>
 
 namespace hpp {
   namespace pinocchio {
     void saturate (const DevicePtr_t& robot,
 			  ConfigurationOut_t configuration)
     {
-      const se3::Model& model = robot->model();
+      const Model& model = robot->model();
       configuration.head(model.nq) = model.upperPositionLimit.cwiseMin(configuration.head(model.nq));
       configuration.head(model.nq) = model.lowerPositionLimit.cwiseMax(configuration.head(model.nq));
 
@@ -44,7 +45,7 @@ namespace hpp {
                    ArrayXb& saturation)
     {
       bool ret = false;
-      const se3::Model& model = robot->model();
+      const Model& model = robot->model();
 
       for (std::size_t i = 1; i < model.joints.size(); ++i) {
         const size_type nq = model.joints[i].nq();
@@ -92,8 +93,8 @@ namespace hpp {
                     ConfigurationIn_t configuration,
                     vectorIn_t velocity, ConfigurationOut_t result)
     {
-      const se3::Model& model = robot->model();
-      result.head(model.nq) = se3::integrate<LieGroup>(model, configuration, velocity);
+      const Model& model = robot->model();
+      result.head(model.nq) = ::pinocchio::integrate<LieGroup>(model, configuration, velocity);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = configuration.tail (dim) + velocity.tail (dim);
       if (saturateConfig) saturate(robot, result);
@@ -131,7 +132,7 @@ namespace hpp {
                       ConfigurationOut_t result)
     {
       const Model& model = robot->model();
-      result.head(model.nq) = se3::interpolate<LieGroup>(model, q0, q1, u);
+      result.head(model.nq) = ::pinocchio::interpolate<LieGroup>(model, q0, q1, u);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = u * q1.tail (dim) + (1-u) * q0.tail (dim);
     }
@@ -142,7 +143,7 @@ namespace hpp {
                                                    const value_type& u,
                                                    ConfigurationOut_t result);
     // TODO remove me. This is kept for backward compatibility
-    template void interpolate<se3::LieGroupMap> (const DevicePtr_t& robot,
+    template void interpolate< ::pinocchio::LieGroupMap> (const DevicePtr_t& robot,
                                                  ConfigurationIn_t q0,
                                                  ConfigurationIn_t q1,
                                                  const value_type& u,
@@ -162,7 +163,7 @@ namespace hpp {
                      ConfigurationIn_t q2, vectorOut_t result)
     {
       const Model& model = robot->model();
-      result.head(model.nv) = se3::difference<LieGroup> (model, q2, q1);
+      result.head(model.nv) = ::pinocchio::difference<LieGroup> (model, q2, q1);
       const size_type& dim = robot->extraConfigSpace().dimension();
       result.tail (dim) = q1.tail (dim) - q2.tail (dim);
     }
@@ -172,7 +173,7 @@ namespace hpp {
 						   ConfigurationIn_t q2,
                            vectorOut_t result);
     // TODO remove me. This is kept for backward compatibility
-    template void difference <se3::LieGroupMap> (const DevicePtr_t& robot,
+    template void difference < ::pinocchio::LieGroupMap> (const DevicePtr_t& robot,
                          ConfigurationIn_t q1,
                          ConfigurationIn_t q2,
                          vectorOut_t result);
@@ -186,7 +187,7 @@ namespace hpp {
     bool isApprox (const DevicePtr_t& robot, ConfigurationIn_t q1,
 			  ConfigurationIn_t q2, value_type eps)
     {
-      if (!se3::isSameConfiguration<se3::LieGroupMap>(robot->model(), q1, q2, eps)) return false;
+      if (!::pinocchio::isSameConfiguration< ::pinocchio::LieGroupMap>(robot->model(), q1, q2, eps)) return false;
       const size_type& dim = robot->extraConfigSpace().dimension();
       return q2.tail (dim).isApprox (q1.tail (dim), eps);
     }
@@ -194,7 +195,7 @@ namespace hpp {
     value_type distance (const DevicePtr_t& robot, ConfigurationIn_t q1,
                          ConfigurationIn_t q2)
     {
-      vector_t dist = se3::squaredDistance<se3::LieGroupMap>(robot->model(), q1, q2);
+      vector_t dist = ::pinocchio::squaredDistance< ::pinocchio::LieGroupMap>(robot->model(), q1, q2);
       const size_type& dim = robot->extraConfigSpace().dimension();
       if (dim == 0) return sqrt(dist.sum());
       else return sqrt (dist.sum() + (q2.tail (dim) - q1.tail (dim)).squaredNorm ());
@@ -202,19 +203,17 @@ namespace hpp {
 
     void normalize (const DevicePtr_t& robot, Configuration_t& q)
     {
-      se3::normalize(robot->model(), q);
+      ::pinocchio::normalize(robot->model(), q);
     }
 
-    struct IsNormalizedStep : public se3::fusion::JointModelVisitor<IsNormalizedStep>
+    struct IsNormalizedStep : public ::pinocchio::fusion::JointVisitorBase<IsNormalizedStep>
     {
       typedef boost::fusion::vector<ConfigurationIn_t,
                                     const value_type &,
                                     bool &> ArgsType;
 
-      JOINT_MODEL_VISITOR_INIT(IsNormalizedStep);
-
       template<typename JointModel>
-      static void algo(const se3::JointModelBase<JointModel> & jmodel,
+      static void algo(const ::pinocchio::JointModelBase<JointModel> & jmodel,
                        ConfigurationIn_t q,
                        const value_type & eps,
                        bool & ret)
@@ -225,18 +224,18 @@ namespace hpp {
     };
 
     template<>
-    void IsNormalizedStep::algo<se3::JointModelComposite>(const se3::JointModelBase<se3::JointModelComposite> & jmodel,
+    void IsNormalizedStep::algo< ::pinocchio::JointModelComposite>(const ::pinocchio::JointModelBase< ::pinocchio::JointModelComposite> & jmodel,
                      ConfigurationIn_t q,
                      const value_type & eps,
                      bool & ret)
     {
-      se3::details::Dispatch<IsNormalizedStep>::run(jmodel, IsNormalizedStep::ArgsType(q, eps, ret));
+      ::pinocchio::details::Dispatch<IsNormalizedStep>::run(jmodel.derived(), IsNormalizedStep::ArgsType(q, eps, ret));
     }
 
     bool isNormalized (const DevicePtr_t& robot, ConfigurationIn_t q, const value_type& eps)
     {
       bool ret = true;
-      const se3::Model& model = robot->model();
+      const Model& model = robot->model();
       for (std::size_t i = 1; i < (std::size_t)model.njoints; ++i) {
         IsNormalizedStep::run(model.joints[i],
                          IsNormalizedStep::ArgsType(q, eps, ret));
@@ -245,7 +244,7 @@ namespace hpp {
       return true;
     }
 
-    std::ostream& display (std::ostream& os, const se3::SE3& m)
+    std::ostream& display (std::ostream& os, const SE3& m)
     {
       return os << pretty_print(m);
     }

@@ -59,8 +59,8 @@ namespace hpp {
                               liegroup::SpecialOrthogonalOperation<2> >,
                             liegroup::SpecialOrthogonalOperation <2>,
                             liegroup::SpecialOrthogonalOperation <3>,
-                            se3::SpecialEuclideanOperation <2>,
-                            se3::SpecialEuclideanOperation <3> >
+                            liegroup::SpecialEuclideanOperation <2>,
+                            liegroup::SpecialEuclideanOperation <3> >
     LiegroupType;
 #endif
 
@@ -109,8 +109,12 @@ namespace hpp {
       /// Return \f$SE(3)\f$
       static LiegroupSpacePtr_t SE3 ();
       /// Return \f$SO(2)\f$
-      static LiegroupSpacePtr_t R2xSO2 ();
+      static LiegroupSpacePtr_t SO2 ();
       /// Return \f$SO(3)\f$
+      static LiegroupSpacePtr_t SO3 ();
+      /// Return \f$\mathbf{R}^2 \times SO(2)\f$
+      static LiegroupSpacePtr_t R2xSO2 ();
+      /// Return \f$\mathbf{R}^3 \times SO(3)\f$
       static LiegroupSpacePtr_t R3xSO3 ();
       /// Return empty Lie group
       static LiegroupSpacePtr_t empty ();
@@ -168,6 +172,15 @@ namespace hpp {
       /// Return the neutral element as a vector
       LiegroupElement neutral () const;
 
+      /// Create a LiegroupElement from a configuration.
+      LiegroupElement element (vectorIn_t q) const;
+
+      /// Create a LiegroupElementRef from a configuration.
+      LiegroupElementRef elementRef (vectorOut_t q) const;
+
+      /// Create a LiegroupElementRef from a configuration.
+      LiegroupElementConstRef elementConstRef (vectorIn_t q) const;
+
       /// Return exponential of a tangent vector
       LiegroupElement exp (vectorIn_t v) const;
 
@@ -188,7 +201,7 @@ namespace hpp {
       /// \note For each elementary Lie group in q.space (), ranging
       ///       over indices \f$[iq, iq+nq-1]\f$, the Jacobian
       ///       \f$J_{Lg} (q [iq:iq+nq])\f$ is computed by method
-      ///       se3::LieGroupBase::dIntegrate_dq.
+      ///       ::pinocchio::LieGroupBase::dIntegrate_dq.
       /// lines \f$[iq:iq+nq]\f$ of Jq are then left multiplied by
       /// \f$J_{Lg} (q [iq:iq+nq])\f$.
       template <DerivativeProduct side>
@@ -210,7 +223,7 @@ namespace hpp {
       /// \note For each elementary Lie group in q.space (), ranging
       ///       over indices \f$[iv, iv+nv-1]\f$, the Jacobian
       ///       \f$J_{Lg} (q [iv:iv+nv])\f$ is computed by method
-      ///       se3::LieGroupBase::dIntegrate_dq.
+      ///       ::pinocchio::LieGroupBase::dIntegrate_dq.
       /// lines \f$[iv:iv+nv]\f$ of Jv are then left multiplied by
       /// \f$J_{Lg} (q [iv:iv+nv])\f$.
       template <DerivativeProduct side>

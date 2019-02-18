@@ -23,9 +23,9 @@ namespace hpp {
   namespace pinocchio {
     namespace liegroup {
       template<int N>
-        struct SpecialOrthogonalOperation : public se3::SpecialOrthogonalOperation<N>
+        struct SpecialOrthogonalOperation : public ::pinocchio::SpecialOrthogonalOperationTpl<N, value_type>
       {
-        typedef se3::SpecialOrthogonalOperation<N> Base;
+        typedef ::pinocchio::SpecialOrthogonalOperationTpl<N, value_type> Base;
         enum {
           BoundSize = 0,
           NR = Base::NV,

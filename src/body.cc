@@ -26,6 +26,7 @@
 #include <pinocchio/multibody/geometry.hpp>
 
 #include <hpp/pinocchio/joint.hh>
+#include <hpp/pinocchio/joint-collection.hh>
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/collision-object.hh>
 
@@ -51,12 +52,12 @@ namespace hpp {
 
     const Model & Body::model() const { return devicePtr.lock()->model(); }
     Model &       Body::model()       { return devicePtr.lock()->model(); }
-    se3::Frame &       Body::frame()
+    ::pinocchio::Frame &       Body::frame()
     {
       searchFrameIndex();
       return model().frames[frameIndex];
     }
-    const se3::Frame & Body::frame() const
+    const ::pinocchio::Frame & Body::frame() const
     {
       searchFrameIndex();
       return model().frames[frameIndex];
@@ -66,9 +67,9 @@ namespace hpp {
     {
       if(frameIndexSet) return;
       frameIndex = 0;
-      BOOST_FOREACH(const se3::Frame & frame,model().frames)
+      BOOST_FOREACH(const ::pinocchio::Frame & frame,model().frames)
         {
-          if( (se3::BODY == frame.type) && (frame.parent == jointIndex) )
+          if( (::pinocchio::BODY == frame.type) && (frame.parent == jointIndex) )
             break;
           frameIndex++;
         }

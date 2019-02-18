@@ -42,10 +42,6 @@ namespace hpp {
     class HPP_PINOCCHIO_DLLAPI Body
     {
     public:
-
-      typedef se3::JointIndex JointIndex;
-      typedef se3::FrameIndex FrameIndex;
-
       /// \name Construction and copy and destruction
       /// @{
       /// Constructor
@@ -102,10 +98,10 @@ namespace hpp {
       /// If frameIndex==-1 (after init), search in pinocchio frame list the proper index.
       void searchFrameIndex() const; 
 
-      const se3::Model&  model() const ;
-      se3::Model&        model() ;
-      const se3::Frame & frame() const ;
-      se3::Frame &       frame() ;
+      const Model&  model() const ;
+      Model&        model() ;
+      const ::pinocchio::Frame & frame() const ;
+      ::pinocchio::Frame &       frame() ;
 
       DeviceWkPtr_t devicePtr;
       JointIndex jointIndex;

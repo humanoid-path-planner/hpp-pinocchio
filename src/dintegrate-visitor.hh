@@ -42,7 +42,7 @@ namespace hpp {
                               v_.segment<LgT::NV>(      row_, lg.nv()),
                               JInt);
           if   (side == DerivativeTimesInput) Jq_.middleRows<LgT::NV> (row_, lg.nv()).applyOnTheLeft  (JInt);
-          else                                Jq_.middleRows<LgT::NV> (row_, lg.nv()).applyOnTheRight (JInt);
+          else                                Jq_.middleCols<LgT::NV> (row_, lg.nv()).applyOnTheRight (JInt);
           row_ += lg.nv();
           configRow_ += lg.nq();
         }

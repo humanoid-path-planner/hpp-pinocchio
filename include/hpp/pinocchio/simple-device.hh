@@ -28,6 +28,11 @@ namespace hpp {
         Computation_t compFlags = (Computation_t) (JOINT_POSITION | JACOBIAN)
         );
 
+    DevicePtr_t humanoidSimple(
+        const std::string& name = "humanoidSimple",
+        Computation_t compFlags = (Computation_t) (JOINT_POSITION | JACOBIAN)
+        );
+
     namespace unittest {
       enum TestDeviceType {
         HumanoidRomeo,

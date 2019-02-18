@@ -19,7 +19,7 @@
 
 # include <list>
 
-# include <pinocchio/multibody/data.hpp> // se3::Data
+# include <pinocchio/multibody/data.hpp> // ::pinocchio::Data
 
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/device.hh>
@@ -43,7 +43,7 @@ namespace hpp {
       public:
         typedef std::vector <JointIndex> JointRootIndexes_t;
         /// \cond
-        // This fixes an alignment issue of se3::Data::hg
+        // This fixes an alignment issue of ::pinocchio::Data::hg
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
         /// \endcond
 
