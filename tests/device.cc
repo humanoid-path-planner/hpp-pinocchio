@@ -18,6 +18,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <pinocchio/multibody/model.hpp>
+
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/simple-device.hh>
@@ -90,26 +92,45 @@ BOOST_AUTO_TEST_CASE (unit_test_device)
   BOOST_CHECK_EQUAL (space->name(), "R^19");
 }
 
-// TODO When neutral configuration can be read from XML string, this test should be updated in order to
-// read a URDF and SRDF string rather than a file in a different package.
-BOOST_AUTO_TEST_CASE(load_neutral_configuration){
-  std::string robotName("romeo");
-  std::string packageName("romeo_description");
-  std::string rootJointType("freeflyer");
-  std::string modelName("romeo");
-  std::string urdfSuffix("_small");
-  std::string srdfSuffix("");
+BOOST_AUTO_TEST_CASE(load_neutral_configuration)
+{
+  std::string urdf (
+      "<robot name='test'>"
+      "<link name='base_link'/>"
+      "<link name='link1'/>"
+      "<joint name='joint1' type='revolute'>"
+      "  <parent link='base_link'/>"
+      "  <child link='link1'/>"
+      "  <limit effort='30' velocity='1.0' />"
+      "</joint>"
+      "</robot>");
+  std::string srdf (
+      "<robot name='test'>"
+      "<group name='all'/>"
+      "<group_state name='half_sitting' group='all'>"
+      "<joint name='joint1' value='1.' />"
+      "</group_state>"
+      "</robot>");
 
-  DevicePtr_t device = Device::create(robotName);
-  urdf::loadRobotModel (device,
-             rootJointType,  packageName,modelName, urdfSuffix,srdfSuffix);
+  DevicePtr_t device = Device::create("test");
+  urdf::loadModelFromString (device, 0, "", "anchor", urdf, srdf);
   BOOST_CHECK(device);
   BOOST_CHECK_EQUAL(device->neutralConfiguration().size(),device->configSize());
+  BOOST_CHECK_MESSAGE(device->neutralConfiguration().isZero(1e-12), "neutral configuration - wrong results");
+
+  /*
+  // TODO When neutral configuration can be read from XML string, this test should be updated in order to
+  // read a URDF and SRDF string rather than a file in a different package.
   Eigen::VectorXd expected(device->configSize());
-  // values fond in the srdf file, if the file change this test need to be updated :
-  expected << 0,0,0,0,0,0,1,0,0,-0.3490658,0.6981317,-0.3490658,0,0,0,-0.3490658,0.6981317,-0.3490658,0,0,1.5,0.6,-0.5,-1.05,-0.4,-0.3,-0.2,0,0,0,0,1.5,-0.6,0.5,1.05,-0.4,-0.3,-0.2;
-  if(verbose)
-    std::cout<<"neutral configuration after loading romeo : "<<displayConfig(device->neutralConfiguration())<<std::endl;
-  BOOST_CHECK_MESSAGE(device->neutralConfiguration().isApprox(expected, 1e-12), "neutral configuration - wrong results");
+  expected.setOnes();
+
+  const Model& model = device->model();
+  Model::ConfigVectorMap::const_iterator half_sitting = model.referenceConfigurations.find ("half_sitting"); 
+  BOOST_REQUIRE(half_sitting != model.referenceConfigurations.end());
+  BOOST_CHECK_MESSAGE(half_sitting->second.isApprox (expected, 1e-12),
+      "reference configuration - wrong results\ngot: "
+      << half_sitting->second.transpose() << "\nexpected: "
+      << expected.transpose());
+      */
 }
 
