@@ -119,6 +119,7 @@ namespace hpp {
         /// Compute forward kinematics
         void computeForwardKinematics () { d().computeForwardKinematics(modelPtr()); }
         /// Compute frame forward kinematics
+        /// \note call AbstractDevice::computeForwardKinematics.
         void computeFramesForwardKinematics () { d().computeFramesForwardKinematics(modelPtr()); }
         /// Update the geometry placement to the currentConfiguration
         void updateGeometryPlacements () { d().updateGeometryPlacements(modelPtr(), geomModelPtr()); }
