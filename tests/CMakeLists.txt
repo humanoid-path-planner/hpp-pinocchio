@@ -56,11 +56,11 @@ ENDMACRO(ADD_TESTCASE_CFLAGS)
 # --- LIST OF TESTS ------------------------------------------------------------
 
 IF(ROMEO_DESCRIPTION_FOUND)
-  ADD_TESTCASE(tconfiguration FALSE)
   ADD_TESTCASE(frame FALSE)
-  ADD_TESTCASE(device FALSE)
 ENDIF(ROMEO_DESCRIPTION_FOUND)
 
+ADD_TESTCASE(tconfiguration FALSE)
+ADD_TESTCASE(device FALSE)
 ADD_TESTCASE(liegroup-element FALSE)
 ADD_TESTCASE(print FALSE)
 
