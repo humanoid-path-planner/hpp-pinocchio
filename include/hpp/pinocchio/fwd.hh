@@ -20,6 +20,10 @@
 #ifndef HPP_PINOCCHIO_FWD_HH
 # define HPP_PINOCCHIO_FWD_HH
 
+# ifndef PINOCCHIO_WITH_HPP_FCL
+#  error "hpp-fcl support in Pinocchio is mandatory."
+# endif
+
 # include <vector>
 # include <Eigen/Core>
 
