@@ -17,23 +17,24 @@
 # include <hpp/pinocchio/frame.hh>
 
 # include <pinocchio/multibody/geometry.hpp>
-# include <pinocchio/multibody/joint/joint.hpp>
+# include <pinocchio/multibody/joint/fwd.hpp>
 # include <pinocchio/algorithm/jacobian.hpp>
 # include <pinocchio/algorithm/frames.hpp>
 
 # include <hpp/pinocchio/device.hh>
 # include <hpp/pinocchio/body.hh>
 # include <hpp/pinocchio/joint.hh>
+# include <hpp/pinocchio/joint-collection.hh>
 
 namespace hpp {
   namespace pinocchio {
     namespace {
       void moveFrame (Model& model, GeomModel& geomModel, const FrameIndex& pF, const Transform3f& new_jMf)
       {
-        se3::Frame& f = model.frames[pF];
+        ::pinocchio::Frame& f = model.frames[pF];
         const Transform3f old_fMj = f.placement.inverse();
         for (GeomIndex i = 0; i < geomModel.geometryObjects.size(); ++i) {
-          se3::GeometryObject& go = geomModel.geometryObjects[i];
+          ::pinocchio::GeometryObject& go = geomModel.geometryObjects[i];
           if (go.parentFrame == pF)
             go.placement = new_jMf * old_fMj * go.placement;
         }
@@ -62,8 +63,8 @@ namespace hpp {
     inline const Model&  Frame::model() const { selfAssert(); return devicePtr_->model(); }
     inline Data &        Frame::data()        { selfAssert(); return devicePtr_->data (); }
     inline const Data &  Frame::data()  const { selfAssert(); return devicePtr_->data (); }
-    const se3::Frame&  Frame::pinocchio() const { return model().frames[index()]; }
-    inline se3::Frame& Frame::pinocchio()       { return model().frames[index()]; }
+    const ::pinocchio::Frame&  Frame::pinocchio() const { return model().frames[index()]; }
+    inline ::pinocchio::Frame& Frame::pinocchio()       { return model().frames[index()]; }
 
     Frame Frame::parentFrame () const
     {
@@ -73,7 +74,7 @@ namespace hpp {
 
     bool Frame::isFixed () const
     {
-      return pinocchio().type == se3::FIXED_JOINT;
+      return pinocchio().type == ::pinocchio::FIXED_JOINT;
     }
 
     JointPtr_t Frame::joint () const
@@ -96,8 +97,8 @@ namespace hpp {
     {
       selfAssert();
       const Data & d = data();
-      const se3::Frame f = model().frames[frameIndex_];
-      if (f.type == se3::JOINT)
+      const ::pinocchio::Frame f = model().frames[frameIndex_];
+      if (f.type == ::pinocchio::JOINT)
         return d.oMi[f.parent];
       else
         return d.oMi[f.parent] * f.placement;
@@ -108,7 +109,7 @@ namespace hpp {
       selfAssert();
       assert(robot()->computationFlag() & JACOBIAN);
       JointJacobian_t jacobian = JointJacobian_t::Zero(6,model().nv);
-      se3::getFrameJacobian<se3::LOCAL> (model(),data(),frameIndex_,jacobian);
+      ::pinocchio::getFrameJacobian(model(),data(),frameIndex_,::pinocchio::LOCAL,jacobian);
       return jacobian;
     }
 
@@ -133,7 +134,7 @@ namespace hpp {
         if (visited[i]) continue;
         visited[i] = true;
         k = model.frames[i].previousFrame;
-        while (model.frames[k].type != se3::JOINT) {
+        while (model.frames[k].type != ::pinocchio::JOINT) {
           if (k == frameIndex_ || k == 0) break;
           // if (visited[k]) {
             // std::vector<FrameIndex>::iterator _k = 
@@ -160,9 +161,9 @@ namespace hpp {
     {
       selfAssert();
       const Model& m = model();
-      const se3::Frame f = m.frames[index()];
+      const ::pinocchio::Frame f = m.frames[index()];
       return m.frames[f.previousFrame].placement.inverse() 
-        * ((f.type == se3::FIXED_JOINT) ? f.placement : m.jointPlacements[f.parent]);
+        * ((f.type == ::pinocchio::FIXED_JOINT) ? f.placement : m.jointPlacements[f.parent]);
     }
 
     void Frame::positionInParentFrame (const Transform3f& p)
@@ -171,8 +172,8 @@ namespace hpp {
       devicePtr_->invalidate();
       Model& model = devicePtr_->model();
       GeomModel& geomModel = devicePtr_->geomModel();
-      se3::Frame& me = pinocchio();
-      bool isJoint = (me.type == se3::JOINT);
+      ::pinocchio::Frame& me = pinocchio();
+      bool isJoint = (me.type == ::pinocchio::JOINT);
       Transform3f fMj = (isJoint ? model.jointPlacements[me.parent].inverse() : me.placement.inverse());
       if (isJoint)
         model.jointPlacements[me.parent] = model.frames[me.previousFrame].placement * p;
@@ -182,7 +183,7 @@ namespace hpp {
       std::vector<bool> visited (model.frames.size(), false);
       for (std::size_t i = 0; i < children_.size(); ++i) {
         FrameIndex k = children_[i];
-        if (model.frames[k].type == se3::JOINT)
+        if (model.frames[k].type == ::pinocchio::JOINT)
           k = model.frames[k].previousFrame;
         while (k != frameIndex_) {
           if (visited[k]) break;
@@ -195,8 +196,8 @@ namespace hpp {
       // Update joint placements
       for (std::size_t i = 0; i < children_.size(); ++i) {
         FrameIndex k = children_[i];
-        const se3::Frame f = model.frames[k];
-        if (f.type == se3::JOINT) {
+        const ::pinocchio::Frame f = model.frames[k];
+        if (f.type == ::pinocchio::JOINT) {
           model.jointPlacements[f.parent]
             = me.placement * fMj * model.jointPlacements[f.parent];
         }

@@ -62,6 +62,26 @@ namespace hpp {
       return shPtr;
     }
 
+    /// Return \f$SO(2)\f$
+    LiegroupSpacePtr_t LiegroupSpace::SO2 ()
+    {
+      LiegroupSpace* ptr (new LiegroupSpace
+                          (liegroup::SpecialOrthogonalOperation<2> ()));
+      LiegroupSpacePtr_t  shPtr (ptr);
+      ptr->init (shPtr);
+      return shPtr;
+    }
+
+    /// Return \f$SO(3)\f$
+    LiegroupSpacePtr_t LiegroupSpace::SO3 ()
+    {
+      LiegroupSpace* ptr (new LiegroupSpace
+                          (liegroup::SpecialOrthogonalOperation<3> ()));
+      LiegroupSpacePtr_t  shPtr (ptr);
+      ptr->init (shPtr);
+      return shPtr;
+    }
+
     /// Return \f$R^2\times SO(2)\f$
     LiegroupSpacePtr_t LiegroupSpace::R2xSO2 ()
     {
@@ -90,7 +110,7 @@ namespace hpp {
     LiegroupSpacePtr_t LiegroupSpace::SE2 ()
     {
       LiegroupSpace* ptr (new LiegroupSpace
-                          (se3::SpecialEuclideanOperation <2>()));
+                          (liegroup::SpecialEuclideanOperation <2>()));
       LiegroupSpacePtr_t  shPtr (ptr);
       ptr->init (shPtr);
       return shPtr;
@@ -100,7 +120,7 @@ namespace hpp {
     LiegroupSpacePtr_t LiegroupSpace::SE3 ()
     {
       LiegroupSpace* ptr (new LiegroupSpace
-                          (se3::SpecialEuclideanOperation <3>()));
+                          (liegroup::SpecialEuclideanOperation <3>()));
       LiegroupSpacePtr_t  shPtr (ptr);
       ptr->init (shPtr);
       return shPtr;
@@ -134,6 +154,21 @@ namespace hpp {
     LiegroupElement LiegroupSpace::neutral () const
     {
       return LiegroupElement (neutral_, weak_.lock ());
+    }
+
+    LiegroupElement LiegroupSpace::element (vectorIn_t q) const
+    {
+      return LiegroupElement (q, weak_.lock ());
+    }
+
+    LiegroupElementRef LiegroupSpace::elementRef (vectorOut_t q) const
+    {
+      return LiegroupElementRef (q, weak_.lock ());
+    }
+
+    LiegroupElementConstRef LiegroupSpace::elementConstRef (vectorIn_t q) const
+    {
+      return LiegroupElementConstRef (q, weak_.lock ());
     }
 
     LiegroupElement LiegroupSpace::exp (vectorIn_t v) const
@@ -181,9 +216,16 @@ namespace hpp {
     template <bool ApplyOnTheLeft>
     void LiegroupSpace::Jdifference (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0, matrixOut_t J1) const
     {
+      dDifference_dq0<ApplyOnTheLeft?DerivativeTimesInput:InputTimesDerivative> (q0, q1, J0);
+      dDifference_dq1<ApplyOnTheLeft?DerivativeTimesInput:InputTimesDerivative> (q0, q1, J1);
+    }
+
+    template <DerivativeProduct side>
+    void LiegroupSpace::dDifference_dq0 (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0) const
+    {
       assert (q0.size() == nq() && q1.size() == nq());
 
-      liegroupType::JdifferenceVisitor<ApplyOnTheLeft> jdv (q0,q1,J0,J1);
+      liegroupType::dDifferenceVisitor<ARG0, side> jdv (q0,q1,J0);
       for (std::size_t i = 0; i < liegroupTypes_.size (); ++i) {
         boost::apply_visitor (jdv, liegroupTypes_ [i]);
       }
@@ -192,21 +234,16 @@ namespace hpp {
     }
 
     template <DerivativeProduct side>
-    void LiegroupSpace::dDifference_dq0 (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0) const
-    {
-      // TODO when updating to Pinocchio v2, use the correct API
-      matrix_t unused;
-      if      (side == DerivativeTimesInput) Jdifference <true > (q0, q1, J0, unused);
-      else if (side == InputTimesDerivative) Jdifference <false> (q0, q1, J0, unused);
-    }
-
-    template <DerivativeProduct side>
     void LiegroupSpace::dDifference_dq1 (vectorIn_t q0, vectorIn_t q1, matrixOut_t J1) const
     {
-      // TODO when updating to Pinocchio v2, use the correct API
-      matrix_t unused;
-      if      (side == DerivativeTimesInput) Jdifference <true > (q0, q1, unused, J1);
-      else if (side == InputTimesDerivative) Jdifference <false> (q0, q1, unused, J1);
+      assert (q0.size() == nq() && q1.size() == nq());
+
+      liegroupType::dDifferenceVisitor<ARG1, side> jdv (q0,q1,J1);
+      for (std::size_t i = 0; i < liegroupTypes_.size (); ++i) {
+        boost::apply_visitor (jdv, liegroupTypes_ [i]);
+      }
+      assert (jdv.iq_ == nq());
+      assert (jdv.iv_ == nv());
     }
 
     template void LiegroupSpace::Jdifference<true > (vectorIn_t q0, vectorIn_t q1, matrixOut_t J0, matrixOut_t J1) const;

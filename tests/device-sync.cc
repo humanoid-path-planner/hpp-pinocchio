@@ -27,6 +27,7 @@ namespace bpt = boost::posix_time;
 #include <hpp/pinocchio/util.hh>
 #include <hpp/pinocchio/device-sync.hh>
 #include <hpp/pinocchio/simple-device.hh>
+#include <hpp/pinocchio/joint-collection.hh>
 
 using namespace hpp;
 using namespace hpp::pinocchio;
@@ -65,7 +66,7 @@ BOOST_AUTO_TEST_CASE (single_thread)
   delete d2;
 }
 
-typedef se3::container::aligned_vector<se3::SE3> SE3Vector_t;
+typedef ::pinocchio::container::aligned_vector<SE3> SE3Vector_t;
 
 void compute_forward_kinematics (DevicePtr_t& device,
     const Configuration_t& q, SE3Vector_t& res)
@@ -98,7 +99,7 @@ BOOST_AUTO_TEST_CASE (check_synchronization)
   // Generate N configurations
   std::vector<Configuration_t> qs (N);
   for (std::size_t i = 0; i < qs.size(); ++i) {
-    qs[i] = se3::randomConfiguration (robot->model());
+    qs[i] = ::pinocchio::randomConfiguration (robot->model());
     // BOOST_CHECK (qs[i].isFinite());
     BOOST_CHECK (!qs[i].hasNaN());
   }

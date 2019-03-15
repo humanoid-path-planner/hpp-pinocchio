@@ -157,7 +157,7 @@ namespace hpp {
     }
 
     /// Write a SE3 taking into account the indentation
-    std::ostream& display (std::ostream& os, const se3::SE3& m);
+    std::ostream& display (std::ostream& os, const SE3& m);
   } // namespace pinocchio
 } // namespace hpp
 #endif // HPP_PINOCCHIO_CONFIGURATION_HH

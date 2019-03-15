@@ -20,6 +20,7 @@
 #include <pinocchio/spatial/se3.hpp>
 
 using namespace hpp;
+using hpp::pinocchio::SE3;
 using hpp::pinocchio::vector_t;
 using hpp::pinocchio::matrix_t;
 using hpp::pinocchio::vectorOut_t;
@@ -28,15 +29,15 @@ using hpp::pinocchio::vectorIn_t;
 int main ()
 {
   std::cout << incindent
-    << iendl << pretty_print (se3::SE3::Identity())
-    << iendl << condensed (se3::SE3::Identity())
-    << iendl << one_line (se3::SE3::Identity())
+    << iendl << pretty_print (SE3::Identity())
+    << iendl << condensed (SE3::Identity())
+    << iendl << one_line (SE3::Identity())
     << decindent << iendl;
 
   std::cout << setpyformat
-    << iendl << pretty_print (se3::SE3::Identity())
-    << iendl << condensed (se3::SE3::Identity())
-    << iendl << one_line (se3::SE3::Identity())
+    << iendl << pretty_print (SE3::Identity())
+    << iendl << condensed (SE3::Identity())
+    << iendl << one_line (SE3::Identity())
     << iendl;
 
   vector_t v = vector_t::Ones(2);

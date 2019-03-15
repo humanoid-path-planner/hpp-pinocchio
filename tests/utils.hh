@@ -38,6 +38,6 @@ BOOST_AUTO_TEST_CASE(convert)
   BOOST_CHECK( J.isApprox((J*p2m::Xq(R))*m2p::Xq(R)) );
   BOOST_CHECK( ((J*m2p::Xq(R))*(p2m::Xq(R)*v)).isApprox(J*v) );
 
-  se3::SE3 Mp = se3::SE3::Random();
+  ::pinocchio::SE3 Mp = ::pinocchio::SE3::Random();
   BOOST_CHECK( Mp.isApprox( m2p::SE3(p2m::SE3(Mp)) ) );
 }

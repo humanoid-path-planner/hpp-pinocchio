@@ -28,13 +28,15 @@
 # include <hpp/pinocchio/config.hh>
 # include <hpp/pinocchio/fwd.hh>
 
-namespace se3
+namespace pinocchio
 {
   struct GeometryObject;
 }
 
 namespace hpp {
   namespace pinocchio {
+    typedef ::pinocchio::GeometryObject GeometryObject;
+
     /// Specialization of fcl::CollisionObject to add a name to objects
     ///
     /// Objects moved by a robot joint. They can collide each other and
@@ -58,8 +60,8 @@ namespace hpp {
       const std::string& name () const;
 
       /// Access to pinocchio object
-      const se3::GeometryObject & pinocchio () const;
-      se3::GeometryObject &       pinocchio ();
+      const GeometryObject & pinocchio () const;
+      GeometryObject &       pinocchio ();
       
       /// Access to fcl object
       FclConstCollisionObjectPtr_t fcl (const GeomData& data) const;

@@ -61,7 +61,8 @@ SEARCH_FOR_BOOST()
 
 # Search for dependecies.
 ADD_REQUIRED_DEPENDENCY("hpp-util >= 3.2")
-ADD_REQUIRED_DEPENDENCY("pinocchio >= 1.2.4")
+ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.0")
+ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.2.92")
 
 ADD_OPTIONAL_DEPENDENCY("romeo_description >= 0.2")
 ADD_OPTIONAL_DEPENDENCY("hpp-environments")
@@ -74,6 +75,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/device-sync.hh
   include/hpp/pinocchio/humanoid-robot.hh
   include/hpp/pinocchio/joint.hh
+  include/hpp/pinocchio/joint-collection.hh
   include/hpp/pinocchio/frame.hh
   include/hpp/pinocchio/body.hh
   include/hpp/pinocchio/gripper.hh

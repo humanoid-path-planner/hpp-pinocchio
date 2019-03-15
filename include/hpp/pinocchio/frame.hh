@@ -66,7 +66,7 @@ namespace hpp {
       /// \name Kinematic chain
       /// \{
 
-      /// Returns true if the frame type is se3::FIXED_JOINT
+      /// Returns true if the frame type is ::pinocchio::FIXED_JOINT
       bool isFixed () const;
 
       /// Returns the joint associated to this frame
@@ -114,7 +114,7 @@ namespace hpp {
         return frameIndex_;
       }
 
-      const se3::Frame& pinocchio() const;
+      const ::pinocchio::Frame& pinocchio() const;
 
       /// \}
 
@@ -123,7 +123,7 @@ namespace hpp {
       FrameIndex frameIndex_;
       std::vector<FrameIndex> children_;
 
-      se3::Frame& pinocchio();
+      ::pinocchio::Frame& pinocchio();
 
       /// Store list of childrens.
       void setChildList();

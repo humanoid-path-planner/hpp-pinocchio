@@ -36,6 +36,7 @@
 #include <hpp/pinocchio/configuration.hh>
 #include <hpp/pinocchio/liegroup.hh>
 #include <hpp/pinocchio/joint.hh>
+#include <hpp/pinocchio/joint-collection.hh>
 
 #include <hpp/pinocchio/simple-device.hh>
 
@@ -148,8 +149,8 @@ void test_difference_and_distance(DevicePtr_t robot)
   Configuration_t q2; q2.resize (robot->configSize ());
   vector_t q1_minus_q0; q1_minus_q0.resize (robot->numberDof ());
   for (size_type i=0; i<NB_CONF; ++i) {
-    q0 = se3::randomConfiguration (robot->model());
-    q1 = se3::randomConfiguration (robot->model());
+    q0 = ::pinocchio::randomConfiguration (robot->model());
+    q1 = ::pinocchio::randomConfiguration (robot->model());
 
     BOOST_CHECK(isNormalized(robot, q0, eps));
     BOOST_CHECK(isNormalized(robot, q1, eps));
@@ -186,8 +187,8 @@ void test_difference_and_integrate(DevicePtr_t robot)
   Configuration_t q2; q2.resize (robot->configSize ());
   vector_t q1_minus_q0; q1_minus_q0.resize (robot->numberDof ());
   for (size_type i=0; i<NB_CONF; ++i) {
-    q0 = se3::randomConfiguration (robot->model());
-    q1 = se3::randomConfiguration (robot->model());
+    q0 = ::pinocchio::randomConfiguration (robot->model());
+    q1 = ::pinocchio::randomConfiguration (robot->model());
 
     BOOST_CHECK(isNormalized(robot, q0, eps));
     BOOST_CHECK(isNormalized(robot, q1, eps));
@@ -226,8 +227,8 @@ void test_interpolate_and_integrate (DevicePtr_t robot)
   const value_type eps_dist = value_type(robot->numberDof()) * sqrt(Eigen::NumTraits<value_type>::epsilon());
   value_type d0, d1;
   for (size_type i=0; i<NB_CONF; ++i) {
-    q0 = se3::randomConfiguration <LieGroup> (robot->model());
-    q1 = se3::randomConfiguration <LieGroup> (robot->model());
+    q0 = ::pinocchio::randomConfiguration <LieGroup> (robot->model());
+    q1 = ::pinocchio::randomConfiguration <LieGroup> (robot->model());
 
     BOOST_CHECK(isNormalized(robot, q0, eps));
     BOOST_CHECK(isNormalized(robot, q1, eps));
@@ -381,10 +382,10 @@ int test_successive_interpolation (DevicePtr_t robot)
   vector_t q1_minus_q0 (robot->numberDof ());
 
   for (size_type i=0; i<NB_CONF; ++i) {
-    q0 = se3::randomConfiguration (robot->model());
+    q0 = ::pinocchio::randomConfiguration (robot->model());
 
     for (size_type j=0; j<NB_SUCCESSIVE_INTERPOLATION; ++j) {
-      q1 = se3::randomConfiguration (robot->model());
+      q1 = ::pinocchio::randomConfiguration (robot->model());
       // BOOST_CHECK(isNormalized(robot, q1, eps));
       if (!isNormalized(robot, q1, eps)) ++count;
       difference<LieGroup> (robot, q1, q0, q1_minus_q0);

@@ -171,6 +171,25 @@ namespace hpp {
 
         /// Inplace integration of a velocity vector
         LiegroupElementBase& operator+= (vectorIn_t v);
+
+        /// Assignment from another LiegroupElement
+        template <typename vector_type2>
+        LiegroupElementBase& operator= (const LiegroupElementConstBase<vector_type2>& other)
+        {
+          this->space_ = other.space();
+          this->value_ = other.vector();
+          return *this;
+        }
+
+        /// Assignment from a vector
+        template <typename Vector>
+        LiegroupElementBase& operator= (const Eigen::MatrixBase<Vector>& v)
+        {
+          EIGEN_STATIC_ASSERT_VECTOR_ONLY(Vector);
+          assert (this->space_->nq() == v.derived().size());
+          this->value_.noalias() = v.derived();
+          return *this;
+        }
     };
 
     /// Integration of a velocity vector from a configuration

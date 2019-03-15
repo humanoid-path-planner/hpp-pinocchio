@@ -20,8 +20,6 @@
 # include <hpp/pinocchio/joint.hh>
 
 # include <limits>
-
-# include <pinocchio/multibody/joint/joint.hpp>
 # include <pinocchio/algorithm/jacobian.hpp>
 
 # include <hpp/pinocchio/device.hh>
@@ -29,6 +27,7 @@
 # include <hpp/pinocchio/body.hh>
 # include <hpp/pinocchio/frame.hh>
 # include <hpp/pinocchio/liegroup-space.hh>
+# include <hpp/pinocchio/joint-collection.hh>
 
 # include "joint/bound.hh"
 
@@ -36,8 +35,8 @@
 
 namespace hpp {
   namespace pinocchio {
-    using se3::LOCAL;
-    using se3::WORLD;
+    using ::pinocchio::LOCAL;
+    using ::pinocchio::WORLD;
 
     JointPtr_t Joint::create (DeviceWkPtr_t device, JointIndex indexInJointList)
     {
@@ -207,7 +206,7 @@ namespace hpp {
     value_type computeMaximalDistanceToParentForAlignedTranslation(
         const Eigen::MatrixBase<Derived>& lower,
         const Eigen::MatrixBase<Derived>& upper,
-        const se3::SE3& placement)
+        const SE3& placement)
     {
       if (!lower.allFinite() || !upper.allFinite())
         return std::numeric_limits <value_type>::infinity ();
@@ -231,9 +230,9 @@ namespace hpp {
     }
 
     template<typename Joint>
-    value_type computeMaximalDistanceToParent( const se3::Model & /*model*/,
-                                               const se3::JointModelBase<Joint> & ,
-                                               const se3::SE3 & /*jointPlacement*/ )
+    value_type computeMaximalDistanceToParent( const Model & /*model*/,
+                                               const ::pinocchio::JointModelBase<Joint> & ,
+                                               const SE3 & /*jointPlacement*/ )
     {
       assert (false 
               && "The function <maximalDistance> as not been implemented for this class of joint");
@@ -241,35 +240,35 @@ namespace hpp {
     }
 
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelFreeFlyer& jmodel, const se3::SE3 & jointPlacement )
+    ( const Model & model, const ::pinocchio::JointModelFreeFlyer& jmodel, const SE3 & jointPlacement )
     {
       const size_type& i = jmodel.idx_q();
       return computeMaximalDistanceToParentForAlignedTranslation<true, true, true>(
-          model.lowerPositionLimit.segment<se3::JointModelTranslation::NQ>(i),
-          model.upperPositionLimit.segment<se3::JointModelTranslation::NQ>(i),
+          model.lowerPositionLimit.segment< ::pinocchio::JointModelTranslation::NQ>(i),
+          model.upperPositionLimit.segment< ::pinocchio::JointModelTranslation::NQ>(i),
           jointPlacement);
     }
 
     template<typename Scalar, int Options, int Axis>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & /*model*/, const se3::JointModelRevoluteTpl<Scalar, Options, Axis> & , const se3::SE3 & jointPlacement )
+    ( const Model & /*model*/, const ::pinocchio::JointModelRevoluteTpl<Scalar, Options, Axis> & , const SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
     template<typename Scalar, int Options>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & /*model*/, const se3::JointModelRevoluteUnalignedTpl<Scalar, Options> &, const se3::SE3 & jointPlacement )
+    ( const Model & /*model*/, const ::pinocchio::JointModelRevoluteUnalignedTpl<Scalar, Options> &, const SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
     template<typename Scalar, int Options, int Axis>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & /*model*/, const se3::JointModelRevoluteUnboundedTpl<Scalar, Options, Axis> & , 
-      const se3::SE3 & jointPlacement )
+    ( const Model & /*model*/, const ::pinocchio::JointModelRevoluteUnboundedTpl<Scalar, Options, Axis> & , 
+      const SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
     template<typename Scalar, int Options, int Axis>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelPrismatic<Scalar, Options, Axis> & jmodel, 
-      const se3::SE3 & jointPlacement )
+    ( const Model & model, const ::pinocchio::JointModelPrismaticTpl<Scalar, Options, Axis> & jmodel, 
+      const SE3 & jointPlacement )
     {
       return computeMaximalDistanceToParentForAlignedTranslation
         <Axis == 0, Axis == 1, Axis == 2>(
@@ -280,8 +279,8 @@ namespace hpp {
 
     template<typename Scalar, int Options>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelPrismaticUnalignedTpl<Scalar, Options>& jmodel, 
-      const se3::SE3 & jointPlacement )
+    ( const Model & model, const ::pinocchio::JointModelPrismaticUnalignedTpl<Scalar, Options>& jmodel, 
+      const SE3 & jointPlacement )
     {
       if( std::isinf (model.lowerPositionLimit[jmodel.idx_q()])
           || std::isinf (model.upperPositionLimit[jmodel.idx_q()]) )
@@ -296,29 +295,29 @@ namespace hpp {
 
     template<typename Scalar, int Options>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & /*model*/, const se3::JointModelSphericalTpl<Scalar, Options>& , const se3::SE3 & jointPlacement )
+    ( const Model & /*model*/, const ::pinocchio::JointModelSphericalTpl<Scalar, Options>& , const SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
     template<typename Scalar, int Options>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & /*model*/, const se3::JointModelSphericalZYXTpl<Scalar, Options>& , const se3::SE3 & jointPlacement )
+    ( const Model & /*model*/, const ::pinocchio::JointModelSphericalZYXTpl<Scalar, Options>& , const SE3 & jointPlacement )
     { return jointPlacement.translation().norm(); }
 
     template<typename Scalar, int Options>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelTranslationTpl<Scalar, Options>& jmodel, const se3::SE3 & jointPlacement )
+    ( const Model & model, const ::pinocchio::JointModelTranslationTpl<Scalar, Options>& jmodel, const SE3 & jointPlacement )
     {
       const size_type& i = jmodel.idx_q();
       return computeMaximalDistanceToParentForAlignedTranslation<true, true, true>(
-          model.lowerPositionLimit.segment<se3::JointModelTranslation::NQ>(i),
-          model.upperPositionLimit.segment<se3::JointModelTranslation::NQ>(i),
+          model.lowerPositionLimit.segment< ::pinocchio::JointModelTranslation::NQ>(i),
+          model.upperPositionLimit.segment< ::pinocchio::JointModelTranslation::NQ>(i),
           jointPlacement);
     }
     // TODO (really?): handle the case where the translation is bounded.
 
     template<typename Scalar, int Options>
     value_type computeMaximalDistanceToParent
-    ( const se3::Model & model, const se3::JointModelPlanarTpl<Scalar, Options>& jmodel, const se3::SE3 & jointPlacement )
+    ( const Model & model, const ::pinocchio::JointModelPlanarTpl<Scalar, Options>& jmodel, const SE3 & jointPlacement )
     {
       const size_type& i = jmodel.idx_q();
       return computeMaximalDistanceToParentForAlignedTranslation <true, true, false> (
@@ -329,13 +328,13 @@ namespace hpp {
 
     struct VisitMaximalDistanceToParent : public boost::static_visitor<value_type> 
     {
-      const se3::Model & model;
-      const se3::SE3 & jointPlacement;
-      VisitMaximalDistanceToParent( const se3::Model & model, const se3::SE3 & jointPlacement )
+      const Model & model;
+      const SE3 & jointPlacement;
+      VisitMaximalDistanceToParent( const Model & model, const SE3 & jointPlacement )
         : model(model), jointPlacement(jointPlacement) {}
 
       template<typename Joint>
-      value_type operator() ( const se3::JointModelBase<Joint> & jmodel )
+      value_type operator() ( const ::pinocchio::JointModelBase<Joint> & jmodel )
       { return computeMaximalDistanceToParent(model,jmodel.derived(),jointPlacement) ; }
     };
 
@@ -354,38 +353,38 @@ namespace hpp {
 
     /* --- LINEAR VELOCITY ---------------------------------------------------*/
     template<typename D>
-    value_type upperBoundLinearVelocity( const se3::JointModelBase<D> & )                  
+    value_type upperBoundLinearVelocity( const ::pinocchio::JointModelBase<D> & )                  
     {
       assert (false 
               && "The function <upperBoundLinearVel> as not been implemented for this class of joint");
       return 0.0;
     }
     template<typename Scalar, int Options>
-    value_type upperBoundLinearVelocity( const se3::JointModelFreeFlyerTpl<Scalar, Options> & )                  { return 1.0; }
+    value_type upperBoundLinearVelocity( const ::pinocchio::JointModelFreeFlyerTpl<Scalar, Options> & )                  { return 1.0; }
     template<typename Scalar, int Options, int AXIS>
-    value_type upperBoundLinearVelocity( const se3::JointModelRevoluteTpl<Scalar, Options, AXIS> & )             { return 0.0; }
+    value_type upperBoundLinearVelocity( const ::pinocchio::JointModelRevoluteTpl<Scalar, Options, AXIS> & )             { return 0.0; }
     template<typename Scalar, int Options>
-    value_type upperBoundLinearVelocity( const se3::JointModelRevoluteUnalignedTpl<Scalar, Options> & )          { return 0.0; }
+    value_type upperBoundLinearVelocity( const ::pinocchio::JointModelRevoluteUnalignedTpl<Scalar, Options> & )          { return 0.0; }
     template<typename Scalar, int Options, int AXIS>
-    value_type upperBoundLinearVelocity( const se3::JointModelRevoluteUnboundedTpl<Scalar, Options, AXIS> & )    { return 0.0; }
+    value_type upperBoundLinearVelocity( const ::pinocchio::JointModelRevoluteUnboundedTpl<Scalar, Options, AXIS> & )    { return 0.0; }
     template<typename Scalar, int Options, int AXIS>
-    value_type upperBoundLinearVelocity( const se3::JointModelPrismatic<Scalar, Options, AXIS> & )            { return 1.0; }
+    value_type upperBoundLinearVelocity( const ::pinocchio::JointModelPrismaticTpl<Scalar, Options, AXIS> & )            { return 1.0; }
     template<typename Scalar, int Options>
-    value_type upperBoundLinearVelocity( const se3::JointModelPrismaticUnalignedTpl<Scalar, Options> & )         { return 1.0; }
+    value_type upperBoundLinearVelocity( const ::pinocchio::JointModelPrismaticUnalignedTpl<Scalar, Options> & )         { return 1.0; }
     template<typename Scalar, int Options>
-    value_type upperBoundLinearVelocity( const se3::JointModelSphericalTpl<Scalar, Options> & )                  { return 0.0; }
+    value_type upperBoundLinearVelocity( const ::pinocchio::JointModelSphericalTpl<Scalar, Options> & )                  { return 0.0; }
     template<typename Scalar, int Options>
-    value_type upperBoundLinearVelocity( const se3::JointModelSphericalZYXTpl<Scalar, Options> & )               { return 0.0; }
+    value_type upperBoundLinearVelocity( const ::pinocchio::JointModelSphericalZYXTpl<Scalar, Options> & )               { return 0.0; }
     template<typename Scalar, int Options>
-    value_type upperBoundLinearVelocity( const se3::JointModelTranslationTpl<Scalar, Options> & )                { return 1.0; }
+    value_type upperBoundLinearVelocity( const ::pinocchio::JointModelTranslationTpl<Scalar, Options> & )                { return 1.0; }
     template<typename Scalar, int Options>
-    value_type upperBoundLinearVelocity( const se3::JointModelPlanarTpl<Scalar, Options> & )                     { return 1.0; }
+    value_type upperBoundLinearVelocity( const ::pinocchio::JointModelPlanarTpl<Scalar, Options> & )                     { return 1.0; }
 
 
     struct VisitUpperBoundLinearVelocity : public boost::static_visitor<value_type> 
     {
       template<typename Joint>
-      value_type operator() ( const se3::JointModelBase<Joint> & jmodel ) const
+      value_type operator() ( const ::pinocchio::JointModelBase<Joint> & jmodel ) const
       { return upperBoundLinearVelocity(jmodel.derived()) ; }
     };
 
@@ -398,37 +397,37 @@ namespace hpp {
  
     /* --- ANGULAR VELOCITY -------------------------------------------------- */
     template<typename D>
-    value_type upperBoundAngularVelocity( const se3::JointModelBase<D> & )                  
+    value_type upperBoundAngularVelocity( const ::pinocchio::JointModelBase<D> & )                  
     {
       assert (false 
               && "The function <upperBoundAngularVel> as not been implemented for this class of joint");
       return 0.0;
     }
     template<typename Scalar, int Options>
-    value_type upperBoundAngularVelocity( const se3::JointModelFreeFlyerTpl<Scalar, Options> & )                  { return 1.0; }
+    value_type upperBoundAngularVelocity( const ::pinocchio::JointModelFreeFlyerTpl<Scalar, Options> & )                  { return 1.0; }
     template<typename Scalar, int Options, int AXIS>
-    value_type upperBoundAngularVelocity( const se3::JointModelRevoluteTpl<Scalar, Options, AXIS> & )             { return 1.0; }
+    value_type upperBoundAngularVelocity( const ::pinocchio::JointModelRevoluteTpl<Scalar, Options, AXIS> & )             { return 1.0; }
     template<typename Scalar, int Options>
-    value_type upperBoundAngularVelocity( const se3::JointModelRevoluteUnalignedTpl<Scalar, Options> & )          { return 1.0; }
+    value_type upperBoundAngularVelocity( const ::pinocchio::JointModelRevoluteUnalignedTpl<Scalar, Options> & )          { return 1.0; }
     template<typename Scalar, int Options, int AXIS>
-    value_type upperBoundAngularVelocity( const se3::JointModelRevoluteUnboundedTpl<Scalar, Options, AXIS> & )    { return 1.0; }
+    value_type upperBoundAngularVelocity( const ::pinocchio::JointModelRevoluteUnboundedTpl<Scalar, Options, AXIS> & )    { return 1.0; }
     template<typename Scalar, int Options, int AXIS>
-    value_type upperBoundAngularVelocity( const se3::JointModelPrismatic<Scalar, Options, AXIS> & )            { return 0.0; }
+    value_type upperBoundAngularVelocity( const ::pinocchio::JointModelPrismaticTpl<Scalar, Options, AXIS> & )            { return 0.0; }
     template<typename Scalar, int Options>
-    value_type upperBoundAngularVelocity( const se3::JointModelPrismaticUnalignedTpl<Scalar, Options> & )         { return 0.0; }
+    value_type upperBoundAngularVelocity( const ::pinocchio::JointModelPrismaticUnalignedTpl<Scalar, Options> & )         { return 0.0; }
     template<typename Scalar, int Options>
-    value_type upperBoundAngularVelocity( const se3::JointModelSphericalTpl<Scalar, Options> & )                  { return 1.0; }
+    value_type upperBoundAngularVelocity( const ::pinocchio::JointModelSphericalTpl<Scalar, Options> & )                  { return 1.0; }
     template<typename Scalar, int Options>
-    value_type upperBoundAngularVelocity( const se3::JointModelSphericalZYXTpl<Scalar, Options> & )               { return 1.0; }
+    value_type upperBoundAngularVelocity( const ::pinocchio::JointModelSphericalZYXTpl<Scalar, Options> & )               { return 1.0; }
     template<typename Scalar, int Options>
-    value_type upperBoundAngularVelocity( const se3::JointModelTranslationTpl<Scalar, Options> & )                { return 0.0; }
+    value_type upperBoundAngularVelocity( const ::pinocchio::JointModelTranslationTpl<Scalar, Options> & )                { return 0.0; }
     template<typename Scalar, int Options>
-    value_type upperBoundAngularVelocity( const se3::JointModelPlanarTpl<Scalar, Options> & )                     { return 1.0; }
+    value_type upperBoundAngularVelocity( const ::pinocchio::JointModelPlanarTpl<Scalar, Options> & )                     { return 1.0; }
 
     struct VisitUpperBoundAngularVelocity : public boost::static_visitor<value_type> 
     {
       template<typename Joint>
-      value_type operator() ( const se3::JointModelBase<Joint> & jmodel ) const
+      value_type operator() ( const ::pinocchio::JointModelBase<Joint> & jmodel ) const
       { return upperBoundAngularVelocity(jmodel.derived()) ; }
     };
 
@@ -449,8 +448,8 @@ namespace hpp {
       assert(jointIndex > 0 && jointIndex - 1 < d.jointJacobians_.size());
       JointJacobian_t& jacobian (d.jointJacobians_[jointIndex-1]);
       if( jacobian.cols()!=model().nv)  jacobian = JointJacobian_t::Zero(6,model().nv);
-      if(local) se3::getJointJacobian <LOCAL> (model(),*d.data_,jointIndex,jacobian);
-      else      se3::getJointJacobian <WORLD> (model(),*d.data_,jointIndex,jacobian);
+      if(local) ::pinocchio::getJointJacobian (model(),*d.data_,jointIndex,LOCAL,jacobian);
+      else      ::pinocchio::getJointJacobian (model(),*d.data_,jointIndex,WORLD,jacobian);
       return jacobian;
     }
 
@@ -512,31 +511,29 @@ namespace hpp {
     }
 
     template <typename LieGroupMap_t>
-    struct ConfigSpaceVisitor : public se3::fusion::JointModelVisitor<ConfigSpaceVisitor<LieGroupMap_t> >
+    struct ConfigSpaceVisitor : public ::pinocchio::fusion::JointVisitorBase<ConfigSpaceVisitor<LieGroupMap_t> >
     {
       typedef boost::fusion::vector<LiegroupSpace&> ArgsType;
 
-      JOINT_MODEL_VISITOR_INIT(ConfigSpaceVisitor);
-
       template<typename JointModel>
-      static void algo(const se3::JointModelBase<JointModel> & jmodel,
+      static void algo(const ::pinocchio::JointModelBase<JointModel> & jmodel,
                        LiegroupSpace& space)
       {
-        run (jmodel.derived(), space);
+        _algo (jmodel.derived(), space);
       }
 
       template<typename JointModel>
-      static void run (const se3::JointModelBase<JointModel> &,
+      static void _algo (const ::pinocchio::JointModelBase<JointModel> &,
                        LiegroupSpace& space)
       {
         typedef typename LieGroupMap_t::template operation<JointModel>::type LG_t;
         space *= LiegroupSpace::create (LG_t());
       }
 
-      static void run (const se3::JointModelComposite& jmodel,
+      static void _algo (const ::pinocchio::JointModelComposite& jmodel,
                        LiegroupSpace& space)
       {
-        se3::details::Dispatch<ConfigSpaceVisitor>::run(jmodel,
+        ::pinocchio::details::Dispatch<ConfigSpaceVisitor>::run(jmodel,
             ConfigSpaceVisitor::ArgsType(space));
       }
 

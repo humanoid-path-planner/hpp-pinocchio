@@ -25,9 +25,8 @@
 #include <hpp/util/exception-factory.hh>
 
 #include "hpp/pinocchio/joint.hh"
+#include <hpp/pinocchio/joint-collection.hh>
 #include "hpp/pinocchio/device.hh"
-
-#include "center-of-mass-computation/algorithm.cc"
 
 namespace hpp {
   namespace pinocchio {
@@ -47,7 +46,7 @@ namespace hpp {
       assert (!(computeJac && !computeCOM)); // JACOBIAN => COM
 
       // update kinematics
-      se3::copy<0>(model,robot_->data(),data);
+      ::pinocchio::copy(model,robot_->data(),data,0);
 
       data.mass[0] = 0;
       if(computeCOM) data.com[0].setZero();
@@ -80,6 +79,11 @@ namespace hpp {
             }
         }
 
+      // TODO as of now, it is not possible to access the template parameter
+      // JointCollectionTpl of Model so we use the default one.
+      typedef ::pinocchio::JacobianCenterOfMassBackwardStep<Model::Scalar,
+              Model::Options, JointCollectionTpl> Pass;
+
       // Assume root is sorted from smallest id.
       // Nasty cast below, from (u-long) size_t to int.
       for( int root=int(roots_.size()-1); root>=0; --root )
@@ -90,9 +94,8 @@ namespace hpp {
         for( JointIndex jid = data.lastChild[rootId];jid>=rootId;--jid )
           {
             if(computeJac)
-              se3::JacobianCenterOfMassBackwardStep
-                ::run(model.joints[jid],data.joints[jid],
-                      se3::JacobianCenterOfMassBackwardStep::ArgsType(model,data,false));
+              Pass::run(model.joints[jid],data.joints[jid],
+                      Pass::ArgsType(model,data,false));
             else
               {
                 assert(computeCOM);
@@ -113,9 +116,8 @@ namespace hpp {
           {
             const JointIndex & parent = model.parents[jid];
             if(computeJac)
-              se3::JacobianCenterOfMassBackwardStep
-                ::run(model.joints[jid],data.joints[jid],
-                      se3::JacobianCenterOfMassBackwardStep::ArgsType(model,data,false));
+              Pass::run(model.joints[jid],data.joints[jid],
+                      Pass::ArgsType(model,data,false));
             else
               {
                 assert(computeCOM);

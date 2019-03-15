@@ -33,6 +33,8 @@
 
 namespace hpp {
   namespace pinocchio {
+    typedef double value_type;
+
     HPP_PREDEF_CLASS (Body);
     HPP_PREDEF_CLASS (CollisionObject);
     HPP_PREDEF_CLASS (Device);
@@ -50,19 +52,22 @@ namespace hpp {
     enum InOutType { INNER, OUTER };
 
     // Pinocchio typedefs
-    typedef se3::JointIndex     JointIndex;
-    typedef se3::FrameIndex     FrameIndex;
-    typedef se3::GeomIndex      GeomIndex;
-    typedef se3::Model          Model;
-    typedef se3::Data           Data;
-    typedef se3::GeometryModel  GeomModel;
-    typedef se3::GeometryData   GeomData;
-    typedef se3::SE3            Transform3f;
-    typedef se3::JointModel     JointModel;
+    template <typename _Scalar, int _Options> struct JointCollectionTpl;
+    typedef JointCollectionTpl<value_type, 0> JointCollection;
+
+    typedef ::pinocchio::JointIndex     JointIndex;
+    typedef ::pinocchio::FrameIndex     FrameIndex;
+    typedef ::pinocchio::GeomIndex      GeomIndex;
+    typedef ::pinocchio::ModelTpl<value_type, 0, JointCollectionTpl> Model;
+    typedef ::pinocchio::DataTpl <value_type, 0, JointCollectionTpl> Data ;
+    typedef ::pinocchio::GeometryModel  GeomModel;
+    typedef ::pinocchio::GeometryData   GeomData;
+    typedef ::pinocchio::SE3            Transform3f;
+    typedef ::pinocchio::SE3            SE3;
+    typedef ::pinocchio::JointModelTpl<value_type, 0, JointCollectionTpl> JointModel;
 
     typedef Eigen::Array <bool, Eigen::Dynamic, 1> ArrayXb;
 
-    typedef double value_type;
     typedef Eigen::Matrix <value_type, Eigen::Dynamic, 1> vector_t;
     typedef vector_t Configuration_t;
     typedef Eigen::Ref <const Configuration_t> ConfigurationIn_t;
