@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE (check_synchronization)
     compute_forward_kinematics (robot, qs[i], res_single[i]);
 
   bpt::ptime t1 = bpt::microsec_clock::local_time();
-  BOOST_MESSAGE ("1 thread:  " << (t1-t0).total_milliseconds() << "ms");
+  BOOST_TEST_MESSAGE ("1 thread:  " << (t1-t0).total_milliseconds() << "ms");
 
   t0 = bpt::microsec_clock::local_time();
   // In a multi threaded fashion, compute the joint positions
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE (check_synchronization)
     compute_forward_kinematics_thread_safe (robot, qs[i], res_multi[i]);
 
   t1 = bpt::microsec_clock::local_time();
-  BOOST_MESSAGE (Nthreads << " threads: " << (t1-t0).total_milliseconds() << "ms");
+  BOOST_TEST_MESSAGE (Nthreads << " threads: " << (t1-t0).total_milliseconds() << "ms");
 
   // Check the results
   for (std::size_t i = 0; i < qs.size(); ++i) {
