@@ -288,8 +288,8 @@ namespace hpp {
       LiegroupTypes::const_iterator it2 (other.liegroupTypes ().begin ());
       while (it1 != liegroupTypes_.end ()){
         liegroup::level1::IsEqualVisitor v (*it2);
-        boost::apply_visitor (v, *it1);
-        if (!v.result) return false;
+        bool res = boost::apply_visitor (v, *it1);
+        if (!res) return false;
         ++it1; ++it2;
       }
       return true;

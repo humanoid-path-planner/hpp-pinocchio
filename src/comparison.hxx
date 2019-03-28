@@ -23,12 +23,12 @@ namespace hpp {
         {
         }
 
-        template <typename LgT1> void IsEqualVisitor::operator ()
+        template <typename LgT1> bool IsEqualVisitor::operator ()
           (const LgT1& lg1)
         {
           hppDout (info,
                    "level1::isEqual::operator ()");
-          result = isEqual (lg1, lg2_);
+          return isEqual (lg1, lg2_);
         }
 
         template <typename LgT1> bool isEqual
@@ -36,8 +36,7 @@ namespace hpp {
         {
           hppDout (info, "level1::isEqual");
           level2::IsEqualVisitor<LgT1> visitor (lgt1);
-          boost::apply_visitor (visitor, lgt2);
-          return visitor.result;
+          return boost::apply_visitor (visitor, lgt2);
         }
       } // namespace level1
 
@@ -51,11 +50,11 @@ namespace hpp {
 
         template <typename LgT1>
         template <typename LgT2>
-        void IsEqualVisitor <LgT1>::operator () (const LgT2& lg2)
+        bool IsEqualVisitor <LgT1>::operator () (const LgT2& lg2)
         {
           hppDout (info, "level2::isEqual::operator ()");
           Comparison <LgT1, LgT2> comp;
-          result = comp (lg1_, lg2);
+          return comp (lg1_, lg2);
         }
       } // namespace level2
 

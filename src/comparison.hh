@@ -27,11 +27,10 @@ namespace hpp {
         template <typename LgT1> bool isEqual
         (const LgT1& lgt1, const LiegroupType& lgt2);
 
-        struct IsEqualVisitor : public boost::static_visitor <>
+        struct IsEqualVisitor : public boost::static_visitor <bool>
         {
           inline IsEqualVisitor (const LiegroupType& lg2);
-          template <typename LgT1> inline void operator () (const LgT1& lg1);
-          bool result;
+          template <typename LgT1> inline bool operator () (const LgT1& lg1);
         private:
           const LiegroupType& lg2_;
         }; // struct IsEqualVisitor
@@ -39,11 +38,10 @@ namespace hpp {
 
       namespace level2 {
         template <typename LgT1>
-        struct IsEqualVisitor : public boost::static_visitor <>
+        struct IsEqualVisitor : public boost::static_visitor <bool>
         {
           inline IsEqualVisitor (const LgT1& lg1);
-          template <typename LgT2> inline void operator () (const LgT2& lg2);
-          bool result;
+          template <typename LgT2> inline bool operator () (const LgT2& lg2);
         private:
           const LgT1& lg1_;
         }; // struct IsEqualVisitor
