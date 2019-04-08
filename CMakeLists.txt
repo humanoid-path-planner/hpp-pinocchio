@@ -66,6 +66,7 @@ ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.2.92")
 
 ADD_OPTIONAL_DEPENDENCY("romeo_description >= 0.2")
 ADD_OPTIONAL_DEPENDENCY("hpp-environments")
+ADD_OPTIONAL_DEPENDENCY("baxter_description")
 
 # Set header files.
 SET(${PROJECT_NAME}_HEADERS
