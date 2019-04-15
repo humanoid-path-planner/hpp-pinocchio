@@ -35,7 +35,7 @@ namespace hpp
       ///
       /// \param robot Empty robot created before calling the function.
       ///        Users can pass an instance of a class deriving from Device.
-      /// \param baseJoint joint to which the joint tree is added.
+      /// \param baseFrame frame to which the joint tree is added.
       /// \param prefix string to insert before all names
       ///               (joint, link, body names)
       /// \param rootJointType type of root joint among "anchor", "freeflyer",
@@ -51,7 +51,7 @@ namespace hpp
       /// \li
       /// package://${package}/srdf/${modelName}${srdfSuffix}.srdf
       void loadRobotModel (const DevicePtr_t& robot,
-                           const JointIndex&  baseJoint,
+                           const FrameIndex&  baseFrame,
 			   const std::string& prefix,
 			   const std::string& rootJointType,
 			   const std::string& package,
@@ -74,7 +74,7 @@ namespace hpp
       ///
       /// \param robot Empty robot created before calling the function.
       ///        Users can pass an instance of a class deriving from Device.
-      /// \param baseJoint joint to which the joint tree is added.
+      /// \param baseFrame frame to which the joint tree is added.
       /// \param prefix string to insert before all names
       ///               (joint, link, body names)
       /// \param rootJointType type of root joint among "anchor", "freeflyer",
@@ -86,7 +86,7 @@ namespace hpp
       /// \li
       /// package://${package}/urdf/${filename}.urdf
       void loadUrdfModel (const DevicePtr_t& robot,
-                          const JointIndex&  baseJoint,
+                          const FrameIndex&  baseFrame,
                           const std::string& prefix,
 			  const std::string& rootJointType,
 			  const std::string& package,
@@ -101,7 +101,7 @@ namespace hpp
       /// robot.
       /// \param srdfPath if empty, do not try to parse SRDF.
       void loadModel (const DevicePtr_t& robot,
-                      const JointIndex&  baseJoint,
+                      const FrameIndex&  baseFrame,
                       const std::string& prefix,
                       const std::string& rootType,
                       const std::string& urdfPath,
@@ -110,7 +110,7 @@ namespace hpp
       /// Read URDF and, optionnally SRDF, as XML string.
       /// \param srdfString if empty, do not try to parse SRDF.
       void loadModelFromString (const DevicePtr_t& robot,
-                                const JointIndex&  baseJoint,
+                                const FrameIndex&  baseFrame,
                                 const std::string& prefix,
                                 const std::string& rootType,
                                 const std::string& urdfString,
