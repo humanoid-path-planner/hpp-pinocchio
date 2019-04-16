@@ -251,6 +251,8 @@ namespace hpp {
                 robot->geomModel(), geomModel,
                 baseFrame, Transform3f::Identity(),
                 *m, *gm);
+            robot->setModel (m);
+            robot->setGeomModel (gm);
           }
 
           robot->createData();
