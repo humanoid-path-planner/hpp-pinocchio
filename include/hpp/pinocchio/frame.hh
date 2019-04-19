@@ -36,7 +36,7 @@ namespace hpp {
       /// Constructor
       /// \param device pointer on the device the frame is belonging to.
       /// \param indexInFrameList index of the frame, i.e. frame = device.model.frames[index]
-      Frame (DevicePtr_t device, FrameIndex indexInFrameList );
+      Frame (DeviceWkPtr_t device, FrameIndex indexInFrameList );
 
       ~Frame() {}
       /// \}
@@ -55,11 +55,16 @@ namespace hpp {
       /// Frame transformation
       Transform3f currentTransformation () const;
 
+      /// Frame transformation
+      Transform3f currentTransformation (const DeviceData& data) const;
+
       /// Get const reference to Jacobian
       ///
       /// The jacobian (6d) is expressed in the local frame.
       /// the linear part corresponds to the velocity of the center of the frame.
-      JointJacobian_t jacobian () const;
+      JointJacobian_t jacobian () const { return jacobian (data()); }
+
+      JointJacobian_t jacobian (const DeviceData& data) const;
 
       ///\}
       // -----------------------------------------------------------------------
@@ -99,9 +104,9 @@ namespace hpp {
       // -----------------------------------------------------------------------
 
       /// Access robot owning the object
-      DeviceConstPtr_t robot () const { selfAssert();  return devicePtr_;}
+      DeviceConstPtr_t robot () const { selfAssert();  return devicePtr_.lock();}
       /// Access robot owning the object
-      DevicePtr_t robot () { selfAssert(); return devicePtr_;}
+      DevicePtr_t robot () { selfAssert(); return devicePtr_.lock();}
 
       /// Display frame
       virtual std::ostream& display (std::ostream& os) const;
@@ -119,7 +124,7 @@ namespace hpp {
       /// \}
 
     private:
-      DevicePtr_t devicePtr_;
+      DeviceWkPtr_t devicePtr_;
       FrameIndex frameIndex_;
       std::vector<FrameIndex> children_;
 
@@ -129,8 +134,7 @@ namespace hpp {
       void setChildList();
       Model&        model() ;
       const Model&  model() const ;
-      Data &        data()  ;
-      const Data &  data()  const ;
+      DeviceData& data() const;
 
       /// Assert that the members of the struct are valid (no null pointer, etc).
       void selfAssert() const;
