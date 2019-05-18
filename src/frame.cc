@@ -42,7 +42,7 @@ namespace hpp {
       }
     }
 
-    Frame::Frame (DevicePtr_t device, FrameIndex indexInFrameList ) 
+    Frame::Frame (DeviceWkPtr_t device, FrameIndex indexInFrameList ) 
       :devicePtr_(device)
       ,frameIndex_(indexInFrameList)
     {
@@ -54,17 +54,20 @@ namespace hpp {
 
     void Frame::selfAssert() const
     {
-      assert(devicePtr_);
-      assert(devicePtr_->modelPtr()); assert(devicePtr_->dataPtr());
-      assert(devicePtr_->model().frames.size()>std::size_t(frameIndex_));
+      assert(devicePtr_.lock());
+      assert(devicePtr_.lock()->modelPtr()); assert(devicePtr_.lock()->dataPtr());
+      assert(devicePtr_.lock()->model().frames.size()>std::size_t(frameIndex_));
     }
 
-    inline Model&        Frame::model()       { selfAssert(); return devicePtr_->model(); }
-    inline const Model&  Frame::model() const { selfAssert(); return devicePtr_->model(); }
-    inline Data &        Frame::data()        { selfAssert(); return devicePtr_->data (); }
-    inline const Data &  Frame::data()  const { selfAssert(); return devicePtr_->data (); }
+    inline Model&        Frame::model()       { selfAssert(); return devicePtr_.lock()->model(); }
+    inline const Model&  Frame::model() const { selfAssert(); return devicePtr_.lock()->model(); }
     const ::pinocchio::Frame&  Frame::pinocchio() const { return model().frames[index()]; }
     inline ::pinocchio::Frame& Frame::pinocchio()       { return model().frames[index()]; }
+
+    DeviceData& Frame::data() const
+    {
+      return devicePtr_.lock()->d();
+    }
 
     Frame Frame::parentFrame () const
     {
@@ -95,46 +98,50 @@ namespace hpp {
 
     Transform3f Frame::currentTransformation () const 
     {
-      selfAssert();
-      const Data & d = data();
-      const ::pinocchio::Frame f = model().frames[frameIndex_];
-      if (f.type == ::pinocchio::JOINT)
-        return d.oMi[f.parent];
-      else
-        return d.oMi[f.parent] * f.placement;
+      return currentTransformation (data());
     }
 
-    JointJacobian_t Frame::jacobian () const 
+    Transform3f Frame::currentTransformation (const DeviceData& d) const 
+    {
+      selfAssert();
+      const ::pinocchio::Frame f = model().frames[frameIndex_];
+      if (f.type == ::pinocchio::JOINT)
+        return d.data_->oMi[f.parent];
+      else
+        return d.data_->oMi[f.parent] * f.placement;
+    }
+
+    JointJacobian_t Frame::jacobian (const DeviceData& d) const 
     {
       selfAssert();
       assert(robot()->computationFlag() & JACOBIAN);
       JointJacobian_t jacobian = JointJacobian_t::Zero(6,model().nv);
-      ::pinocchio::getFrameJacobian(model(),data(),frameIndex_,::pinocchio::LOCAL,jacobian);
+      ::pinocchio::getFrameJacobian(model(),*d.data_,frameIndex_,::pinocchio::LOCAL,jacobian);
       return jacobian;
     }
 
     void Frame::setChildList()
     {
-      assert(devicePtr_->modelPtr()); assert(devicePtr_->dataPtr());
+      selfAssert();
       children_.clear();
       if (!isFixed()) return;
-      const Model& model = devicePtr_->model();
+      const Model& m = model();
 
-      std::vector<bool> visited (model.frames.size(), false);
-      std::vector<bool> isChild (model.frames.size(), false);
+      std::vector<bool> visited (m.frames.size(), false);
+      std::vector<bool> isChild (m.frames.size(), false);
 
       FrameIndex k = frameIndex_;
       while (k > 0) {
         visited[k] = true;
-        k = model.frames[k].previousFrame;
+        k = m.frames[k].previousFrame;
       }
       visited[0] = true;
 
-      for (FrameIndex i = model.frames.size() - 1; i > 0; --i) {
+      for (FrameIndex i = m.frames.size() - 1; i > 0; --i) {
         if (visited[i]) continue;
         visited[i] = true;
-        k = model.frames[i].previousFrame;
-        while (model.frames[k].type != ::pinocchio::JOINT) {
+        k = m.frames[i].previousFrame;
+        while (m.frames[k].type != ::pinocchio::JOINT) {
           if (k == frameIndex_ || k == 0) break;
           // if (visited[k]) {
             // std::vector<FrameIndex>::iterator _k = 
@@ -145,7 +152,7 @@ namespace hpp {
             // break;
           // }
           visited[k] = true;
-          k = model.frames[k].previousFrame;
+          k = m.frames[k].previousFrame;
         }
         if (k == frameIndex_)
           children_.push_back(i);
@@ -169,37 +176,37 @@ namespace hpp {
     void Frame::positionInParentFrame (const Transform3f& p)
     {
       selfAssert();
-      devicePtr_->invalidate();
-      Model& model = devicePtr_->model();
-      GeomModel& geomModel = devicePtr_->geomModel();
+      devicePtr_.lock()->invalidate();
+      Model& m = model();
+      GeomModel& geomModel = devicePtr_.lock()->geomModel();
       ::pinocchio::Frame& me = pinocchio();
       bool isJoint = (me.type == ::pinocchio::JOINT);
-      Transform3f fMj = (isJoint ? model.jointPlacements[me.parent].inverse() : me.placement.inverse());
+      Transform3f fMj = (isJoint ? m.jointPlacements[me.parent].inverse() : me.placement.inverse());
       if (isJoint)
-        model.jointPlacements[me.parent] = model.frames[me.previousFrame].placement * p;
+        m.jointPlacements[me.parent] = m.frames[me.previousFrame].placement * p;
       else
-        me.placement = model.frames[me.previousFrame].placement * p;
+        me.placement = m.frames[me.previousFrame].placement * p;
 
-      std::vector<bool> visited (model.frames.size(), false);
+      std::vector<bool> visited (m.frames.size(), false);
       for (std::size_t i = 0; i < children_.size(); ++i) {
         FrameIndex k = children_[i];
-        if (model.frames[k].type == ::pinocchio::JOINT)
-          k = model.frames[k].previousFrame;
+        if (m.frames[k].type == ::pinocchio::JOINT)
+          k = m.frames[k].previousFrame;
         while (k != frameIndex_) {
           if (visited[k]) break;
           visited[k] = true;
-          moveFrame (model, geomModel, k, me.placement * fMj * model.frames[k].placement);
-          k = model.frames[k].previousFrame;
+          moveFrame (m, geomModel, k, me.placement * fMj * m.frames[k].placement);
+          k = m.frames[k].previousFrame;
         }
       }
 
       // Update joint placements
       for (std::size_t i = 0; i < children_.size(); ++i) {
         FrameIndex k = children_[i];
-        const ::pinocchio::Frame f = model.frames[k];
+        const ::pinocchio::Frame f = m.frames[k];
         if (f.type == ::pinocchio::JOINT) {
-          model.jointPlacements[f.parent]
-            = me.placement * fMj * model.jointPlacements[f.parent];
+          m.jointPlacements[f.parent]
+            = me.placement * fMj * m.jointPlacements[f.parent];
         }
       }
     }
