@@ -46,8 +46,8 @@ namespace hpp {
       :devicePtr_(device)
       ,frameIndex_(indexInFrameList)
     {
-      assert (devicePtr_);
-      assert (devicePtr_->modelPtr());
+      assert (devicePtr_.lock());
+      assert (devicePtr_.lock()->modelPtr());
       assert (std::size_t(frameIndex_)<model().frames.size());
       setChildList();
     }
