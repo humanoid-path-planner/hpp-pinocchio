@@ -206,8 +206,8 @@ BOOST_AUTO_TEST_CASE (comparison)
 
 BOOST_AUTO_TEST_CASE (multiplication)
 {
-  LiegroupSpacePtr_t sp (LiegroupSpace::Rn (10) * LiegroupSpace::R3 () *
-                         LiegroupSpace::R3xSO3 ());
+  LiegroupSpacePtr_t sp (LiegroupSpace::Rn (0) * LiegroupSpace::Rn (10) *
+                         LiegroupSpace::R3 () * LiegroupSpace::R3xSO3 ());
   vector_t n; n.resize (20); n.setZero (); n [19] = 1;
   BOOST_CHECK_EQUAL (sp->nq (), 20);
   BOOST_CHECK_EQUAL (sp->nv (), 19);
