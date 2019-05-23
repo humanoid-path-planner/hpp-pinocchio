@@ -370,6 +370,7 @@ namespace hpp {
       liegroupType::IsVectorSpace ivs;
       liegroupType::SizeVisitor curSizes;
       size_type vsSize = 0;
+      bool prevIsVectorSpace = false;
 
       for (LiegroupTypes::const_iterator _cur = liegroupTypes_.begin();
           _cur != liegroupTypes_.end (); ++_cur) {
@@ -378,7 +379,7 @@ namespace hpp {
         if (curIsVectorSpace) {
           boost::apply_visitor (curSizes, *_cur);
         }
-        if (vsSize > 0 && curIsVectorSpace) {
+        if (prevIsVectorSpace && curIsVectorSpace) {
           // Update previous liegroup type (which is a vector space).
           vsSize += curSizes.nq;
           assert (!newLgT.empty());
@@ -390,7 +391,13 @@ namespace hpp {
           }
         } else {
           // No merge to do.
-          vsSize = (curIsVectorSpace ? curSizes.nq : 0);
+          if (curIsVectorSpace) {
+            vsSize = curSizes.nq;
+            prevIsVectorSpace = true;
+          } else {
+            vsSize = 0;
+            prevIsVectorSpace = false;
+          }
           newLgT.push_back (*_cur);
         }
       }
