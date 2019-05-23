@@ -25,12 +25,12 @@ namespace hpp {
   namespace pinocchio {
       struct SetBoundStep : public ::pinocchio::fusion::JointVisitorBase<SetBoundStep>
       {
-        typedef boost::fusion::vector<const Configuration_t &,
+        typedef boost::fusion::vector<ConfigurationIn_t,
                 Configuration_t &> ArgsType;
 
         template<typename JointModel>
         static void algo(const ::pinocchio::JointModelBase<JointModel> & jmodel,
-            const Configuration_t & bounds,
+            ConfigurationIn_t bounds,
             Configuration_t& out)
         {
           ::hpp::pinocchio::LieGroupTpl::template operation<JointModel>::type
@@ -42,7 +42,7 @@ namespace hpp {
       template <>
       void SetBoundStep::algo< ::pinocchio::JointModelComposite>(
           const ::pinocchio::JointModelBase< ::pinocchio::JointModelComposite> & jmodel,
-          const Configuration_t & bounds,
+          ConfigurationIn_t bounds,
           Configuration_t & out)
       {
         ::pinocchio::details::Dispatch<SetBoundStep>::run(
