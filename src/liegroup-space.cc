@@ -426,6 +426,7 @@ namespace hpp {
       nv_ += o->nv_;
       neutral_.conservativeResize (nq_);
       neutral_.tail (o->nq ()) = o->neutral ().vector ();
+      mergeVectorSpaces ();
       return weak_.lock();
     }
   } // namespace pinocchio
@@ -439,6 +440,7 @@ namespace boost {
   {
     LiegroupSpacePtr_t res (LiegroupSpace::createCopy (sp1));
     *res *= sp2;
+    res->mergeVectorSpaces ();
     return res;
   }
   /// Cartesian power by an integer
