@@ -216,7 +216,7 @@ namespace hpp {
           GeomModel geomModel;
 
           std::vector<std::string> baseDirs = ::pinocchio::rosPaths();
-          static fcl::MeshLoaderPtr loader (new fcl::CachedMeshLoader (fcl::BV_OBB));
+          static fcl::MeshLoaderPtr loader (new fcl::CachedMeshLoader (fcl::BV_OBBRSS));
           ::pinocchio::urdf::buildGeom(*model, urdfStream, ::pinocchio::COLLISION, geomModel, baseDirs, loader);
           geomModel.addAllCollisionPairs();
 

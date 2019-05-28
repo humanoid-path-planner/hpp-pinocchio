@@ -1,4 +1,8 @@
                                                                 -*- outline -*-
+New in v4.6.1
+* Revert default bounding volume to BV_OBBRSS instead of BV_OBB.
+  - distance computations between BV_OBBRSS is not available.
+
 New in v4.6,
 * Fix API of loadModel (use base frame rather than base joint).
 * Change default bounding volume to BV_OBB rather than BV_OBBRSS.
