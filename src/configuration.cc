@@ -230,7 +230,7 @@ namespace hpp {
     };
 
     template<>
-    void IsNormalizedStep::algo< ::pinocchio::JointModelComposite>(const ::pinocchio::JointModelBase< ::pinocchio::JointModelComposite> & jmodel,
+    void IsNormalizedStep::algo< JointModelComposite>(const ::pinocchio::JointModelBase< JointModelComposite> & jmodel,
                      ConfigurationIn_t q,
                      const value_type & eps,
                      bool & ret)

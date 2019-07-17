@@ -411,8 +411,8 @@ namespace hpp {
     };
 
     template <>
-    void AABBStep::algo< ::pinocchio::JointModelComposite >(
-        const ::pinocchio::JointModelBase< ::pinocchio::JointModelComposite > & jmodel,
+    void AABBStep::algo< JointModelComposite >(
+        const ::pinocchio::JointModelBase< JointModelComposite > & jmodel,
         const Model& model,
         Configuration_t q,
         bool initializeAABB,
@@ -421,7 +421,7 @@ namespace hpp {
       // TODO this should for but I did not test it.
       hppDout(warning, "Computing AABB of JointModelComposite should work but has never been tested");
       if (initializeAABB)  {
-        ::pinocchio::JointModelComposite::JointDataDerived data = jmodel.createData();
+        JointModelComposite::JointDataDerived data = jmodel.createData();
         jmodel.calc(data, q);
         aabb = fcl::AABB(data.M.translation());
       }
