@@ -530,7 +530,7 @@ namespace hpp {
         space *= LiegroupSpace::create (LG_t());
       }
 
-      static void _algo (const ::pinocchio::JointModelComposite& jmodel,
+      static void _algo (const JointModelComposite& jmodel,
                        LiegroupSpace& space)
       {
         ::pinocchio::details::Dispatch<ConfigSpaceVisitor>::run(jmodel,
