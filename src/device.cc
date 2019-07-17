@@ -245,11 +245,11 @@ namespace hpp {
     Frame Device::
     getFrameByName (const std::string& name) const
     {
-      if(! model().existFrame(name, all_joint_type))
+      if(! model().existFrame(name))
 	throw std::logic_error ("Device " + name_ +
 				" does not have any frame named "
 				+ name);
-      FrameIndex id = model().getFrameId(name, all_joint_type);
+      FrameIndex id = model().getFrameId(name);
       return Frame(weakPtr_.lock(), id);
     }
 

@@ -46,10 +46,8 @@ namespace hpp
       /// \param srdfSuffix suffix for srdf file
 
       /// \note This function reads the following files:
-      /// \li
-      /// package://${package}/urdf/${modelName}${urdfSuffix}.urdf
-      /// \li
-      /// package://${package}/srdf/${modelName}${srdfSuffix}.srdf
+      /// \li \c package://${package}/urdf/${modelName}${urdfSuffix}.urdf
+      /// \li \c package://${package}/srdf/${modelName}${srdfSuffix}.srdf
       void loadRobotModel (const DevicePtr_t& robot,
                            const FrameIndex&  baseFrame,
 			   const std::string& prefix,
