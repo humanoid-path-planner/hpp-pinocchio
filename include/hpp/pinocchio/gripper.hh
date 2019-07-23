@@ -100,7 +100,7 @@ namespace hpp {
 
         GripperPtr_t clone () const;
 
-        virtual std::ostream& print (std::ostream& os) const;
+        std::ostream& print (std::ostream& os) const;
 
       protected:
         /// Constructor

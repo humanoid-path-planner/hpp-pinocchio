@@ -119,7 +119,7 @@ namespace hpp {
       assert (0 <= i && i < nbInnerObjects());
       DevicePtr_t device = devicePtr.lock();
       return CollisionObjectPtr_t(new CollisionObject(device,
-            device->geomData().innerObjects[jointIndex][i]));
+            device->geomData().innerObjects[jointIndex][(std::size_t)i]));
     }
 
     value_type Body::radius () const
@@ -144,7 +144,7 @@ namespace hpp {
       assert (0 <= i && i < nbOuterObjects());
       DevicePtr_t device = devicePtr.lock();
       return CollisionObjectPtr_t(new CollisionObject(device,
-            device->geomData().outerObjects[jointIndex][i]));
+            device->geomData().outerObjects[jointIndex][(std::size_t)i]));
     }
   } // namespace pinocchio
 } // namespace hpp

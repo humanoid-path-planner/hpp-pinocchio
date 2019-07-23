@@ -50,7 +50,7 @@ namespace hpp {
     class Frame;
     class AbstractDevice;
     class DeviceSync;
-    class DeviceData;
+    struct DeviceData;
 
     enum Request_t {COLLISION, DISTANCE};
     enum InOutType { INNER, OUTER };

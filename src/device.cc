@@ -67,7 +67,7 @@ namespace hpp {
       , weakPtr_()
       , datas_ ()
     {
-      numberDeviceData(other.datas_.size());
+      numberDeviceData(other.numberDeviceData());
     }
 
     Device::~Device ()
@@ -80,8 +80,8 @@ namespace hpp {
       // Delete current device datas
       datas_.clear();
       // Create new device datas
-      std::vector<DeviceData*> datas (s);
-      for (size_type i = 0; i < s; ++i) datas[i] = new DeviceData (d_);
+      std::vector<DeviceData*> datas ((std::size_t)s);
+      for (std::size_t i = 0; i < (std::size_t)s; ++i) datas[i] = new DeviceData (d_);
       datas_.push_back (datas.begin(), datas.end());
     }
 
@@ -148,7 +148,7 @@ namespace hpp {
       d().geomData_ = GeomDataPtr_t( new GeomData(geomModel()) );
       ::pinocchio::computeBodyRadius(model(),geomModel(),geomData());
       d().invalidate();
-      numberDeviceData(datas_.size());
+      numberDeviceData(numberDeviceData());
     }
 
     void Device::controlComputation (const Computation_t& flag)
@@ -158,7 +158,7 @@ namespace hpp {
       // It should be done in another function (like controlComputations)
       // as it might be a desired behaviour to have different computation options
       // in different DeviceData.
-      numberDeviceData(datas_.size());
+      numberDeviceData(numberDeviceData());
     }
     
     /* ---------------------------------------------------------------------- */
@@ -183,7 +183,7 @@ namespace hpp {
     JointPtr_t Device::jointAt (const size_type& i) const
     {
       assert (i < nbJoints());
-      return Joint::create(weakPtr_.lock(),i+1);
+      return Joint::create(weakPtr_.lock(),JointIndex(i+1));
     }
 
     JointPtr_t Device::
@@ -276,7 +276,7 @@ namespace hpp {
       d_.currentConfiguration_ = neutralConfiguration();
       d_.currentVelocity_      = vector_t::Zero(numberDof());
       d_.currentAcceleration_  = vector_t::Zero(numberDof());
-      d_.jointJacobians_.resize (model().njoints);
+      d_.jointJacobians_.resize ((std::size_t)model().njoints);
 
       configSpace_ = LiegroupSpace::empty();
       const Model& m (model());
@@ -285,7 +285,7 @@ namespace hpp {
       if (extraConfigSpace_.dimension() > 0)
         *configSpace_ *= LiegroupSpace::create (extraConfigSpace_.dimension());
 
-      numberDeviceData(datas_.size());
+      numberDeviceData(numberDeviceData());
     }
 
     LiegroupSpacePtr_t Device::
@@ -335,7 +335,7 @@ namespace hpp {
     CollisionObjectPtr_t Device::objectAt (const size_type& i) const
     {
       assert (i < nbObjects());
-      return CollisionObjectPtr_t (new CollisionObject(weakPtr_.lock(),i));
+      return CollisionObjectPtr_t (new CollisionObject(weakPtr_.lock(),(GeomIndex)i));
     }
 
     bool Device::collisionTest (const bool stopAtFirstCollision)
@@ -377,7 +377,7 @@ namespace hpp {
                        bool initializeAABB,
                        fcl::AABB& aabb)
       {
-        typedef typename LieGroupTpl::operation<JointModel>::type LG_t;
+        typedef typename RnxSOnLieGroupMap::operation<JointModel>::type LG_t;
         /*
         if (LG_t::NT == 0) {
           aabb.min_.setZero();

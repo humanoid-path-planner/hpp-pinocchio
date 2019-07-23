@@ -33,7 +33,7 @@ namespace hpp {
             ConfigurationIn_t bounds,
             Configuration_t& out)
         {
-          ::hpp::pinocchio::LieGroupTpl::template operation<JointModel>::type
+          ::hpp::pinocchio::RnxSOnLieGroupMap::template operation<JointModel>::type
             ::setBound(bounds,
                        jmodel.jointConfigSelector(out));
         }
