@@ -29,6 +29,8 @@
 
 namespace hpp {
   namespace pinocchio {
+    typedef ::pinocchio::JointModelCompositeTpl<value_type, 0, JointCollectionTpl> JointModelComposite;
+
     /// This class maps at compile time a joint type to a lie group type.
     ///
     /// JointModelPlanar (JointModelFreeFlyer resp.) maps to
@@ -53,7 +55,7 @@ namespace hpp {
 
     /// \cond
     //---------------- RnxSOnLieGroupMap -------------------------------//
-    // JointModelRevolute, JointModelRevoluteUnbounded, JointModelRevoluteUnaligned
+    // JointModelRevolute, JointModelRevoluteUnbounded, JointModelRevoluteUnaligned, JointModelRevoluteUnboundedUnaligned
     template<typename Scalar, int Options, int Axis>
     struct RnxSOnLieGroupMap::operation < ::pinocchio::JointModelRevoluteTpl<Scalar, Options, Axis> > {
       typedef liegroup::VectorSpaceOperation<1, true> type;
@@ -66,6 +68,12 @@ namespace hpp {
     struct RnxSOnLieGroupMap::operation < ::pinocchio::JointModelRevoluteUnalignedTpl<Scalar, Options> > {
       typedef liegroup::VectorSpaceOperation<1, true> type;
     };
+#if PINOCCHIO_VERSION_AT_LEAST(2,1,5)
+    template<typename Scalar, int Options>
+    struct RnxSOnLieGroupMap::operation < ::pinocchio::JointModelRevoluteUnboundedUnalignedTpl<Scalar, Options> > {
+      typedef liegroup::SpecialOrthogonalOperation<2> type;
+    };
+#endif
 
     // JointModelPrismaticTpl, JointModelPrismaticUnaligned, JointModelTranslation
     template<typename Scalar, int Options, int Axis>
@@ -109,7 +117,7 @@ namespace hpp {
 
     //---------------- DefaultLieGroupMap ------------------------------------//
 
-    // JointModelRevolute, JointModelRevoluteUnbounded, JointModelRevoluteUnaligned
+    // JointModelRevolute, JointModelRevoluteUnbounded, JointModelRevoluteUnaligned, JointModelRevoluteUnboundedUnaligned
     template<typename Scalar, int Options, int Axis>
     struct DefaultLieGroupMap::operation < ::pinocchio::JointModelRevoluteTpl<Scalar, Options, Axis> > {
       typedef liegroup::VectorSpaceOperation<1, true> type;
@@ -122,6 +130,13 @@ namespace hpp {
     struct DefaultLieGroupMap::operation < ::pinocchio::JointModelRevoluteUnalignedTpl<Scalar, Options> > {
       typedef liegroup::VectorSpaceOperation<1, true> type;
     };
+#if PINOCCHIO_VERSION_AT_LEAST(2,1,5)
+    template<typename Scalar, int Options>
+    struct DefaultLieGroupMap::operation < ::pinocchio::JointModelRevoluteUnboundedUnalignedTpl<Scalar, Options> > {
+      typedef liegroup::SpecialOrthogonalOperation<2> type;
+    };
+#endif
+
 
     // JointModelPrismaticTpl, JointModelPrismaticUnaligned, JointModelTranslation
     template<typename Scalar, int Options, int Axis>

@@ -40,8 +40,8 @@ namespace hpp {
       };
 
       template <>
-      void SetBoundStep::algo< ::pinocchio::JointModelComposite>(
-          const ::pinocchio::JointModelBase< ::pinocchio::JointModelComposite> & jmodel,
+      void SetBoundStep::algo<JointModelComposite>(
+          const ::pinocchio::JointModelBase<JointModelComposite> & jmodel,
           ConfigurationIn_t bounds,
           Configuration_t & out)
       {

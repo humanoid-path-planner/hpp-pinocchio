@@ -28,6 +28,9 @@
 #include "pinocchio/multibody/joint/joint-planar.hpp"
 #include "pinocchio/multibody/joint/joint-prismatic.hpp"
 #include "pinocchio/multibody/joint/joint-revolute-unaligned.hpp"
+#if PINOCCHIO_VERSION_AT_LEAST(2,1,5)
+# include "pinocchio/multibody/joint/joint-revolute-unbounded-unaligned.hpp"
+#endif
 #include "pinocchio/multibody/joint/joint-prismatic-unaligned.hpp"
 #include "pinocchio/multibody/joint/joint-revolute.hpp"
 #include "pinocchio/multibody/joint/joint-revolute-unbounded.hpp"
@@ -56,7 +59,12 @@ namespace hpp {
       typedef ::pinocchio::JointModelRevoluteUnboundedTpl<Scalar,Options,0> JointModelRUBX;
       typedef ::pinocchio::JointModelRevoluteUnboundedTpl<Scalar,Options,1> JointModelRUBY;
       typedef ::pinocchio::JointModelRevoluteUnboundedTpl<Scalar,Options,2> JointModelRUBZ;
-      
+
+#if PINOCCHIO_VERSION_AT_LEAST(2,1,5)
+      // Joint Revolute Unbounded Unaligned
+      typedef ::pinocchio::JointModelRevoluteUnboundedUnalignedTpl<Scalar,Options> JointModelRevoluteUnboundedUnaligned;
+#endif
+
       // Joint Prismatic
       typedef ::pinocchio::JointModelPrismaticTpl<Scalar,Options,0> JointModelPX;
       typedef ::pinocchio::JointModelPrismaticTpl<Scalar,Options,1> JointModelPY;
@@ -88,6 +96,9 @@ namespace hpp {
       JointModelRX, JointModelRY, JointModelRZ
       , JointModelFreeFlyer, JointModelPlanar
       , JointModelRevoluteUnaligned
+#if PINOCCHIO_VERSION_AT_LEAST(2,1,5)
+      , JointModelRevoluteUnboundedUnaligned
+#endif
       , JointModelPX, JointModelPY, JointModelPZ
       , JointModelPrismaticUnaligned
       , JointModelTranslation
@@ -107,6 +118,11 @@ namespace hpp {
       typedef ::pinocchio::JointDataRevoluteUnboundedTpl<Scalar,Options,0> JointDataRUBX;
       typedef ::pinocchio::JointDataRevoluteUnboundedTpl<Scalar,Options,1> JointDataRUBY;
       typedef ::pinocchio::JointDataRevoluteUnboundedTpl<Scalar,Options,2> JointDataRUBZ;
+    
+#if PINOCCHIO_VERSION_AT_LEAST(2,1,5)
+      // Joint Revolute Unbounded Unaligned
+      typedef ::pinocchio::JointDataRevoluteUnboundedUnalignedTpl<Scalar,Options> JointDataRevoluteUnboundedUnaligned;
+#endif
       
       // Joint Prismatic
       typedef ::pinocchio::JointDataPrismaticTpl<Scalar,Options,0> JointDataPX;
@@ -139,6 +155,9 @@ namespace hpp {
       JointDataRX, JointDataRY, JointDataRZ
       , JointDataFreeFlyer, JointDataPlanar
       , JointDataRevoluteUnaligned
+#if PINOCCHIO_VERSION_AT_LEAST(2,1,5)
+      , JointDataRevoluteUnboundedUnaligned
+#endif
       , JointDataPX, JointDataPY, JointDataPZ
       , JointDataPrismaticUnaligned
       , JointDataTranslation
