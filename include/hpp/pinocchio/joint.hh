@@ -201,7 +201,7 @@ namespace hpp {
       /// \}
 
       /// Display joint
-      virtual std::ostream& display (std::ostream& os) const;
+      std::ostream& display (std::ostream& os) const;
 
       /// Get configuration space of joint
       LiegroupSpacePtr_t configurationSpace () const;

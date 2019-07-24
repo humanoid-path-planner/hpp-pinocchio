@@ -41,7 +41,7 @@ namespace hpp {
     class CenterOfMassComputation
     {
       public:
-        typedef std::vector <JointIndex> JointRootIndexes_t;
+        typedef std::vector <std::size_t> JointRootIndexes_t;
         /// \cond
         // This fixes an alignment issue of ::pinocchio::Data::hg
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW

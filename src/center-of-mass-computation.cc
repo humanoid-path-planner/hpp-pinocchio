@@ -63,13 +63,13 @@ namespace hpp {
         }
 
       // Nullify non-subtree com and mass.
-      int root = 0;
-      for(JointIndex jid=1; std::size_t(jid)<model.joints.size(); ++jid )
+      std::size_t root = 0;
+      for(std::size_t jid=1; jid<model.joints.size(); ++jid )
         {
-          const JointIndex& rootId = roots_[root];
+          const std::size_t& rootId = roots_[root];
           if(jid == rootId)
             {
-              jid = data.lastChild[rootId];
+              jid = (std::size_t)data.lastChild[rootId];
               root ++;
             }
           else 
@@ -88,10 +88,10 @@ namespace hpp {
       // Nasty cast below, from (u-long) size_t to int.
       for( int root=int(roots_.size()-1); root>=0; --root )
       {
-        JointIndex rootId = roots_[root];
+        std::size_t rootId = roots_[(std::size_t)root];
 
         // Backward loop on descendents of joint rootId.
-        for( JointIndex jid = data.lastChild[rootId];jid>=rootId;--jid )
+        for( JointIndex jid = (JointIndex)data.lastChild[rootId];jid>=rootId;--jid )
           {
             if(computeJac)
               Pass::run(model.joints[jid],data.joints[jid],
@@ -111,7 +111,7 @@ namespace hpp {
 
         // Backward loop on ancestors of joint rootId
         JointIndex jid = model.parents[rootId]; // loop variable
-        rootId = (root>0) ? roots_[root-1] : 0;      // root of previous subtree in roots_
+        rootId = (root>0) ? roots_[(std::size_t)(root-1)] : 0;      // root of previous subtree in roots_
         while (jid>rootId)                           // stop when meeting the next subtree
           {
             const JointIndex & parent = model.parents[jid];

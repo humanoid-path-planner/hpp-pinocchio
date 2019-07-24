@@ -142,6 +142,12 @@ namespace hpp {
                                                    ConfigurationIn_t q1,
                                                    const value_type& u,
                                                    ConfigurationOut_t result);
+    template void interpolate<RnxSOnLieGroupMap>  (const DevicePtr_t& robot,
+                                                   ConfigurationIn_t q0,
+                                                   ConfigurationIn_t q1,
+                                                   const value_type& u,
+                                                   ConfigurationOut_t result);
+
     // TODO remove me. This is kept for backward compatibility
     template void interpolate< ::pinocchio::LieGroupMap> (const DevicePtr_t& robot,
                                                  ConfigurationIn_t q0,
