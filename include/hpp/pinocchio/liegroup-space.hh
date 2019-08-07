@@ -19,6 +19,7 @@
 
 # include <vector>
 # include <string>
+# include <pinocchio/fwd.hpp>
 # include <boost/variant.hpp>
 # include <pinocchio/multibody/liegroup/special-euclidean.hpp>
 # include <pinocchio/multibody/liegroup/special-orthogonal.hpp>
