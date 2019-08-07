@@ -82,7 +82,11 @@ namespace hpp {
       // TODO as of now, it is not possible to access the template parameter
       // JointCollectionTpl of Model so we use the default one.
       typedef ::pinocchio::JacobianCenterOfMassBackwardStep<Model::Scalar,
-              Model::Options, JointCollectionTpl> Pass;
+              Model::Options, JointCollectionTpl
+#if PINOCCHIO_VERSION_AT_LEAST(2,1,6)
+              ,Data::Matrix3x
+#endif
+                > Pass;
 
       // Assume root is sorted from smallest id.
       // Nasty cast below, from (u-long) size_t to int.
@@ -95,7 +99,11 @@ namespace hpp {
           {
             if(computeJac)
               Pass::run(model.joints[jid],data.joints[jid],
-                      Pass::ArgsType(model,data,false));
+                      Pass::ArgsType(model,data,
+#if PINOCCHIO_VERSION_AT_LEAST(2,1,6)
+                        data.Jcom,
+#endif
+                        false));
             else
               {
                 assert(computeCOM);
@@ -117,7 +125,11 @@ namespace hpp {
             const JointIndex & parent = model.parents[jid];
             if(computeJac)
               Pass::run(model.joints[jid],data.joints[jid],
-                      Pass::ArgsType(model,data,false));
+                      Pass::ArgsType(model,data,
+#if PINOCCHIO_VERSION_AT_LEAST(2,1,6)
+                        data.Jcom,
+#endif
+                        false));
             else
               {
                 assert(computeCOM);
