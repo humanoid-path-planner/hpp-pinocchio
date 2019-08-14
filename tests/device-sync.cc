@@ -17,6 +17,7 @@
 #define BOOST_TEST_MODULE tdevice-sync
 
 #include <ctime>
+#include <pinocchio/fwd.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
