@@ -27,6 +27,40 @@
 
 namespace hpp {
     /// \addtogroup to_output_stream Printing to output stream
+    ///
+    /// Some tools to ease pretty printing of objects in HPP.
+    /// To print vectors, you have the following options:
+    /// \snippet tests/print.cc Example usage
+    /// which should output something like
+    /// \code
+    ///    R =   1, 0, 0
+    ///          0, 1, 0
+    ///          0, 0, 1
+    ///    p = 0, 0, 0
+    ///    q = 0, 0, 0, 1
+    ///    p = 0, 0, 0
+    ///    q = 0, 0, 0, 1, p = 0, 0, 0
+    ///
+    ///  R = ( (1, 0, 0,)
+    ///        (0, 1, 0,)
+    ///        (0, 0, 1,) )
+    ///  p = (0, 0, 0,)
+    ///  q = (0, 0, 0, 1,)
+    ///  p = (0, 0, 0,)
+    ///  q = (0, 0, 0, 1,), p = (0, 0, 0,)
+    ///
+    ///  1, 1
+    ///  1, 1
+    ///  1, 1
+    ///  1, 1
+    ///  1, 1
+    ///
+    ///  ( (1, 0, 0,),
+    ///     (0, 1, 0,),
+    ///     (0, 0, 1,), )
+    ///  ( (1, 0, 0,),    (0, 1, 0,),    (0, 0, 1,), )
+    ///  ( (1, 0,),    (0, 1,), )
+    /// \endcode
     /// \{
 
     /// This function must be specialized for the type you want to print.

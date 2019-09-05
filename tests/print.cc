@@ -28,6 +28,7 @@ using hpp::pinocchio::vectorIn_t;
 
 int main ()
 {
+//! [Example usage]
   std::cout << incindent
     << iendl << pretty_print (SE3::Identity())
     << iendl << condensed (SE3::Identity())
@@ -56,6 +57,7 @@ int main ()
     << iendl << condensed (m)
     << iendl << one_line (m.block(1,1,2,2))
     << iendl;
+//! [Example usage]
 
   return 0;
 }

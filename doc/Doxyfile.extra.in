@@ -6,3 +6,5 @@ INPUT                  = @CMAKE_SOURCE_DIR@/include \
                          @CMAKE_SOURCE_DIR@/doc
 
 PREDEFINED             = HPP_PINOCCHIO_PARSED_BY_DOXYGEN
+
+EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@
