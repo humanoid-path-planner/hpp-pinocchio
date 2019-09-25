@@ -43,7 +43,7 @@ namespace hpp {
           }
         };
       }
-      /// \endcond
+      /// \endcond
 
       template<int Size, bool rot>
         struct VectorSpaceOperation : public ::pinocchio::VectorSpaceOperationTpl<Size, value_type>

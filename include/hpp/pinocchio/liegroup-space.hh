@@ -36,7 +36,7 @@ namespace hpp {
     /// Elementary Lie groups
     /// A boost variant with the following classes:
     /// \li \f$\mathbf{R}^n\f$, where \f$n\f$ is either 1, 2, 3 or dynamic,
-    /// \li \f$\mathbf{R}^n \times SO(n) \f$, where \f$n\f$ is either 2 or 3,
+    /// \li \f$\mathbf{R}^n \times SO(n) \f$, where \f$n\f$ is either 2 or 3,
     /// \li \f$SO(n) \f$, where \f$n\f$ is either 2 or 3,
     /// \li \f$SE(n) \f$, where \f$n\f$ is either 2 or 3.
     /// \sa hpp::pinocchio::liegroup::VectorSpaceOperation,
