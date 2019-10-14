@@ -163,8 +163,9 @@ namespace hpp {
     {
       public:
         /// Constructor
+        /// \param device to lock
         /// \param lock whether to acquire the lock.
-        DeviceSync (const DevicePtr_t& d, bool lock = true);
+        DeviceSync (const DevicePtr_t& device, bool lock = true);
 
         /// Destructor.
         /// The lock is released if necessary.

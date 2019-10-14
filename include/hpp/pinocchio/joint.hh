@@ -178,6 +178,7 @@ namespace hpp {
       JointJacobian_t& jacobian (const bool localFrame=true) const { return jacobian (data(), localFrame); }
 
       /// Get reference to Jacobian
+      /// \param data a DeviceData (see hpp::pinocchio::DeviceSync for details).
       /// \param localFrame if true, compute the jacobian (6d) in the local frame, 
       /// whose linear part corresponds to the velocity of the center of the frame.
       /// If false, the jacobian is expressed in the global frame and its linear part
