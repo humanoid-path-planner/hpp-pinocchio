@@ -54,6 +54,7 @@ namespace hpp {
       friend class Frame;
       friend class DeviceSync;
       friend class CollisionObject;
+      friend class CenterOfMassComputation;
     public:
       /// Collision pairs between bodies
       typedef std::pair <JointPtr_t, JointPtr_t> CollisionPair_t;

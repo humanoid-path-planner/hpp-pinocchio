@@ -36,7 +36,7 @@ namespace hpp {
       return CenterOfMassComputationPtr_t (new CenterOfMassComputation (d));
     }
 
-    void CenterOfMassComputation::compute (const Computation_t& flag)
+    void CenterOfMassComputation::compute (DeviceData& d, const Computation_t& flag)
     {
       const Model& model = robot_->model();
 
@@ -45,8 +45,7 @@ namespace hpp {
       assert(computeCOM && "This does nothing");
       assert (!(computeJac && !computeCOM)); // JACOBIAN => COM
 
-      // update kinematics
-      ::pinocchio::copy(model,robot_->data(),data,0);
+      Data& data = *d.data_;
 
       data.mass[0] = 0;
       if(computeCOM) data.com[0].setZero();
@@ -146,12 +145,12 @@ namespace hpp {
     }
 
     CenterOfMassComputation::CenterOfMassComputation (const DevicePtr_t& d) :
-      robot_(d), roots_ (), //mass_ (0), jacobianCom_ (3, d->numberDof ())
-      data(d->model())
+      robot_(d), roots_ ()
     { assert (d->modelPtr()); }
 
     void CenterOfMassComputation::add (const JointPtr_t& j)
     {
+      const Data& data = robot_->data();
       JointIndex jid = j->index();
       BOOST_FOREACH( const JointIndex rootId,  roots_ )
         {

@@ -61,14 +61,36 @@ namespace hpp {
         void add (const JointPtr_t& rootOfSubtree);
 
         /// Compute the center of mass and Jacobian of the sub-trees.
-        void compute (const Computation_t& flag = COMPUTE_ALL);
+        /// \param flag select which values must be computed.
+        void compute (const Computation_t& flag = COMPUTE_ALL)
+        {
+          compute (robot_->d(), flag);
+        }
+
+        /// \copydoc compute(const Computation_t&)
+        /// \param data where to write results.
+        void compute (DeviceData& data, const Computation_t& flag);
 
         /// Get center of mass of the subtree.
-        const vector3_t&     com         () const { return data.com [0]; }
+        const vector3_t&     com      () const { return com     (robot_->d()); }
         /// Get mass of the sub-tree.
-        const value_type&    mass        () const { return data.mass[0]; }
+        const value_type&    mass     () const { return mass    (robot_->d()); }
         /// Get Jacobian of center of mass of the sub-tree.
-        const ComJacobian_t& jacobian    () const { return data.Jcom   ; }
+        const ComJacobian_t& jacobian () const { return jacobian(robot_->d()); }
+
+        /// \copydoc com
+        /// \param d the data where results were written
+        ///          (passed to compute(const DeviceData&, const Computation_t&)).
+        static const vector3_t&     com      (const DeviceData& d) { return d.data_->com [0]; }
+        /// \copydoc mass
+        /// \param d the data where results were written
+        ///          (passed to compute(const DeviceData&, const Computation_t&)).
+        static const value_type&    mass     (const DeviceData& d) { return d.data_->mass[0]; }
+        /// \copydoc jacobian
+        /// \param d the data where results were written
+        ///          (passed to compute(const DeviceData&, const Computation_t&)).
+        static const ComJacobian_t& jacobian (const DeviceData& d) { return d.data_->Jcom   ; }
+
         /// Get const reference to the vector of sub-tree roots.
         const JointRootIndexes_t & roots () const { return roots_; }
 
@@ -81,13 +103,6 @@ namespace hpp {
         DevicePtr_t robot_;
         // Root of the subtrees
         JointRootIndexes_t roots_;
-        // Specific pinocchio Data to store the computation results
-        Data data;
-
-        // value_type mass_;
-        // vector3_t com_;
-        // ComJacobian_t jacobianCom_;
-
     }; // class CenterOfMassComputation
   }  // namespace pinocchio
 }  // namespace hpp
