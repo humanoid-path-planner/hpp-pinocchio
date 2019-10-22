@@ -258,6 +258,21 @@ namespace hpp {
           robot->createData();
           robot->createGeomData();
 
+          // Build mimic joint table.
+          typedef std::map<std::string, PINOCCHIO_URDF_SHARED_PTR(::urdf::Joint) > UrdfJointMap_t;
+          for (UrdfJointMap_t::const_iterator _joint = urdfTree->joints_.begin();
+             _joint != urdfTree->joints_.end(); ++_joint) {
+            const PINOCCHIO_URDF_SHARED_PTR(::urdf::Joint)& joint = _joint->second;
+            if (joint && joint->mimic) {
+              Device::JointLinearConstraint constraint;
+              constraint.joint     = robot->getJointByName (prefix + joint->name);
+              constraint.reference = robot->getJointByName (prefix + joint->mimic->joint_name);
+              constraint.multiplier = joint->mimic->multiplier;
+              constraint.offset     = joint->mimic->offset;
+              robot->addJointConstraint (constraint);
+            }
+          }
+
           hppDout (notice, "Finished parsing SRDF file.");
         }
 
