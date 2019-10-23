@@ -310,12 +310,29 @@ namespace hpp {
       return n;
     }
 
+    void Device::
+    addJointConstraint (JointLinearConstraint constraint)
+    {
+      assert (constraint.joint && constraint.reference);
+      assert (constraint.joint    ->configSize() == 1);
+      assert (constraint.reference->configSize() == 1);
+
+      jointConstraints_.push_back (constraint);
+    }
+
     std::ostream& Device::
     print (std::ostream& os) const
     {
-      for (size_type i = 0; i < nbJoints(); ++i)
-        jointAt(i)->display(os);
-      return os;
+      os << model() << iendl;
+      if (jointConstraints_.size()>0)
+        os << "Joint linear constraints:" << incindent;
+      for (std::size_t i = 0; i < jointConstraints_.size(); ++i)
+        os << iendl
+          << jointConstraints_[i].joint->name() << " = "
+          << jointConstraints_[i].multiplier << " * "
+          << jointConstraints_[i].reference->name() << " + "
+          << jointConstraints_[i].offset;
+      return os << decindent << std::endl;
     }
 
     /* ---------------------------------------------------------------------- */

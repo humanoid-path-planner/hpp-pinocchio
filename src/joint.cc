@@ -471,32 +471,6 @@ namespace hpp {
 	os << "Anchor joint\\n";
       os << "Current transformation: " << currentTransformation();
       os << "\\n";
-      /*hpp::model::BodyPtr_t body = linkedBody();
-      if (body) {
-	const matrix3_t& I = body->inertiaMatrix();
-	os << "Attached body: " << body->name () << "\\n";
-	os << "Mass of the attached body: " << body->mass() << "\\n";
-	os << "Local center of mass:" << body->localCenterOfMass() << "\\n";
-	os << "Inertia matrix:" << "\\n";
-	os << I (0,0) << "\t" << I (0,1) << "\t" << I (0,2) << "\\n"
-	   << I (1,0) << "\t" << I (1,1) << "\t" << I (1,2) << "\\n"
-	   << I (2,0) << "\t" << I (2,1) << "\t" << I (2,2) << "\\n";
-	os << "geometric objects" << "\\n";
-	const hpp::model::ObjectVector_t& colObjects =
-	  body->innerObjects (hpp::model::COLLISION);
-	for (hpp::model::ObjectVector_t::const_iterator it =
-	       colObjects.begin (); it != colObjects.end (); ++it) {
-	  os << "name: " << (*it)->name () << "\\n";
-	  os << "position in joint:" << "\\n";
-	  const fcl::Transform3f& local ((*it)->positionInJointFrame ());
-	  displayTransform3f (os, local); os << "\\n";
-	  os << "position :" << "\\n";
-	  const fcl::Transform3f& global ((*it)->fcl ()->getTransform ());
-	  displayTransform3f (os, global);
-	}
-      } else {
-	os << "No body";
-        }*/
       os << "\"]" << std::endl;
       for (unsigned int iChild=0; iChild < numberChildJoints (); iChild++)
         {

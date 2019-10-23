@@ -117,6 +117,18 @@ namespace hpp {
       /// \name Joints
       /// \{
 
+      /// This struct defines a linear relation between two joint values.
+      ///
+      /// The configuration of \c JointConstraint::joint is expected to be \f$
+      /// q_{joint} = multiplier * q_{reference} + offset\f$.
+      /// where \f$q_{reference}\f$ is the configuration of
+      /// JointLinearConstraint::reference joint.
+      struct JointLinearConstraint
+      {
+        value_type offset, multiplier;
+        JointPtr_t joint, reference;
+      };
+
       /// Get root joint
       JointPtr_t rootJoint () const;
 
@@ -170,6 +182,14 @@ namespace hpp {
 
       /// Get the neutral configuration
       Configuration_t neutralConfiguration () const;
+
+      /// Add a joint constraint
+      void addJointConstraint (JointLinearConstraint constraint);
+
+      const std::vector<JointLinearConstraint>& jointConstraints () const
+      {
+        return jointConstraints_;
+      }
 
       /// \}
       // -----------------------------------------------------------------------
@@ -313,6 +333,8 @@ namespace hpp {
       LiegroupSpacePtr_t configSpace_;
       // Extra configuration space
       ExtraConfigSpace extraConfigSpace_;
+      // Joint linear constraints
+      std::vector<JointLinearConstraint> jointConstraints_;
       DeviceWkPtr_t weakPtr_;
 
     private:
