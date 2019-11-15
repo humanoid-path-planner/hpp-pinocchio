@@ -380,7 +380,7 @@ namespace hpp {
     /* --- Bounding box ----------------------------------------------------- */
     /* ---------------------------------------------------------------------- */
 
-    struct AABBStep : public ::pinocchio::fusion::JointVisitorBase<AABBStep>
+    struct AABBStep : public ::pinocchio::fusion::JointUnaryVisitorBase<AABBStep>
     {
       typedef boost::fusion::vector<const Model&,
                                     Configuration_t,

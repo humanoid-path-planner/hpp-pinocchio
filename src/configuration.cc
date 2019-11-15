@@ -184,6 +184,11 @@ namespace hpp {
                          ConfigurationIn_t q2,
                          vectorOut_t result);
 
+    template void difference < RnxSOnLieGroupMap> (const DevicePtr_t& robot,
+                         ConfigurationIn_t q1,
+                         ConfigurationIn_t q2,
+                         vectorOut_t result);
+
     void difference (const DevicePtr_t& robot, ConfigurationIn_t q1,
                      ConfigurationIn_t q2, vectorOut_t result)
     {
@@ -212,7 +217,7 @@ namespace hpp {
       ::pinocchio::normalize(robot->model(), q);
     }
 
-    struct IsNormalizedStep : public ::pinocchio::fusion::JointVisitorBase<IsNormalizedStep>
+    struct IsNormalizedStep : public ::pinocchio::fusion::JointUnaryVisitorBase<IsNormalizedStep>
     {
       typedef boost::fusion::vector<ConfigurationIn_t,
                                     const value_type &,

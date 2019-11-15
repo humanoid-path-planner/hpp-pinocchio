@@ -485,7 +485,7 @@ namespace hpp {
     }
 
     template <typename LieGroupMap_t>
-    struct ConfigSpaceVisitor : public ::pinocchio::fusion::JointVisitorBase<ConfigSpaceVisitor<LieGroupMap_t> >
+    struct ConfigSpaceVisitor : public ::pinocchio::fusion::JointUnaryVisitorBase<ConfigSpaceVisitor<LieGroupMap_t> >
     {
       typedef boost::fusion::vector<LiegroupSpace&> ArgsType;
 
