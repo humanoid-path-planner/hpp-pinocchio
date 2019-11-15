@@ -18,24 +18,25 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 SET(CXX_DISABLE_WERROR TRUE)
-INCLUDE(cmake/base.cmake)
+SET(PROJECT_NAME hpp-pinocchio)
+SET(PROJECT_DESCRIPTION "Wrapping of the kinematic/dynamic chain Pinocchio for HPP.")
+SET(PROJECT_URL "https://github.com/humanoid-path-planner/hpp-pinocchio")
+OPTION(INSTALL_DOCUMENTATION "Generate and install the documentation" ON)
+
 INCLUDE(cmake/hpp.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/ros.cmake)
 INCLUDE(cmake/apple.cmake)
 INCLUDE(cmake/test.cmake)
 
-SET(PROJECT_NAME hpp-pinocchio)
-SET(PROJECT_DESCRIPTION "Wrapping of the kinematic/dynamic chain Pinocchio for HPP.")
-SET(PROJECT_URL "https://github.com/humanoid-path-planner/hpp-pinocchio")
-OPTION(INSTALL_DOCUMENTATION "Generate and install the documentation" ON)
+# HMake that we compute the PROJECT_VERSION manually.
+CMAKE_POLICY(SET CMP0048 OLD)
+PROJECT(${PROJECT_NAME} CXX)
 
 # Handle APPLE Cmake policy
 IF(APPLE)
   APPLY_DEFAULT_APPLE_CONFIGURATION()
 ENDIF(APPLE)
-
-SETUP_HPP_PROJECT()
 
 # Activate hpp-util logging if requested
 SET (HPP_DEBUG FALSE CACHE BOOL "trigger hpp-util debug output")
@@ -103,5 +104,3 @@ ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(tests)
 
 PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})
-
-SETUP_HPP_PROJECT_FINALIZE()
