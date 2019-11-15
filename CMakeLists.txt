@@ -21,6 +21,7 @@ SET(CXX_DISABLE_WERROR TRUE)
 SET(PROJECT_NAME hpp-pinocchio)
 SET(PROJECT_DESCRIPTION "Wrapping of the kinematic/dynamic chain Pinocchio for HPP.")
 OPTION(INSTALL_DOCUMENTATION "Generate and install the documentation" ON)
+SET(PROJECT_USE_CMAKE_EXPORT TRUE)
 
 INCLUDE(cmake/hpp.cmake)
 INCLUDE(cmake/boost.cmake)
