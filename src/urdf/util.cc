@@ -263,7 +263,7 @@ namespace hpp {
           for (UrdfJointMap_t::const_iterator _joint = urdfTree->joints_.begin();
              _joint != urdfTree->joints_.end(); ++_joint) {
             const PINOCCHIO_URDF_SHARED_PTR(::urdf::Joint)& joint = _joint->second;
-            if (joint && joint->mimic) {
+            if (joint && joint->type != ::urdf::Joint::FIXED && joint->mimic) {
               Device::JointLinearConstraint constraint;
               constraint.joint     = robot->getJointByName (prefix + joint->name);
               constraint.reference = robot->getJointByName (prefix + joint->mimic->joint_name);

@@ -23,7 +23,7 @@
 
 namespace hpp {
   namespace pinocchio {
-      struct SetBoundStep : public ::pinocchio::fusion::JointVisitorBase<SetBoundStep>
+      struct SetBoundStep : public ::pinocchio::fusion::JointUnaryVisitorBase<SetBoundStep>
       {
         typedef boost::fusion::vector<ConfigurationIn_t,
                 Configuration_t &> ArgsType;
