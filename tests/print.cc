@@ -14,6 +14,8 @@
 // received a copy of the GNU Lesser General Public License along with
 // hpp-pinocchio. If not, see <http://www.gnu.org/licenses/>.
 
+#include <iostream>
+
 #include <hpp/pinocchio/util.hh>
 
 #include <hpp/pinocchio/fwd.hh>
