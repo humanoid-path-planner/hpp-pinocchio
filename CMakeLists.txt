@@ -20,7 +20,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 SET(CXX_DISABLE_WERROR TRUE)
 SET(PROJECT_NAME hpp-pinocchio)
 SET(PROJECT_DESCRIPTION "Wrapping of the kinematic/dynamic chain Pinocchio for HPP.")
-SET(PROJECT_URL "https://github.com/humanoid-path-planner/hpp-pinocchio")
 OPTION(INSTALL_DOCUMENTATION "Generate and install the documentation" ON)
 
 INCLUDE(cmake/hpp.cmake)
@@ -29,9 +28,8 @@ INCLUDE(cmake/ros.cmake)
 INCLUDE(cmake/apple.cmake)
 INCLUDE(cmake/test.cmake)
 
-# HMake that we compute the PROJECT_VERSION manually.
-CMAKE_POLICY(SET CMP0048 OLD)
-PROJECT(${PROJECT_NAME} CXX)
+COMPUTE_PROJECT_ARGS(PROJECT_ARGS LANGUAGES CXX)
+PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
 
 # Handle APPLE Cmake policy
 IF(APPLE)
