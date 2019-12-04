@@ -60,7 +60,7 @@ SEARCH_FOR_BOOST()
 
 # Search for dependecies.
 ADD_REQUIRED_DEPENDENCY("hpp-util >= 3.2")
-ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.1.2")
+ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.1.10")
 ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.2.92")
 
 ADD_OPTIONAL_DEPENDENCY("romeo_description >= 0.2")
