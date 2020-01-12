@@ -178,7 +178,7 @@ namespace hpp {
       const LiegroupSpacePtr_t& configSpace () const { return configSpace_; }
 
       /// See Joint::RnxSOnConfigurationSpace
-      LiegroupSpacePtr_t RnxSOnConfigSpace () const;
+      const LiegroupSpacePtr_t& RnxSOnConfigSpace () const { return configSpaceRnxSOn_; }
 
       /// Get the neutral configuration
       Configuration_t neutralConfiguration () const;
@@ -330,7 +330,7 @@ namespace hpp {
       std::string name_;
       // Grippers
       Grippers_t grippers_;
-      LiegroupSpacePtr_t configSpace_;
+      LiegroupSpacePtr_t configSpace_, configSpaceRnxSOn_;
       // Extra configuration space
       ExtraConfigSpace extraConfigSpace_;
       // Joint linear constraints
