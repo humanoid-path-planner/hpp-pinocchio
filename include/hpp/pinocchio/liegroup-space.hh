@@ -258,6 +258,17 @@ namespace hpp {
       template <DerivativeProduct side>
       void dDifference_dq1 (vectorIn_t q0, vectorIn_t q1, matrixOut_t J1) const;
 
+      /// Interpolate between two elements of the Lie group.
+      ///
+      /// This is equivalent to \f$ q_0 \oplus u*(q_1 \ominus q_0) \f$.
+      ///
+      /// \param q0, q1 two elements
+      /// \param u in [0,1] position along the interpolation: q0 for u=0,
+      /// q1 for u=1
+      /// \retval result interpolated configuration
+      void interpolate (vectorIn_t q0, vectorIn_t q1, value_type u,
+          vectorOut_t result) const;
+
       /// Return name of Lie group
       std::string name () const;
 

@@ -20,6 +20,7 @@
 #include "../src/size-visitor.hh"
 #include "../src/dintegrate-visitor.hh"
 #include "../src/jdifference-visitor.hh"
+#include "../src/visitor/interpolate.hh"
 
 namespace hpp {
   namespace pinocchio {
@@ -252,6 +253,19 @@ namespace hpp {
     template void LiegroupSpace::dDifference_dq0<InputTimesDerivative> (vectorIn_t, vectorIn_t, matrixOut_t) const;
     template void LiegroupSpace::dDifference_dq1<DerivativeTimesInput> (vectorIn_t, vectorIn_t, matrixOut_t) const;
     template void LiegroupSpace::dDifference_dq1<InputTimesDerivative> (vectorIn_t, vectorIn_t, matrixOut_t) const;
+
+    void LiegroupSpace::interpolate (vectorIn_t q0, vectorIn_t q1, value_type u,
+        vectorOut_t r) const
+    {
+      assert (q0.size() == nq());
+      assert (q1.size() == nq());
+      assert (r .size() == nq());
+
+      liegroupType::visitor::Interpolate iv (q0, q1, u, r);
+      for (LiegroupTypes::const_iterator it = liegroupTypes ().begin ();
+           it != liegroupTypes ().end (); ++it)
+        boost::apply_visitor (iv, *it);
+    }
 
     struct NameVisitor : public boost::static_visitor <>
     {
