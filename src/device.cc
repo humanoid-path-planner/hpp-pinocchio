@@ -123,7 +123,6 @@ namespace hpp {
     {
       weakPtr_ = weakPtr;
       d_.devicePtr_ = weakPtr;
-      DevicePtr_t self (weakPtr_.lock());
     }
 
     void Device::initCopy(const DeviceWkPtr_t& weakPtr, const Device& other)

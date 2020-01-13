@@ -18,7 +18,11 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <pinocchio/fwd.hpp>
+#include <hpp/pinocchio/fwd.hh>
+#include <hpp/pinocchio/joint-collection.hh>
 #include <pinocchio/multibody/model.hpp>
+#include <pinocchio/algorithm/check.hpp>
 
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/device.hh>
@@ -63,6 +67,9 @@ BOOST_AUTO_TEST_CASE (unit_test_device)
 {
   DevicePtr_t robot;
   LiegroupSpacePtr_t space;
+
+  robot = Device::create ("robot");
+  BOOST_CHECK(pinocchio::checkData (robot->model(), robot->data()));
 
   robot = unittest::makeDevice (unittest::HumanoidSimple);
   space = LiegroupSpace::createCopy(robot->configSpace());
