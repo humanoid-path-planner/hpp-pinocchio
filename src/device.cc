@@ -123,7 +123,6 @@ namespace hpp {
     {
       weakPtr_ = weakPtr;
       d_.devicePtr_ = weakPtr;
-      DevicePtr_t self (weakPtr_.lock());
     }
 
     void Device::initCopy(const DeviceWkPtr_t& weakPtr, const Device& other)
@@ -279,25 +278,19 @@ namespace hpp {
       d_.jointJacobians_.resize ((std::size_t)model().njoints);
 
       configSpace_ = LiegroupSpace::empty();
+      configSpaceRnxSOn_ = LiegroupSpace::empty();
       const Model& m (model());
-      for (JointIndex i = 1; i < m.joints.size(); ++i)
-        *configSpace_ *= Joint(weakPtr_, i).configurationSpace();
-      if (extraConfigSpace_.dimension() > 0)
-        *configSpace_ *= LiegroupSpace::create (extraConfigSpace_.dimension());
+      for (JointIndex i = 1; i < m.joints.size(); ++i) {
+        *configSpace_       *= Joint(weakPtr_, i).configurationSpace();
+        *configSpaceRnxSOn_ *= Joint(weakPtr_, i).RnxSOnConfigurationSpace();
+      }
+      if (extraConfigSpace_.dimension() > 0) {
+        LiegroupSpacePtr_t extra = LiegroupSpace::create (extraConfigSpace_.dimension());
+        *configSpace_       *= extra;
+        *configSpaceRnxSOn_ *= extra;
+      }
 
       numberDeviceData(numberDeviceData());
-    }
-
-    LiegroupSpacePtr_t Device::
-    RnxSOnConfigSpace () const
-    {
-      const Model& m (model());
-      LiegroupSpacePtr_t space (LiegroupSpace::empty());
-      for (JointIndex i = 1; i < m.joints.size(); ++i)
-        *space *= Joint(weakPtr_, i).RnxSOnConfigurationSpace();
-      if (extraConfigSpace_.dimension() > 0)
-        *space *= LiegroupSpace::create (extraConfigSpace_.dimension());
-      return space;
     }
 
     Configuration_t Device::
