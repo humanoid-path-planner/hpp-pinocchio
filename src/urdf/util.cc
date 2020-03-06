@@ -191,6 +191,28 @@ namespace hpp {
             (model, geomModel, srdf, verbose);
         }
 
+        /// JointPtrType will be a boost or std shared_ptr depending on the
+        /// version of urdfdom.
+        template <typename JointPtrType>
+        void addMimicJoints (const std::map<std::string, JointPtrType>& joints,
+            const std::string& prefix,
+            const DevicePtr_t& robot)
+        {
+          typedef std::map<std::string, JointPtrType> UrdfJointMap_t;
+          for (typename UrdfJointMap_t::const_iterator _joint = joints.begin();
+             _joint != joints.end(); ++_joint) {
+            const JointPtrType& joint = _joint->second;
+            if (joint && joint->type != ::urdf::Joint::FIXED && joint->mimic) {
+              Device::JointLinearConstraint constraint;
+              constraint.joint     = robot->getJointByName (prefix + joint->name);
+              constraint.reference = robot->getJointByName (prefix + joint->mimic->joint_name);
+              constraint.multiplier = joint->mimic->multiplier;
+              constraint.offset     = joint->mimic->offset;
+              robot->addJointConstraint (constraint);
+            }
+          }
+        }
+
         template <bool srdfAsXmlString>
         void _loadModel (const DevicePtr_t& robot,
                         const FrameIndex&  baseFrame,
@@ -259,19 +281,7 @@ namespace hpp {
           robot->createGeomData();
 
           // Build mimic joint table.
-          typedef std::map<std::string, PINOCCHIO_URDF_SHARED_PTR(::urdf::Joint) > UrdfJointMap_t;
-          for (UrdfJointMap_t::const_iterator _joint = urdfTree->joints_.begin();
-             _joint != urdfTree->joints_.end(); ++_joint) {
-            const PINOCCHIO_URDF_SHARED_PTR(::urdf::Joint)& joint = _joint->second;
-            if (joint && joint->type != ::urdf::Joint::FIXED && joint->mimic) {
-              Device::JointLinearConstraint constraint;
-              constraint.joint     = robot->getJointByName (prefix + joint->name);
-              constraint.reference = robot->getJointByName (prefix + joint->mimic->joint_name);
-              constraint.multiplier = joint->mimic->multiplier;
-              constraint.offset     = joint->mimic->offset;
-              robot->addJointConstraint (constraint);
-            }
-          }
+          addMimicJoints (urdfTree->joints_, prefix, robot);
 
           hppDout (notice, "Finished parsing SRDF file.");
         }
