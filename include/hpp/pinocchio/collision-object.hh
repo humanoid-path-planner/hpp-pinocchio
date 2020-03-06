@@ -73,6 +73,7 @@ namespace hpp {
       /// \param d Ignored if this object represents an obstacle.
       ///          Otherwise, a DeviceData for the internal device.
       FclCollisionObjectPtr_t      fcl (DeviceData& d) const;
+      FclConstCollisionObjectPtr_t fcl (const DeviceData& d) const;
 
       /// Get joint index
       const JointIndex& jointIndex () const { return jointIndex_; }
@@ -112,6 +113,7 @@ namespace hpp {
     private:
       GeomData& geomData() const;
       GeomData& geomData(DeviceData& d) const;
+      const GeomData& geomData(const DeviceData& d) const;
 
       DevicePtr_t devicePtr;
       GeomModelPtr_t geomModel_;

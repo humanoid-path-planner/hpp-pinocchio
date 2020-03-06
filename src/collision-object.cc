@@ -81,6 +81,12 @@ namespace hpp {
       return & geomData(d).collisionObjects[geomInModelIndex];
     }
 
+    FclConstCollisionObjectPtr_t CollisionObject::fcl
+    (const DeviceData& d) const
+    {
+      return & geomData(d).collisionObjects[geomInModelIndex];
+    }
+
     JointPtr_t      CollisionObject::joint ()
     {
       if (!devicePtr) return JointPtr_t();
@@ -130,6 +136,12 @@ namespace hpp {
     }
 
     GeomData& CollisionObject::geomData (DeviceData& d) const
+    {
+      if (geomData_) return *geomData_;
+      else return *d.geomData_;
+    }
+
+    const GeomData& CollisionObject::geomData (const DeviceData& d) const
     {
       if (geomData_) return *geomData_;
       else return *d.geomData_;
