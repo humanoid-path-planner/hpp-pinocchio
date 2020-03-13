@@ -36,26 +36,29 @@ namespace hpp {
     /// components of the robot configuration starting at
     /// Joint::rankInConfiguration.
     ///
-    /// The joint input vector represents a element of a Lie group, either
+    /// The joint input vector represents an element of a Lie group, either
     /// \li a vector space for JointTranslation, and bounded JointRotation,
     /// \li the unit circle for non-bounded JointRotation joints,
     /// \li an element of SO(3) for JointSO3, represented by a unit quaternion.
     ///
-    /// Operations specific to joints (uniform sampling of input space, straight
-    /// interpolation, distance, ...) are performed by a JointConfiguration
-    /// instance that has the same class hierarchy as Joint.
+    /// This class is a wrapper to pinocchio::JointModelTpl.
     class HPP_PINOCCHIO_DLLAPI Joint {
     public:
       /// \name Construction and copy and destruction
       /// \{
 
       /// Create a new joint
-      /// Returns a null pointer if indexInJointList is 0.
+      /// \param indexInJointList index in pinocchio vector of joints
+      ///        (pinocchio::ModelTpl::joints)
+      /// \return shared pointer to result if indexInJointList > 0, empty
+      ///         shared pointer if indexInJointList == 0.
+      /// \note indices of device start at 1 since 0 corresponds to "universe".
       static JointPtr_t create (DeviceWkPtr_t device, JointIndex indexInJointList );
 
       /// Constructor
-      /// \param device pointer on the device the joint is belonging to.
-      /// \param indexInJointList index of the joint, i.e. joint = device.model.joints[index]
+      /// \param indexInJointList index in pinocchio vector of joints
+      ///        (pinocchio::ModelTpl::joints). Should be > 0.
+      /// \note indices of device start at 1 since 0 corresponds to "universe".
       Joint (DeviceWkPtr_t device, JointIndex indexInJointList );
 
       ~Joint() {}
