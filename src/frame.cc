@@ -77,7 +77,7 @@ namespace hpp {
 
     bool Frame::isFixed () const
     {
-      return pinocchio().type == ::pinocchio::FIXED_JOINT;
+      return pinocchio().type != ::pinocchio::JOINT;
     }
 
     JointPtr_t Frame::joint () const
