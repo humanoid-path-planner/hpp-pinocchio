@@ -57,10 +57,6 @@ ENDIF(CMAKE_BUILD_TYPE MATCHES "DEBUG")
 # Search for Boost.
 # Boost.Test is used by the test suite.
 SET(BOOST_COMPONENTS_LIB thread)
-SET(BOOST_COMPONENTS ${BOOST_COMPONENTS_LIB})
-IF(BUILD_TESTING)
-  SET(BOOST_COMPONENTS ${BOOST_COMPONENTS_LIB} unit_test_framework)
-ENDIF()
 SEARCH_FOR_BOOST()
 
 # Search for dependecies.

@@ -15,6 +15,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with hpp-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
 
+SET(BOOST_COMPONENTS ${BOOST_COMPONENTS_LIB} unit_test_framework)
+SEARCH_FOR_BOOST()
+
 # Make Boost.Test generates the main function in test cases.
 ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK -DBOOST_TEST_MAIN)
 
