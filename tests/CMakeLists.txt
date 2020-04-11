@@ -15,9 +15,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with hpp-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
 
-# Add Boost path to include directories.
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-
 # Make Boost.Test generates the main function in test cases.
 ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK -DBOOST_TEST_MAIN)
 
@@ -32,43 +29,29 @@ ADD_DEFINITIONS(-DTEST_DIRECTORY="${CMAKE_SOURCE_DIR}/tests/data")
 # This macro will create a binary from `NAME.cc', link it against
 # Boost and add it to the test suite.
 #
-MACRO(ADD_TESTCASE NAME GENERATED)
-  IF (${GENERATED} STREQUAL TRUE)
-    ADD_UNIT_TEST(${NAME} ${CMAKE_CURRENT_BINARY_DIR}/${NAME}.cc)
-  ELSE()
-    ADD_UNIT_TEST(${NAME} ${NAME}.cc)
-  ENDIF()
-
-  # Link against Boost and project library.
-  TARGET_LINK_LIBRARIES(${NAME}
-    ${Boost_LIBRARIES}
-    ${PROJECT_NAME})
-  PKG_CONFIG_USE_DEPENDENCY(${NAME} hpp-util)
-  PKG_CONFIG_USE_DEPENDENCY(${NAME} pinocchio)
+MACRO(ADD_TESTCASE NAME)
+  ADD_UNIT_TEST(${NAME} ${NAME}.cc)
+  TARGET_LINK_LIBRARIES(${NAME} ${PROJECT_NAME} ${Boost_LIBRARIES})
 ENDMACRO(ADD_TESTCASE)
-
-MACRO(ADD_TESTCASE_CFLAGS target flag)
-  SET_PROPERTY(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS " ${flag}")
-ENDMACRO(ADD_TESTCASE_CFLAGS)
 
 # --- LIST OF TESTS ------------------------------------------------------------
 # --- LIST OF TESTS ------------------------------------------------------------
 # --- LIST OF TESTS ------------------------------------------------------------
 
 IF(ROMEO_DESCRIPTION_FOUND)
-  ADD_TESTCASE(frame FALSE)
+  ADD_TESTCASE(frame)
 ENDIF(ROMEO_DESCRIPTION_FOUND)
 
-ADD_TESTCASE(tconfiguration FALSE)
-ADD_TESTCASE(device FALSE)
-ADD_TESTCASE(urdf FALSE)
-ADD_TESTCASE(liegroup-element FALSE)
-ADD_TESTCASE(print FALSE)
-ADD_TESTCASE(joint-bounds FALSE)
+ADD_TESTCASE(tconfiguration)
+ADD_TESTCASE(device)
+ADD_TESTCASE(urdf)
+ADD_TESTCASE(liegroup-element)
+ADD_TESTCASE(print)
+ADD_TESTCASE(joint-bounds)
 
 FIND_PACKAGE(OpenMP)
 IF(OPENMP_FOUND)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-  ADD_TESTCASE(device-sync FALSE)
+  ADD_TESTCASE(device-sync)
 ENDIF()
-ADD_TESTCASE(pool FALSE)
+ADD_TESTCASE(pool)

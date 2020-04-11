@@ -15,19 +15,18 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with hpp-pinocchio.  If not, see <http://www.gnu.org/licenses/>.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
 SET(CXX_DISABLE_WERROR TRUE)
 SET(PROJECT_NAME hpp-pinocchio)
 SET(PROJECT_DESCRIPTION "Wrapping of the kinematic/dynamic chain Pinocchio for HPP.")
+
 OPTION(INSTALL_DOCUMENTATION "Generate and install the documentation" ON)
 SET(PROJECT_USE_CMAKE_EXPORT TRUE)
 
 INCLUDE(cmake/hpp.cmake)
 INCLUDE(cmake/boost.cmake)
-INCLUDE(cmake/ros.cmake)
 INCLUDE(cmake/apple.cmake)
-INCLUDE(cmake/test.cmake)
 
 COMPUTE_PROJECT_ARGS(PROJECT_ARGS LANGUAGES CXX)
 PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
@@ -65,12 +64,12 @@ ENDIF()
 SEARCH_FOR_BOOST()
 
 # Search for dependecies.
-ADD_REQUIRED_DEPENDENCY("hpp-util >= 3.2")
-ADD_REQUIRED_DEPENDENCY("pinocchio >= 2.1.10")
-ADD_REQUIRED_DEPENDENCY("eigen3 >= 3.2.92")
+ADD_PROJECT_DEPENDENCY(hpp-util REQUIRED PKG_CONFIG_REQUIRES "hpp-util >= 3.2")
+ADD_PROJECT_DEPENDENCY(pinocchio REQUIRED PKG_CONFIG_REQUIRES "pinocchio >= 2.1.10")
+ADD_PROJECT_DEPENDENCY(Eigen3 REQUIRED "eigen3 >= 3.2.92")
 
-ADD_OPTIONAL_DEPENDENCY("example-robot-data")
-ADD_OPTIONAL_DEPENDENCY("hpp-environments")
+ADD_PROJECT_DEPENDENCY("example-robot-data")
+ADD_PROJECT_DEPENDENCY("hpp-environments")
 
 # Set header files.
 SET(${PROJECT_NAME}_HEADERS
@@ -103,7 +102,37 @@ SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/urdf/util.hh
   )
 
-ADD_SUBDIRECTORY(src)
+SET(${PROJECT_NAME}_SOURCES
+  src/addition-visitor.hh
+  src/comparison.hh
+  src/comparison.hxx
+  src/device.cc
+  src/device-data.cc
+  src/device-sync.cc
+  src/humanoid-robot.cc
+  src/joint.cc
+  src/frame.cc
+  src/collision-object.cc
+  src/body.cc
+  src/gripper.cc
+  src/center-of-mass-computation.cc
+  src/configuration.cc
+  src/simple-device.cc
+  src/liegroup-element.cc
+  src/liegroup-space.cc
+  src/log-visitor.hh
+  src/size-visitor.hh
+  src/substraction-visitor.hh
+  src/urdf/util.cc
+  src/util.cc
+  )
+
+ADD_LIBRARY(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS})
+TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} hpp-util::hpp-util pinocchio::pinocchio)
+
+INSTALL(TARGETS ${PROJECT_NAME} EXPORT ${TARGETS_EXPORT_NAME} DESTINATION lib)
+
 ADD_SUBDIRECTORY(tests)
 
 PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})
