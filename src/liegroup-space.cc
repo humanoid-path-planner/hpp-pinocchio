@@ -34,10 +34,17 @@ namespace hpp {
     }
 
     /// Return \f$\mathbf{R}\f$ as a Lie group
-    LiegroupSpacePtr_t LiegroupSpace::R1 ()
+    LiegroupSpacePtr_t LiegroupSpace::R1 (bool rotation)
     {
-      LiegroupSpace* ptr (new LiegroupSpace
-                          (liegroup::VectorSpaceOperation <1, false> ()));
+      LiegroupSpace* ptr;
+      if (rotation)
+      {
+        ptr = new LiegroupSpace(liegroup::VectorSpaceOperation <1, true> ());
+      }
+      else
+      {
+        ptr = new LiegroupSpace(liegroup::VectorSpaceOperation <1, false> ());
+      }
       LiegroupSpacePtr_t  shPtr (ptr);
       ptr->init (shPtr);
       return shPtr;

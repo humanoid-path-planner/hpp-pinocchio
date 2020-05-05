@@ -100,7 +100,9 @@ namespace hpp {
       /// \param n dimension of vector space
       static LiegroupSpacePtr_t Rn (const size_type& n);
       /// Return \f$\mathbf{R}\f$ as a Lie group
-      static LiegroupSpacePtr_t R1 ();
+      /// \param rotation whether values of this space represent angles or
+      ///        lengths.
+      static LiegroupSpacePtr_t R1 (bool rotation=false);
       /// Return \f$\mathbf{R}^2\f$ as a Lie group
       static LiegroupSpacePtr_t R2 ();
       /// Return \f$\mathbf{R}^3\f$ as a Lie group
