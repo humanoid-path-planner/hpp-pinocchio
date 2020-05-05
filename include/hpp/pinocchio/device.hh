@@ -341,6 +341,9 @@ namespace hpp {
       Pool<DeviceData> datas_;
     }; // class Device
 
+    void replaceGeometryByConvexHull (GeomModel& geomModel,
+        const std::vector<std::string>& geometryNames);
+
     inline std::ostream& operator<< (std::ostream& os, const hpp::pinocchio::Device& device)
     { return device.print(os); }
 
