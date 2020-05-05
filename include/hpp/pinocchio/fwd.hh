@@ -96,6 +96,8 @@ namespace hpp {
     typedef boost::shared_ptr<Body> BodyPtr_t;
     typedef boost::shared_ptr<const Body> BodyConstPtr_t;
     //typedef std::vector<BodyPtr_t> BodyVector_t;
+    typedef fcl::CollisionGeometry CollisionGeometry;
+    typedef boost::shared_ptr<CollisionGeometry> CollisionGeometryPtr_t;
     typedef       fcl::CollisionObject   FclCollisionObject;
     typedef       fcl::CollisionObject * FclCollisionObjectPtr_t;
     typedef const fcl::CollisionObject * FclConstCollisionObjectPtr_t;
