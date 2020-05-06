@@ -1,0 +1,36 @@
+<?xml version='1.0'?> 
+ <package format='2'> 
+ <name>hpp-pinocchio</name> 
+ <version>4.9.0</version> 
+ <description>Wrapping of the kinematic/dynamic chain Pinocchio for HPP. </description> 
+ 
+ <maintainer email='hpp@laas.fr'>Joseph Mirabel</maintainer> 
+ <license>LGPL</license> 
+ 
+ <!-- <url type='website'>https://github.com/humanoid-path-planner/hpp-pinocchio </url> --> 
+ 
+ <author>Joseph Mirabel</author> 
+ <author>Florent Lamiraux et al.</author> 
+ 
+ <buildtool_depend>catkin</buildtool_depend> 
+ <build_depend>hpp-util</build_depend> 
+ <exec_depend>hpp-util</exec_depend> 
+ <build_export_depend>hpp-util</build_export_depend>
+ <build_depend>pinocchio</build_depend> 
+ <exec_depend>pinocchio</exec_depend> 
+ <build_export_depend>pinocchio</build_export_depend>
+ <build_depend>Eigen3</build_depend> 
+ <exec_depend>Eigen3</exec_depend> 
+ <build_export_depend>Eigen3</build_export_depend>
+ <test_depend>example-robot-data</test_depend> 
+ <test_depend>hpp-environments</test_depend> 
+ <build_depend>eigen3</build_depend> 
+ <exec_depend>eigen3</exec_depend> 
+ <build_export_depend>eigen3</build_export_depend>
+ <build_depend>urdfdom</build_depend> 
+ <exec_depend>urdfdom</exec_depend> 
+ <build_export_depend>urdfdom</build_export_depend>
+ <build_depend>hpp-fcl</build_depend> 
+ <exec_depend>hpp-fcl</exec_depend> 
+ <build_export_depend>hpp-fcl</build_export_depend>
+ </package>
