@@ -21,6 +21,7 @@
 
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/multibody/geometry.hpp>
+#include <pinocchio/spatial/fcl-pinocchio-conversions.hpp>
 
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/joint.hh>
@@ -63,6 +64,9 @@ namespace hpp {
     ::pinocchio::GeometryObject & CollisionObject::pinocchio ()
     { return geomModel_->geometryObjects[geomInModelIndex]; }
 
+    CollisionGeometryPtr_t CollisionObject::geometry () const
+    { return pinocchio().geometry; }
+
     FclCollisionObjectPtr_t CollisionObject::fcl (GeomData& geomData) const
     {
       return & geomData.collisionObjects[geomInModelIndex];
@@ -102,8 +106,8 @@ namespace hpp {
     const Transform3f& CollisionObject::
     positionInJointFrame () const { return pinocchio().placement; }
 
-    const fcl::Transform3f& CollisionObject::getFclTransform () const
-    { return geomData().collisionObjects[geomInModelIndex].getTransform(); }
+    fcl::Transform3f CollisionObject::getFclTransform () const
+    { return ::pinocchio::toFclTransform3f(geomData().oMg[geomInModelIndex]); }
     const Transform3f& CollisionObject::getTransform () const
     { return geomData().oMg[geomInModelIndex];  }
     const Transform3f& CollisionObject::getTransform (DeviceData& d) const

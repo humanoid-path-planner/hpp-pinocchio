@@ -62,6 +62,9 @@ namespace hpp {
       /// Access to pinocchio object
       const GeometryObject & pinocchio () const;
       GeometryObject &       pinocchio ();
+
+      /// Access to fcl object
+      CollisionGeometryPtr_t geometry () const;
       
       /// Access to fcl object
       FclConstCollisionObjectPtr_t fcl (const GeomData& data) const;
@@ -90,7 +93,7 @@ namespace hpp {
       /// manually moved, this will return the non-update transform.
       /// \note If object is not attached to a joint, use move() to update
       /// transform between hpp and fcl.
-      const fcl::Transform3f& getFclTransform () const;
+      fcl::Transform3f getFclTransform () const;
       const Transform3f&      getTransform () const;
       const Transform3f&      getTransform (DeviceData& d) const;
 
