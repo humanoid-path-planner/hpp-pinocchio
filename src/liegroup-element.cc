@@ -15,6 +15,14 @@
 // hpp-pinocchio. If not, see <http://www.gnu.org/licenses/>.
 
 #include <hpp/pinocchio/liegroup-element.hh>
+
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/split_free.hpp>
+
+#include <hpp/util/serialization.hh>
+
+#include <pinocchio/serialization/eigen.hpp>
+
 #include "../src/size-visitor.hh"
 #include "../src/addition-visitor.hh"
 #include "../src/substraction-visitor.hh"
@@ -105,3 +113,42 @@ namespace hpp {
     template vector_t log (const LiegroupElementConstBase<vectorOut_t>& lge);
   } // namespace pinocchio
 } // namespace hpp
+
+namespace boost {
+namespace serialization {
+template<class Archive>
+void load (Archive & ar, hpp::pinocchio::LiegroupElement& c, const unsigned int version)
+{
+  (void) version;
+  hpp::pinocchio::LiegroupSpacePtr_t space;
+  hpp::pinocchio::vector_t vector;
+  ar & make_nvp("space", space);
+  ar & make_nvp("vector", vector);
+  c = hpp::pinocchio::LiegroupElement(vector, space);
+}
+template<class Archive>
+void save (Archive & ar, const hpp::pinocchio::LiegroupElement& c, const unsigned int version)
+{
+  (void) version;
+  ar & make_nvp("space", c.space());
+  ar & make_nvp("vector", c.vector());
+}
+template<class Archive>
+void serialize(Archive & ar, hpp::pinocchio::LiegroupElement& c, const unsigned int file_version)
+{
+  split_free(ar, c, file_version);
+}
+
+using archive::polymorphic_iarchive;
+using archive::polymorphic_oarchive;
+template void load <polymorphic_iarchive> (polymorphic_iarchive & ar,
+    hpp::pinocchio::LiegroupElement& c, const unsigned int version);
+template void save <polymorphic_oarchive> (polymorphic_oarchive & ar,
+    const hpp::pinocchio::LiegroupElement& c, const unsigned int version);
+
+template void serialize <polymorphic_iarchive> (polymorphic_iarchive & ar,
+    hpp::pinocchio::LiegroupElement& c, const unsigned int version);
+template void serialize <polymorphic_oarchive> (polymorphic_oarchive & ar,
+    hpp::pinocchio::LiegroupElement& c, const unsigned int version);
+} // namespace serialization
+} // namespace boost

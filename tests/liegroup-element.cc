@@ -21,6 +21,10 @@
 #include <boost/variant.hpp>
 #endif
 
+#include <sstream>
+#include <boost/archive/polymorphic_xml_iarchive.hpp>
+#include <boost/archive/polymorphic_xml_oarchive.hpp>
+
 #include <boost/test/unit_test.hpp>
 #include <boost/assign/list_of.hpp>
 #include <hpp/pinocchio/liegroup-element.hh>
@@ -285,4 +289,25 @@ BOOST_AUTO_TEST_CASE (log_)
   BOOST_CHECK (R6xSO3->nv (1) == 6);
 
   BOOST_CHECK ((hpp::pinocchio::log(e).isZero(1e-10)));
+}
+
+BOOST_AUTO_TEST_CASE (serialization)
+{
+  LiegroupSpacePtr_t R6xSO3 (LiegroupSpace::R3 () * LiegroupSpace::R3xSO3 ());
+  LiegroupElement e (R6xSO3); e.setNeutral ();
+
+  std::stringstream ss;
+  {
+    boost::archive::polymorphic_xml_oarchive oa(ss);
+    oa << boost::serialization::make_nvp("element", e);
+  }
+
+  LiegroupElement e2;
+  {
+    boost::archive::polymorphic_xml_iarchive ia(ss);
+    ia >> boost::serialization::make_nvp("element", e2);
+  }
+
+  BOOST_CHECK_EQUAL(*e.space(), *e2.space());
+  BOOST_CHECK(e.vector() == e2.vector());
 }

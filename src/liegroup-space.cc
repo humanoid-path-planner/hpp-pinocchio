@@ -14,8 +14,20 @@
 // received a copy of the GNU Lesser General Public License along with
 // hpp-pinocchio. If not, see <http://www.gnu.org/licenses/>.
 
-#include <hpp/pinocchio/liegroup-element.hh>
 #include <hpp/pinocchio/liegroup-space.hh>
+
+#include <boost/serialization/variant.hpp>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/weak_ptr.hpp>
+
+#include <pinocchio/serialization/eigen.hpp>
+
+#include <hpp/util/serialization.hh>
+
+#include <hpp/pinocchio/liegroup-element.hh>
+#include <hpp/pinocchio/liegroup/serialization.hh>
+
 #include "../src/comparison.hh"
 #include "../src/size-visitor.hh"
 #include "../src/dintegrate-visitor.hh"
@@ -457,8 +469,23 @@ namespace hpp {
       mergeVectorSpaces ();
       return weak_.lock();
     }
+
+    template<class Archive>
+    void LiegroupSpace::serialize(Archive & ar, const unsigned int version)
+    {
+      (void) version;
+      ar & BOOST_SERIALIZATION_NVP(liegroupTypes_);
+      ar & BOOST_SERIALIZATION_NVP(nq_);
+      ar & BOOST_SERIALIZATION_NVP(nv_);
+      ar & BOOST_SERIALIZATION_NVP(neutral_);
+      ar & BOOST_SERIALIZATION_NVP(weak_);
+    }
+
+    HPP_SERIALIZATION_IMPLEMENT(LiegroupSpace);
   } // namespace pinocchio
 } // namespace hpp
+
+BOOST_CLASS_EXPORT(hpp::pinocchio::LiegroupSpace)
 
 namespace boost {
   using namespace hpp::pinocchio;

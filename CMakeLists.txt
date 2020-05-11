@@ -94,6 +94,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/liegroup/cartesian-product.hh
   include/hpp/pinocchio/liegroup/special-euclidean.hh
   include/hpp/pinocchio/liegroup/special-orthogonal.hh
+  include/hpp/pinocchio/liegroup/serialization.hh
 
   include/hpp/pinocchio/urdf/util.hh
   )
