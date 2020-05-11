@@ -226,6 +226,16 @@ namespace hpp {
 
       /// \}
 
+      bool operator== (const Joint& other) const
+      {
+        return index() == other.index() && robot() == other.robot();
+      }
+
+      bool operator!= (const Joint& other) const
+      {
+        return !operator==(other);
+      }
+
     protected:
       value_type maximalDistanceToParent_;
       DeviceWkPtr_t devicePtr;

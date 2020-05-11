@@ -43,6 +43,11 @@ BOOST_AUTO_TEST_CASE(joint_bounds)
   size_type nJoints (robot->nbJoints ());
   for (size_type i=0; i<nJoints; ++i) {
     JointPtr_t joint (robot->jointAt (i));
+    BOOST_CHECK(joint == joint);
+    BOOST_CHECK(*joint == *robot->jointAt (i));
+    if (i > 0)
+      BOOST_CHECK(*joint != *robot->jointAt (i-1));
+
     // Set bounds
     vector_t l0 (joint->configSize ());
     vector_t u0 (joint->configSize ());
