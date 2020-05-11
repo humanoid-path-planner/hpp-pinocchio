@@ -28,6 +28,7 @@
 # include <boost/thread/condition_variable.hpp>
 
 # include <hpp/util/debug.hh>
+# include <hpp/util/serialization-fwd.hh>
 
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/frame.hh>
@@ -339,6 +340,9 @@ namespace hpp {
 
     private:
       Pool<DeviceData> datas_;
+
+      Device() {}
+      HPP_SERIALIZABLE_SPLIT();
     }; // class Device
 
     void replaceGeometryByConvexHull (GeomModel& geomModel,

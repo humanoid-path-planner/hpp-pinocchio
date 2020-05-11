@@ -24,6 +24,8 @@
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/config.hh>
 
+# include <hpp/util/serialization-fwd.hh>
+
 namespace hpp {
   namespace pinocchio {
     /// Robot joint
@@ -252,6 +254,9 @@ namespace hpp {
       void selfAssert() const;
 
       friend class Device;
+
+      Joint() {}
+      HPP_SERIALIZABLE();
     }; // class Joint
 
     inline std::ostream& operator<< (std::ostream& os, const Joint& joint) { return joint.display(os); }

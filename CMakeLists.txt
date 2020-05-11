@@ -86,6 +86,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/simple-device.hh
   include/hpp/pinocchio/util.hh
   include/hpp/pinocchio/pool.hh
+  include/hpp/pinocchio/serialization.hh
 
   include/hpp/pinocchio/liegroup.hh
   include/hpp/pinocchio/liegroup-element.hh

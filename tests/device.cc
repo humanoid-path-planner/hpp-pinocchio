@@ -18,6 +18,10 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <sstream>
+#include <boost/archive/polymorphic_xml_iarchive.hpp>
+#include <boost/archive/polymorphic_xml_oarchive.hpp>
+
 #include <pinocchio/fwd.hpp>
 #include <hpp/pinocchio/fwd.hh>
 #include <hpp/pinocchio/joint-collection.hh>
@@ -31,6 +35,7 @@
 #include <hpp/pinocchio/urdf/util.hh>
 #include <hpp/pinocchio/liegroup-space.hh>
 #include <hpp/pinocchio/configuration.hh>
+#include <hpp/pinocchio/serialization.hh>
 static bool verbose = true;
 
 using namespace hpp::pinocchio;
@@ -141,3 +146,34 @@ BOOST_AUTO_TEST_CASE(load_neutral_configuration)
       */
 }
 
+struct iarchive :
+  boost::archive::polymorphic_xml_iarchive, hpp::serialization::archive_device_wrapper
+{
+  iarchive(std::istream& is) : boost::archive::polymorphic_xml_iarchive (is) {}
+};
+
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  DevicePtr_t device = unittest::makeDevice (unittest::HumanoidSimple);
+  JointPtr_t joint = Joint::create (device, 1);
+
+  std::stringstream ss;
+  {
+    boost::archive::polymorphic_xml_oarchive oa(ss);
+    oa << boost::serialization::make_nvp("device", device);
+    oa << boost::serialization::make_nvp("joint", joint);
+  }
+
+  DevicePtr_t device2;
+  JointPtr_t joint2;
+  {
+    iarchive ia(ss);
+    ia.device = device;
+    //boost::archive::polymorphic_xml_iarchive ia(ss);
+    ia >> boost::serialization::make_nvp("device", device2);
+    ia >> boost::serialization::make_nvp("joint", joint2);
+  }
+
+  BOOST_CHECK(device == device2);
+  BOOST_CHECK(joint2->robot() == device2);
+}

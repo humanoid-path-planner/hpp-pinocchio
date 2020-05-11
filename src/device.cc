@@ -20,7 +20,11 @@
 #include <hpp/pinocchio/device.hh>
 
 #include <boost/foreach.hpp>
+#include <boost/serialization/export.hpp>
+
 #include <Eigen/Core>
+
+#include <hpp/util/serialization.hh>
 
 #include <hpp/fcl/BV/AABB.h>
 #include <hpp/fcl/BVH/BVH_model.h>
@@ -29,6 +33,7 @@
 #include <pinocchio/algorithm/joint-configuration.hpp> // ::pinocchio::details::Dispatch
 #include <pinocchio/multibody/geometry.hpp>
 #include <pinocchio/multibody/model.hpp>
+#include <pinocchio/serialization/model.hpp>
 
 #include <hpp/pinocchio/fwd.hh>
 #include <hpp/pinocchio/joint-collection.hh>
@@ -40,6 +45,10 @@
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/liegroup.hh>
 #include <hpp/pinocchio/liegroup-space.hh>
+#include <hpp/pinocchio/serialization.hh>
+
+// Needed to allow inheritance.
+BOOST_CLASS_EXPORT(hpp::pinocchio::Device)
 
 namespace hpp {
   namespace pinocchio {
@@ -523,5 +532,84 @@ namespace hpp {
         }
       }
     }
+
+#if __cplusplus > 201103L
+    using boost::serialization::make_nvp;
+
+    template<typename To, typename Ti, typename UnaryOp>
+    inline std::vector<To> serialize_to (const std::vector<Ti>& in, UnaryOp op)
+    {
+      std::vector<To> out;
+      out.reserve(in.size());
+      std::transform(in.begin(), in.end(), out.begin(), op);
+      return out;
+    }
+
+    template<class Archive>
+    void Device::save(Archive & ar, const unsigned int version) const
+    {
+      (void) version;
+      ar & BOOST_SERIALIZATION_NVP(name_);
+      /*
+      // AbstractDevice
+      ar & BOOST_SERIALIZATION_NVP(model_);
+      //ar & BOOST_SERIALIZATION_NVP(geomModel_);
+
+      // Device
+      ar & BOOST_SERIALIZATION_NVP(name_);
+      // - grippers_
+      ar & make_nvp("grippers", serialize_to<FrameIndex>(grippers_,
+            [](const GripperPtr_t& g) -> FrameIndex { return g->frameIndex(); })
+          );
+      ar & BOOST_SERIALIZATION_NVP(jointConstraints_);
+      ar & BOOST_SERIALIZATION_NVP(weakPtr_);
+
+      ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.dimension_);
+      ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.lowerBounds_);
+      ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.upperBounds_);
+
+      ar & serialization::make_nvp("nbDeviceData", datas_.size());
+      */
+    }
+
+    template<class Archive>
+    void Device::load(Archive & ar, const unsigned int version)
+    {
+      using hpp::serialization::archive_device_wrapper;
+      archive_device_wrapper* adw = dynamic_cast<archive_device_wrapper*>(&ar);
+      if (!adw) throw std::logic_error("Not implemented.");
+      (void) version;
+      ar & BOOST_SERIALIZATION_NVP(name_);
+      // TODO if (adw->device->name() != name_) ?
+    }
+#else
+    template<class Archive>
+    void Device::save(Archive &, const unsigned int) const
+    {
+      throw std::logic_error("Not implemented without C++ 11.");
+    }
+
+    template<class Archive>
+    void Device::load(Archive &, const unsigned int)
+    {
+      throw std::logic_error("Not implemented without C++ 11.");
+    }
+#endif
+
+    HPP_SERIALIZATION_SPLIT_IMPLEMENT(Device);
   } // namespace pinocchio
 } // namespace hpp
+
+namespace boost {
+namespace serialization {
+template<class Archive>
+void serialize (Archive & ar, hpp::pinocchio::Device::JointLinearConstraint& c, const unsigned int version)
+{
+  (void) version;
+  ar & make_nvp("offset", c.offset);
+  ar & make_nvp("multiplier", c.multiplier);
+  ar & make_nvp("joint", c.joint);
+  ar & make_nvp("reference", c.reference);
+}
+}
+}
