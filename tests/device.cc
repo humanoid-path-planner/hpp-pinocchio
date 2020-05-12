@@ -154,7 +154,7 @@ struct iarchive :
 
 BOOST_AUTO_TEST_CASE(serialization)
 {
-  DevicePtr_t device = unittest::makeDevice (unittest::HumanoidSimple);
+  DevicePtr_t device = unittest::makeDevice (unittest::HumanoidRomeo);
   JointPtr_t joint = Joint::create (device, 1);
 
   std::stringstream ss;

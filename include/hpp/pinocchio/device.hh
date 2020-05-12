@@ -341,7 +341,9 @@ namespace hpp {
     private:
       Pool<DeviceData> datas_;
 
+    protected:
       Device() {}
+    private:
       HPP_SERIALIZABLE_SPLIT();
     }; // class Device
 

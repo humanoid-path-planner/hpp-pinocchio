@@ -122,6 +122,9 @@ namespace hpp {
       JointPtr_t gazeJoint_;
       vector3_t gazeOrigin_;
       vector3_t gazeDirection_;
+
+      HumanoidRobot () {}
+      HPP_SERIALIZABLE();
     }; // class HumanoidRobot
   } // namespace pinocchio
 } // namespace hpp

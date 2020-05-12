@@ -47,9 +47,6 @@
 #include <hpp/pinocchio/liegroup-space.hh>
 #include <hpp/pinocchio/serialization.hh>
 
-// Needed to allow inheritance.
-BOOST_CLASS_EXPORT(hpp::pinocchio::Device)
-
 namespace hpp {
   namespace pinocchio {
     const ::pinocchio::FrameType all_joint_type =
@@ -535,6 +532,7 @@ namespace hpp {
 
 #if __cplusplus > 201103L
     using boost::serialization::make_nvp;
+    using hpp::serialization::archive_device_wrapper;
 
     template<typename To, typename Ti, typename UnaryOp>
     inline std::vector<To> serialize_to (const std::vector<Ti>& in, UnaryOp op)
@@ -549,38 +547,79 @@ namespace hpp {
     void Device::save(Archive & ar, const unsigned int version) const
     {
       (void) version;
+
+      archive_device_wrapper* adw = dynamic_cast<archive_device_wrapper*>(&ar);
       ar & BOOST_SERIALIZATION_NVP(name_);
-      /*
-      // AbstractDevice
-      ar & BOOST_SERIALIZATION_NVP(model_);
-      //ar & BOOST_SERIALIZATION_NVP(geomModel_);
+      bool written = (adw != NULL);
+      ar & BOOST_SERIALIZATION_NVP(written);
+      if (written) {
+        // AbstractDevice
+        ar & BOOST_SERIALIZATION_NVP(model_);
+        //ar & BOOST_SERIALIZATION_NVP(geomModel_);
 
-      // Device
-      ar & BOOST_SERIALIZATION_NVP(name_);
-      // - grippers_
-      ar & make_nvp("grippers", serialize_to<FrameIndex>(grippers_,
-            [](const GripperPtr_t& g) -> FrameIndex { return g->frameIndex(); })
-          );
-      ar & BOOST_SERIALIZATION_NVP(jointConstraints_);
-      ar & BOOST_SERIALIZATION_NVP(weakPtr_);
+        // Device
+        ar & BOOST_SERIALIZATION_NVP(name_);
+        // - grippers_
+        std::vector<FrameIndex> grippers;
+        std::transform(grippers_.begin(), grippers_.end(), grippers.begin(),
+            [](const GripperPtr_t& g) -> FrameIndex { return g->frameId(); });
+        ar & BOOST_SERIALIZATION_NVP(grippers);
+        ar & BOOST_SERIALIZATION_NVP(jointConstraints_);
+        ar & BOOST_SERIALIZATION_NVP(weakPtr_);
 
-      ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.dimension_);
-      ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.lowerBounds_);
-      ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.upperBounds_);
+        ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.dimension_);
+        ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.lowerBounds_);
+        ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.upperBounds_);
 
-      ar & serialization::make_nvp("nbDeviceData", datas_.size());
-      */
+        size_type nbDeviceData = numberDeviceData();
+        ar & BOOST_SERIALIZATION_NVP(nbDeviceData);
+      }
     }
 
     template<class Archive>
     void Device::load(Archive & ar, const unsigned int version)
     {
-      using hpp::serialization::archive_device_wrapper;
-      archive_device_wrapper* adw = dynamic_cast<archive_device_wrapper*>(&ar);
-      if (!adw) throw std::logic_error("Not implemented.");
       (void) version;
       ar & BOOST_SERIALIZATION_NVP(name_);
-      // TODO if (adw->device->name() != name_) ?
+      bool written;
+      ar & BOOST_SERIALIZATION_NVP(written);
+
+      archive_device_wrapper* adw = dynamic_cast<archive_device_wrapper*>(&ar);
+      if (written) {
+        // AbstractDevice
+        ar & BOOST_SERIALIZATION_NVP(model_);
+        //ar & BOOST_SERIALIZATION_NVP(geomModel_);
+
+        // Device
+        ar & BOOST_SERIALIZATION_NVP(name_);
+        // - grippers_
+        std::vector<FrameIndex> grippers;
+        ar & BOOST_SERIALIZATION_NVP(grippers);
+        ar & BOOST_SERIALIZATION_NVP(jointConstraints_);
+        ar & BOOST_SERIALIZATION_NVP(weakPtr_);
+
+        ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.dimension_);
+        ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.lowerBounds_);
+        ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.upperBounds_);
+
+        size_type nbDeviceData;
+        ar & BOOST_SERIALIZATION_NVP(nbDeviceData);
+
+        if (!adw) { // if archive_device_wrapper, then this device will be
+          // thrown away. No need to initialize it cleanly.
+          grippers_.reserve(grippers.size());
+          std::transform(grippers.begin(), grippers.end(), grippers_.begin(),
+              [this](FrameIndex i) -> GripperPtr_t {
+              return Gripper::create (model_->frames[i].name, weakPtr_);
+              });
+          createData();
+          createGeomData();
+          numberDeviceData(nbDeviceData);
+        }
+      } else if (!adw) // && !written
+        throw std::logic_error("This archive does not contain a valid Device "
+            "and the archive is not of type archive_device_wrapper.");
+      // else TODO if (adw->device->name() != name_) ?
     }
 #else
     template<class Archive>
