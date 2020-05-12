@@ -51,6 +51,7 @@ ADD_TESTCASE(urdf)
 ADD_TESTCASE(liegroup-element)
 ADD_TESTCASE(print)
 ADD_TESTCASE(joint-bounds)
+ADD_TESTCASE(serialization)
 
 FIND_PACKAGE(OpenMP)
 IF(OPENMP_FOUND)
