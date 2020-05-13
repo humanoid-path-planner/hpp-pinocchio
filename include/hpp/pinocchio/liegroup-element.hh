@@ -228,15 +228,6 @@ namespace hpp {
   } // namespace pinocchio
 } // namespace hpp
 
-namespace boost {
-namespace serialization {
-template<class Archive>
-void load (Archive & ar, hpp::pinocchio::LiegroupElement& c, const unsigned int version);
-template<class Archive>
-void save (Archive & ar, const hpp::pinocchio::LiegroupElement& c, const unsigned int version);
-template<class Archive>
-void serialize(Archive & ar, hpp::pinocchio::LiegroupElement& c, const unsigned int file_version);
-} // namespace serialization
-} // namespace boost
+HPP_SERIALIZABLE_SPLIT_FREE(hpp::pinocchio::LiegroupElement)
 
 #endif // HPP_PINOCCHIO_LIEGROUP_ELEMENT_HH

@@ -133,22 +133,7 @@ void save (Archive & ar, const hpp::pinocchio::LiegroupElement& c, const unsigne
   ar & make_nvp("space", c.space());
   ar & make_nvp("vector", c.vector());
 }
-template<class Archive>
-void serialize(Archive & ar, hpp::pinocchio::LiegroupElement& c, const unsigned int file_version)
-{
-  split_free(ar, c, file_version);
-}
-
-using archive::polymorphic_iarchive;
-using archive::polymorphic_oarchive;
-template void load <polymorphic_iarchive> (polymorphic_iarchive & ar,
-    hpp::pinocchio::LiegroupElement& c, const unsigned int version);
-template void save <polymorphic_oarchive> (polymorphic_oarchive & ar,
-    const hpp::pinocchio::LiegroupElement& c, const unsigned int version);
-
-template void serialize <polymorphic_iarchive> (polymorphic_iarchive & ar,
-    hpp::pinocchio::LiegroupElement& c, const unsigned int version);
-template void serialize <polymorphic_oarchive> (polymorphic_oarchive & ar,
-    hpp::pinocchio::LiegroupElement& c, const unsigned int version);
 } // namespace serialization
 } // namespace boost
+
+HPP_SERIALIZATION_SPLIT_FREE_IMPLEMENT(hpp::pinocchio::LiegroupElement)
