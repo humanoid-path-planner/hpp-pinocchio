@@ -514,6 +514,7 @@ namespace hpp {
     void replaceGeometryByConvexHull (GeomModel& gmodel,
         const std::vector<std::string>& gnames)
     {
+#if HPP_FCL_VERSION_AT_LEAST(1,4,5)
       for (std::size_t i = 0; i < gnames.size(); ++i) {
         if (!gmodel.existGeometryName(gnames[i]))
           throw std::invalid_argument("Geometry " + gnames[i] + " does not "
@@ -528,6 +529,10 @@ namespace hpp {
           go.geometry = bvh->convex;
         }
       }
+#else
+      throw std::logic_error("hpp-fcl version is below 1.4.5 does not support "
+          "the generation of convex hulls.");
+#endif
     }
 
 #if __cplusplus > 201103L
