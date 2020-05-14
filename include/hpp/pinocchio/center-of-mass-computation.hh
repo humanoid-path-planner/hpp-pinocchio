@@ -21,6 +21,8 @@
 
 # include <pinocchio/multibody/data.hpp> // ::pinocchio::Data
 
+# include <hpp/util/serialization-fwd.hh>
+
 # include <hpp/pinocchio/fwd.hh>
 # include <hpp/pinocchio/device.hh>
 
@@ -103,6 +105,9 @@ namespace hpp {
         DevicePtr_t robot_;
         // Root of the subtrees
         JointRootIndexes_t roots_;
+
+        CenterOfMassComputation() {}
+        HPP_SERIALIZABLE();
     }; // class CenterOfMassComputation
   }  // namespace pinocchio
 }  // namespace hpp

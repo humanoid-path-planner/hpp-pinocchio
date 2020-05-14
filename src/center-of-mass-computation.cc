@@ -18,15 +18,18 @@
 
 #include <algorithm>
 #include <boost/foreach.hpp>
+#include <boost/serialization/vector.hpp>
 
 #include <pinocchio/algorithm/center-of-mass.hpp>
 #include <pinocchio/algorithm/copy.hpp>
 
 #include <hpp/util/exception-factory.hh>
+#include <hpp/util/serialization.hh>
 
 #include "hpp/pinocchio/joint.hh"
 #include <hpp/pinocchio/joint-collection.hh>
 #include "hpp/pinocchio/device.hh"
+#include "hpp/pinocchio/serialization.hh"
 
 namespace hpp {
   namespace pinocchio {
@@ -169,5 +172,15 @@ namespace hpp {
 
     CenterOfMassComputation::~CenterOfMassComputation ()
     {}
+
+    template<class Archive>
+    void CenterOfMassComputation::serialize(Archive & ar, const unsigned int version)
+    {
+      (void) version;
+      ar & BOOST_SERIALIZATION_NVP(robot_);
+      ar & BOOST_SERIALIZATION_NVP(roots_);
+    }
+
+    HPP_SERIALIZATION_IMPLEMENT(CenterOfMassComputation);
   }  //  namespace pinocchio
 }  //  namespace hpp
