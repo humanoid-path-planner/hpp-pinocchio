@@ -31,7 +31,7 @@ inline void load(Archive & ar,
 {
   (void) version;
   if (Size == Eigen::Dynamic) {
-    ::pinocchio::Index size;
+    int size;
     ar & make_nvp("size", size);
     lg = hpp::pinocchio::liegroup::VectorSpaceOperation<Size,rot> (size);
   }
@@ -44,7 +44,7 @@ inline void save(Archive & ar,
 {
   (void) version;
   if (Size == Eigen::Dynamic) {
-    ::pinocchio::Index size (lg.nq());
+    int size = static_cast<int>(lg.nq());
     ar & make_nvp("size", size);
   }
 }
@@ -63,8 +63,14 @@ inline void serialize(Archive & ar,
     const unsigned int version)
 {
   (void) version;
-  ar & make_nvp("lg1_", lg.lg1_);
-  ar & make_nvp("lg2_", lg.lg2_);
+#if PINOCCHIO_VERSION_AT_LEAST(2,4,5)
+  ar & make_nvp("lg1", lg.lg1);
+  ar & make_nvp("lg2", lg.lg2);
+#else
+  (void) ar; (void) lg;
+  throw std::logic_error("Pinocchio version is too low for serializing "
+      "hpp::pinocchio::liegroup::CartesianProductOperation");
+#endif
 }
 
 template<class Archive, int N>
