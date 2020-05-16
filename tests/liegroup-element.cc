@@ -291,10 +291,9 @@ BOOST_AUTO_TEST_CASE (log_)
   BOOST_CHECK ((hpp::pinocchio::log(e).isZero(1e-10)));
 }
 
-BOOST_AUTO_TEST_CASE (serialization)
+void test_serialization(LiegroupSpacePtr_t space)
 {
-  LiegroupSpacePtr_t R6xSO3 (LiegroupSpace::R3 () * LiegroupSpace::R3xSO3 ());
-  LiegroupElement e (R6xSO3); e.setNeutral ();
+  LiegroupElement e (space); e.setNeutral ();
 
   std::stringstream ss;
   {
@@ -310,4 +309,20 @@ BOOST_AUTO_TEST_CASE (serialization)
 
   BOOST_CHECK_EQUAL(*e.space(), *e2.space());
   BOOST_CHECK(e.vector() == e2.vector());
+}
+
+BOOST_AUTO_TEST_CASE (serialization)
+{
+  test_serialization(LiegroupSpace::R1());
+  test_serialization(LiegroupSpace::R2());
+  test_serialization(LiegroupSpace::R3());
+  test_serialization(LiegroupSpace::Rn(4));
+  test_serialization(LiegroupSpace::SO2());
+  test_serialization(LiegroupSpace::SO3());
+  test_serialization(LiegroupSpace::SE2());
+  test_serialization(LiegroupSpace::SE3());
+  test_serialization(LiegroupSpace::R2xSO2());
+  test_serialization(LiegroupSpace::R3xSO3());
+  test_serialization(LiegroupSpace::R3() * LiegroupSpace::R3xSO3());
+  test_serialization(LiegroupSpace::R3() * LiegroupSpace::R3xSO3());
 }

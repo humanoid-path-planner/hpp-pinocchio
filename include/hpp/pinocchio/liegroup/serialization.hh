@@ -24,37 +24,21 @@
 
 namespace boost {
 namespace serialization {
-template<class Archive, int Size, bool rot>
-inline void load(Archive & ar,
-    hpp::pinocchio::liegroup::VectorSpaceOperation<Size,rot>& lg,
-    const unsigned int version)
-{
-  (void) version;
-  if (Size == Eigen::Dynamic) {
-    int size;
-    ar & make_nvp("size", size);
-    lg = hpp::pinocchio::liegroup::VectorSpaceOperation<Size,rot> (size);
-  }
-}
-
-template<class Archive, int Size, bool rot>
-inline void save(Archive & ar,
-    const hpp::pinocchio::liegroup::VectorSpaceOperation<Size,rot>& lg,
-    const unsigned int version)
-{
-  (void) version;
-  if (Size == Eigen::Dynamic) {
-    int size = static_cast<int>(lg.nq());
-    ar & make_nvp("size", size);
-  }
-}
 
 template<class Archive, int Size, bool rot>
 inline void serialize(Archive & ar,
     hpp::pinocchio::liegroup::VectorSpaceOperation<Size,rot>& lg,
     const unsigned int version)
 {
-  split_free(ar, lg, version);
+  (void) version;
+  if (Size == Eigen::Dynamic) {
+    int size = static_cast<int>(lg.nq());
+    ar & make_nvp("size", size);
+    if (!Archive::is_saving::value) {
+      // TODO VectorSpaceOperation should provide a resize operation.
+      lg = hpp::pinocchio::liegroup::VectorSpaceOperation<Size,rot>(size);
+    }
+  }
 }
 
 template<class Archive, typename LieGroup1, typename LieGroup2>
