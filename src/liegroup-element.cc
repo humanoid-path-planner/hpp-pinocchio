@@ -15,6 +15,14 @@
 // hpp-pinocchio. If not, see <http://www.gnu.org/licenses/>.
 
 #include <hpp/pinocchio/liegroup-element.hh>
+
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/split_free.hpp>
+
+#include <hpp/util/serialization.hh>
+
+#include <pinocchio/serialization/eigen.hpp>
+
 #include "../src/size-visitor.hh"
 #include "../src/addition-visitor.hh"
 #include "../src/substraction-visitor.hh"
@@ -105,3 +113,27 @@ namespace hpp {
     template vector_t log (const LiegroupElementConstBase<vectorOut_t>& lge);
   } // namespace pinocchio
 } // namespace hpp
+
+namespace boost {
+namespace serialization {
+template<class Archive>
+void load (Archive & ar, hpp::pinocchio::LiegroupElement& c, const unsigned int version)
+{
+  (void) version;
+  hpp::pinocchio::LiegroupSpacePtr_t space;
+  hpp::pinocchio::vector_t vector;
+  ar & make_nvp("space", space);
+  ar & make_nvp("vector", vector);
+  c = hpp::pinocchio::LiegroupElement(vector, space);
+}
+template<class Archive>
+void save (Archive & ar, const hpp::pinocchio::LiegroupElement& c, const unsigned int version)
+{
+  (void) version;
+  ar & make_nvp("space", c.space());
+  ar & make_nvp("vector", c.vector());
+}
+} // namespace serialization
+} // namespace boost
+
+HPP_SERIALIZATION_SPLIT_FREE_IMPLEMENT(hpp::pinocchio::LiegroupElement)

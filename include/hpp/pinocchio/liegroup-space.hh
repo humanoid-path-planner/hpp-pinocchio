@@ -21,6 +21,7 @@
 # include <string>
 # include <pinocchio/fwd.hpp>
 # include <boost/variant.hpp>
+# include <hpp/util/serialization-fwd.hh>
 # include <pinocchio/multibody/liegroup/special-euclidean.hpp>
 # include <pinocchio/multibody/liegroup/special-orthogonal.hpp>
 # include <pinocchio/multibody/liegroup/vector-space.hpp>
@@ -309,6 +310,8 @@ namespace hpp {
       vector_t neutral_;
       /// weak pointer to itself
       LiegroupSpaceWkPtr_t weak_;
+
+      HPP_SERIALIZABLE();
     }; // class LiegroupSpace
     /// Writing in a stream
     inline std::ostream& operator<< (std::ostream& os,

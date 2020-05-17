@@ -228,4 +228,6 @@ namespace hpp {
   } // namespace pinocchio
 } // namespace hpp
 
+HPP_SERIALIZABLE_SPLIT_FREE(hpp::pinocchio::LiegroupElement)
+
 #endif // HPP_PINOCCHIO_LIEGROUP_ELEMENT_HH

@@ -20,7 +20,11 @@
 #include <hpp/pinocchio/device.hh>
 
 #include <boost/foreach.hpp>
+#include <boost/serialization/export.hpp>
+
 #include <Eigen/Core>
+
+#include <hpp/util/serialization.hh>
 
 #include <hpp/fcl/BV/AABB.h>
 #include <hpp/fcl/BVH/BVH_model.h>
@@ -29,6 +33,7 @@
 #include <pinocchio/algorithm/joint-configuration.hpp> // ::pinocchio::details::Dispatch
 #include <pinocchio/multibody/geometry.hpp>
 #include <pinocchio/multibody/model.hpp>
+#include <pinocchio/serialization/model.hpp>
 
 #include <hpp/pinocchio/fwd.hh>
 #include <hpp/pinocchio/joint-collection.hh>
@@ -40,6 +45,7 @@
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/liegroup.hh>
 #include <hpp/pinocchio/liegroup-space.hh>
+#include <hpp/pinocchio/serialization.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -508,6 +514,7 @@ namespace hpp {
     void replaceGeometryByConvexHull (GeomModel& gmodel,
         const std::vector<std::string>& gnames)
     {
+#if HPP_FCL_VERSION_AT_LEAST(1,4,5)
       for (std::size_t i = 0; i < gnames.size(); ++i) {
         if (!gmodel.existGeometryName(gnames[i]))
           throw std::invalid_argument("Geometry " + gnames[i] + " does not "
@@ -522,6 +529,131 @@ namespace hpp {
           go.geometry = bvh->convex;
         }
       }
+#else
+      throw std::logic_error("hpp-fcl version is below 1.4.5 does not support "
+          "the generation of convex hulls.");
+#endif
     }
+
+#if __cplusplus > 201103L
+    using boost::serialization::make_nvp;
+    using hpp::serialization::archive_device_wrapper;
+
+    template<typename To, typename Ti, typename UnaryOp>
+    inline std::vector<To> serialize_to (const std::vector<Ti>& in, UnaryOp op)
+    {
+      std::vector<To> out;
+      out.reserve(in.size());
+      std::transform(in.begin(), in.end(), out.begin(), op);
+      return out;
+    }
+
+    template<class Archive>
+    void Device::save(Archive & ar, const unsigned int version) const
+    {
+      (void) version;
+
+      archive_device_wrapper* adw = dynamic_cast<archive_device_wrapper*>(&ar);
+      ar & BOOST_SERIALIZATION_NVP(name_);
+      bool written = (adw != NULL);
+      ar & BOOST_SERIALIZATION_NVP(written);
+      if (written) {
+        // AbstractDevice
+        ar & BOOST_SERIALIZATION_NVP(model_);
+        //ar & BOOST_SERIALIZATION_NVP(geomModel_);
+
+        // Device
+        ar & BOOST_SERIALIZATION_NVP(name_);
+        // - grippers_
+        std::vector<FrameIndex> grippers;
+        std::transform(grippers_.begin(), grippers_.end(), grippers.begin(),
+            [](const GripperPtr_t& g) -> FrameIndex { return g->frameId(); });
+        ar & BOOST_SERIALIZATION_NVP(grippers);
+        ar & BOOST_SERIALIZATION_NVP(jointConstraints_);
+        ar & BOOST_SERIALIZATION_NVP(weakPtr_);
+
+        ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.dimension_);
+        ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.lowerBounds_);
+        ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.upperBounds_);
+
+        size_type nbDeviceData = numberDeviceData();
+        ar & BOOST_SERIALIZATION_NVP(nbDeviceData);
+      }
+    }
+
+    template<class Archive>
+    void Device::load(Archive & ar, const unsigned int version)
+    {
+      (void) version;
+      ar & BOOST_SERIALIZATION_NVP(name_);
+      bool written;
+      ar & BOOST_SERIALIZATION_NVP(written);
+
+      archive_device_wrapper* adw = dynamic_cast<archive_device_wrapper*>(&ar);
+      if (written) {
+        // AbstractDevice
+        ar & BOOST_SERIALIZATION_NVP(model_);
+        //ar & BOOST_SERIALIZATION_NVP(geomModel_);
+
+        // Device
+        ar & BOOST_SERIALIZATION_NVP(name_);
+        // - grippers_
+        std::vector<FrameIndex> grippers;
+        ar & BOOST_SERIALIZATION_NVP(grippers);
+        ar & BOOST_SERIALIZATION_NVP(jointConstraints_);
+        ar & BOOST_SERIALIZATION_NVP(weakPtr_);
+
+        ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.dimension_);
+        ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.lowerBounds_);
+        ar & BOOST_SERIALIZATION_NVP(extraConfigSpace_.upperBounds_);
+
+        size_type nbDeviceData;
+        ar & BOOST_SERIALIZATION_NVP(nbDeviceData);
+
+        if (!adw) { // if archive_device_wrapper, then this device will be
+          // thrown away. No need to initialize it cleanly.
+          grippers_.reserve(grippers.size());
+          std::transform(grippers.begin(), grippers.end(), grippers_.begin(),
+              [this](FrameIndex i) -> GripperPtr_t {
+              return Gripper::create (model_->frames[i].name, weakPtr_);
+              });
+          createData();
+          createGeomData();
+          numberDeviceData(nbDeviceData);
+        }
+      } else if (!adw) // && !written
+        throw std::logic_error("This archive does not contain a valid Device "
+            "and the archive is not of type archive_device_wrapper.");
+      // else TODO if (adw->device->name() != name_) ?
+    }
+#else
+    template<class Archive>
+    void Device::save(Archive &, const unsigned int) const
+    {
+      throw std::logic_error("Not implemented without C++ 11.");
+    }
+
+    template<class Archive>
+    void Device::load(Archive &, const unsigned int)
+    {
+      throw std::logic_error("Not implemented without C++ 11.");
+    }
+#endif
+
+    HPP_SERIALIZATION_SPLIT_IMPLEMENT(Device);
   } // namespace pinocchio
 } // namespace hpp
+
+namespace boost {
+namespace serialization {
+template<class Archive>
+void serialize (Archive & ar, hpp::pinocchio::Device::JointLinearConstraint& c, const unsigned int version)
+{
+  (void) version;
+  ar & make_nvp("offset", c.offset);
+  ar & make_nvp("multiplier", c.multiplier);
+  ar & make_nvp("joint", c.joint);
+  ar & make_nvp("reference", c.reference);
+}
+}
+}

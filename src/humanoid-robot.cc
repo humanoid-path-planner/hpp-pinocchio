@@ -19,7 +19,12 @@
 
 #include <hpp/pinocchio/humanoid-robot.hh>
 
+#include <pinocchio/serialization/eigen.hpp>
+
+#include <hpp/util/serialization.hh>
+
 #include <hpp/pinocchio/joint.hh>
+#include <hpp/pinocchio/serialization.hh>
 
 namespace hpp {
   namespace pinocchio {
@@ -181,5 +186,32 @@ namespace hpp {
 	gazeJoint_ = joint;
       }
 
+      template<class Archive>
+      void HumanoidRobot::serialize(Archive & ar, const unsigned int version)
+      {
+        using hpp::serialization::archive_device_wrapper;
+
+        (void) version;
+        ar & boost::serialization::make_nvp("base", boost::serialization::base_object<Device>(*this));
+        archive_device_wrapper* adw = dynamic_cast<archive_device_wrapper*>(&ar);
+        bool written = (adw != NULL);
+        ar & BOOST_SERIALIZATION_NVP(written);
+        if (written) {
+          ar & BOOST_SERIALIZATION_NVP(weakPtr_);
+          ar & BOOST_SERIALIZATION_NVP(waist_);
+          ar & BOOST_SERIALIZATION_NVP(chest_);
+          ar & BOOST_SERIALIZATION_NVP(leftWrist_);
+          ar & BOOST_SERIALIZATION_NVP(rightWrist_);
+          ar & BOOST_SERIALIZATION_NVP(leftAnkle_);
+          ar & BOOST_SERIALIZATION_NVP(rightAnkle_);
+          ar & BOOST_SERIALIZATION_NVP(gazeJoint_);
+          ar & BOOST_SERIALIZATION_NVP(gazeOrigin_);
+          ar & BOOST_SERIALIZATION_NVP(gazeDirection_);
+        }
+      }
+
+      HPP_SERIALIZATION_IMPLEMENT(HumanoidRobot);
   } // namespace pinocchio
 } // namespace hpp
+
+BOOST_CLASS_EXPORT(hpp::pinocchio::HumanoidRobot)

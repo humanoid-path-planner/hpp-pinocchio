@@ -20,7 +20,11 @@
 # include <hpp/pinocchio/joint.hh>
 
 # include <limits>
+# include <boost/serialization/vector.hpp>
+
 # include <pinocchio/algorithm/jacobian.hpp>
+
+# include <hpp/util/serialization.hh>
 
 # include <hpp/pinocchio/device.hh>
 # include <hpp/pinocchio/device-data.hh>
@@ -28,6 +32,7 @@
 # include <hpp/pinocchio/frame.hh>
 # include <hpp/pinocchio/liegroup-space.hh>
 # include <hpp/pinocchio/joint-collection.hh>
+# include <hpp/pinocchio/serialization.hh>
 
 # include "joint/bound.hh"
 
@@ -539,5 +544,17 @@ namespace hpp {
     {
       return devicePtr.lock()->d();
     }
+
+    template<class Archive>
+    void Joint::serialize(Archive & ar, const unsigned int version)
+    {
+      (void) version;
+      ar & BOOST_SERIALIZATION_NVP(maximalDistanceToParent_);
+      ar & BOOST_SERIALIZATION_NVP(devicePtr);
+      ar & BOOST_SERIALIZATION_NVP(jointIndex);
+      ar & BOOST_SERIALIZATION_NVP(children);
+    }
+
+    HPP_SERIALIZATION_IMPLEMENT(Joint);
   } // namespace pinocchio
 } // namespace hpp

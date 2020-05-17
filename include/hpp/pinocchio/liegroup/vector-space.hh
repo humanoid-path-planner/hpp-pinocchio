@@ -58,7 +58,7 @@ namespace hpp {
         /// Constructor
         /// \param size size of the vector space: should be the equal to
         ///        template argument for static sized vector-spaces.
-        VectorSpaceOperation (int size = Size) : Base (size)
+        VectorSpaceOperation (int size = boost::static_signed_max<0,Size>::value) : Base (size)
         {
         }
 
