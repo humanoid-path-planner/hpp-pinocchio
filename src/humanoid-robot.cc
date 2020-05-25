@@ -19,6 +19,8 @@
 
 #include <hpp/pinocchio/humanoid-robot.hh>
 
+#include <boost/serialization/weak_ptr.hpp>
+
 #include <pinocchio/serialization/eigen.hpp>
 
 #include <hpp/util/serialization.hh>
