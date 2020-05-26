@@ -20,8 +20,8 @@
 
 #include <sstream>
 #include <fstream>
-#include <boost/archive/polymorphic_xml_iarchive.hpp>
-#include <boost/archive/polymorphic_xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
 
 #include <pinocchio/fwd.hpp>
 #include <hpp/pinocchio/fwd.hh>

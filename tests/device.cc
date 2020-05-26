@@ -19,8 +19,8 @@
 #include <boost/test/unit_test.hpp>
 
 #include <sstream>
-#include <boost/archive/polymorphic_xml_iarchive.hpp>
-#include <boost/archive/polymorphic_xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
 
 #include <pinocchio/fwd.hpp>
 #include <hpp/pinocchio/fwd.hh>
@@ -147,9 +147,9 @@ BOOST_AUTO_TEST_CASE(load_neutral_configuration)
 }
 
 struct iarchive :
-  boost::archive::polymorphic_xml_iarchive, hpp::serialization::archive_device_wrapper
+  boost::archive::xml_iarchive, hpp::serialization::archive_device_wrapper
 {
-  iarchive(std::istream& is) : boost::archive::polymorphic_xml_iarchive (is) {}
+  iarchive(std::istream& is) : boost::archive::xml_iarchive (is) {}
 };
 
 BOOST_AUTO_TEST_CASE(serialization)
@@ -159,7 +159,7 @@ BOOST_AUTO_TEST_CASE(serialization)
 
   std::stringstream ss;
   {
-    boost::archive::polymorphic_xml_oarchive oa(ss);
+    boost::archive::xml_oarchive oa(ss);
     oa << boost::serialization::make_nvp("device", device);
     oa << boost::serialization::make_nvp("joint", joint);
   }
@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE(serialization)
   {
     iarchive ia(ss);
     ia.device = device;
-    //boost::archive::polymorphic_xml_iarchive ia(ss);
+    //boost::archive::xml_iarchive ia(ss);
     ia >> boost::serialization::make_nvp("device", device2);
     ia >> boost::serialization::make_nvp("joint", joint2);
   }

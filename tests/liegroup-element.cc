@@ -22,8 +22,8 @@
 #endif
 
 #include <sstream>
-#include <boost/archive/polymorphic_xml_iarchive.hpp>
-#include <boost/archive/polymorphic_xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include <boost/assign/list_of.hpp>
@@ -297,13 +297,13 @@ void test_serialization(LiegroupSpacePtr_t space)
 
   std::stringstream ss;
   {
-    boost::archive::polymorphic_xml_oarchive oa(ss);
+    boost::archive::xml_oarchive oa(ss);
     oa << boost::serialization::make_nvp("element", e);
   }
 
   LiegroupElement e2;
   {
-    boost::archive::polymorphic_xml_iarchive ia(ss);
+    boost::archive::xml_iarchive ia(ss);
     ia >> boost::serialization::make_nvp("element", e2);
   }
 
