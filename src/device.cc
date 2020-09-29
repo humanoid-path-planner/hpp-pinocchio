@@ -535,7 +535,7 @@ namespace hpp {
 #endif
     }
 
-#if __cplusplus > 201103L
+#if __cplusplus >= 201103L
     using boost::serialization::make_nvp;
     using hpp::serialization::archive_device_wrapper;
 
