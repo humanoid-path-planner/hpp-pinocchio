@@ -84,8 +84,9 @@ namespace hpp {
       /// Returns true if this frame is the universe frame.
       bool isRootFrame () const;
 
-      const std::vector<FrameIndex>& children () const
+      const std::vector<FrameIndex>& children ()
       {
+        setChildList();
         return children_;
       }
 
