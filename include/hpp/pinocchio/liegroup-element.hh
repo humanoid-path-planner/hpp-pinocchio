@@ -85,6 +85,20 @@ namespace hpp {
         assert (value_.size () == space_->nq ());
       }
 
+      /// Equality operator
+      template <typename vector_type2>
+      bool operator==(const LiegroupElementConstBase<vector_type2>& other)
+      {
+	return ((*space_ == *(other.space_)) && (value_ == other.value_));
+      }
+
+      /// Equality operator
+      template <typename vector_type2>
+      bool operator!=(const LiegroupElementConstBase<vector_type2>& other)
+      {
+	return ((*space_ != *(other.space_)) || (value_ != other.value_));
+      }
+
     protected:
       template <typename Derived>
       LiegroupElementConstBase (const Eigen::EigenBase<Derived>& value,
