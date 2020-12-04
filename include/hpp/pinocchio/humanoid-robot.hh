@@ -111,6 +111,8 @@ namespace hpp {
 
       void initCopy (const HumanoidRobotWkPtr_t& weakPtr, const HumanoidRobot& other);
 
+      /// For serialization only
+      HumanoidRobot () {}
     private:
       HumanoidRobotWkPtr_t weakPtr_;
       JointPtr_t waist_;
@@ -123,7 +125,6 @@ namespace hpp {
       vector3_t gazeOrigin_;
       vector3_t gazeDirection_;
 
-      HumanoidRobot () {}
       HPP_SERIALIZABLE();
     }; // class HumanoidRobot
   } // namespace pinocchio
