@@ -49,7 +49,6 @@ namespace hpp {
       assert (devicePtr_.lock());
       assert (devicePtr_.lock()->modelPtr());
       assert (std::size_t(frameIndex_)<model().frames.size());
-      setChildList();
     }
 
     void Frame::selfAssert() const
@@ -123,7 +122,7 @@ namespace hpp {
     void Frame::setChildList()
     {
       selfAssert();
-      children_.clear();
+      if (!children_.empty()) return;
       if (!isFixed()) return;
       const Model& m = model();
 
@@ -176,6 +175,8 @@ namespace hpp {
     void Frame::positionInParentFrame (const Transform3f& p)
     {
       selfAssert();
+      setChildList();
+
       devicePtr_.lock()->invalidate();
       Model& m = model();
       GeomModel& geomModel = devicePtr_.lock()->geomModel();
