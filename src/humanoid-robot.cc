@@ -216,4 +216,4 @@ namespace hpp {
   } // namespace pinocchio
 } // namespace hpp
 
-BOOST_CLASS_EXPORT(hpp::pinocchio::HumanoidRobot)
+BOOST_CLASS_EXPORT_IMPLEMENT(hpp::pinocchio::HumanoidRobot)

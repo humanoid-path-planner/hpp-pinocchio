@@ -485,8 +485,6 @@ namespace hpp {
   } // namespace pinocchio
 } // namespace hpp
 
-BOOST_CLASS_EXPORT(hpp::pinocchio::LiegroupSpace)
-
 namespace boost {
   using namespace hpp::pinocchio;
 
