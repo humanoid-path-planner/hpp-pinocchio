@@ -19,11 +19,15 @@
 #ifndef HPP_PINOCCHIO_SERIALIZATION_HH
 # define HPP_PINOCCHIO_SERIALIZATION_HH
 
+# include <set>
+# include <type_traits>
+
 # include <boost/serialization/split_free.hpp>
 # include <boost/serialization/shared_ptr.hpp>
 # include <boost/serialization/weak_ptr.hpp>
 
 # include <hpp/pinocchio/fwd.hh>
+# include <pinocchio/serialization/eigen.hpp>
 
 namespace hpp {
 namespace serialization {
@@ -88,5 +92,125 @@ inline void serialize(Archive & ar, Eigen::Array<_Scalar,_Rows,_Cols,_Options,_M
 
 } // namespace serialization
 } // namespace boost
+
+namespace hpp {
+namespace serialization {
+namespace remove_duplicate {
+template<typename Key, typename Compare = std::less<Key> >
+struct ptr_less : Compare {
+  inline bool operator() (Key const* t1, Key const* t2) { return Compare::operator() (*t1, *t2); }
+};
+
+template<typename Derived>
+struct eigen_compare {
+  bool operator() (const Eigen::DenseBase<Derived>& a,
+                   const Eigen::DenseBase<Derived>& b)
+  {
+    if (a.size() < b.size()) return true;
+    if (a.size() > b.size()) return false;
+    for(Eigen::Index i = 0; i < a.size(); ++i) {
+      if (a.derived().data()[i] < b.derived().data()[i]) return true;
+      if (a.derived().data()[i] > b.derived().data()[i]) return false;
+    }
+    return false;
+  }
+};
+
+template<typename Key, typename Compare = std::less<Key> >
+struct archive {
+  typedef Compare compare_type;
+  typedef ptr_less<Key, Compare> ptr_compare_type;
+  std::set<Key const*, ptr_compare_type > datas;
+};
+
+typedef archive<::hpp::pinocchio::vector_t, eigen_compare<::hpp::pinocchio::vector_t> > vector_archive;
+
+template<class Archive, typename Key, typename Compare = std::less<Key>>
+inline void load_or_save_no_remove_duplicate_check (Archive& ar,
+    const char* name,
+    Key& key,
+    const unsigned int version)
+{
+  (void) version;
+  Key* value = &key;
+  ar & boost::serialization::make_nvp(name, value);
+}
+
+template<class Archive, typename Key, typename Compare = std::less<Key>>
+inline void save (Archive& ar,
+    std::set<Key const*, ptr_less<Key,Compare> >& set,
+    const char* name,
+    const Key& key,
+    const unsigned int version)
+{
+  (void) version;
+  static_assert(Archive::is_saving::value, "Archive is saving");
+  auto result = set.insert(&key);
+  bool inserted = result.second;
+  Key const* k = (inserted ? &key : *result.first);
+  ar & boost::serialization::make_nvp(name, k);
+}
+
+template<class Archive, typename Key, typename Compare = std::less<Key>>
+inline void serialize (Archive& ar,
+    std::set<Key const*, ptr_less<Key,Compare> >& set,
+    const char* name,
+    Key& key,
+    const unsigned int version)
+{
+  if (Archive::is_saving::value) {
+    save(ar, set, name, key, version);
+  } else {
+    load_or_save_no_remove_duplicate_check(ar, name, key, version);
+  }
+}
+
+template <bool is_base>
+struct serialiaze_impl {
+template<typename Archive, typename Key, typename Compare = std::less<Key> >
+static inline void run (Archive& ar,
+    const char* name,
+    Key& key,
+    const unsigned int version)
+{
+  serialize(ar, static_cast<archive<Key, Compare>&>(ar).datas, name, key, version);
+}
+};
+
+template <>
+struct serialiaze_impl<false> {
+template<typename Archive, typename Key, typename Compare = std::less<Key> >
+static inline void run (Archive& ar,
+    const char* name,
+    Key& key,
+    const unsigned int version)
+{
+  load_or_save_no_remove_duplicate_check(ar, name, key, version);
+}
+};
+
+template<typename Archive, typename Key, typename Compare = std::less<Key>,
+  bool is_base = std::is_base_of<archive<Key, Compare>, Archive>::value >
+inline void serialize (Archive& ar,
+    const char* name,
+    Key& key,
+    const unsigned int version)
+{
+  serialiaze_impl<is_base>::template run<Archive, Key, Compare>(ar, name, key, version);
+}
+
+template<typename Archive>
+inline void serialize_vector (Archive& ar,
+    const char* name,
+    ::hpp::pinocchio::vector_t& key,
+    const unsigned int version)
+{
+  serialize<Archive, ::hpp::pinocchio::vector_t, vector_archive::compare_type>
+    (ar, name, key, version);
+}
+
+} // namespace remove_duplicate
+} // namespace pinocchio
+} // namespace hpp
 
 #endif // HPP_PINOCCHIO_SERIALIZATION_HH

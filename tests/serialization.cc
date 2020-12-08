@@ -48,3 +48,41 @@ BOOST_AUTO_TEST_CASE(empty_array)
 
   BOOST_CHECK_EQUAL(empty_r.size(), 0);
 }
+
+template<typename base_archive = boost::archive::xml_oarchive>
+struct oarchive :
+  base_archive, hpp::serialization::remove_duplicate::vector_archive
+{
+  oarchive(std::ostream& is) : base_archive (is) {}
+};
+
+template<typename Archive>
+void check_remove_duplicate_impl ()
+{
+  vector_t a(5), b(a);
+
+  std::stringstream ss;
+  {
+    Archive oa(ss);
+    hpp::serialization::remove_duplicate::serialize_vector(oa, "a", a, 0);
+    hpp::serialization::remove_duplicate::serialize_vector(oa, "b", b, 0);
+  }
+
+  BOOST_TEST_MESSAGE(ss.str());
+
+  vector_t a_r, b_r;
+  {
+    boost::archive::xml_iarchive ia(ss);
+    hpp::serialization::remove_duplicate::serialize_vector(ia, "a", a, 0);
+    hpp::serialization::remove_duplicate::serialize_vector(ia, "b", b, 0);
+  }
+
+  BOOST_CHECK_EQUAL(a, a_r);
+  BOOST_CHECK_EQUAL(b, b_r);
+}
+
+BOOST_AUTO_TEST_CASE(check_remove_duplicate)
+{
+  check_remove_duplicate_impl<boost::archive::xml_oarchive>();
+  check_remove_duplicate_impl<oarchive<boost::archive::xml_oarchive> >();
+}

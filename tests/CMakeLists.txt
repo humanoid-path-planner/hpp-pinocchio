@@ -50,7 +50,10 @@ ADD_TESTCASE(urdf)
 ADD_TESTCASE(liegroup-element)
 ADD_TESTCASE(print)
 ADD_TESTCASE(joint-bounds)
-ADD_TESTCASE(serialization)
+ADD_UNIT_TEST(serialization serialization.cc)
+target_link_libraries(serialization PRIVATE
+  hpp-util::hpp-util pinocchio::pinocchio Boost::thread
+  ${Boost_LIBRARIES})
 
 FIND_PACKAGE(OpenMP)
 IF(OPENMP_FOUND)
