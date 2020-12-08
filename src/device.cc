@@ -535,7 +535,6 @@ namespace hpp {
 #endif
     }
 
-#if __cplusplus >= 201103L
     using boost::serialization::make_nvp;
     using hpp::serialization::archive_device_wrapper;
 
@@ -626,19 +625,6 @@ namespace hpp {
             "and the archive is not of type archive_device_wrapper.");
       // else TODO if (adw->device->name() != name_) ?
     }
-#else
-    template<class Archive>
-    void Device::save(Archive &, const unsigned int) const
-    {
-      throw std::logic_error("Not implemented without C++ 11.");
-    }
-
-    template<class Archive>
-    void Device::load(Archive &, const unsigned int)
-    {
-      throw std::logic_error("Not implemented without C++ 11.");
-    }
-#endif
 
     HPP_SERIALIZATION_SPLIT_IMPLEMENT(Device);
   } // namespace pinocchio
