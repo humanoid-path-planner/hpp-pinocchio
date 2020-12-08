@@ -121,6 +121,9 @@ struct archive {
   typedef Compare compare_type;
   typedef ptr_less<Key, Compare> ptr_compare_type;
   std::set<Key const*, ptr_compare_type > datas;
+  int hitcount;
+
+  archive() : hitcount(0) {}
 };
 
 typedef archive<::hpp::pinocchio::vector_t, eigen_compare<::hpp::pinocchio::vector_t> > vector_archive;
@@ -151,6 +154,7 @@ inline void save_impl (Archive& ar,
 template<class Archive, typename Key, typename Compare = std::less<Key>>
 inline void save_impl (Archive& ar,
     std::set<Key const*, ptr_less<Key,Compare> >& set,
+    int& hitcount,
     const char* name,
     const Key& key,
     const unsigned int version)
@@ -162,17 +166,19 @@ inline void save_impl (Archive& ar,
   bool inserted = result.second;
   Key const* k = (inserted ? &key : *result.first);
   ar & boost::serialization::make_nvp(name, k);
+  if (!inserted) hitcount++;
 }
 
 template<class Archive, typename Key, typename Compare = std::less<Key>>
 inline void serialize (Archive& ar,
     std::set<Key const*, ptr_less<Key,Compare> >& set,
+    int& hitcount,
     const char* name,
     Key& key,
     const unsigned int version)
 {
   if (Archive::is_saving::value) {
-    save_impl(ar, set, name, key, version);
+    save_impl(ar, set, hitcount, name, key, version);
   } else {
     load_or_save_no_remove_duplicate_check(ar, name, key, version);
   }
@@ -186,7 +192,8 @@ static inline void run (Archive& ar,
     Key& key,
     const unsigned int version)
 {
-  serialize(ar, dynamic_cast<archive<Key, Compare>&>(ar).datas, name, key, version);
+  archive<Key, Compare>& rda = dynamic_cast<archive<Key, Compare>&>(ar);
+  serialize(ar, rda.datas, rda.hitcount, name, key, version);
 }
 template<typename Archive, typename Key, typename Compare = std::less<Key> >
 static inline void save (Archive& ar,
@@ -194,7 +201,8 @@ static inline void save (Archive& ar,
     const Key& key,
     const unsigned int version)
 {
-  save_impl(ar, dynamic_cast<archive<Key, Compare>&>(ar).datas, name, key, version);
+  archive<Key, Compare>& rda = dynamic_cast<archive<Key, Compare>&>(ar);
+  save_impl(ar, rda.datas, rda.hitcount, name, key, version);
 }
 };
 

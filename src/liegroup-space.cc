@@ -476,9 +476,10 @@ namespace hpp {
     {
       (void) version;
       ar & BOOST_SERIALIZATION_NVP(liegroupTypes_);
-      ar & BOOST_SERIALIZATION_NVP(nq_);
-      ar & BOOST_SERIALIZATION_NVP(nv_);
-      serialization::remove_duplicate::serialize_vector(ar, "neutral_", neutral_, version);
+      if (!Archive::is_saving::value) {
+        computeSize();
+        computeNeutral();
+      }
       ar & BOOST_SERIALIZATION_NVP(weak_);
     }
 
