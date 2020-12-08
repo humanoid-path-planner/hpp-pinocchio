@@ -27,6 +27,7 @@
 
 #include <hpp/pinocchio/liegroup-element.hh>
 #include <hpp/pinocchio/liegroup/serialization.hh>
+#include <hpp/pinocchio/serialization.hh>
 
 #include "../src/comparison.hh"
 #include "../src/size-visitor.hh"
@@ -477,7 +478,7 @@ namespace hpp {
       ar & BOOST_SERIALIZATION_NVP(liegroupTypes_);
       ar & BOOST_SERIALIZATION_NVP(nq_);
       ar & BOOST_SERIALIZATION_NVP(nv_);
-      ar & BOOST_SERIALIZATION_NVP(neutral_);
+      serialization::remove_duplicate::serialize_vector(ar, "neutral_", neutral_, version);
       ar & BOOST_SERIALIZATION_NVP(weak_);
     }
 

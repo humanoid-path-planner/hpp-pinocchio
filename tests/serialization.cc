@@ -73,8 +73,8 @@ void check_remove_duplicate_impl ()
   vector_t a_r, b_r;
   {
     boost::archive::xml_iarchive ia(ss);
-    hpp::serialization::remove_duplicate::serialize_vector(ia, "a", a, 0);
-    hpp::serialization::remove_duplicate::serialize_vector(ia, "b", b, 0);
+    hpp::serialization::remove_duplicate::serialize_vector(ia, "a", a_r, 0);
+    hpp::serialization::remove_duplicate::serialize_vector(ia, "b", b_r, 0);
   }
 
   BOOST_CHECK_EQUAL(a, a_r);

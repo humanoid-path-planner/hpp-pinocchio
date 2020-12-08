@@ -28,6 +28,7 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/assign/list_of.hpp>
 #include <hpp/pinocchio/liegroup-element.hh>
+#include <hpp/pinocchio/serialization.hh>
 
 using boost::assign::list_of;
 using hpp::pinocchio::size_type;
@@ -291,15 +292,24 @@ BOOST_AUTO_TEST_CASE (log_)
   BOOST_CHECK ((hpp::pinocchio::log(e).isZero(1e-10)));
 }
 
+template<typename base_archive = boost::archive::xml_oarchive>
+struct oarchive :
+  base_archive, hpp::serialization::remove_duplicate::vector_archive
+{
+  oarchive(std::ostream& is) : base_archive (is) {}
+};
+
 void test_serialization(LiegroupSpacePtr_t space)
 {
   LiegroupElement e (space); e.setNeutral ();
 
   std::stringstream ss;
   {
-    boost::archive::xml_oarchive oa(ss);
+    oarchive<boost::archive::xml_oarchive> oa(ss);
     oa << boost::serialization::make_nvp("element", e);
   }
+
+  BOOST_TEST_MESSAGE(ss.str());
 
   LiegroupElement e2;
   {

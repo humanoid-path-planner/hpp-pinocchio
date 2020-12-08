@@ -21,7 +21,7 @@
 
 #include <hpp/util/serialization.hh>
 
-#include <pinocchio/serialization/eigen.hpp>
+#include <hpp/pinocchio/serialization.hh>
 
 #include "../src/size-visitor.hh"
 #include "../src/addition-visitor.hh"
@@ -123,7 +123,7 @@ void load (Archive & ar, hpp::pinocchio::LiegroupElement& c, const unsigned int 
   hpp::pinocchio::LiegroupSpacePtr_t space;
   hpp::pinocchio::vector_t vector;
   ar & make_nvp("space", space);
-  ar & make_nvp("vector", vector);
+  hpp::serialization::remove_duplicate::serialize_vector(ar, "vector", vector, version);
   c = hpp::pinocchio::LiegroupElement(vector, space);
 }
 template<class Archive>
@@ -131,7 +131,7 @@ void save (Archive & ar, const hpp::pinocchio::LiegroupElement& c, const unsigne
 {
   (void) version;
   ar & make_nvp("space", c.space());
-  ar & make_nvp("vector", c.vector());
+  hpp::serialization::remove_duplicate::save_vector(ar, "vector", c.vector(), version);
 }
 } // namespace serialization
 } // namespace boost

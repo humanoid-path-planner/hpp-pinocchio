@@ -125,7 +125,7 @@ struct archive {
 
 typedef archive<::hpp::pinocchio::vector_t, eigen_compare<::hpp::pinocchio::vector_t> > vector_archive;
 
-template<class Archive, typename Key, typename Compare = std::less<Key>>
+template<class Archive, typename Key>
 inline void load_or_save_no_remove_duplicate_check (Archive& ar,
     const char* name,
     Key& key,
@@ -134,17 +134,30 @@ inline void load_or_save_no_remove_duplicate_check (Archive& ar,
   (void) version;
   Key* value = &key;
   ar & boost::serialization::make_nvp(name, value);
+  if (!Archive::is_saving::value) key = *value;
+}
+
+template<class Archive, typename Key>
+inline void save_impl (Archive& ar,
+    const char* name,
+    const Key& key,
+    const unsigned int version)
+{
+  (void) version;
+  Key const* value = &key;
+  ar << boost::serialization::make_nvp(name, value);
 }
 
 template<class Archive, typename Key, typename Compare = std::less<Key>>
-inline void save (Archive& ar,
+inline void save_impl (Archive& ar,
     std::set<Key const*, ptr_less<Key,Compare> >& set,
     const char* name,
     const Key& key,
     const unsigned int version)
 {
   (void) version;
-  static_assert(Archive::is_saving::value, "Archive is saving");
+  if(!Archive::is_saving::value)
+    throw std::logic_error("HPP serialization: cannot load into a const element. This should never happen.");
   auto result = set.insert(&key);
   bool inserted = result.second;
   Key const* k = (inserted ? &key : *result.first);
@@ -159,7 +172,7 @@ inline void serialize (Archive& ar,
     const unsigned int version)
 {
   if (Archive::is_saving::value) {
-    save(ar, set, name, key, version);
+    save_impl(ar, set, name, key, version);
   } else {
     load_or_save_no_remove_duplicate_check(ar, name, key, version);
   }
@@ -173,7 +186,15 @@ static inline void run (Archive& ar,
     Key& key,
     const unsigned int version)
 {
-  serialize(ar, static_cast<archive<Key, Compare>&>(ar).datas, name, key, version);
+  serialize(ar, dynamic_cast<archive<Key, Compare>&>(ar).datas, name, key, version);
+}
+template<typename Archive, typename Key, typename Compare = std::less<Key> >
+static inline void save (Archive& ar,
+    const char* name,
+    const Key& key,
+    const unsigned int version)
+{
+  save_impl(ar, dynamic_cast<archive<Key, Compare>&>(ar).datas, name, key, version);
 }
 };
 
@@ -185,7 +206,21 @@ static inline void run (Archive& ar,
     Key& key,
     const unsigned int version)
 {
-  load_or_save_no_remove_duplicate_check(ar, name, key, version);
+  if (dynamic_cast<archive<Key, Compare>*>(&ar) != NULL)
+    serialiaze_impl<true>::run<Archive, Key, Compare>(ar, name, key, version);
+  else
+    load_or_save_no_remove_duplicate_check(ar, name, key, version);
+}
+template<typename Archive, typename Key, typename Compare = std::less<Key> >
+static inline void save (Archive& ar,
+    const char* name,
+    const Key& key,
+    const unsigned int version)
+{
+  if (dynamic_cast<archive<Key, Compare>*>(&ar) != NULL)
+    serialiaze_impl<true>::save<Archive, Key, Compare>(ar, name, key, version);
+  else
+    save_impl(ar, name, key, version);
 }
 };
 
@@ -199,6 +234,16 @@ inline void serialize (Archive& ar,
   serialiaze_impl<is_base>::template run<Archive, Key, Compare>(ar, name, key, version);
 }
 
+template<typename Archive, typename Key, typename Compare = std::less<Key>,
+  bool is_base = std::is_base_of<archive<Key, Compare>, Archive>::value >
+inline void save (Archive& ar,
+    const char* name,
+    const Key& key,
+    const unsigned int version)
+{
+  serialiaze_impl<is_base>::template save<Archive, Key, Compare>(ar, name, key, version);
+}
+
 template<typename Archive>
 inline void serialize_vector (Archive& ar,
     const char* name,
@@ -206,6 +251,16 @@ inline void serialize_vector (Archive& ar,
     const unsigned int version)
 {
   serialize<Archive, ::hpp::pinocchio::vector_t, vector_archive::compare_type>
+    (ar, name, key, version);
+}
+
+template<typename Archive>
+inline void save_vector (Archive& ar,
+    const char* name,
+    const ::hpp::pinocchio::vector_t& key,
+    const unsigned int version)
+{
+  save<Archive, ::hpp::pinocchio::vector_t, vector_archive::compare_type>
     (ar, name, key, version);
 }
 
