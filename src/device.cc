@@ -554,7 +554,7 @@ namespace hpp {
 
       archive_device_wrapper* adw = dynamic_cast<archive_device_wrapper*>(&ar);
       ar & BOOST_SERIALIZATION_NVP(name_);
-      bool written = (adw != NULL);
+      bool written = (adw == NULL);
       ar & BOOST_SERIALIZATION_NVP(written);
       if (written) {
         // AbstractDevice
