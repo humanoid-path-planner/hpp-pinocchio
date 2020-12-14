@@ -164,7 +164,11 @@ namespace hpp {
       value_type upperBoundAngularVelocity () const;
 
       /// Maximal distance of joint origin to parent origin
-      const value_type& maximalDistanceToParent () const { return maximalDistanceToParent_; }
+      const value_type& maximalDistanceToParent () {
+        if (maximalDistanceToParent_ < 0)
+          computeMaximalDistanceToParent();
+        return maximalDistanceToParent_;
+      }
 
       /// \}
     protected:

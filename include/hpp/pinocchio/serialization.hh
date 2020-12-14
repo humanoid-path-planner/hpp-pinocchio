@@ -22,22 +22,16 @@
 # include <set>
 # include <type_traits>
 
+# include <pinocchio/fwd.hpp>
 # include <boost/serialization/split_free.hpp>
 # include <boost/serialization/shared_ptr.hpp>
 # include <boost/serialization/weak_ptr.hpp>
 
-# include <hpp/pinocchio/fwd.hh>
 # include <pinocchio/serialization/eigen.hpp>
-
-namespace hpp {
-namespace serialization {
-struct archive_device_wrapper {
-  pinocchio::DevicePtr_t device;
-  virtual ~archive_device_wrapper() {}
-};
-} // namespace pinocchio
-} // namespace hpp
-
+# include <hpp/util/serialization.hh>
+# include <hpp/pinocchio/fwd.hh>
+# include <hpp/pinocchio/device.hh>
+# include <hpp/pinocchio/humanoid-robot.hh>
 
 BOOST_SERIALIZATION_SPLIT_FREE(hpp::pinocchio::DevicePtr_t)
 BOOST_SERIALIZATION_SPLIT_FREE(hpp::pinocchio::DeviceWkPtr_t)
@@ -48,33 +42,35 @@ template<class Archive>
 inline void load (Archive& ar, hpp::pinocchio::DevicePtr_t& d, const unsigned int version)
 {
   load<Archive, hpp::pinocchio::Device> (ar, d, version);
-  using hpp::serialization::archive_device_wrapper;
-  archive_device_wrapper* adw = dynamic_cast<archive_device_wrapper*>(&ar);
-  if (adw) d = adw->device;
+  auto* har = hpp::serialization::cast(&ar);
+  if (d && har && har->contains(d->name()))
+    d = har->template get<hpp::pinocchio::Device>(d->name(), true)->self();
 }
 template<class Archive>
 inline void load (Archive& ar, hpp::pinocchio::DeviceWkPtr_t& d, const unsigned int version)
 {
   load<Archive, hpp::pinocchio::Device> (ar, d, version);
-  using hpp::serialization::archive_device_wrapper;
-  archive_device_wrapper* adw = dynamic_cast<archive_device_wrapper*>(&ar);
-  if (adw) d = adw->device;
+  auto* har = hpp::serialization::cast(&ar);
+  std::string name (d.lock()->name());
+  if (d.lock() && har && har->contains(name))
+    d = har->template get<hpp::pinocchio::Device>(name, true)->self();
 }
 template<class Archive>
 inline void load (Archive& ar, hpp::pinocchio::HumanoidRobotPtr_t& d, const unsigned int version)
 {
   load<Archive, hpp::pinocchio::HumanoidRobot> (ar, d, version);
-  using hpp::serialization::archive_device_wrapper;
-  archive_device_wrapper* adw = dynamic_cast<archive_device_wrapper*>(&ar);
-  if (adw) d = boost::dynamic_pointer_cast<hpp::pinocchio::HumanoidRobot>(adw->device);
+  auto* har = hpp::serialization::cast(&ar);
+  if (d && har && har->contains(d->name()))
+    d = har->template getChildClass<hpp::pinocchio::Device, hpp::pinocchio::HumanoidRobot>(d->name(), true)->self();
 }
 template<class Archive>
 inline void load (Archive& ar, hpp::pinocchio::HumanoidRobotWkPtr_t& d, const unsigned int version)
 {
   load<Archive, hpp::pinocchio::HumanoidRobot> (ar, d, version);
-  using hpp::serialization::archive_device_wrapper;
-  archive_device_wrapper* adw = dynamic_cast<archive_device_wrapper*>(&ar);
-  if (adw) d = boost::dynamic_pointer_cast<hpp::pinocchio::HumanoidRobot>(adw->device);
+  auto* har = hpp::serialization::cast(&ar);
+  std::string name (d.lock()->name());
+  if (d.lock() && har && har->contains(name))
+    d = har->template getChildClass<hpp::pinocchio::Device, hpp::pinocchio::HumanoidRobot>(name, true)->self();
 }
 
 template <class Archive, typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
@@ -103,8 +99,8 @@ struct ptr_less : Compare {
 
 template<typename Derived>
 struct eigen_compare {
-  bool operator() (const Eigen::DenseBase<Derived>& a,
-                   const Eigen::DenseBase<Derived>& b)
+  bool operator() (const Eigen::PlainObjectBase<Derived>& a,
+                   const Eigen::PlainObjectBase<Derived>& b)
   {
     if (a.size() < b.size()) return true;
     if (a.size() > b.size()) return false;

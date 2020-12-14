@@ -146,12 +146,6 @@ BOOST_AUTO_TEST_CASE(load_neutral_configuration)
       */
 }
 
-struct iarchive :
-  boost::archive::xml_iarchive, hpp::serialization::archive_device_wrapper
-{
-  iarchive(std::istream& is) : boost::archive::xml_iarchive (is) {}
-};
-
 BOOST_AUTO_TEST_CASE(serialization)
 {
   DevicePtr_t device = unittest::makeDevice (unittest::HumanoidRomeo);
@@ -159,17 +153,20 @@ BOOST_AUTO_TEST_CASE(serialization)
 
   std::stringstream ss;
   {
-    boost::archive::xml_oarchive oa(ss);
+    hpp::serialization::xml_oarchive oa(ss);
+    oa.initialize();
     oa << boost::serialization::make_nvp("device", device);
     oa << boost::serialization::make_nvp("joint", joint);
   }
 
+  BOOST_TEST_MESSAGE(ss.str());
+
   DevicePtr_t device2;
   JointPtr_t joint2;
   {
-    iarchive ia(ss);
-    ia.device = device;
-    //boost::archive::xml_iarchive ia(ss);
+    hpp::serialization::xml_iarchive ia(ss);
+    ia.insert(device->name(), device.get());
+    ia.initialize();
     ia >> boost::serialization::make_nvp("device", device2);
     ia >> boost::serialization::make_nvp("joint", joint2);
   }

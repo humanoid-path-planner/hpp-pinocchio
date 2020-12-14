@@ -75,6 +75,8 @@ namespace hpp {
       /// Both pinocchio objects model and data are copied.
       /// TODO: this method is not implemented yet (assert if called)
       DevicePtr_t cloneConst() const { return createCopyConst(weakPtr_.lock()); }
+
+      DevicePtr_t self() const { return weakPtr_.lock(); }
  
       /// Get name of device
       const std::string& name () const {return name_;}
@@ -355,5 +357,7 @@ namespace hpp {
 
   } // namespace pinocchio
 } // namespace hpp
+
+BOOST_CLASS_EXPORT_KEY(hpp::pinocchio::Device)
 
 #endif // HPP_PINOCCHIO_DEVICE_HH

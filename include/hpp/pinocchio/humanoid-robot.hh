@@ -41,6 +41,8 @@ namespace hpp {
       /// \brief Clone as a HumanoidRobot
       virtual DevicePtr_t clone () const;
 
+      HumanoidRobotPtr_t self() const { return weakPtr_.lock(); }
+
       ///
       /// @}
       ///

@@ -191,12 +191,14 @@ namespace hpp {
       template<class Archive>
       void HumanoidRobot::serialize(Archive & ar, const unsigned int version)
       {
-        using hpp::serialization::archive_device_wrapper;
-
         (void) version;
+        auto* har = hpp::serialization::cast(&ar);
+
         ar & boost::serialization::make_nvp("base", boost::serialization::base_object<Device>(*this));
-        archive_device_wrapper* adw = dynamic_cast<archive_device_wrapper*>(&ar);
-        bool written = (adw == NULL);
+        // TODO we should throw if a Device instance with name name_ and not of
+        // type HumanoidRobot is found.
+        bool written = (!har ||
+            har->template getChildClass<Device, HumanoidRobot>(name_, false) != this);
         ar & BOOST_SERIALIZATION_NVP(written);
         if (written) {
           ar & BOOST_SERIALIZATION_NVP(weakPtr_);

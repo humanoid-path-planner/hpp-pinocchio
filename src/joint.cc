@@ -50,14 +50,14 @@ namespace hpp {
     }
 
     Joint::Joint (DeviceWkPtr_t device, JointIndex indexInJointList ) 
-      :devicePtr(device)
+      :maximalDistanceToParent_(-1)
+      ,devicePtr(device)
       ,jointIndex(indexInJointList)
     {
       assert (devicePtr.lock());
       assert (robot()->modelPtr());
       assert (std::size_t(jointIndex)<model().joints.size());
       setChildList();
-      computeMaximalDistanceToParent();
     }
 
     void Joint::setChildList()
@@ -549,10 +549,12 @@ namespace hpp {
     void Joint::serialize(Archive & ar, const unsigned int version)
     {
       (void) version;
-      ar & BOOST_SERIALIZATION_NVP(maximalDistanceToParent_);
       ar & BOOST_SERIALIZATION_NVP(devicePtr);
       ar & BOOST_SERIALIZATION_NVP(jointIndex);
-      ar & BOOST_SERIALIZATION_NVP(children);
+      if (!Archive::is_saving::value) {
+        maximalDistanceToParent_ = -1;
+        setChildList();
+      }
     }
 
     HPP_SERIALIZATION_IMPLEMENT(Joint);
