@@ -522,9 +522,9 @@ namespace hpp {
         GeomIndex gid = gmodel.getGeometryId(gnames[i]);
         GeometryObject& go = gmodel.geometryObjects[gid];
         if (go.geometry->getObjectType() == fcl::OT_BVH) {
-          boost::shared_ptr<fcl::BVHModelBase> bvh =
-            HPP_DYNAMIC_PTR_CAST(fcl::BVHModelBase, go.geometry);
-          assert(bvh);
+          fcl::BVHModelBase* bvh =
+            dynamic_cast<fcl::BVHModelBase*>(go.geometry.get());
+          assert(bvh != NULL);
           bvh->buildConvexHull(false, "Qx");
           go.geometry = bvh->convex;
         }
