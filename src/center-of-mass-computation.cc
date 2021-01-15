@@ -66,13 +66,18 @@ namespace hpp {
 
       // Nullify non-subtree com and mass.
       std::size_t root = 0;
+      std::size_t rootId = roots_[root];
       for(std::size_t jid=1; jid<model.joints.size(); ++jid )
         {
-          const std::size_t& rootId = roots_[root];
           if(jid == rootId)
             {
               jid = (std::size_t)data.lastChild[rootId];
               root ++;
+	      if (root < roots_.size())
+		rootId = roots_[root];
+	      else
+		// After last root, make sure that all joints set to 0.
+		rootId = model.joints.size();
             }
           else 
             {
