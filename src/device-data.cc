@@ -88,7 +88,7 @@ namespace hpp {
             ::pinocchio::jacobianCenterOfMass(model,*data_,modelConf_,true);
           else 
             // 0 means Compose Com position, but not velocity and acceleration.
-            ::pinocchio::centerOfMass(model,*data_,0,true);
+            ::pinocchio::centerOfMass(model,*data_,::pinocchio::POSITION,true);
         }
 
       if(computationFlag_&JACOBIAN)
