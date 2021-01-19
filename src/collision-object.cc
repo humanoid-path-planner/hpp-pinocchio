@@ -69,12 +69,14 @@ namespace hpp {
 
     FclCollisionObjectPtr_t CollisionObject::fcl (GeomData& geomData) const
     {
-      return & geomData.collisionObjects[geomInModelIndex];
+      return FclCollisionObjectPtr_t(new FclCollisionObject(geometry(),
+            toFclTransform3f(geomData.oMg[geomInModelIndex])));
     }
 
     FclConstCollisionObjectPtr_t CollisionObject::fcl (const GeomData& geomData) const
     {
-      return & geomData.collisionObjects[geomInModelIndex];
+      return FclCollisionObjectPtr_t(new FclCollisionObject(geometry(),
+            toFclTransform3f(geomData.oMg[geomInModelIndex])));
     }
 
     FclConstCollisionObjectPtr_t CollisionObject::fcl () const { return fcl(geomData()); }
@@ -82,13 +84,15 @@ namespace hpp {
 
     FclCollisionObjectPtr_t CollisionObject::fcl (DeviceData& d) const
     {
-      return & geomData(d).collisionObjects[geomInModelIndex];
+      return FclCollisionObjectPtr_t(new FclCollisionObject(geometry(),
+            toFclTransform3f(geomData(d).oMg[geomInModelIndex])));
     }
 
     FclConstCollisionObjectPtr_t CollisionObject::fcl
     (const DeviceData& d) const
     {
-      return & geomData(d).collisionObjects[geomInModelIndex];
+      return FclCollisionObjectPtr_t(new FclCollisionObject(geometry(),
+            toFclTransform3f(geomData(d).oMg[geomInModelIndex])));
     }
 
     JointPtr_t      CollisionObject::joint ()
@@ -110,7 +114,7 @@ namespace hpp {
     { return ::pinocchio::toFclTransform3f(geomData().oMg[geomInModelIndex]); }
     const Transform3f& CollisionObject::getTransform () const
     { return geomData().oMg[geomInModelIndex];  }
-    const Transform3f& CollisionObject::getTransform (DeviceData& d) const
+    const Transform3f& CollisionObject::getTransform (const DeviceData& d) const
     { return geomData(d).oMg[geomInModelIndex];  }
 
     void CollisionObject::move (const Transform3f& position)
@@ -118,8 +122,6 @@ namespace hpp {
       // move does not work but for object attached to the universe (joint 0)
       assert( jointIndex_==0 ); 
       geomData().oMg[geomInModelIndex] = position;
-      geomData().collisionObjects[geomInModelIndex]
-        .setTransform(toFclTransform3f(position));
       pinocchio().placement = position;
     }
 

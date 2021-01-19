@@ -94,8 +94,8 @@ namespace hpp {
       /// \note If object is not attached to a joint, use move() to update
       /// transform between hpp and fcl.
       fcl::Transform3f getFclTransform () const;
-      const Transform3f&      getTransform () const;
-      const Transform3f&      getTransform (DeviceData& d) const;
+      const Transform3f& getTransform () const;
+      const Transform3f& getTransform (const DeviceData& d) const;
 
       const GeomIndex& indexInModel () const
       {
