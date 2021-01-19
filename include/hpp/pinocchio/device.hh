@@ -115,6 +115,10 @@ namespace hpp {
       /// Create Pinocchio geomData from model.
       void createGeomData();
 
+      /// Remove some joints from the configuration space.
+      void removeJoints(const std::vector<std::string>& jointNames,
+          Configuration_t referenceConfig);
+
       /// \}
       // -----------------------------------------------------------------------
       /// \name Joints

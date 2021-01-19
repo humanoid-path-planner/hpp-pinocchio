@@ -36,15 +36,15 @@
 #include <hpp/pinocchio/liegroup-space.hh>
 #include <hpp/pinocchio/configuration.hh>
 #include <hpp/pinocchio/serialization.hh>
-static bool verbose = true;
 
 using namespace hpp::pinocchio;
 
 void displayAABB(const hpp::fcl::AABB& aabb)
 {
-    std::cout << "Bounding box is\n"
+  BOOST_TEST_MESSAGE(
+      "Bounding box is\n"
       << aabb.min_.transpose() << '\n'
-      << aabb.max_.transpose() << std::endl;
+      << aabb.max_.transpose());
 }
 
 BOOST_AUTO_TEST_CASE (computeAABB)
@@ -55,17 +55,17 @@ BOOST_AUTO_TEST_CASE (computeAABB)
   robot->rootJoint()->lowerBounds(vector3_t::Constant(-0));
   robot->rootJoint()->upperBounds(vector3_t::Constant( 0));
   hpp::fcl::AABB aabb0 = robot->computeAABB();
-  if (verbose) displayAABB(aabb0);
+  displayAABB(aabb0);
 
   robot->rootJoint()->lowerBounds(vector3_t(-1, -1, 0));
   robot->rootJoint()->upperBounds(vector3_t( 1,  1, 0));
   hpp::fcl::AABB aabb1 = robot->computeAABB();
-  if (verbose) displayAABB(aabb1);
+  displayAABB(aabb1);
 
   robot->rootJoint()->lowerBounds(vector3_t(-2, -2, 0));
   robot->rootJoint()->upperBounds(vector3_t(-1, -1, 0));
   hpp::fcl::AABB aabb2 = robot->computeAABB();
-  if (verbose) displayAABB(aabb2);
+  displayAABB(aabb2);
 }
 /* -------------------------------------------------------------------------- */
 BOOST_AUTO_TEST_CASE (unit_test_device)
@@ -92,6 +92,14 @@ BOOST_AUTO_TEST_CASE (unit_test_device)
   space = LiegroupSpace::createCopy(robot->configSpace());
   space->mergeVectorSpaces();
   BOOST_CHECK_EQUAL (space->name(), "SE(3)*R^29");
+
+  BOOST_TEST_MESSAGE(*robot);
+  robot->removeJoints({ "rleg2_joint", "rarm1_joint" },
+      robot->neutralConfiguration());
+  BOOST_TEST_MESSAGE(*robot);
+
+  BOOST_CHECK_THROW(robot->getJointByName("rleg2_joint"), std::runtime_error);
+  BOOST_CHECK_THROW(robot->getJointByName("rarm1_joint"), std::runtime_error);
 
   robot = unittest::makeDevice (unittest::CarLike);
   space = LiegroupSpace::createCopy(robot->configSpace());

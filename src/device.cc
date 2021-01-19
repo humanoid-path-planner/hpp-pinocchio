@@ -30,6 +30,7 @@
 #include <hpp/fcl/BVH/BVH_model.h>
 
 #include <pinocchio/algorithm/geometry.hpp>
+#include <pinocchio/algorithm/model.hpp>
 #include <pinocchio/algorithm/joint-configuration.hpp> // ::pinocchio::details::Dispatch
 #include <pinocchio/multibody/geometry.hpp>
 #include <pinocchio/multibody/model.hpp>
@@ -154,6 +155,34 @@ namespace hpp {
       d().geomData_ = GeomDataPtr_t( new GeomData(geomModel()) );
       ::pinocchio::computeBodyRadius(model(),geomModel(),geomData());
       d().invalidate();
+      numberDeviceData(numberDeviceData());
+    }
+
+    void Device::removeJoints(const std::vector<std::string>& jointNames,
+        Configuration_t referenceConfig)
+    {
+      std::vector<JointIndex> joints (jointNames.size());
+      std::transform(jointNames.begin(), jointNames.end(), joints.begin(),
+          [this](const std::string& n) {
+            auto id = model_->getJointId(n);
+            if (id >= model_->joints.size())
+              throw std::invalid_argument ("Device " + name_ + " does not have "
+                  "any joint named " + n);
+            return id;
+          });
+
+
+      ModelPtr_t nModel (new Model);
+      GeomModelPtr_t nGeomModel (new GeomModel);
+      ::pinocchio::buildReducedModel(*model_, *geomModel_, joints,
+          referenceConfig.head(model_->nq), *nModel, *nGeomModel);
+      model_ = nModel;
+      geomModel_ = nGeomModel;
+
+      invalidate();
+      createData();
+      createGeomData();
+
       numberDeviceData(numberDeviceData());
     }
 
