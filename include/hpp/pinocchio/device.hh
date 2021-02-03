@@ -116,7 +116,7 @@ namespace hpp {
       void createGeomData();
 
       /// Remove some joints from the configuration space.
-      void removeJoints(const std::vector<std::string>& jointNames,
+      virtual void removeJoints(const std::vector<std::string>& jointNames,
           Configuration_t referenceConfig);
 
       /// \}

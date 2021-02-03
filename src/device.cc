@@ -179,6 +179,10 @@ namespace hpp {
       model_ = nModel;
       geomModel_ = nGeomModel;
 
+      // update the grippers
+      std::transform(grippers_.begin(), grippers_.end(), grippers_.begin(),
+          [this](GripperPtr_t g) { return Gripper::create(g->name(), this->weakPtr_); });
+
       invalidate();
       createData();
       createGeomData();
