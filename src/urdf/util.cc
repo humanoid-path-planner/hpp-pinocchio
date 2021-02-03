@@ -36,6 +36,99 @@
 
 namespace hpp {
   namespace pinocchio {
+    namespace srdf {
+      void removeCollisionPairs(const Model& model,
+          GeomModel & geom_model,
+          const std::string& prefix,
+          std::istream & stream)
+      {
+        // Read xml stream
+        using boost::property_tree::ptree;
+        ptree pt;
+        read_xml(stream, pt);
+
+        // Iterate over collision pairs
+        auto last = geom_model.collisionPairs.end();
+        BOOST_FOREACH(const ptree::value_type & v, pt.get_child("robot"))
+        {
+          if (v.first == "disable_collisions")
+          {
+            const std::string link1 = prefix+v.second.get<std::string>("<xmlattr>.link1");
+            const std::string link2 = prefix+v.second.get<std::string>("<xmlattr>.link2");
+
+            // Check first if the two bodies exist in model
+            if (!model.existBodyName(link1)) {
+                hppDout(error, link1 << ", " << link2 << ". Link1 does not exist in model. Skip");
+                continue;
+            }
+            if (!model.existBodyName(link2)) {
+                hppDout(error, link1 << ", " << link2 << ". Link2 does not exist in model. Skip");
+                continue;
+            }
+
+            const typename Model::FrameIndex frame_id1 = model.getBodyId(link1);
+            const typename Model::FrameIndex frame_id2 = model.getBodyId(link2);
+
+            // Malformed SRDF
+            if (frame_id1 == frame_id2) {
+              hppDout(info, "Cannot disable collision between " << link1 << " and " << link2);
+              continue;
+            }
+
+            auto nlast = std::remove_if(geom_model.collisionPairs.begin(), last,
+                [&](const auto& colPair) {
+                  const auto &ga = geom_model.geometryObjects[colPair.first],
+                             &gb = geom_model.geometryObjects[colPair.second];
+                  return ((ga.parentFrame == frame_id1) && (gb.parentFrame == frame_id2))
+                      || ((gb.parentFrame == frame_id1) && (ga.parentFrame == frame_id2));
+                });
+            if(last != nlast) {
+              hppDout(info, "Remove collision pair (" << link1 << "," << link2 << ")" );
+            }
+            last = nlast;
+          }
+        } // BOOST_FOREACH
+        if(last != geom_model.collisionPairs.end()) {
+          hppDout(info, "Removing " << std::distance(last, geom_model.collisionPairs.end())
+              << " collision pairs.");
+          geom_model.collisionPairs.erase(last, geom_model.collisionPairs.end());
+        }
+      }
+
+      void removeCollisionPairs(const Model& model,
+          GeomModel & geom_model,
+          const std::string& prefix,
+          const std::string & filename)
+      {
+        // Check extension
+        const std::string extension = filename.substr(filename.find_last_of('.')+1);
+        if (extension != "srdf")
+        {
+          const std::string exception_message (filename + " does not have the right extension.");
+          throw std::invalid_argument(exception_message);
+        }
+
+        // Open file
+        std::ifstream srdf_stream(filename.c_str());
+        if (! srdf_stream.is_open())
+        {
+          const std::string exception_message (filename + " does not seem to be a valid file.");
+          throw std::invalid_argument(exception_message);
+        }
+
+        removeCollisionPairs(model, geom_model, prefix, srdf_stream);
+      }
+
+      void removeCollisionPairsFromXML(const Model& model,
+          GeomModel & geom_model,
+          const std::string& prefix,
+          const std::string & xmlString)
+      {
+        std::istringstream srdf_stream(xmlString);
+        removeCollisionPairs(model, geom_model, prefix, srdf_stream);
+      }
+    } // namespace srdf
+
     namespace urdf {
       namespace {
 #ifdef HPP_DEBUG
@@ -173,22 +266,22 @@ namespace hpp {
         void _removeCollisionPairs (
             const Model& model,
             GeomModel& geomModel,
-            const std::string& srdf,
-            bool verbose)
+            const std::string& prefix,
+            const std::string& srdf)
         {
-          ::pinocchio::srdf::removeCollisionPairsFromXML
-            (model, geomModel, srdf, verbose);
+          hppDout(info, "parsing SRDF string:\n" << srdf);
+          srdf::removeCollisionPairsFromXML(model, geomModel, prefix, srdf);
         }
 
         template <>
         void _removeCollisionPairs<false> (
             const Model& model,
             GeomModel& geomModel,
-            const std::string& srdf,
-            bool verbose)
+            const std::string& prefix,
+            const std::string& srdf)
         {
-          ::pinocchio::srdf::removeCollisionPairs
-            (model, geomModel, srdf, verbose);
+          hppDout(info, "parsing SRDF file: " << srdf);
+          srdf::removeCollisionPairs (model, geomModel, prefix, srdf);
         }
 
         /// JointPtrType will be a boost or std shared_ptr depending on the
@@ -243,8 +336,6 @@ namespace hpp {
           geomModel.addAllCollisionPairs();
 
           if (!srdf.empty()) {
-            _removeCollisionPairs<srdfAsXmlString>
-              (*model, geomModel, srdf, verbose);
             if(!srdfAsXmlString)
               ::pinocchio::srdf::loadReferenceConfigurations(*model,srdf,verbose);
             else{
@@ -275,6 +366,11 @@ namespace hpp {
                 *m, *gm);
             robot->setModel (m);
             robot->setGeomModel (gm);
+          }
+
+          if (!srdf.empty()) {
+            _removeCollisionPairs<srdfAsXmlString>
+              (robot->model(), robot->geomModel(), prefix, srdf);
           }
 
           robot->createData();
@@ -388,6 +484,35 @@ namespace hpp {
           std::istringstream urdfStream (urdfString);
           _loadModel <true> (robot, baseFrame, prefix, rootType,
               urdfTree, urdfStream, srdfString);
+        }
+
+        void loadSRDFModel (const DevicePtr_t& robot,
+            std::string prefix,
+            const std::string& srdfPath)
+        {
+          std::vector<std::string> baseDirs = ::pinocchio::rosPaths();
+          std::string srdfFileName = ::pinocchio::retrieveResourcePath(srdfPath, baseDirs);
+          if (srdfFileName == "") {
+            throw std::invalid_argument (std::string ("Unable to retrieve ") +
+                srdfPath);
+          }
+          if (!prefix.empty() && *prefix.rbegin() != '/') prefix += "/";
+
+          _removeCollisionPairs<false> (robot->model(), robot->geomModel(),
+              prefix, srdfFileName);
+          ::pinocchio::srdf::loadReferenceConfigurations(robot->model(),
+              srdfFileName, verbose);
+          robot->createGeomData();
+        }
+
+        void loadSRDFModelFromString (const DevicePtr_t& robot,
+            std::string prefix,
+            const std::string& srdfString)
+        {
+          if (!prefix.empty() && *prefix.rbegin() != '/') prefix += "/";
+          _removeCollisionPairs<true> (robot->model(), robot->geomModel(),
+              prefix, srdfString);
+          robot->createGeomData();
         }
     } // end of namespace urdf.
   } // end of namespace pinocchio.

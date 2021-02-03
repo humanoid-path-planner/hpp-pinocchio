@@ -113,6 +113,16 @@ namespace hpp
                                 const std::string& rootType,
                                 const std::string& urdfString,
                                 const std::string& srdfString);
+
+      /// Read SRDF file
+      void loadSRDFModel (const DevicePtr_t& robot,
+                          std::string prefix,
+                          const std::string& srdfPath);
+
+      /// Read SRDF string.
+      void loadSRDFModelFromString (const DevicePtr_t& robot,
+                                    std::string prefix,
+                                    const std::string& srdfString);
     } // end of namespace urdf.
   } // end of namespace pinocchio.
 } // end of namespace hpp.
