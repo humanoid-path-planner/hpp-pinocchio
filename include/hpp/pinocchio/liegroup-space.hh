@@ -324,7 +324,7 @@ namespace hpp {
   } // namespace pinocchio
 } // namespace hpp
 
-namespace boost {
+namespace std {
   /// \addtogroup liegroup
   /// \{
 
