@@ -487,7 +487,7 @@ namespace hpp {
   } // namespace pinocchio
 } // namespace hpp
 
-namespace boost {
+namespace std {
   using namespace hpp::pinocchio;
 
   LiegroupSpacePtr_t operator*
