@@ -22,6 +22,8 @@
 #ifndef HPP_PINOCCHIO_URDF_UTIL
 # define HPP_PINOCCHIO_URDF_UTIL
 
+#include <pinocchio/spatial/se3.hpp>
+
 #include <hpp/pinocchio/fwd.hh>
 #include <hpp/pinocchio/deprecated.hh>
 
@@ -44,7 +46,7 @@ namespace hpp
       /// \param modelName robot model name
       /// \param urdfSuffix suffix for urdf file
       /// \param srdfSuffix suffix for srdf file
-
+      /// \param bMr position of the root joint of the new model in the base frame.
       /// \note This function reads the following files:
       /// \li \c package://${package}/urdf/${modelName}${urdfSuffix}.urdf
       /// \li \c package://${package}/srdf/${modelName}${srdfSuffix}.srdf
@@ -55,7 +57,8 @@ namespace hpp
 			   const std::string& package,
 			   const std::string& modelName,
 			   const std::string& urdfSuffix,
-			   const std::string& srdfSuffix);
+			   const std::string& srdfSuffix,
+                           const SE3& bMr = SE3::Identity());
       void loadRobotModel (const DevicePtr_t& robot,
 			   const std::string& rootJointType,
 			   const std::string& package,
@@ -88,7 +91,8 @@ namespace hpp
                           const std::string& prefix,
 			  const std::string& rootJointType,
 			  const std::string& package,
-			  const std::string& filename);
+                          const std::string& filename,
+                          const SE3& bMr = SE3::Identity());
       void loadUrdfModel (const DevicePtr_t& robot,
 			  const std::string& rootJointType,
 			  const std::string& package,
@@ -103,7 +107,8 @@ namespace hpp
                       const std::string& prefix,
                       const std::string& rootType,
                       const std::string& urdfPath,
-                      const std::string& srdfPath);
+                      const std::string& srdfPath,
+                      const SE3& bMr = SE3::Identity());
 
       /// Read URDF and, optionnally SRDF, as XML string.
       /// \param srdfString if empty, do not try to parse SRDF.
@@ -112,7 +117,8 @@ namespace hpp
                                 const std::string& prefix,
                                 const std::string& rootType,
                                 const std::string& urdfString,
-                                const std::string& srdfString);
+                                const std::string& srdfString,
+                                const SE3& bMr = SE3::Identity());
 
       /// Read SRDF file
       void loadSRDFModel (const DevicePtr_t& robot,

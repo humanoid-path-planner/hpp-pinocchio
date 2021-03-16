@@ -49,7 +49,7 @@ namespace hpp {
 
         // Iterate over collision pairs
         auto last = geom_model.collisionPairs.end();
-        BOOST_FOREACH(const ptree::value_type & v, pt.get_child("robot"))
+        for (const ptree::value_type & v : pt.get_child("robot"))
         {
           if (v.first == "disable_collisions")
           {
@@ -87,7 +87,7 @@ namespace hpp {
             }
             last = nlast;
           }
-        } // BOOST_FOREACH
+        }
         if(last != geom_model.collisionPairs.end()) {
           hppDout(info, "Removing " << std::distance(last, geom_model.collisionPairs.end())
               << " collision pairs.");
@@ -221,9 +221,8 @@ namespace hpp {
             ::pinocchio::Frame& f = model.frames[i];
             f.name = prefix + f.name;
           }
-          BOOST_FOREACH(::pinocchio::GeometryObject& go, geomModel.geometryObjects) {
+          for (::pinocchio::GeometryObject& go : geomModel.geometryObjects)
             go.name = prefix + go.name;
-          }
         }
 
         void setRootJointBounds(Model& model,
@@ -309,6 +308,7 @@ namespace hpp {
         template <bool srdfAsXmlString>
         void _loadModel (const DevicePtr_t& robot,
                         const FrameIndex&  baseFrame,
+                        const SE3& bMr,
                         std::string prefix,
                         const std::string& rootType,
                         const ::urdf::ModelInterfaceSharedPtr urdfTree,
@@ -362,7 +362,7 @@ namespace hpp {
             GeomModelPtr_t gm (new GeomModel);
             ::pinocchio::appendModel(robot->model(), *model,
                 robot->geomModel(), geomModel,
-                baseFrame, Transform3f::Identity(),
+                baseFrame, bMr,
                 *m, *gm);
             robot->setModel (m);
             robot->setGeomModel (gm);
@@ -403,13 +403,15 @@ namespace hpp {
 			   const std::string& package,
 			   const std::string& modelName,
 			   const std::string& urdfSuffix,
-                           const std::string& srdfSuffix)
+                           const std::string& srdfSuffix,
+                           const SE3& bMr)
       {
         loadModel (robot, baseFrame,
             (prefix.empty() ? "" : prefix + "/"),
             rootJointType,
             makeModelPath(package, "urdf", modelName, urdfSuffix),
-            makeModelPath(package, "srdf", modelName, srdfSuffix));
+            makeModelPath(package, "srdf", modelName, srdfSuffix),
+            bMr);
       }
 
       void setupHumanoidRobot (const HumanoidRobotPtr_t& robot,
@@ -426,12 +428,13 @@ namespace hpp {
                           const std::string& prefix,
 			  const std::string& rootJointType,
 			  const std::string& package,
-			  const std::string& filename)
+                          const std::string& filename,
+                          const SE3& bMr)
       {
         loadModel (robot, baseFrame,
             (prefix.empty() ? "" : prefix + "/"),
             rootJointType,
-            makeModelPath(package, "urdf", filename), "");
+            makeModelPath(package, "urdf", filename), "", bMr);
       }
 
       void loadUrdfModel (const DevicePtr_t& robot,
@@ -448,7 +451,8 @@ namespace hpp {
                         const std::string& prefix,
                         const std::string& rootType,
                         const std::string& urdfPath,
-                        const std::string& srdfPath)
+                        const std::string& srdfPath,
+                        const SE3& bMr)
         {
           std::vector<std::string> baseDirs = ::pinocchio::rosPaths();
 
@@ -469,7 +473,7 @@ namespace hpp {
 
           ::urdf::ModelInterfaceSharedPtr urdfTree = ::urdf::parseURDFFile(urdfFileName);
           std::ifstream urdfStream (urdfFileName.c_str());
-          _loadModel <false> (robot, baseFrame, prefix, rootType,
+          _loadModel <false> (robot, baseFrame, bMr, prefix, rootType,
               urdfTree, urdfStream, srdfFileName);
         }
 
@@ -478,11 +482,12 @@ namespace hpp {
                                   const std::string& prefix,
                                   const std::string& rootType,
                                   const std::string& urdfString,
-                                  const std::string& srdfString)
+                                  const std::string& srdfString,
+                                  const SE3& bMr)
         {
           ::urdf::ModelInterfaceSharedPtr urdfTree = ::urdf::parseURDF(urdfString);
           std::istringstream urdfStream (urdfString);
-          _loadModel <true> (robot, baseFrame, prefix, rootType,
+          _loadModel <true> (robot, baseFrame, bMr, prefix, rootType,
               urdfTree, urdfStream, srdfString);
         }
 
