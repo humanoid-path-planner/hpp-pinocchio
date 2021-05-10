@@ -188,7 +188,7 @@ namespace hpp {
       /// Return exponential of a tangent vector
       LiegroupElement exp (vectorIn_t v) const;
 
-      /// Compute the Jacobian of the integration operation with respect to q.
+      /// Compute the Jacobian of the integration operation with respect to \f$\mathbf{q}\f$.
       ///
       /// Given \f$ \mathbf{p} = \mathbf{q} + \mathbf{v} \f$,
       /// compute \f$J_{\mathbf{q}}\f$ such that
@@ -196,40 +196,42 @@ namespace hpp {
       /// \f{equation}
       /// \dot{\mathbf{p}} = J_{\mathbf{q}}\dot{\mathbf{q}}
       /// \f}
-      /// for constant \f$\mathbf{v}\f$
+      /// for constant \f$\mathbf{v}\f$. \f$J_{\mathbf{q}}\f$ is a block
+      /// diagonal matrix, each block corresponding to an elementary Lie group.
       ///
+      /// \tparam side side to multiply in place the Jacobian blocks. See
+      ///         "Return values" for an explanation.
       /// \param q the configuration,
       /// \param v the velocity vector,
-      /// \retval Jq the Jacobian (initialized as identity)
-      ///
-      /// \note For each elementary Lie group in q.space (), ranging
-      ///       over indices \f$[iq, iq+nq-1]\f$, the Jacobian
-      ///       \f$J_{Lg} (q [iq:iq+nq])\f$ is computed by method
-      ///       ::pinocchio::LieGroupBase::dIntegrate_dq.
-      /// lines \f$[iq:iq+nq]\f$ of Jq are then left multiplied by
-      /// \f$J_{Lg} (q [iq:iq+nq])\f$.
+      /// \retval J in place multiplied result. \f$J\leftarrow J.J_{\mathbf{q}}\f$ if side is
+      ///         InputTimesDerivative
+      ///           \f$J\leftarrow J_{\mathbf{q}}.J\f$ if side is
+      ///         DerivativeTimesInput. If \f$J\f$ is initialized to identity,
+      ///         both results are the same.
       template <DerivativeProduct side>
-      void dIntegrate_dq (LiegroupElementConstRef q, vectorIn_t v, matrixOut_t Jq) const;
+      void dIntegrate_dq (LiegroupElementConstRef q, vectorIn_t v, matrixOut_t J) const;
 
-      /// Compute the Jacobian of the integration operation with respect to v.
+      /// Compute the Jacobian of the integration operation with respect to \f$\mathbf{v}\f$.
       ///
       /// Given \f$ \mathbf{p} = \mathbf{q} + \mathbf{v} \f$,
-      /// compute \f$J_{\mathbf{v}}\f$ such that
+      /// compute \f$J_{\mathbf{q}}\f$ such that
       ///
       /// \f{equation}
       /// \dot{\mathbf{p}} = J_{\mathbf{v}}\dot{\mathbf{v}}
       /// \f}
-      /// for constant \f$\mathbf{q}\f$
+      /// for constant \f$\mathbf{q}\f$. \f$J_{\mathbf{v}}\f$ is a block
+      /// diagonal matrix, each block corresponding to an elementary Lie group.
       ///
+      /// \tparam side side to multiply in place the Jacobian blocks. See
+      ///         "Return values" for an explanation.
       /// \param q the configuration,
       /// \param v the velocity vector,
-      /// \retval Jv the Jacobian (initialized to identity)
-      /// \note For each elementary Lie group in q.space (), ranging
-      ///       over indices \f$[iv, iv+nv-1]\f$, the Jacobian
-      ///       \f$J_{Lg} (q [iv:iv+nv])\f$ is computed by method
-      ///       ::pinocchio::LieGroupBase::dIntegrate_dq.
-      /// lines \f$[iv:iv+nv]\f$ of Jv are then left multiplied by
-      /// \f$J_{Lg} (q [iv:iv+nv])\f$.
+      /// \retval J in place multiplied result.
+      ///         \f$J\leftarrow J.J_{\mathbf{v}}\f$ if side is
+      ///         InputTimesDerivative
+      ///         \f$J\leftarrow J_{\mathbf{v}}.J\f$ if side is
+      ///         DerivativeTimesInput. If \f$J\f$ is initialized to identity,
+      ///         both results are the same.
       template <DerivativeProduct side>
       void dIntegrate_dv (LiegroupElementConstRef q, vectorIn_t v, matrixOut_t Jv) const;
 
