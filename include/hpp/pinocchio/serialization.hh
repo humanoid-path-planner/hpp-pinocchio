@@ -94,13 +94,13 @@ namespace serialization {
 namespace remove_duplicate {
 template<typename Key, typename Compare = std::less<Key> >
 struct ptr_less : Compare {
-  inline bool operator() (Key const* t1, Key const* t2) { return Compare::operator() (*t1, *t2); }
+  inline bool operator() (Key const* t1, Key const* t2) const { return Compare::operator() (*t1, *t2); }
 };
 
 template<typename Derived>
 struct eigen_compare {
   bool operator() (const Eigen::PlainObjectBase<Derived>& a,
-                   const Eigen::PlainObjectBase<Derived>& b)
+                   const Eigen::PlainObjectBase<Derived>& b) const
   {
     if (a.size() < b.size()) return true;
     if (a.size() > b.size()) return false;
