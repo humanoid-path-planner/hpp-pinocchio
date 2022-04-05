@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2016 CNRS
-// Author: NMansard 
+// Author: NMansard
 //
 //
 
@@ -28,135 +28,114 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 
-#include <hpp/pinocchio/body.hh>
-
 #include <boost/foreach.hpp>
-
-#include <pinocchio/spatial/fcl-pinocchio-conversions.hpp>
-#include <pinocchio/multibody/model.hpp>
-#include <pinocchio/multibody/geometry.hpp>
-
-#include <hpp/pinocchio/joint.hh>
-#include <hpp/pinocchio/joint-collection.hh>
-#include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/body.hh>
 #include <hpp/pinocchio/collision-object.hh>
+#include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/joint-collection.hh>
+#include <hpp/pinocchio/joint.hh>
+#include <pinocchio/multibody/geometry.hpp>
+#include <pinocchio/multibody/model.hpp>
+#include <pinocchio/spatial/fcl-pinocchio-conversions.hpp>
 
 namespace hpp {
-  namespace pinocchio {
+namespace pinocchio {
 
-    Body::
-    Body (DeviceWkPtr_t device, JointIndex joint) 
-      : devicePtr(device),jointIndex(joint) ,frameIndexSet(false)
-    {
-      selfAssert();
-    }
+Body::Body(DeviceWkPtr_t device, JointIndex joint)
+    : devicePtr(device), jointIndex(joint), frameIndexSet(false) {
+  selfAssert();
+}
 
-    void Body::selfAssert() const 
-    {
-      DevicePtr_t device = devicePtr.lock();
-      assert(device);
-      assert(device->modelPtr());
-      assert(device->model().joints.size()>std::size_t(jointIndex));
-      if(frameIndexSet)
-        assert(device->model().frames.size()>std::size_t(frameIndex));
-    }
+void Body::selfAssert() const {
+  DevicePtr_t device = devicePtr.lock();
+  assert(device);
+  assert(device->modelPtr());
+  assert(device->model().joints.size() > std::size_t(jointIndex));
+  if (frameIndexSet)
+    assert(device->model().frames.size() > std::size_t(frameIndex));
+}
 
-    const Model & Body::model() const { return devicePtr.lock()->model(); }
-    Model &       Body::model()       { return devicePtr.lock()->model(); }
-    ::pinocchio::Frame &       Body::frame()
-    {
-      searchFrameIndex();
-      return model().frames[frameIndex];
-    }
-    const ::pinocchio::Frame & Body::frame() const
-    {
-      searchFrameIndex();
-      return model().frames[frameIndex];
-    }
+const Model& Body::model() const { return devicePtr.lock()->model(); }
+Model& Body::model() { return devicePtr.lock()->model(); }
+::pinocchio::Frame& Body::frame() {
+  searchFrameIndex();
+  return model().frames[frameIndex];
+}
+const ::pinocchio::Frame& Body::frame() const {
+  searchFrameIndex();
+  return model().frames[frameIndex];
+}
 
-    void Body::searchFrameIndex() const
-    {
-      if(frameIndexSet) return;
-      frameIndex = 0;
-      BOOST_FOREACH(const ::pinocchio::Frame & frame,model().frames)
-        {
-          if( (::pinocchio::BODY == frame.type) && (frame.parent == jointIndex) )
-            break;
-          frameIndex++;
-        }
-      // If index not find, then it is set to size() -> normal behavior
-      frameIndexSet = true;
-    }
+void Body::searchFrameIndex() const {
+  if (frameIndexSet) return;
+  frameIndex = 0;
+  BOOST_FOREACH (const ::pinocchio::Frame& frame, model().frames) {
+    if ((::pinocchio::BODY == frame.type) && (frame.parent == jointIndex))
+      break;
+    frameIndex++;
+  }
+  // If index not find, then it is set to size() -> normal behavior
+  frameIndexSet = true;
+}
 
-    const std::string & Body::name () const
-    {
-      selfAssert();
-      return frame().name;
-    }
+const std::string& Body::name() const {
+  selfAssert();
+  return frame().name;
+}
 
-    JointPtr_t Body::joint () const
-    {
-      selfAssert();
-      return Joint::create (devicePtr,jointIndex);
-    }
+JointPtr_t Body::joint() const {
+  selfAssert();
+  return Joint::create(devicePtr, jointIndex);
+}
 
+const vector3_t& Body::localCenterOfMass() const {
+  selfAssert();
+  return model().inertias[jointIndex].lever();
+}
+matrix3_t Body::inertiaMatrix() const {
+  selfAssert();
+  return model().inertias[jointIndex].inertia();
+}
+value_type Body::mass() const {
+  selfAssert();
+  return model().inertias[jointIndex].mass();
+}
 
-    const vector3_t& Body::localCenterOfMass () const
-    {
-      selfAssert();
-      return model().inertias[jointIndex].lever();
-    }
-    matrix3_t Body::inertiaMatrix() const
-    {
-      selfAssert();
-      return model().inertias[jointIndex].inertia();
-    }
-    value_type Body::mass() const
-    {
-      selfAssert();
-      return model().inertias[jointIndex].mass();
-    }
+size_type Body::nbInnerObjects() const {
+  selfAssert();
+  DevicePtr_t device = devicePtr.lock();
+  return (size_type)device->geomData().innerObjects[jointIndex].size();
+}
 
-    size_type Body::nbInnerObjects () const
-    {
-      selfAssert();
-      DevicePtr_t device = devicePtr.lock();
-      return (size_type)device->geomData().innerObjects[jointIndex].size();
-    }
+CollisionObjectPtr_t Body::innerObjectAt(const size_type& i) const {
+  selfAssert();
+  assert(0 <= i && i < nbInnerObjects());
+  DevicePtr_t device = devicePtr.lock();
+  return CollisionObjectPtr_t(new CollisionObject(
+      device, device->geomData().innerObjects[jointIndex][(std::size_t)i]));
+}
 
-    CollisionObjectPtr_t Body::innerObjectAt (const size_type& i) const
-    {
-      selfAssert();
-      assert (0 <= i && i < nbInnerObjects());
-      DevicePtr_t device = devicePtr.lock();
-      return CollisionObjectPtr_t(new CollisionObject(device,
-            device->geomData().innerObjects[jointIndex][(std::size_t)i]));
-    }
+value_type Body::radius() const {
+  selfAssert();
+  DevicePtr_t device = devicePtr.lock();
+  assert(device->geomDataPtr());
+  assert(std::size_t(device->geomData().radius.size()) ==
+         model().joints.size());
+  return device->geomData().radius[jointIndex];
+}
 
-    value_type Body::radius () const
-    {
-      selfAssert();
-      DevicePtr_t device = devicePtr.lock();
-      assert(device->geomDataPtr());
-      assert(std::size_t(device->geomData().radius.size())==model().joints.size());
-      return device->geomData().radius[jointIndex]; 
-    }
+size_type Body::nbOuterObjects() const {
+  selfAssert();
+  DevicePtr_t device = devicePtr.lock();
+  return (size_type)device->geomData().outerObjects[jointIndex].size();
+}
 
-    size_type Body::nbOuterObjects () const
-    {
-      selfAssert();
-      DevicePtr_t device = devicePtr.lock();
-      return (size_type)device->geomData().outerObjects[jointIndex].size();
-    }
-
-    CollisionObjectPtr_t Body::outerObjectAt (const size_type& i) const
-    {
-      selfAssert();
-      assert (0 <= i && i < nbOuterObjects());
-      DevicePtr_t device = devicePtr.lock();
-      return CollisionObjectPtr_t(new CollisionObject(device,
-            device->geomData().outerObjects[jointIndex][(std::size_t)i]));
-    }
-  } // namespace pinocchio
-} // namespace hpp
-
+CollisionObjectPtr_t Body::outerObjectAt(const size_type& i) const {
+  selfAssert();
+  assert(0 <= i && i < nbOuterObjects());
+  DevicePtr_t device = devicePtr.lock();
+  return CollisionObjectPtr_t(new CollisionObject(
+      device, device->geomData().outerObjects[jointIndex][(std::size_t)i]));
+}
+}  // namespace pinocchio
+}  // namespace hpp

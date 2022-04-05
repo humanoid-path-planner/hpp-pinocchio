@@ -31,122 +31,104 @@
 #ifndef HPP_PINOCCHIO_POOL_HH
 #define HPP_PINOCCHIO_POOL_HH
 
-# include <vector>
-
-# include <boost/thread/mutex.hpp>
-# include <boost/thread/condition_variable.hpp>
-
-# include <hpp/pinocchio/config.hh>
+#include <boost/thread/condition_variable.hpp>
+#include <boost/thread/mutex.hpp>
+#include <hpp/pinocchio/config.hh>
+#include <vector>
 
 namespace hpp {
-  namespace pinocchio {
+namespace pinocchio {
 
-    /// \brief Pool of objects
-    ///
-    /// Usage:
-    /// \code
-    /// Pool<Foo> pool;
-    /// std::vector<Foo*> temporary_foos;
-    /// // Fill temporary_foos new objects.
-    /// // The ownership is passed to the pool.
-    /// pool.push_back (foo.begin(), foo.end());
-    ///
-    /// Foo* foo = pool.acquire();
-    /// // Access to foo is thread safe.
-    /// pool.release(foo);
-    /// \endcode
-    template <typename T>
-    class HPP_PINOCCHIO_DLLAPI Pool
-    {
-      public:
-        /// Get an object from the pool.
-        /// If the pool is empty, wait until one element becomes available.
-        T* acquire ()
-        {
-          boost::mutex::scoped_lock lock (mutex_);
-          condVariable_.wait (lock, OneIsAvailable(*this));
-          T* ret = NULL;
-          std::swap (ret, Ts_[lastFree_]);
-          lastFree_++;
-          return ret;
-        }
+/// \brief Pool of objects
+///
+/// Usage:
+/// \code
+/// Pool<Foo> pool;
+/// std::vector<Foo*> temporary_foos;
+/// // Fill temporary_foos new objects.
+/// // The ownership is passed to the pool.
+/// pool.push_back (foo.begin(), foo.end());
+///
+/// Foo* foo = pool.acquire();
+/// // Access to foo is thread safe.
+/// pool.release(foo);
+/// \endcode
+template <typename T>
+class HPP_PINOCCHIO_DLLAPI Pool {
+ public:
+  /// Get an object from the pool.
+  /// If the pool is empty, wait until one element becomes available.
+  T* acquire() {
+    boost::mutex::scoped_lock lock(mutex_);
+    condVariable_.wait(lock, OneIsAvailable(*this));
+    T* ret = NULL;
+    std::swap(ret, Ts_[lastFree_]);
+    lastFree_++;
+    return ret;
+  }
 
-        /// Release a previously acquired object.
-        /// \warning There is no check that the object was actually one returned
-        /// by Pool::acquire
-        void release (T* t)
-        {
-          boost::mutex::scoped_lock lock (mutex_);
-          // At least one T* is not free.
-          assert (lastFree_ > 0);
-          assert (Ts_[lastFree_-1] == NULL);
-          Ts_[lastFree_-1] = t;
-          lastFree_--;
-          condVariable_.notify_one ();
-        }
+  /// Release a previously acquired object.
+  /// \warning There is no check that the object was actually one returned
+  /// by Pool::acquire
+  void release(T* t) {
+    boost::mutex::scoped_lock lock(mutex_);
+    // At least one T* is not free.
+    assert(lastFree_ > 0);
+    assert(Ts_[lastFree_ - 1] == NULL);
+    Ts_[lastFree_ - 1] = t;
+    lastFree_--;
+    condVariable_.notify_one();
+  }
 
-        /// Returns true is at least one object is not locked.
-        bool available () const
-        {
-          return OneIsAvailable (*this) ();
-        }
+  /// Returns true is at least one object is not locked.
+  bool available() const { return OneIsAvailable(*this)(); }
 
-        std::size_t size () const
-        {
-          return Ts_.size();
-        }
+  std::size_t size() const { return Ts_.size(); }
 
-        /// Deletes all internal objects.
-        void clear ()
-        {
-          boost::mutex::scoped_lock lock (mutex_);
-          if (lastFree_ > 0)
-            throw std::logic_error ("Cannot free pool when some objects are in use.");
-          for (std::size_t i = 0; i < size(); ++i) delete Ts_[i];
-          Ts_.resize(0);
-        }
+  /// Deletes all internal objects.
+  void clear() {
+    boost::mutex::scoped_lock lock(mutex_);
+    if (lastFree_ > 0)
+      throw std::logic_error("Cannot free pool when some objects are in use.");
+    for (std::size_t i = 0; i < size(); ++i) delete Ts_[i];
+    Ts_.resize(0);
+  }
 
-        /// Adds an object to the pool
-        /// The pool takes ownership of the object
-        void push_back (T* t)
-        {
-          boost::mutex::scoped_lock lock (mutex_);
-          Ts_.push_back(t);
-        }
+  /// Adds an object to the pool
+  /// The pool takes ownership of the object
+  void push_back(T* t) {
+    boost::mutex::scoped_lock lock(mutex_);
+    Ts_.push_back(t);
+  }
 
-        /// Add objects to the pool
-        /// The pool takes ownership of the object
-        template <class InputIterator>
-        void push_back (InputIterator first, InputIterator last)
-        {
-          boost::mutex::scoped_lock lock (mutex_);
-          Ts_.insert(Ts_.end(), first, last);
-        }
+  /// Add objects to the pool
+  /// The pool takes ownership of the object
+  template <class InputIterator>
+  void push_back(InputIterator first, InputIterator last) {
+    boost::mutex::scoped_lock lock(mutex_);
+    Ts_.insert(Ts_.end(), first, last);
+  }
 
-        /// Destructor
-        /// Calls Pool::clear()
-        ~Pool ()
-        {
-          clear();
-        }
+  /// Destructor
+  /// Calls Pool::clear()
+  ~Pool() { clear(); }
 
-        /// Constructor
-        Pool () : lastFree_ (0) {}
+  /// Constructor
+  Pool() : lastFree_(0) {}
 
-      private:
-        struct OneIsAvailable
-        {
-          const Pool& p;
-          OneIsAvailable (const Pool& pool) : p (pool) {}
-          bool operator() () { return p.lastFree_ < p.size(); }
-        };
+ private:
+  struct OneIsAvailable {
+    const Pool& p;
+    OneIsAvailable(const Pool& pool) : p(pool) {}
+    bool operator()() { return p.lastFree_ < p.size(); }
+  };
 
-        boost::mutex mutex_;
-        boost::condition_variable condVariable_;
-        std::vector<T*> Ts_;
-        std::size_t lastFree_;
-    }; // class Pool
-  } // namespace pinocchio
-} // namespace hpp
+  boost::mutex mutex_;
+  boost::condition_variable condVariable_;
+  std::vector<T*> Ts_;
+  std::size_t lastFree_;
+};  // class Pool
+}  // namespace pinocchio
+}  // namespace hpp
 
-#endif // HPP_PINOCCHIO_DEVICE_HH
+#endif  // HPP_PINOCCHIO_DEVICE_HH

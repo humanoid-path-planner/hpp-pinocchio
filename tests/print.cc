@@ -26,52 +26,39 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 
-#include <iostream>
-
-#include <hpp/pinocchio/util.hh>
-
 #include <hpp/pinocchio/fwd.hh>
+#include <hpp/pinocchio/util.hh>
+#include <iostream>
 #include <pinocchio/spatial/se3.hpp>
 
 using namespace hpp;
+using hpp::pinocchio::matrix_t;
 using hpp::pinocchio::SE3;
 using hpp::pinocchio::vector_t;
-using hpp::pinocchio::matrix_t;
-using hpp::pinocchio::vectorOut_t;
 using hpp::pinocchio::vectorIn_t;
+using hpp::pinocchio::vectorOut_t;
 
-int main ()
-{
-//! [Example usage]
-  std::cout << incindent
-    << iendl << pretty_print (SE3::Identity())
-    << iendl << condensed (SE3::Identity())
-    << iendl << one_line (SE3::Identity())
-    << decindent << iendl;
+int main() {
+  //! [Example usage]
+  std::cout << incindent << iendl << pretty_print(SE3::Identity()) << iendl
+            << condensed(SE3::Identity()) << iendl << one_line(SE3::Identity())
+            << decindent << iendl;
 
-  std::cout << setpyformat
-    << iendl << pretty_print (SE3::Identity())
-    << iendl << condensed (SE3::Identity())
-    << iendl << one_line (SE3::Identity())
-    << iendl;
+  std::cout << setpyformat << iendl << pretty_print(SE3::Identity()) << iendl
+            << condensed(SE3::Identity()) << iendl << one_line(SE3::Identity())
+            << iendl;
 
   vector_t v = vector_t::Ones(2);
-  matrix_t m = matrix_t::Identity(3,3);
+  matrix_t m = matrix_t::Identity(3, 3);
 
-  std::cout << unsetpyformat
-    << iendl << pretty_print (v)
-    << iendl << condensed (v)
-    << iendl << one_line (v.segment(0,2))
-    << iendl << pretty_print (vectorOut_t(v))
-    << iendl << condensed (vectorIn_t(v))
-    << iendl;
+  std::cout << unsetpyformat << iendl << pretty_print(v) << iendl
+            << condensed(v) << iendl << one_line(v.segment(0, 2)) << iendl
+            << pretty_print(vectorOut_t(v)) << iendl << condensed(vectorIn_t(v))
+            << iendl;
 
-  std::cout << setpyformat
-    << iendl << pretty_print (m)
-    << iendl << condensed (m)
-    << iendl << one_line (m.block(1,1,2,2))
-    << iendl;
-//! [Example usage]
+  std::cout << setpyformat << iendl << pretty_print(m) << iendl << condensed(m)
+            << iendl << one_line(m.block(1, 1, 2, 2)) << iendl;
+  //! [Example usage]
 
   return 0;
 }

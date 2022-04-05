@@ -29,16 +29,14 @@
 #define BOOST_TEST_MODULE urdf
 
 #include <boost/test/unit_test.hpp>
-
-#include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/urdf/util.hh>
 
 using namespace hpp::pinocchio;
 
-BOOST_AUTO_TEST_CASE (mimic_joint)
-{
-  std::string urdf (
+BOOST_AUTO_TEST_CASE(mimic_joint) {
+  std::string urdf(
       "<robot name='test'>"
       "<link name='base_link'/>"
       "<link name='link1'/>"
@@ -55,11 +53,11 @@ BOOST_AUTO_TEST_CASE (mimic_joint)
       "  <limit effort='30' velocity='1.0' />"
       "</joint>"
       "</robot>");
-  DevicePtr_t robot = Device::create ("test");
-  urdf::loadModelFromString (robot, 0, "test", "anchor", urdf, "");
+  DevicePtr_t robot = Device::create("test");
+  urdf::loadModelFromString(robot, 0, "test", "anchor", urdf, "");
   BOOST_REQUIRE(robot);
 
-  BOOST_REQUIRE_EQUAL (robot->jointConstraints().size(), 1);
-  BOOST_CHECK_EQUAL (robot->jointConstraints()[0].multiplier, -1.);
-  BOOST_CHECK_EQUAL (robot->jointConstraints()[0].offset    , 0.5);
+  BOOST_REQUIRE_EQUAL(robot->jointConstraints().size(), 1);
+  BOOST_CHECK_EQUAL(robot->jointConstraints()[0].multiplier, -1.);
+  BOOST_CHECK_EQUAL(robot->jointConstraints()[0].offset, 0.5);
 }

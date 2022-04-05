@@ -28,43 +28,38 @@
 
 #define BOOST_TEST_MODULE tpool
 
-#include <hpp/pinocchio/pool.hh>
 #include <boost/test/unit_test.hpp>
+#include <hpp/pinocchio/pool.hh>
 
 template <typename T>
-void compute (T& t, std::size_t i)
-{
-  t = 2*(T)i;
+void compute(T& t, std::size_t i) {
+  t = 2 * (T)i;
 }
 
 template <typename T>
-void _test_pool ()
-{
+void _test_pool() {
   using namespace hpp::pinocchio;
   typedef Pool<T> Pool_t;
 
   Pool_t pool;
-  for (int i = 0; i < 4; ++i) pool.push_back (new T);
+  for (int i = 0; i < 4; ++i) pool.push_back(new T);
 
   const std::size_t N = 100;
-  std::vector<T> res (N);
+  std::vector<T> res(N);
 
 #pragma omp parallel for
   for (std::size_t i = 0; i < N; ++i) {
-    T* t = pool.acquire ();
+    T* t = pool.acquire();
     compute(*t, i);
     res[i] = *t;
-    pool.release (t);
+    pool.release(t);
   }
 
   T t;
   for (std::size_t i = 0; i < N; ++i) {
-    compute (t, i);
-    BOOST_CHECK_EQUAL (t, res[i]);
+    compute(t, i);
+    BOOST_CHECK_EQUAL(t, res[i]);
   }
 }
 
-BOOST_AUTO_TEST_CASE (test_pool)
-{
-  _test_pool<int>();
-}
+BOOST_AUTO_TEST_CASE(test_pool) { _test_pool<int>(); }

@@ -27,35 +27,26 @@
 // DAMAGE.
 
 #ifndef HPP_PINOCCHIO_SIMPLE_DEVICE_HH
-# define HPP_PINOCCHIO_SIMPLE_DEVICE_HH
+#define HPP_PINOCCHIO_SIMPLE_DEVICE_HH
 
-# include <hpp/pinocchio/fwd.hh>
-# include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/fwd.hh>
 
 namespace hpp {
-  namespace pinocchio {
-    DevicePtr_t humanoidSimple(
-        const std::string& name = "humanoidSimple",
-        bool usingFF = true,
-        Computation_t compFlags = (Computation_t) (JOINT_POSITION | JACOBIAN)
-        );
+namespace pinocchio {
+DevicePtr_t humanoidSimple(
+    const std::string& name = "humanoidSimple", bool usingFF = true,
+    Computation_t compFlags = (Computation_t)(JOINT_POSITION | JACOBIAN));
 
-    DevicePtr_t humanoidSimple(
-        const std::string& name = "humanoidSimple",
-        Computation_t compFlags = (Computation_t) (JOINT_POSITION | JACOBIAN)
-        );
+DevicePtr_t humanoidSimple(
+    const std::string& name = "humanoidSimple",
+    Computation_t compFlags = (Computation_t)(JOINT_POSITION | JACOBIAN));
 
-    namespace unittest {
-      enum TestDeviceType {
-        HumanoidRomeo,
-        HumanoidSimple,
-        CarLike,
-        ManipulatorArm2
-      };
+namespace unittest {
+enum TestDeviceType { HumanoidRomeo, HumanoidSimple, CarLike, ManipulatorArm2 };
 
-      DevicePtr_t makeDevice (TestDeviceType type,
-                              const std::string& prefix = "");
-    }
-  } // namespace pinocchio
-} // namespace hpp
-#endif // HPP_PINOCCHIO_SIMPLE_DEVICE_HH
+DevicePtr_t makeDevice(TestDeviceType type, const std::string& prefix = "");
+}  // namespace unittest
+}  // namespace pinocchio
+}  // namespace hpp
+#endif  // HPP_PINOCCHIO_SIMPLE_DEVICE_HH

@@ -28,22 +28,18 @@
 
 #define BOOST_TEST_MODULE tserialization
 
-#include <boost/test/unit_test.hpp>
-
-#include <sstream>
-#include <fstream>
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
-
-#include <pinocchio/fwd.hpp>
+#include <boost/test/unit_test.hpp>
+#include <fstream>
 #include <hpp/pinocchio/fwd.hh>
-
 #include <hpp/pinocchio/serialization.hh>
+#include <pinocchio/fwd.hpp>
+#include <sstream>
 
 using namespace hpp::pinocchio;
 
-BOOST_AUTO_TEST_CASE(empty_array)
-{
+BOOST_AUTO_TEST_CASE(empty_array) {
   Eigen::ArrayXi empty(0);
 
   std::stringstream ss;
@@ -61,16 +57,14 @@ BOOST_AUTO_TEST_CASE(empty_array)
   BOOST_CHECK_EQUAL(empty_r.size(), 0);
 }
 
-template<typename base_archive = boost::archive::xml_oarchive>
-struct oarchive :
-  base_archive, hpp::serialization::remove_duplicate::vector_archive
-{
-  oarchive(std::ostream& is) : base_archive (is) {}
+template <typename base_archive = boost::archive::xml_oarchive>
+struct oarchive : base_archive,
+                  hpp::serialization::remove_duplicate::vector_archive {
+  oarchive(std::ostream& is) : base_archive(is) {}
 };
 
-template<typename Archive>
-void check_remove_duplicate_impl ()
-{
+template <typename Archive>
+void check_remove_duplicate_impl() {
   vector_t a(5), b(a);
 
   std::stringstream ss;
@@ -93,12 +87,11 @@ void check_remove_duplicate_impl ()
   BOOST_CHECK_EQUAL(b, b_r);
 }
 
-BOOST_AUTO_TEST_CASE(check_remove_duplicate)
-{
+BOOST_AUTO_TEST_CASE(check_remove_duplicate) {
   check_remove_duplicate_impl<boost::archive::xml_oarchive>();
   check_remove_duplicate_impl<oarchive<boost::archive::xml_oarchive> >();
 
-  vector_t q (5);
+  vector_t q(5);
   for (int i = 0; i < 10; ++i) {
     q.setRandom();
     vector_t qq;

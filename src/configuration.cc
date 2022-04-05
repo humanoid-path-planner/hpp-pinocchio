@@ -27,249 +27,226 @@
 // DAMAGE.
 
 #include <hpp/pinocchio/configuration.hh>
-
-#include <hpp/util/indent.hh>
-
-#include <pinocchio/algorithm/joint-configuration.hpp>
-#include <pinocchio/multibody/liegroup/liegroup.hpp>
 #include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/joint-collection.hh>
 #include <hpp/pinocchio/liegroup.hh>
 #include <hpp/pinocchio/util.hh>
-#include <hpp/pinocchio/joint-collection.hh>
+#include <hpp/util/indent.hh>
+#include <pinocchio/algorithm/joint-configuration.hpp>
+#include <pinocchio/multibody/liegroup/liegroup.hpp>
 
 namespace hpp {
-  namespace pinocchio {
-    void saturate (const DevicePtr_t& robot,
-			  ConfigurationOut_t configuration)
-    {
-      const Model& model = robot->model();
-      configuration.head(model.nq) = model.upperPositionLimit.cwiseMin(configuration.head(model.nq));
-      configuration.head(model.nq) = model.lowerPositionLimit.cwiseMax(configuration.head(model.nq));
+namespace pinocchio {
+void saturate(const DevicePtr_t& robot, ConfigurationOut_t configuration) {
+  const Model& model = robot->model();
+  configuration.head(model.nq) =
+      model.upperPositionLimit.cwiseMin(configuration.head(model.nq));
+  configuration.head(model.nq) =
+      model.lowerPositionLimit.cwiseMax(configuration.head(model.nq));
 
-      const ExtraConfigSpace& ecs = robot->extraConfigSpace();
-      const size_type& d = ecs.dimension();
-      configuration.tail(d) = ecs.upper().cwiseMin(configuration.tail(d));
-      configuration.tail(d) = ecs.lower().cwiseMax(configuration.tail(d));
+  const ExtraConfigSpace& ecs = robot->extraConfigSpace();
+  const size_type& d = ecs.dimension();
+  configuration.tail(d) = ecs.upper().cwiseMin(configuration.tail(d));
+  configuration.tail(d) = ecs.lower().cwiseMax(configuration.tail(d));
+}
+
+bool saturate(const DevicePtr_t& robot, ConfigurationOut_t configuration,
+              ArrayXb& saturation) {
+  bool ret = false;
+  const Model& model = robot->model();
+
+  for (std::size_t i = 1; i < model.joints.size(); ++i) {
+    const size_type nq = model.joints[i].nq();
+    const size_type nv = model.joints[i].nv();
+    const size_type idx_q = model.joints[i].idx_q();
+    const size_type idx_v = model.joints[i].idx_v();
+    for (size_type j = 0; j < nq; ++j) {
+      const size_type iq = idx_q + j;
+      const size_type iv = idx_v + std::min(j, nv - 1);
+      if (configuration[iq] > model.upperPositionLimit[iq]) {
+        saturation[iv] = true;
+        configuration[iq] = model.upperPositionLimit[iq];
+        ret = true;
+      } else if (configuration[iq] < model.lowerPositionLimit[iq]) {
+        saturation[iv] = true;
+        configuration[iq] = model.lowerPositionLimit[iq];
+        ret = true;
+      } else
+        saturation[iv] = false;
     }
+  }
 
-    bool saturate (const DevicePtr_t& robot,
-                   ConfigurationOut_t configuration,
-                   ArrayXb& saturation)
-    {
-      bool ret = false;
-      const Model& model = robot->model();
+  const ExtraConfigSpace& ecs = robot->extraConfigSpace();
+  const size_type& d = ecs.dimension();
 
-      for (std::size_t i = 1; i < model.joints.size(); ++i) {
-        const size_type nq = model.joints[i].nq();
-        const size_type nv = model.joints[i].nv();
-        const size_type idx_q = model.joints[i].idx_q();
-        const size_type idx_v = model.joints[i].idx_v();
-        for (size_type j = 0; j < nq; ++j) {
-          const size_type iq = idx_q + j;
-          const size_type iv = idx_v + std::min(j,nv-1);
-          if        (configuration[iq] > model.upperPositionLimit[iq]) {
-            saturation[iv] = true;
-            configuration[iq] = model.upperPositionLimit[iq];
-            ret = true;
-          } else if (configuration[iq] < model.lowerPositionLimit[iq]) {
-            saturation[iv] = true;
-            configuration[iq] = model.lowerPositionLimit[iq];
-            ret = true;
-          } else
-            saturation[iv] = false;
-        }
-      }
+  for (size_type k = 0; k < d; ++k) {
+    const size_type iq = model.nq + k;
+    const size_type iv = model.nv + k;
+    if (configuration[iq] > ecs.upper(k)) {
+      saturation[iv] = true;
+      configuration[iq] = ecs.upper(k);
+      ret = true;
+    } else if (configuration[iq] < ecs.lower(k)) {
+      saturation[iv] = true;
+      configuration[iq] = ecs.lower(k);
+      ret = true;
+    } else
+      saturation[iv] = false;
+  }
+  return ret;
+}
 
-      const ExtraConfigSpace& ecs = robot->extraConfigSpace();
-      const size_type& d = ecs.dimension();
+template <bool saturateConfig, typename LieGroup>
+void integrate(const DevicePtr_t& robot, ConfigurationIn_t configuration,
+               vectorIn_t velocity, ConfigurationOut_t result) {
+  const Model& model = robot->model();
+  result.head(model.nq) =
+      ::pinocchio::integrate<LieGroup>(model, configuration, velocity);
+  const size_type& dim = robot->extraConfigSpace().dimension();
+  result.tail(dim) = configuration.tail(dim) + velocity.tail(dim);
+  if (saturateConfig) saturate(robot, result);
+}
 
-      for (size_type k = 0; k < d; ++k) {
-        const size_type iq = model.nq + k;
-        const size_type iv = model.nv + k;
-        if        (configuration[iq] > ecs.upper(k)) {
-          saturation[iv] = true;
-          configuration[iq] = ecs.upper(k);
-          ret = true;
-        } else if (configuration[iq] < ecs.lower(k)) {
-          saturation[iv] = true;
-          configuration[iq] = ecs.lower(k);
-          ret = true;
-        } else
-          saturation[iv] = false;
-      }
-      return ret;
-    }
+template void integrate<true, RnxSOnLieGroupMap>(
+    const DevicePtr_t& robot, ConfigurationIn_t configuration,
+    vectorIn_t velocity, ConfigurationOut_t result);
+template void integrate<false, RnxSOnLieGroupMap>(
+    const DevicePtr_t& robot, ConfigurationIn_t configuration,
+    vectorIn_t velocity, ConfigurationOut_t result);
+template void integrate<true, DefaultLieGroupMap>(
+    const DevicePtr_t& robot, ConfigurationIn_t configuration,
+    vectorIn_t velocity, ConfigurationOut_t result);
+template void integrate<false, DefaultLieGroupMap>(
+    const DevicePtr_t& robot, ConfigurationIn_t configuration,
+    vectorIn_t velocity, ConfigurationOut_t result);
 
-    template<bool saturateConfig, typename LieGroup>
-    void integrate (const DevicePtr_t& robot,
-                    ConfigurationIn_t configuration,
-                    vectorIn_t velocity, ConfigurationOut_t result)
-    {
-      const Model& model = robot->model();
-      result.head(model.nq) = ::pinocchio::integrate<LieGroup>(model, configuration, velocity);
-      const size_type& dim = robot->extraConfigSpace().dimension();
-      result.tail (dim) = configuration.tail (dim) + velocity.tail (dim);
-      if (saturateConfig) saturate(robot, result);
-    }
+void integrate(const DevicePtr_t& robot, ConfigurationIn_t configuration,
+               vectorIn_t velocity, ConfigurationOut_t result) {
+  integrate<true, DefaultLieGroupMap>(robot, configuration, velocity, result);
+}
 
-    template void integrate<true,  RnxSOnLieGroupMap>
-                                  (const DevicePtr_t& robot,
-                                   ConfigurationIn_t configuration,
-                                   vectorIn_t velocity, ConfigurationOut_t result);
-    template void integrate<false, RnxSOnLieGroupMap>
-                                  (const DevicePtr_t& robot,
-                                   ConfigurationIn_t configuration,
-                                   vectorIn_t velocity, ConfigurationOut_t result);
-    template void integrate<true,  DefaultLieGroupMap>
-                                  (const DevicePtr_t& robot,
-                                   ConfigurationIn_t configuration,
-                                   vectorIn_t velocity, ConfigurationOut_t result);
-    template void integrate<false, DefaultLieGroupMap>
-                                  (const DevicePtr_t& robot,
-                                   ConfigurationIn_t configuration,
-                                   vectorIn_t velocity, ConfigurationOut_t result);
+template <typename LieGroup>
+void interpolate(const DevicePtr_t& robot, ConfigurationIn_t q0,
+                 ConfigurationIn_t q1, const value_type& u,
+                 ConfigurationOut_t result) {
+  const Model& model = robot->model();
+  result.head(model.nq) = ::pinocchio::interpolate<LieGroup>(model, q0, q1, u);
+  const size_type& dim = robot->extraConfigSpace().dimension();
+  result.tail(dim) = u * q1.tail(dim) + (1 - u) * q0.tail(dim);
+}
 
-    void integrate (const DevicePtr_t& robot,
-                           ConfigurationIn_t configuration,
-                           vectorIn_t velocity, ConfigurationOut_t result)
-    {
-      integrate<true, DefaultLieGroupMap> (robot, configuration, velocity, result);
-    }
+template void interpolate<DefaultLieGroupMap>(const DevicePtr_t& robot,
+                                              ConfigurationIn_t q0,
+                                              ConfigurationIn_t q1,
+                                              const value_type& u,
+                                              ConfigurationOut_t result);
+template void interpolate<RnxSOnLieGroupMap>(const DevicePtr_t& robot,
+                                             ConfigurationIn_t q0,
+                                             ConfigurationIn_t q1,
+                                             const value_type& u,
+                                             ConfigurationOut_t result);
 
-    template <typename LieGroup>
-    void interpolate (const DevicePtr_t& robot,
-                      ConfigurationIn_t q0,
-                      ConfigurationIn_t q1,
-                      const value_type& u,
-                      ConfigurationOut_t result)
-    {
-      const Model& model = robot->model();
-      result.head(model.nq) = ::pinocchio::interpolate<LieGroup>(model, q0, q1, u);
-      const size_type& dim = robot->extraConfigSpace().dimension();
-      result.tail (dim) = u * q1.tail (dim) + (1-u) * q0.tail (dim);
-    }
+// TODO remove me. This is kept for backward compatibility
+template void interpolate< ::pinocchio::LieGroupMap>(const DevicePtr_t& robot,
+                                                     ConfigurationIn_t q0,
+                                                     ConfigurationIn_t q1,
+                                                     const value_type& u,
+                                                     ConfigurationOut_t result);
 
-    template void interpolate<DefaultLieGroupMap> (const DevicePtr_t& robot,
-                                                   ConfigurationIn_t q0,
-                                                   ConfigurationIn_t q1,
-                                                   const value_type& u,
-                                                   ConfigurationOut_t result);
-    template void interpolate<RnxSOnLieGroupMap>  (const DevicePtr_t& robot,
-                                                   ConfigurationIn_t q0,
-                                                   ConfigurationIn_t q1,
-                                                   const value_type& u,
-                                                   ConfigurationOut_t result);
+void interpolate(const DevicePtr_t& robot, ConfigurationIn_t q0,
+                 ConfigurationIn_t q1, const value_type& u,
+                 ConfigurationOut_t result) {
+  interpolate<RnxSOnLieGroupMap>(robot, q0, q1, u, result);
+}
 
-    // TODO remove me. This is kept for backward compatibility
-    template void interpolate< ::pinocchio::LieGroupMap> (const DevicePtr_t& robot,
-                                                 ConfigurationIn_t q0,
-                                                 ConfigurationIn_t q1,
-                                                 const value_type& u,
-                                                 ConfigurationOut_t result);
+template <typename LieGroup>
+void difference(const DevicePtr_t& robot, ConfigurationIn_t q1,
+                ConfigurationIn_t q2, vectorOut_t result) {
+  const Model& model = robot->model();
+  result.head(model.nv) = ::pinocchio::difference<LieGroup>(model, q2, q1);
+  const size_type& dim = robot->extraConfigSpace().dimension();
+  result.tail(dim) = q1.tail(dim) - q2.tail(dim);
+}
 
-    void interpolate (const DevicePtr_t& robot,
-                      ConfigurationIn_t q0,
-                      ConfigurationIn_t q1,
-                      const value_type& u,
-                      ConfigurationOut_t result)
-    {
-      interpolate<RnxSOnLieGroupMap> (robot, q0, q1, u, result);
-    }
+template void difference<DefaultLieGroupMap>(const DevicePtr_t& robot,
+                                             ConfigurationIn_t q1,
+                                             ConfigurationIn_t q2,
+                                             vectorOut_t result);
+// TODO remove me. This is kept for backward compatibility
+template void difference< ::pinocchio::LieGroupMap>(const DevicePtr_t& robot,
+                                                    ConfigurationIn_t q1,
+                                                    ConfigurationIn_t q2,
+                                                    vectorOut_t result);
 
-    template <typename LieGroup>
-    void difference (const DevicePtr_t& robot, ConfigurationIn_t q1,
-                     ConfigurationIn_t q2, vectorOut_t result)
-    {
-      const Model& model = robot->model();
-      result.head(model.nv) = ::pinocchio::difference<LieGroup> (model, q2, q1);
-      const size_type& dim = robot->extraConfigSpace().dimension();
-      result.tail (dim) = q1.tail (dim) - q2.tail (dim);
-    }
+template void difference<RnxSOnLieGroupMap>(const DevicePtr_t& robot,
+                                            ConfigurationIn_t q1,
+                                            ConfigurationIn_t q2,
+                                            vectorOut_t result);
 
-    template void difference <DefaultLieGroupMap> (const DevicePtr_t& robot,
-						   ConfigurationIn_t q1,
-						   ConfigurationIn_t q2,
-                           vectorOut_t result);
-    // TODO remove me. This is kept for backward compatibility
-    template void difference < ::pinocchio::LieGroupMap> (const DevicePtr_t& robot,
-                         ConfigurationIn_t q1,
-                         ConfigurationIn_t q2,
-                         vectorOut_t result);
+void difference(const DevicePtr_t& robot, ConfigurationIn_t q1,
+                ConfigurationIn_t q2, vectorOut_t result) {
+  difference<RnxSOnLieGroupMap>(robot, q1, q2, result);
+}
 
-    template void difference < RnxSOnLieGroupMap> (const DevicePtr_t& robot,
-                         ConfigurationIn_t q1,
-                         ConfigurationIn_t q2,
-                         vectorOut_t result);
+bool isApprox(const DevicePtr_t& robot, ConfigurationIn_t q1,
+              ConfigurationIn_t q2, value_type eps) {
+  if (!::pinocchio::isSameConfiguration< ::pinocchio::LieGroupMap>(
+          robot->model(), q1, q2, eps))
+    return false;
+  const size_type& dim = robot->extraConfigSpace().dimension();
+  return q2.tail(dim).isApprox(q1.tail(dim), eps);
+}
 
-    void difference (const DevicePtr_t& robot, ConfigurationIn_t q1,
-                     ConfigurationIn_t q2, vectorOut_t result)
-    {
-      difference <RnxSOnLieGroupMap> (robot, q1, q2, result);
-    }
+value_type distance(const DevicePtr_t& robot, ConfigurationIn_t q1,
+                    ConfigurationIn_t q2) {
+  vector_t dist = ::pinocchio::squaredDistance< ::pinocchio::LieGroupMap>(
+      robot->model(), q1, q2);
+  const size_type& dim = robot->extraConfigSpace().dimension();
+  if (dim == 0)
+    return sqrt(dist.sum());
+  else
+    return sqrt(dist.sum() + (q2.tail(dim) - q1.tail(dim)).squaredNorm());
+}
 
-    bool isApprox (const DevicePtr_t& robot, ConfigurationIn_t q1,
-			  ConfigurationIn_t q2, value_type eps)
-    {
-      if (!::pinocchio::isSameConfiguration< ::pinocchio::LieGroupMap>(robot->model(), q1, q2, eps)) return false;
-      const size_type& dim = robot->extraConfigSpace().dimension();
-      return q2.tail (dim).isApprox (q1.tail (dim), eps);
-    }
+void normalize(const DevicePtr_t& robot, Configuration_t& q) {
+  ::pinocchio::normalize(robot->model(), q);
+}
 
-    value_type distance (const DevicePtr_t& robot, ConfigurationIn_t q1,
-                         ConfigurationIn_t q2)
-    {
-      vector_t dist = ::pinocchio::squaredDistance< ::pinocchio::LieGroupMap>(robot->model(), q1, q2);
-      const size_type& dim = robot->extraConfigSpace().dimension();
-      if (dim == 0) return sqrt(dist.sum());
-      else return sqrt (dist.sum() + (q2.tail (dim) - q1.tail (dim)).squaredNorm ());
-    }
+struct IsNormalizedStep
+    : public ::pinocchio::fusion::JointUnaryVisitorBase<IsNormalizedStep> {
+  typedef boost::fusion::vector<ConfigurationIn_t, const value_type&, bool&>
+      ArgsType;
 
-    void normalize (const DevicePtr_t& robot, Configuration_t& q)
-    {
-      ::pinocchio::normalize(robot->model(), q);
-    }
+  template <typename JointModel>
+  static void algo(const ::pinocchio::JointModelBase<JointModel>& jmodel,
+                   ConfigurationIn_t q, const value_type& eps, bool& ret) {
+    typedef typename RnxSOnLieGroupMap::operation<JointModel>::type LG_t;
+    ret = ret && LG_t::isNormalized(jmodel.jointConfigSelector(q), eps);
+  }
+};
 
-    struct IsNormalizedStep : public ::pinocchio::fusion::JointUnaryVisitorBase<IsNormalizedStep>
-    {
-      typedef boost::fusion::vector<ConfigurationIn_t,
-                                    const value_type &,
-                                    bool &> ArgsType;
+template <>
+void IsNormalizedStep::algo<JointModelComposite>(
+    const ::pinocchio::JointModelBase<JointModelComposite>& jmodel,
+    ConfigurationIn_t q, const value_type& eps, bool& ret) {
+  ::pinocchio::details::Dispatch<IsNormalizedStep>::run(
+      jmodel.derived(), IsNormalizedStep::ArgsType(q, eps, ret));
+}
 
-      template<typename JointModel>
-      static void algo(const ::pinocchio::JointModelBase<JointModel> & jmodel,
-                       ConfigurationIn_t q,
-                       const value_type & eps,
-                       bool & ret)
-      {
-        typedef typename RnxSOnLieGroupMap::operation<JointModel>::type LG_t;
-        ret = ret && LG_t::isNormalized(jmodel.jointConfigSelector(q), eps);
-      }
-    };
+bool isNormalized(const DevicePtr_t& robot, ConfigurationIn_t q,
+                  const value_type& eps) {
+  bool ret = true;
+  const Model& model = robot->model();
+  for (std::size_t i = 1; i < (std::size_t)model.njoints; ++i) {
+    IsNormalizedStep::run(model.joints[i],
+                          IsNormalizedStep::ArgsType(q, eps, ret));
+    if (!ret) return false;
+  }
+  return true;
+}
 
-    template<>
-    void IsNormalizedStep::algo< JointModelComposite>(const ::pinocchio::JointModelBase< JointModelComposite> & jmodel,
-                     ConfigurationIn_t q,
-                     const value_type & eps,
-                     bool & ret)
-    {
-      ::pinocchio::details::Dispatch<IsNormalizedStep>::run(jmodel.derived(), IsNormalizedStep::ArgsType(q, eps, ret));
-    }
-
-    bool isNormalized (const DevicePtr_t& robot, ConfigurationIn_t q, const value_type& eps)
-    {
-      bool ret = true;
-      const Model& model = robot->model();
-      for (std::size_t i = 1; i < (std::size_t)model.njoints; ++i) {
-        IsNormalizedStep::run(model.joints[i],
-                         IsNormalizedStep::ArgsType(q, eps, ret));
-        if (!ret) return false;
-      }
-      return true;
-    }
-
-    std::ostream& display (std::ostream& os, const SE3& m)
-    {
-      return os << pretty_print(m);
-    }
-  } // namespace pinocchio
-} // namespace hpp
+std::ostream& display(std::ostream& os, const SE3& m) {
+  return os << pretty_print(m);
+}
+}  // namespace pinocchio
+}  // namespace hpp
