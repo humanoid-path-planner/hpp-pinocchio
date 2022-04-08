@@ -157,9 +157,13 @@ class HPP_PINOCCHIO_DLLAPI Device : public AbstractDevice {
   Frame rootFrame() const;
 
   /// Get number of joints
+  /// \note "universe" is not included in the count
   size_type nbJoints() const;
 
   /// Access i-th joint
+  /// \param i index of joint in device. This is 1 less than index of joint
+  ///        in pinocchio vector of joints (pinocchio::ModelTpl::joints)
+  ///        since "universe" is not included as index 0
   JointPtr_t jointAt(const size_type& i) const;
 
   /// Get the joint at configuration rank r
