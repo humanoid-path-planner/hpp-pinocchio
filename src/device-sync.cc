@@ -28,117 +28,97 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 
-#include <hpp/pinocchio/device-sync.hh>
-
 #include <boost/thread/locks.hpp>
-
+#include <hpp/pinocchio/device-sync.hh>
+#include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/joint-collection.hh>
 #include <pinocchio/multibody/data.hpp>
 #include <pinocchio/multibody/geometry.hpp>
 #include <pinocchio/multibody/model.hpp>
 
-#include <hpp/pinocchio/device.hh>
-#include <hpp/pinocchio/joint-collection.hh>
-
 namespace hpp {
-  namespace pinocchio {
-    bool AbstractDevice::currentConfiguration (ConfigurationIn_t configuration)
-    {
-      DeviceData& data = d();
-      assert (configuration.size() == data.currentConfiguration_.size());
-      if (configuration != data.currentConfiguration_) {
-        data.invalidate();
-        data.currentConfiguration_ = configuration;
-        return true;
-      }
-      return false;
-    }
+namespace pinocchio {
+bool AbstractDevice::currentConfiguration(ConfigurationIn_t configuration) {
+  DeviceData& data = d();
+  assert(configuration.size() == data.currentConfiguration_.size());
+  if (configuration != data.currentConfiguration_) {
+    data.invalidate();
+    data.currentConfiguration_ = configuration;
+    return true;
+  }
+  return false;
+}
 
-    bool AbstractDevice::currentVelocity (vectorIn_t v)
-    {
-      DeviceData& data = d();
-      if (v != data.currentVelocity_) {
-        data.invalidate();
-        data.currentVelocity_ = v;
-        return true;
-      }
-      return false;
-    }
+bool AbstractDevice::currentVelocity(vectorIn_t v) {
+  DeviceData& data = d();
+  if (v != data.currentVelocity_) {
+    data.invalidate();
+    data.currentVelocity_ = v;
+    return true;
+  }
+  return false;
+}
 
-    bool AbstractDevice::currentAcceleration (vectorIn_t a)
-    {
-      DeviceData& data = d();
-      if (a != data.currentAcceleration_) {
-        data.invalidate();
-        data.currentAcceleration_ = a;
-        return true;
-      }
-      return false;
-    }
+bool AbstractDevice::currentAcceleration(vectorIn_t a) {
+  DeviceData& data = d();
+  if (a != data.currentAcceleration_) {
+    data.invalidate();
+    data.currentAcceleration_ = a;
+    return true;
+  }
+  return false;
+}
 
-    const value_type& AbstractDevice::mass () const 
-    { 
-      return data().mass[0];
-    }
-    
-    const vector3_t& AbstractDevice::positionCenterOfMass () const
-    {
-      return data().com[0];
-    }
-    
-    const ComJacobian_t& AbstractDevice::jacobianCenterOfMass () const
-    {
-      return data().Jcom;
-    }
+const value_type& AbstractDevice::mass() const { return data().mass[0]; }
 
-    void AbstractDevice::controlComputation (const Computation_t& flag)
-    {
-      if (d().computationFlag_ != flag) {
-        d().computationFlag_ = flag;
-        d().invalidate();
-      }
-    }
+const vector3_t& AbstractDevice::positionCenterOfMass() const {
+  return data().com[0];
+}
 
-    AbstractDevice::AbstractDevice ()
-      : model_    (new Model())
-      , geomModel_(new GeomModel())
-    {}
+const ComJacobian_t& AbstractDevice::jacobianCenterOfMass() const {
+  return data().Jcom;
+}
 
-    AbstractDevice::AbstractDevice (const ModelPtr_t& m, const GeomModelPtr_t& gm)
-      : model_    (m)
-      , geomModel_(gm)
-    {}
+void AbstractDevice::controlComputation(const Computation_t& flag) {
+  if (d().computationFlag_ != flag) {
+    d().computationFlag_ = flag;
+    d().invalidate();
+  }
+}
 
-    DeviceSync::DeviceSync (const DevicePtr_t& d, bool acquireLock)
-      : AbstractDevice (d->modelPtr(), d->geomModelPtr())
-      , device_ (d)
-      , d_ (NULL)
-    {
-      if (acquireLock) lock();
-    }
+AbstractDevice::AbstractDevice()
+    : model_(new Model()), geomModel_(new GeomModel()) {}
 
-    DeviceSync::~DeviceSync ()
-    {
-      if (isLocked())
-        unlock();
-    }
+AbstractDevice::AbstractDevice(const ModelPtr_t& m, const GeomModelPtr_t& gm)
+    : model_(m), geomModel_(gm) {}
 
-    void DeviceSync::lock ()
-    {
-      if (!isLocked()) {
-        d_ = device_->datas_.acquire();
-      } else {
-        hppDout (warning, "Cannot lock a locked DeviceSync. You may a concurrency error.");
-      }
-    }
+DeviceSync::DeviceSync(const DevicePtr_t& d, bool acquireLock)
+    : AbstractDevice(d->modelPtr(), d->geomModelPtr()), device_(d), d_(NULL) {
+  if (acquireLock) lock();
+}
 
-    void DeviceSync::unlock ()
-    {
-      if (isLocked()) {
-        device_->datas_.release(d_);
-        d_ = NULL;
-      } else {
-        hppDout (warning, "Cannot unlock an unlocked DeviceSync. You may a concurrency error.");
-      }
-    }
-  } // namespace pinocchio
-} // namespace hpp
+DeviceSync::~DeviceSync() {
+  if (isLocked()) unlock();
+}
+
+void DeviceSync::lock() {
+  if (!isLocked()) {
+    d_ = device_->datas_.acquire();
+  } else {
+    hppDout(warning,
+            "Cannot lock a locked DeviceSync. You may a concurrency error.");
+  }
+}
+
+void DeviceSync::unlock() {
+  if (isLocked()) {
+    device_->datas_.release(d_);
+    d_ = NULL;
+  } else {
+    hppDout(
+        warning,
+        "Cannot unlock an unlocked DeviceSync. You may a concurrency error.");
+  }
+}
+}  // namespace pinocchio
+}  // namespace hpp

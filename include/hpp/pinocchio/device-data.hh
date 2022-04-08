@@ -31,52 +31,54 @@
 #ifndef HPP_PINOCCHIO_DEVICE_DATA_HH
 #define HPP_PINOCCHIO_DEVICE_DATA_HH
 
-# include <hpp/util/debug.hh>
-
-# include <hpp/pinocchio/config.hh>
-# include <hpp/pinocchio/fwd.hh>
+#include <hpp/pinocchio/config.hh>
+#include <hpp/pinocchio/fwd.hh>
+#include <hpp/util/debug.hh>
 
 namespace hpp {
-  namespace pinocchio {
-    enum Computation_t {
-      JOINT_POSITION = 0x1,
-      JACOBIAN       = 0x2,
-      VELOCITY       = 0x4,
-      ACCELERATION   = 0x8,
-      COM            = 0xf,
-      COMPUTE_ALL    = 0Xffff
-    };
+namespace pinocchio {
+enum Computation_t {
+  JOINT_POSITION = 0x1,
+  JACOBIAN = 0x2,
+  VELOCITY = 0x4,
+  ACCELERATION = 0x8,
+  COM = 0xf,
+  COMPUTE_ALL = 0Xffff
+};
 
-    /// Struct containing the Device data.
-    /// Users normally do not need to access its attributes.
-    struct DeviceData
-    {
-      DeviceData ();
-      DeviceData (const DeviceData& other);
+/// Struct containing the Device data.
+/// Users normally do not need to access its attributes.
+struct DeviceData {
+  DeviceData();
+  DeviceData(const DeviceData& other);
 
-      inline void invalidate () { upToDate_ = false; frameUpToDate_ = false; geomUpToDate_ = false; }
+  inline void invalidate() {
+    upToDate_ = false;
+    frameUpToDate_ = false;
+    geomUpToDate_ = false;
+  }
 
-      void computeForwardKinematics (const ModelPtr_t& m);
-      void computeFramesForwardKinematics (const ModelPtr_t& m);
-      void updateGeometryPlacements (const ModelPtr_t& m, const GeomModelPtr_t& gm);
+  void computeForwardKinematics(const ModelPtr_t& m);
+  void computeFramesForwardKinematics(const ModelPtr_t& m);
+  void updateGeometryPlacements(const ModelPtr_t& m, const GeomModelPtr_t& gm);
 
-      // Pinocchio objects
-      DataPtr_t data_;
-      GeomDataPtr_t geomData_;
+  // Pinocchio objects
+  DataPtr_t data_;
+  GeomDataPtr_t geomData_;
 
-      Configuration_t currentConfiguration_;
-      vector_t currentVelocity_;
-      vector_t currentAcceleration_;
-      bool upToDate_, frameUpToDate_, geomUpToDate_;
-      Computation_t computationFlag_;
-      DeviceWkPtr_t devicePtr_;
+  Configuration_t currentConfiguration_;
+  vector_t currentVelocity_;
+  vector_t currentAcceleration_;
+  bool upToDate_, frameUpToDate_, geomUpToDate_;
+  Computation_t computationFlag_;
+  DeviceWkPtr_t devicePtr_;
 
-      /// Temporary variable to avoid dynamic allocation
-      Configuration_t modelConf_;
-      /// Pool of joint jacobians
-      std::vector<JointJacobian_t> jointJacobians_;
-    }; // struct DeviceData
-  } // namespace pinocchio
-} // namespace hpp
+  /// Temporary variable to avoid dynamic allocation
+  Configuration_t modelConf_;
+  /// Pool of joint jacobians
+  std::vector<JointJacobian_t> jointJacobians_;
+};  // struct DeviceData
+}  // namespace pinocchio
+}  // namespace hpp
 
-#endif // HPP_PINOCCHIO_DEVICE_DATA_HH
+#endif  // HPP_PINOCCHIO_DEVICE_DATA_HH

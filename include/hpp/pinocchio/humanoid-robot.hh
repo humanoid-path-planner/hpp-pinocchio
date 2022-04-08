@@ -31,118 +31,118 @@
 #ifndef HPP_PINOCCHIO_HUMANOID_ROBOT_HH
 #define HPP_PINOCCHIO_HUMANOID_ROBOT_HH
 
-# include <iostream>
-# include <vector>
-
-# include <hpp/pinocchio/device.hh>
-# include <hpp/pinocchio/fwd.hh>
-# include <hpp/pinocchio/config.hh>
+#include <hpp/pinocchio/config.hh>
+#include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/fwd.hh>
+#include <iostream>
+#include <vector>
 
 namespace hpp {
-  namespace pinocchio {
-    /// \brief Humanoid robot
+namespace pinocchio {
+/// \brief Humanoid robot
 
-    class HPP_PINOCCHIO_DLLAPI HumanoidRobot : public Device
-    {
-    public:
-      /// \name Construction, copy and destruction
-      /// @{
-      virtual ~HumanoidRobot ();
+class HPP_PINOCCHIO_DLLAPI HumanoidRobot : public Device {
+ public:
+  /// \name Construction, copy and destruction
+  /// @{
+  virtual ~HumanoidRobot();
 
-      /// \brief Clone as a HumanoidRobot
-      virtual DevicePtr_t clone () const;
+  /// \brief Clone as a HumanoidRobot
+  virtual DevicePtr_t clone() const;
 
-      HumanoidRobotPtr_t self() const { return weakPtr_.lock(); }
+  HumanoidRobotPtr_t self() const { return weakPtr_.lock(); }
 
-      ///
-      /// @}
-      ///
+  ///
+  /// @}
+  ///
 
-      /// \brief Creation of a new device
-      /// \return a shared pointer to the new device
-      /// \param name Name of the device (is passed to CkkpDeviceComponent)
-      static HumanoidRobotPtr_t create (const std::string& name);
+  /// \brief Creation of a new device
+  /// \return a shared pointer to the new device
+  /// \param name Name of the device (is passed to CkkpDeviceComponent)
+  static HumanoidRobotPtr_t create(const std::string& name);
 
-      /// \brief Get Joint corresponding to the waist.
-      JointPtr_t waist() const;
+  /// \brief Get Joint corresponding to the waist.
+  JointPtr_t waist() const;
 
-      /// Set waist joint
-      void waist (const JointPtr_t& joint);
+  /// Set waist joint
+  void waist(const JointPtr_t& joint);
 
-      /// \brief Get Joint corresponding to the chest.
-      JointPtr_t chest() const;
+  /// \brief Get Joint corresponding to the chest.
+  JointPtr_t chest() const;
 
-      /// Set chest joint
-      void chest (const JointPtr_t& joint);
+  /// Set chest joint
+  void chest(const JointPtr_t& joint);
 
-      /// \brief Get Joint corresponding to the left wrist.
-      JointPtr_t leftWrist() const;
+  /// \brief Get Joint corresponding to the left wrist.
+  JointPtr_t leftWrist() const;
 
-      /// Set left wrist
-      void leftWrist (const JointPtr_t& joint);
+  /// Set left wrist
+  void leftWrist(const JointPtr_t& joint);
 
-      /// \brief Get Joint corresponding to the right wrist.
-      JointPtr_t rightWrist() const;
+  /// \brief Get Joint corresponding to the right wrist.
+  JointPtr_t rightWrist() const;
 
-      /// Set right wrist
-      void rightWrist (const JointPtr_t& joint);
+  /// Set right wrist
+  void rightWrist(const JointPtr_t& joint);
 
-      /// \brief Get Joint corresponding to the left ankle.
-      JointPtr_t leftAnkle() const;
+  /// \brief Get Joint corresponding to the left ankle.
+  JointPtr_t leftAnkle() const;
 
-      /// Set letf ankle
-      void leftAnkle (const JointPtr_t& joint);
+  /// Set letf ankle
+  void leftAnkle(const JointPtr_t& joint);
 
-      /// \brief Get Joint corresponding to the right ankle.
-      JointPtr_t rightAnkle() const;
+  /// \brief Get Joint corresponding to the right ankle.
+  JointPtr_t rightAnkle() const;
 
-      /// Set right ankle
-      void rightAnkle (const JointPtr_t& joint);
+  /// Set right ankle
+  void rightAnkle(const JointPtr_t& joint);
 
-      /// \brief Get gaze joint
-      JointPtr_t gazeJoint() const;
+  /// \brief Get gaze joint
+  JointPtr_t gazeJoint() const;
 
-      /// Set gaze joint
-      void gazeJoint (const JointPtr_t& joint);
+  /// Set gaze joint
+  void gazeJoint(const JointPtr_t& joint);
 
-      /// Set gaze parameters
-      void gaze (const vector3_t& origin, const vector3_t& dir)
-      {
-	gazeOrigin_ = origin;
-	gazeDirection_ = dir;
-      }
-    protected:
-      /// \brief Constructor
-      HumanoidRobot (const std::string& name);
+  /// Set gaze parameters
+  void gaze(const vector3_t& origin, const vector3_t& dir) {
+    gazeOrigin_ = origin;
+    gazeDirection_ = dir;
+  }
 
-      HumanoidRobot (const HumanoidRobot& other);
+ protected:
+  /// \brief Constructor
+  HumanoidRobot(const std::string& name);
 
-      ///
-      /// \brief Initialization.
-      ///
-      void init (const HumanoidRobotWkPtr_t& weakPtr);
+  HumanoidRobot(const HumanoidRobot& other);
 
-      void initCopy (const HumanoidRobotWkPtr_t& weakPtr, const HumanoidRobot& other);
+  ///
+  /// \brief Initialization.
+  ///
+  void init(const HumanoidRobotWkPtr_t& weakPtr);
 
-      /// For serialization only
-      HumanoidRobot () {}
-    private:
-      HumanoidRobotWkPtr_t weakPtr_;
-      JointPtr_t waist_;
-      JointPtr_t chest_;
-      JointPtr_t leftWrist_;
-      JointPtr_t rightWrist_;
-      JointPtr_t leftAnkle_;
-      JointPtr_t rightAnkle_;
-      JointPtr_t gazeJoint_;
-      vector3_t gazeOrigin_;
-      vector3_t gazeDirection_;
+  void initCopy(const HumanoidRobotWkPtr_t& weakPtr,
+                const HumanoidRobot& other);
 
-      HPP_SERIALIZABLE();
-    }; // class HumanoidRobot
-  } // namespace pinocchio
-} // namespace hpp
+  /// For serialization only
+  HumanoidRobot() {}
+
+ private:
+  HumanoidRobotWkPtr_t weakPtr_;
+  JointPtr_t waist_;
+  JointPtr_t chest_;
+  JointPtr_t leftWrist_;
+  JointPtr_t rightWrist_;
+  JointPtr_t leftAnkle_;
+  JointPtr_t rightAnkle_;
+  JointPtr_t gazeJoint_;
+  vector3_t gazeOrigin_;
+  vector3_t gazeDirection_;
+
+  HPP_SERIALIZABLE();
+};  // class HumanoidRobot
+}  // namespace pinocchio
+}  // namespace hpp
 
 BOOST_CLASS_EXPORT_KEY(hpp::pinocchio::HumanoidRobot)
 
-#endif // HPP_PINOCCHIO_HUMANOID_ROBOT_HH
+#endif  // HPP_PINOCCHIO_HUMANOID_ROBOT_HH

@@ -27,53 +27,48 @@
 // DAMAGE.
 
 #ifndef HPP_PINOCCHIO_SRC_SIZE_VISITOR_HH
-# define HPP_PINOCCHIO_SRC_SIZE_VISITOR_HH
+#define HPP_PINOCCHIO_SRC_SIZE_VISITOR_HH
 
 namespace hpp {
-  namespace pinocchio {
-    namespace liegroupType {
+namespace pinocchio {
+namespace liegroupType {
 
-      /// Visitor to compute size of LiegroupType
-      struct SizeVisitor : public boost::static_visitor <>
-      {
-        inline SizeVisitor () : nq(-1), nv(-1) {}
-        template <typename LiegroupType> void operator () (LiegroupType& op)
-        {
-          nq = op.nq ();
-          nv = op.nv ();
-        }
-        size_type nq, nv;
-      }; // struct SizeVisitor
+/// Visitor to compute size of LiegroupType
+struct SizeVisitor : public boost::static_visitor<> {
+  inline SizeVisitor() : nq(-1), nv(-1) {}
+  template <typename LiegroupType>
+  void operator()(LiegroupType& op) {
+    nq = op.nq();
+    nv = op.nv();
+  }
+  size_type nq, nv;
+};  // struct SizeVisitor
 
-      /// Visitor to compute neutral element of LiegroupType
-      struct NeutralVisitor : public boost::static_visitor <>
-      {
-        template <typename LiegroupType> void operator () (LiegroupType& op)
-        {
-          neutral = op.neutral ();
-        }
-        vector_t neutral;
-      }; // struct NeutralVisitor
+/// Visitor to compute neutral element of LiegroupType
+struct NeutralVisitor : public boost::static_visitor<> {
+  template <typename LiegroupType>
+  void operator()(LiegroupType& op) {
+    neutral = op.neutral();
+  }
+  vector_t neutral;
+};  // struct NeutralVisitor
 
-      /// Visitor to check if a LiegroupType is a vector space
-      struct IsVectorSpace : public boost::static_visitor <>
-      {
-        IsVectorSpace () : isVectorSpace (false) {}
-        template <typename LiegroupType> void operator () (const LiegroupType&)
-        {
-          isVectorSpace = false;
-        }
-        template<int Size, bool rot>
-        void operator () (const liegroup::VectorSpaceOperation<Size,rot>&)
-        {
-          isVectorSpace = true;
-        }
-        bool isVectorSpace;
-      }; // struct SizeVisitor
+/// Visitor to check if a LiegroupType is a vector space
+struct IsVectorSpace : public boost::static_visitor<> {
+  IsVectorSpace() : isVectorSpace(false) {}
+  template <typename LiegroupType>
+  void operator()(const LiegroupType&) {
+    isVectorSpace = false;
+  }
+  template <int Size, bool rot>
+  void operator()(const liegroup::VectorSpaceOperation<Size, rot>&) {
+    isVectorSpace = true;
+  }
+  bool isVectorSpace;
+};  // struct SizeVisitor
 
+}  // namespace liegroupType
+}  // namespace pinocchio
+}  // namespace hpp
 
-    } // namespace liegroupType
-  } // namespace pinocchio
-} // namespace hpp
-
-#endif // HPP_PINOCCHIO_SRC_SIZE_VISITOR_HH
+#endif  // HPP_PINOCCHIO_SRC_SIZE_VISITOR_HH

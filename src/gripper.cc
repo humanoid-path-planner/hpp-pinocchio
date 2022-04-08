@@ -28,50 +28,39 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 
-#include <hpp/pinocchio/gripper.hh>
-
-#include <pinocchio/spatial/se3.hpp>
-#include <pinocchio/multibody/model.hpp>
-
 #include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/gripper.hh>
 #include <hpp/pinocchio/joint.hh>
+#include <pinocchio/multibody/model.hpp>
+#include <pinocchio/spatial/se3.hpp>
 
 namespace hpp {
-  namespace pinocchio {
-    Gripper::Gripper (const std::string& name, const DeviceWkPtr_t& device) :
-      name_ (name),
-      device_ (device),
-      clearance_ (0)
-    {
-      DevicePtr_t d = this->device();
-      fid_ = d->model().getFrameId (name);
-      joint_ = Joint::create(d, d->model().frames[fid_].parent);
-    }
+namespace pinocchio {
+Gripper::Gripper(const std::string& name, const DeviceWkPtr_t& device)
+    : name_(name), device_(device), clearance_(0) {
+  DevicePtr_t d = this->device();
+  fid_ = d->model().getFrameId(name);
+  joint_ = Joint::create(d, d->model().frames[fid_].parent);
+}
 
-    const Transform3f& Gripper::objectPositionInJoint () const
-    {
-      return device()->model().frames[fid_].placement;
-    }
+const Transform3f& Gripper::objectPositionInJoint() const {
+  return device()->model().frames[fid_].placement;
+}
 
-    GripperPtr_t Gripper::clone () const
-    {
-      return Gripper::create (name_, device_);
-    }
+GripperPtr_t Gripper::clone() const { return Gripper::create(name_, device_); }
 
-    std::ostream& Gripper::print (std::ostream& os) const
-    {
-      os << "name :" << name () << std::endl;
-      os << "Position in joint :" << objectPositionInJoint ();
-      os << "Joint :" << (joint() ? joint ()->name () : "universe") << std::endl;
-      os << std::endl;
-      return os;
-    }
+std::ostream& Gripper::print(std::ostream& os) const {
+  os << "name :" << name() << std::endl;
+  os << "Position in joint :" << objectPositionInJoint();
+  os << "Joint :" << (joint() ? joint()->name() : "universe") << std::endl;
+  os << std::endl;
+  return os;
+}
 
-    DevicePtr_t Gripper::device() const
-    {
-      DevicePtr_t d = device_.lock();
-      assert (d);
-      return d;
-    }
-  } // namespace pinocchio
-} // namespace hpp
+DevicePtr_t Gripper::device() const {
+  DevicePtr_t d = device_.lock();
+  assert(d);
+  return d;
+}
+}  // namespace pinocchio
+}  // namespace hpp

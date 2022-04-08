@@ -31,72 +31,53 @@
 #ifndef HPP_PINOCCHIO_EXTRA_CONFIG_SPACE_HH
 #define HPP_PINOCCHIO_EXTRA_CONFIG_SPACE_HH
 
-# include <hpp/pinocchio/fwd.hh>
+#include <hpp/pinocchio/fwd.hh>
 
 namespace hpp {
-  namespace pinocchio {
-    /// Extra degrees of freedom to store internal values in configurations
-    ///
-    /// In some applications, it is useful to store extra variables
-    /// with the configuration vector of a robot. For instance, when
-    /// planning motions in state space using roadmap based methods,
-    /// the velocity of the robot is stored in the nodes of the
-    /// roadmap.
-    class ExtraConfigSpace
-    {
-    public:
-      ExtraConfigSpace () : dimension_ (0), lowerBounds_ (), upperBounds_ ()
-      {
-	lowerBounds_.resize (0);
-	upperBounds_.resize (0);
-      }
-      value_type& lower (const size_type& index)
-      {
-	return lowerBounds_ [index];
-      }
-      value_type& upper (const size_type& index)
-      {
-	return upperBounds_ [index];
-      }
-      const value_type& lower (const size_type& index) const
-      {
-	return lowerBounds_ [index];
-      }
-      const value_type& upper (const size_type& index) const
-      {
-	return upperBounds_ [index];
-      }
-      const vector_t& lower () const
-      {
-        return lowerBounds_;
-      }
-      const vector_t& upper () const
-      {
-        return upperBounds_;
-      }
-      /// Get dimension
-      size_type dimension () const
-      {
-	return dimension_;
-      }	
-    private:
-      /// Set dimension of extra configuration space
-      ///
-      /// resize lowerBounds and upperBounds, set bounds to -infinity, +infinity
-      void setDimension (const size_type& dimension)
-      {
-	dimension_ = dimension;
-	lowerBounds_.resize (dimension);
-	upperBounds_.resize (dimension);
-	lowerBounds_.setConstant (-std::numeric_limits<value_type>::infinity());
-	upperBounds_.setConstant (+std::numeric_limits<value_type>::infinity());
-      }
-      size_type dimension_;
-      vector_t lowerBounds_;
-      vector_t upperBounds_;
-      friend class Device;
-    }; // class ExtraConfigSpace
-  } // namespace pinocchio
-} // namespace hpp
+namespace pinocchio {
+/// Extra degrees of freedom to store internal values in configurations
+///
+/// In some applications, it is useful to store extra variables
+/// with the configuration vector of a robot. For instance, when
+/// planning motions in state space using roadmap based methods,
+/// the velocity of the robot is stored in the nodes of the
+/// roadmap.
+class ExtraConfigSpace {
+ public:
+  ExtraConfigSpace() : dimension_(0), lowerBounds_(), upperBounds_() {
+    lowerBounds_.resize(0);
+    upperBounds_.resize(0);
+  }
+  value_type& lower(const size_type& index) { return lowerBounds_[index]; }
+  value_type& upper(const size_type& index) { return upperBounds_[index]; }
+  const value_type& lower(const size_type& index) const {
+    return lowerBounds_[index];
+  }
+  const value_type& upper(const size_type& index) const {
+    return upperBounds_[index];
+  }
+  const vector_t& lower() const { return lowerBounds_; }
+  const vector_t& upper() const { return upperBounds_; }
+  /// Get dimension
+  size_type dimension() const { return dimension_; }
 
-#endif // HPP_PINOCCHIO_EXTRA_CONFIG_SPACE_HH
+ private:
+  /// Set dimension of extra configuration space
+  ///
+  /// resize lowerBounds and upperBounds, set bounds to -infinity, +infinity
+  void setDimension(const size_type& dimension) {
+    dimension_ = dimension;
+    lowerBounds_.resize(dimension);
+    upperBounds_.resize(dimension);
+    lowerBounds_.setConstant(-std::numeric_limits<value_type>::infinity());
+    upperBounds_.setConstant(+std::numeric_limits<value_type>::infinity());
+  }
+  size_type dimension_;
+  vector_t lowerBounds_;
+  vector_t upperBounds_;
+  friend class Device;
+};  // class ExtraConfigSpace
+}  // namespace pinocchio
+}  // namespace hpp
+
+#endif  // HPP_PINOCCHIO_EXTRA_CONFIG_SPACE_HH

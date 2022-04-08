@@ -27,40 +27,36 @@
 // DAMAGE.
 
 #ifndef HPP_PINOCCHIO_SRC_SUBSTRACTION_VISITOR_HH
-# define HPP_PINOCCHIO_SRC_SUBSTRACTION_VISITOR_HH
+#define HPP_PINOCCHIO_SRC_SUBSTRACTION_VISITOR_HH
 
 namespace hpp {
-  namespace pinocchio {
-    namespace liegroupType {
+namespace pinocchio {
+namespace liegroupType {
 
-      typedef Eigen::Quaternion <value_type> quaternion_t;
+typedef Eigen::Quaternion<value_type> quaternion_t;
 
-      /// Substraction visitor
-      template <typename vector_type1, typename vector_type2>
-      struct SubstractionVisitor : public boost::static_visitor <>
-      {
-        SubstractionVisitor (const vector_type1& e1, const vector_type2& e2,
-            vector_t& res) :
-          e1_ (e1), e2_ (e2), result (res),
-          iq_(0), iv_(0)
-        {}
-        template <typename LiegroupType> void operator () (LiegroupType& op)
-        {
-          op.difference (
-              e2_.template segment<LiegroupType::NQ>(iq_, op.nq()),
-              e1_.template segment<LiegroupType::NQ>(iq_, op.nq()),
-              result.segment<LiegroupType::NV>(iv_, op.nv()));
+/// Substraction visitor
+template <typename vector_type1, typename vector_type2>
+struct SubstractionVisitor : public boost::static_visitor<> {
+  SubstractionVisitor(const vector_type1& e1, const vector_type2& e2,
+                      vector_t& res)
+      : e1_(e1), e2_(e2), result(res), iq_(0), iv_(0) {}
+  template <typename LiegroupType>
+  void operator()(LiegroupType& op) {
+    op.difference(e2_.template segment<LiegroupType::NQ>(iq_, op.nq()),
+                  e1_.template segment<LiegroupType::NQ>(iq_, op.nq()),
+                  result.segment<LiegroupType::NV>(iv_, op.nv()));
 
-          iq_ += op.nq();
-          iv_ += op.nv();
-        }
-        const vector_type1& e1_;
-        const vector_type2& e2_;
-        vector_t& result;
-        size_type iq_, iv_;
-      }; // struct SubstractionVisitor
-    } // namespace liegroupType
-  } // namespace pinocchio
-} // namespace hpp
+    iq_ += op.nq();
+    iv_ += op.nv();
+  }
+  const vector_type1& e1_;
+  const vector_type2& e2_;
+  vector_t& result;
+  size_type iq_, iv_;
+};  // struct SubstractionVisitor
+}  // namespace liegroupType
+}  // namespace pinocchio
+}  // namespace hpp
 
-#endif // HPP_PINOCCHIO_SRC_SUBSTRACTION_VISITOR_HH
+#endif  // HPP_PINOCCHIO_SRC_SUBSTRACTION_VISITOR_HH

@@ -31,48 +31,46 @@
 // This test
 //   - sets bounds and checks that they are stored correctly
 
-#define BOOST_TEST_MODULE joint-bounds
+#define BOOST_TEST_MODULE joint - bounds
 
 #include <boost/test/unit_test.hpp>
-
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/humanoid-robot.hh>
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/simple-device.hh>
 
-using hpp::pinocchio::size_type;
-using hpp::pinocchio::JointPtr_t;
-using hpp::pinocchio::vector_t;
 using hpp::pinocchio::DevicePtr_t;
-using hpp::pinocchio::unittest::makeDevice;
+using hpp::pinocchio::JointPtr_t;
+using hpp::pinocchio::size_type;
+using hpp::pinocchio::vector_t;
 using hpp::pinocchio::unittest::HumanoidSimple;
+using hpp::pinocchio::unittest::makeDevice;
 
-BOOST_AUTO_TEST_CASE(joint_bounds)
-{
+BOOST_AUTO_TEST_CASE(joint_bounds) {
   DevicePtr_t robot;
   robot = makeDevice(HumanoidSimple);
-  size_type nJoints (robot->nbJoints ());
-  for (size_type i=0; i<nJoints; ++i) {
-    JointPtr_t joint (robot->jointAt (i));
+  size_type nJoints(robot->nbJoints());
+  for (size_type i = 0; i < nJoints; ++i) {
+    JointPtr_t joint(robot->jointAt(i));
     BOOST_CHECK(joint == joint);
-    BOOST_CHECK(*joint == *robot->jointAt (i));
-    if (i > 0)
-      BOOST_CHECK(*joint != *robot->jointAt (i-1));
+    BOOST_CHECK(*joint == *robot->jointAt(i));
+    if (i > 0) BOOST_CHECK(*joint != *robot->jointAt(i - 1));
 
     // Set bounds
-    vector_t l0 (joint->configSize ());
-    vector_t u0 (joint->configSize ());
-    l0.fill (-1.); u0.fill (1.);
-    joint->lowerBounds (l0);
-    joint->upperBounds (u0);
+    vector_t l0(joint->configSize());
+    vector_t u0(joint->configSize());
+    l0.fill(-1.);
+    u0.fill(1.);
+    joint->lowerBounds(l0);
+    joint->upperBounds(u0);
     // Get bounds
-    vector_t l1 (joint->configSize ());
-    vector_t u1 (joint->configSize ());
-    for (size_type i=0; i<joint->configSize (); ++i) {
-      l1 [i] = joint->lowerBound (i);
-      u1 [i] = joint->upperBound (i);
+    vector_t l1(joint->configSize());
+    vector_t u1(joint->configSize());
+    for (size_type i = 0; i < joint->configSize(); ++i) {
+      l1[i] = joint->lowerBound(i);
+      u1[i] = joint->upperBound(i);
     }
-    BOOST_CHECK (l0 == l1);
-    BOOST_CHECK (u0 == u1);
+    BOOST_CHECK(l0 == l1);
+    BOOST_CHECK(u0 == u1);
   }
 }

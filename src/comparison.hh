@@ -27,83 +27,78 @@
 // DAMAGE.
 
 #ifndef HPP_PINOCCHIO_SRC_COMPARISON_HH
-# define HPP_PINOCCHIO_SRC_COMPARISON_HH
+#define HPP_PINOCCHIO_SRC_COMPARISON_HH
 
-# include <hpp/util/debug.hh>
+#include <hpp/util/debug.hh>
 
 namespace hpp {
-  namespace pinocchio {
-    namespace liegroup {
+namespace pinocchio {
+namespace liegroup {
 
-      namespace level1 {
-        template <typename LgT1> bool isEqual
-        (const LgT1& lgt1, const LiegroupType& lgt2);
+namespace level1 {
+template <typename LgT1>
+bool isEqual(const LgT1& lgt1, const LiegroupType& lgt2);
 
-        struct IsEqualVisitor : public boost::static_visitor <bool>
-        {
-          inline IsEqualVisitor (const LiegroupType& lg2);
-          template <typename LgT1> inline bool operator () (const LgT1& lg1);
-        private:
-          const LiegroupType& lg2_;
-        }; // struct IsEqualVisitor
-      } // namespace level1
+struct IsEqualVisitor : public boost::static_visitor<bool> {
+  inline IsEqualVisitor(const LiegroupType& lg2);
+  template <typename LgT1>
+  inline bool operator()(const LgT1& lg1);
 
-      namespace level2 {
-        template <typename LgT1>
-        struct IsEqualVisitor : public boost::static_visitor <bool>
-        {
-          inline IsEqualVisitor (const LgT1& lg1);
-          template <typename LgT2> inline bool operator () (const LgT2& lg2);
-        private:
-          const LgT1& lg1_;
-        }; // struct IsEqualVisitor
-      } // namespace level2
+ private:
+  const LiegroupType& lg2_;
+};  // struct IsEqualVisitor
+}  // namespace level1
 
-      /// Default implementation: for pairs of different types
-      template <typename LgT1, typename LgT2>
-      struct Comparison
-      {
-        inline bool operator () (const LgT1&, const LgT2&);
-      }; // class Comparison
+namespace level2 {
+template <typename LgT1>
+struct IsEqualVisitor : public boost::static_visitor<bool> {
+  inline IsEqualVisitor(const LgT1& lg1);
+  template <typename LgT2>
+  inline bool operator()(const LgT2& lg2);
 
-      // Specialization for two instances of same type
-      template <typename LgT> struct Comparison <LgT, LgT>
-      {
-        inline bool operator () (const LgT&, const LgT&);
-      };
+ private:
+  const LgT1& lg1_;
+};  // struct IsEqualVisitor
+}  // namespace level2
 
-      // Specialization for vector spaces
-      template <bool rot>
-      struct Comparison <VectorSpaceOperation <Eigen::Dynamic, rot>,
-                         VectorSpaceOperation <Eigen::Dynamic, rot> >
-      {
-        inline bool operator ()
-          (const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt1,
-           const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt2);
-      };
+/// Default implementation: for pairs of different types
+template <typename LgT1, typename LgT2>
+struct Comparison {
+  inline bool operator()(const LgT1&, const LgT2&);
+};  // class Comparison
 
-      template <int Size, bool rot>
-      struct Comparison <VectorSpaceOperation <Eigen::Dynamic, rot>,
-                         VectorSpaceOperation <Size, rot> >
-      {
-        inline bool operator ()
-          (const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt1,
-           const VectorSpaceOperation <Size, rot>& lgt2);
-      };
+// Specialization for two instances of same type
+template <typename LgT>
+struct Comparison<LgT, LgT> {
+  inline bool operator()(const LgT&, const LgT&);
+};
 
-      template <int Size, bool rot>
-      struct Comparison <VectorSpaceOperation <Size, rot>,
-                         VectorSpaceOperation <Eigen::Dynamic, rot> >
-      {
-        inline bool operator ()
-          (const VectorSpaceOperation <Size, rot>& lgt1,
-           const VectorSpaceOperation <Eigen::Dynamic, rot>& lgt2);
-      };
+// Specialization for vector spaces
+template <bool rot>
+struct Comparison<VectorSpaceOperation<Eigen::Dynamic, rot>,
+                  VectorSpaceOperation<Eigen::Dynamic, rot> > {
+  inline bool operator()(const VectorSpaceOperation<Eigen::Dynamic, rot>& lgt1,
+                         const VectorSpaceOperation<Eigen::Dynamic, rot>& lgt2);
+};
 
-    } // namespace liegroup
-  } // namespace pinocchio
-} // namespace hpp
+template <int Size, bool rot>
+struct Comparison<VectorSpaceOperation<Eigen::Dynamic, rot>,
+                  VectorSpaceOperation<Size, rot> > {
+  inline bool operator()(const VectorSpaceOperation<Eigen::Dynamic, rot>& lgt1,
+                         const VectorSpaceOperation<Size, rot>& lgt2);
+};
 
-# include "../src/comparison.hxx"
+template <int Size, bool rot>
+struct Comparison<VectorSpaceOperation<Size, rot>,
+                  VectorSpaceOperation<Eigen::Dynamic, rot> > {
+  inline bool operator()(const VectorSpaceOperation<Size, rot>& lgt1,
+                         const VectorSpaceOperation<Eigen::Dynamic, rot>& lgt2);
+};
+
+}  // namespace liegroup
+}  // namespace pinocchio
+}  // namespace hpp
+
+#include "../src/comparison.hxx"
 
 #endif

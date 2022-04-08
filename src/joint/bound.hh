@@ -28,37 +28,29 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 
+#include <hpp/pinocchio/liegroup.hh>
 #include <pinocchio/algorithm/joint-configuration.hpp>
 
-#include <hpp/pinocchio/liegroup.hh>
-
 namespace hpp {
-  namespace pinocchio {
-      struct SetBoundStep : public ::pinocchio::fusion::JointUnaryVisitorBase<SetBoundStep>
-      {
-        typedef boost::fusion::vector<ConfigurationIn_t,
-                Configuration_t &> ArgsType;
+namespace pinocchio {
+struct SetBoundStep
+    : public ::pinocchio::fusion::JointUnaryVisitorBase<SetBoundStep> {
+  typedef boost::fusion::vector<ConfigurationIn_t, Configuration_t&> ArgsType;
 
-        template<typename JointModel>
-        static void algo(const ::pinocchio::JointModelBase<JointModel> & jmodel,
-            ConfigurationIn_t bounds,
-            Configuration_t& out)
-        {
-          ::hpp::pinocchio::RnxSOnLieGroupMap::template operation<JointModel>::type
-            ::setBound(bounds,
-                       jmodel.jointConfigSelector(out));
-        }
-      };
+  template <typename JointModel>
+  static void algo(const ::pinocchio::JointModelBase<JointModel>& jmodel,
+                   ConfigurationIn_t bounds, Configuration_t& out) {
+    ::hpp::pinocchio::RnxSOnLieGroupMap::template operation<
+        JointModel>::type ::setBound(bounds, jmodel.jointConfigSelector(out));
+  }
+};
 
-      template <>
-      void SetBoundStep::algo<JointModelComposite>(
-          const ::pinocchio::JointModelBase<JointModelComposite> & jmodel,
-          ConfigurationIn_t bounds,
-          Configuration_t & out)
-      {
-        ::pinocchio::details::Dispatch<SetBoundStep>::run(
-            jmodel.derived(),
-            ArgsType(bounds, out));
-      }
-  } // namespace pinocchio
-} // namespace hpp
+template <>
+void SetBoundStep::algo<JointModelComposite>(
+    const ::pinocchio::JointModelBase<JointModelComposite>& jmodel,
+    ConfigurationIn_t bounds, Configuration_t& out) {
+  ::pinocchio::details::Dispatch<SetBoundStep>::run(jmodel.derived(),
+                                                    ArgsType(bounds, out));
+}
+}  // namespace pinocchio
+}  // namespace hpp

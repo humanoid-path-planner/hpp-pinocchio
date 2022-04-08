@@ -1,14 +1,14 @@
 /** \mainpage
     \section hpp_pinocchio_intro Introduction
-   
+
     This package implements kinematic chains for motion and manipulation
     planning in the Humanoid Path Planner platform.
-   
+
     Kinematic and dynamic computations are performed by package pinocchio,
     while collision avoidance in performed by package hpp-fcl.
-   
+
     \defgroup liegroup Lie group
-   
+
     Configurations of robots, as well as some values like the position of a
     robot joint with respect to a fixed frame belong to differential manifolds
     that have the structure of Lie groups. These manifolds are the
