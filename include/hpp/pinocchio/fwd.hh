@@ -122,6 +122,7 @@ typedef shared_ptr<HumanoidRobot> HumanoidRobotPtr_t;
 typedef shared_ptr<CenterOfMassComputation> CenterOfMassComputationPtr_t;
 typedef shared_ptr<Joint> JointPtr_t;
 typedef shared_ptr<const Joint> JointConstPtr_t;
+typedef Joint Joint;
 typedef shared_ptr<Gripper> GripperPtr_t;
 typedef std::vector<GripperPtr_t> Grippers_t;
 
