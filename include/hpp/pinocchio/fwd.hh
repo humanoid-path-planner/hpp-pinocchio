@@ -25,6 +25,7 @@
 # endif
 
 # include <vector>
+# include <memory>
 # include <Eigen/Core>
 
 # include <hpp/util/pointer.hh>
@@ -76,7 +77,7 @@ namespace hpp {
     typedef vector_t Configuration_t;
     typedef Eigen::Ref <const Configuration_t> ConfigurationIn_t;
     typedef Eigen::Ref <Configuration_t> ConfigurationOut_t;
-    typedef shared_ptr <Configuration_t> ConfigurationPtr_t;
+    typedef std::shared_ptr <Configuration_t> ConfigurationPtr_t;
     typedef Eigen::Ref <const vector_t> vectorIn_t;
     typedef Eigen::Ref <vector_t> vectorOut_t;
     typedef Eigen::Matrix<value_type, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
@@ -93,35 +94,35 @@ namespace hpp {
     typedef JointVector JointVector_t;
     struct ObjectVector;
     typedef ObjectVector ObjectVector_t;
-    typedef shared_ptr<Body> BodyPtr_t;
-    typedef shared_ptr<const Body> BodyConstPtr_t;
+    typedef std::shared_ptr<Body> BodyPtr_t;
+    typedef std::shared_ptr<const Body> BodyConstPtr_t;
     //typedef std::vector<BodyPtr_t> BodyVector_t;
     using fcl::CollisionGeometry;
     using fcl::CollisionGeometryPtr_t;
     typedef       fcl::CollisionObject   FclCollisionObject;
     typedef       fcl::CollisionObject * FclCollisionObjectPtr_t;
     typedef const fcl::CollisionObject * FclConstCollisionObjectPtr_t;
-    typedef shared_ptr<CollisionObject> CollisionObjectPtr_t;
-    typedef shared_ptr<const CollisionObject> CollisionObjectConstPtr_t;
-    typedef shared_ptr <Device> DevicePtr_t;
-    typedef shared_ptr <const Device> DeviceConstPtr_t;
+    typedef std::shared_ptr<CollisionObject> CollisionObjectPtr_t;
+    typedef std::shared_ptr<const CollisionObject> CollisionObjectConstPtr_t;
+    typedef std::shared_ptr <Device> DevicePtr_t;
+    typedef std::shared_ptr <const Device> DeviceConstPtr_t;
     typedef std::vector <fcl::DistanceResult> DistanceResults_t;
-    typedef shared_ptr <HumanoidRobot> HumanoidRobotPtr_t;
-    typedef shared_ptr <CenterOfMassComputation> CenterOfMassComputationPtr_t;
-    typedef shared_ptr<Joint> JointPtr_t;
-    typedef shared_ptr<const Joint> JointConstPtr_t;
-    typedef shared_ptr <Gripper> GripperPtr_t;
+    typedef std::shared_ptr <HumanoidRobot> HumanoidRobotPtr_t;
+    typedef std::shared_ptr <CenterOfMassComputation> CenterOfMassComputationPtr_t;
+    typedef std::shared_ptr<Joint> JointPtr_t;
+    typedef std::shared_ptr<const Joint> JointConstPtr_t;
+    typedef std::shared_ptr <Gripper> GripperPtr_t;
     typedef std::vector <GripperPtr_t> Grippers_t;
 
-    typedef shared_ptr<Model>           ModelPtr_t;
-    typedef shared_ptr<const Model>     ModelConstPtr_t;
-    typedef shared_ptr<Data>            DataPtr_t;
-    typedef shared_ptr<const Data>      DataConstPtr_t;
+    typedef std::shared_ptr<Model>           ModelPtr_t;
+    typedef std::shared_ptr<const Model>     ModelConstPtr_t;
+    typedef std::shared_ptr<Data>            DataPtr_t;
+    typedef std::shared_ptr<const Data>      DataConstPtr_t;
 
-    typedef shared_ptr<GeomModel>       GeomModelPtr_t;
-    typedef shared_ptr<const GeomModel> GeomModelConstPtr_t;
-    typedef shared_ptr<GeomData>        GeomDataPtr_t;
-    typedef shared_ptr<const GeomData>  GeomDataConstPtr_t;
+    typedef std::shared_ptr<GeomModel>       GeomModelPtr_t;
+    typedef std::shared_ptr<const GeomModel> GeomModelConstPtr_t;
+    typedef std::shared_ptr<GeomData>        GeomDataPtr_t;
+    typedef std::shared_ptr<const GeomData>  GeomDataConstPtr_t;
 
     template <typename vector_type> class LiegroupElementConstBase;
     template <typename vector_type> class LiegroupElementBase;
@@ -133,8 +134,8 @@ namespace hpp {
     typedef LiegroupElementBase     <vectorOut_t> LiegroupElementRef;
 
     HPP_PREDEF_CLASS (LiegroupSpace);
-    typedef shared_ptr <LiegroupSpace> LiegroupSpacePtr_t;
-    typedef shared_ptr <const LiegroupSpace> LiegroupSpaceConstPtr_t;
+    typedef std::shared_ptr <LiegroupSpace> LiegroupSpacePtr_t;
+    typedef std::shared_ptr <const LiegroupSpace> LiegroupSpaceConstPtr_t;
   } // namespace pinocchio
 } // namespace hpp
 #endif // HPP_PINOCCHIO_FWD_HH
