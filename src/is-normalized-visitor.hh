@@ -1,5 +1,6 @@
-// Copyright (c) 2020, CNRS
-// Authors: Joseph Mirabel
+// Copyright (c) 2022, CNRS
+// Authors: Florent Lamiraux
+//          Le Quang Anh
 //
 
 // Redistribution and use in source and binary forms, with or without
@@ -26,36 +27,35 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 
-#ifndef HPP_PINOCCHIO_SRC_VISITOR_INTERPOLATE_HH
-#define HPP_PINOCCHIO_SRC_VISITOR_INTERPOLATE_HH
+#ifndef HPP_PINOCCHIO_SRC_IS_NORMALIZED_VISITOR_HH
+#define HPP_PINOCCHIO_SRC_IS_NORMALIZED_VISITOR_HH
 
 namespace hpp {
 namespace pinocchio {
 namespace liegroupType {
-namespace visitor {
-/// Interpolate
-struct Interpolate : public boost::static_visitor<> {
-  Interpolate(const vectorIn_t& e1, const vectorIn_t& e2, value_type u,
-              vectorOut_t& er)
-      : e1_(e1), e2_(e2), u_(u), er_(er), iq_(0), iv_(0) {}
+
+/// Is Normalized visitor
+template <typename vector_type>
+struct IsNormalizedVisitor : public boost::static_visitor<> {
+  IsNormalizedVisitor(const vector_type& e1,
+                      const value_type& eps,
+                      bool& res)
+      : e1_(e1), iq_(0), eps_(eps), result(res) {}
   template <typename LiegroupType>
   void operator()(LiegroupType& op) {
-    op.interpolate(e1_.segment<LiegroupType::NQ>(iq_, op.nq()),
-                   e2_.segment<LiegroupType::NQ>(iq_, op.nq()), u_,
-                   er_.segment<LiegroupType::NQ>(iq_, op.nq()));
+    result &= op.isNormalized(
+                e1_.template segment<LiegroupType::NQ>(iq_, op.nq()),
+                eps_);
 
     iq_ += op.nq();
-    iv_ += op.nv();
   }
-  const vectorIn_t& e1_;
-  const vectorIn_t& e2_;
-  value_type u_;
-  vectorOut_t& er_;
-  size_type iq_, iv_;
-};  // struct Interpolate Visitor
-}  // namespace visitor
+  const vector_type& e1_;
+  size_type iq_;
+  const value_type& eps_;
+  bool& result;
+};  // struct IsNormalizedVisitor
 }  // namespace liegroupType
 }  // namespace pinocchio
 }  // namespace hpp
 
-#endif  // HPP_PINOCCHIO_SRC_VISITOR_INTERPOLATE_HH
+#endif  // HPP_PINOCCHIO_SRC_IS_NORMALIZED_VISITOR_HH

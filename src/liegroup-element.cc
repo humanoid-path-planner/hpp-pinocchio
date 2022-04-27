@@ -36,6 +36,7 @@
 #include "../src/log-visitor.hh"
 #include "../src/size-visitor.hh"
 #include "../src/substraction-visitor.hh"
+#include "../src/is-normalized-visitor.hh"
 
 namespace hpp {
 namespace pinocchio {
@@ -111,6 +112,27 @@ template vector_t operator-(const LiegroupElementConstBase<vectorOut_t>& e1,
                             const LiegroupElementConstBase<vectorIn_t>& e2);
 template vector_t operator-(const LiegroupElementConstBase<vectorOut_t>& e1,
                             const LiegroupElementConstBase<vectorOut_t>& e2);
+
+template <typename vector_type>
+bool checkNormalized(const LiegroupElementConstBase<vector_type>& e1,
+                  const value_type& eps) {
+  bool result = true;
+
+  liegroupType::IsNormalizedVisitor<vector_type> isNormalizedvisitor(
+      e1.vector(), eps, result);
+  for (LiegroupTypes::const_iterator it = e1.space()->liegroupTypes().begin();
+       it != e1.space()->liegroupTypes().end(); ++it) {
+    boost::apply_visitor(isNormalizedvisitor, *it);
+  }
+  return result;
+}
+
+template bool checkNormalized(const LiegroupElementConstBase<vector_t>&e1,
+                              const value_type& eps);
+template bool checkNormalized(const LiegroupElementConstBase<vectorIn_t>&e1,
+                              const value_type& eps);
+template bool checkNormalized(const LiegroupElementConstBase<vectorOut_t>&e1,
+                              const value_type& eps);
 
 template <typename vector_type>
 vector_t log(const LiegroupElementConstBase<vector_type>& lge) {
