@@ -32,6 +32,7 @@
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/joint-collection.hh>
 #include <hpp/pinocchio/joint.hh>
+#include <hpp/pinocchio/shared-ptr.hh>
 #include <pinocchio/multibody/geometry.hpp>
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/spatial/fcl-pinocchio-conversions.hpp>
@@ -72,7 +73,7 @@ const ::pinocchio::GeometryObject& CollisionObject::pinocchio() const {
 }
 
 CollisionGeometryPtr_t CollisionObject::geometry() const {
-  return pinocchio().geometry;
+  return as_std_shared_ptr(pinocchio().geometry);
 }
 
 FclCollisionObjectPtr_t CollisionObject::fcl(GeomData& geomData) const {

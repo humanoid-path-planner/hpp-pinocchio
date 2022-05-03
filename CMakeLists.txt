@@ -71,6 +71,7 @@ ENDIF(CMAKE_BUILD_TYPE MATCHES "DEBUG")
 ADD_PROJECT_DEPENDENCY(Boost REQUIRED COMPONENTS thread)
 
 # Search for dependecies.
+ADD_PROJECT_DEPENDENCY(hpp-fcl 2.0.1 REQUIRED)
 ADD_PROJECT_DEPENDENCY(hpp-util 4.10.0 REQUIRED)
 ADD_PROJECT_DEPENDENCY(pinocchio REQUIRED)
 ADD_PROJECT_DEPENDENCY(Eigen3 REQUIRED)
@@ -98,6 +99,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/hpp/pinocchio/util.hh
   include/hpp/pinocchio/pool.hh
   include/hpp/pinocchio/serialization.hh
+  include/hpp/pinocchio/shared-ptr.hh
 
   include/hpp/pinocchio/liegroup.hh
   include/hpp/pinocchio/liegroup-element.hh
@@ -134,6 +136,7 @@ SET(${PROJECT_NAME}_SOURCES
   src/substraction-visitor.hh
   src/urdf/util.cc
   src/util.cc
+  src/shared-ptr.cc
   )
 
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS})

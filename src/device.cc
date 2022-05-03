@@ -53,6 +53,7 @@
 #include <hpp/pinocchio/liegroup-space.hh>
 #include <hpp/pinocchio/liegroup.hh>
 #include <hpp/pinocchio/serialization.hh>
+#include <hpp/pinocchio/shared-ptr.hh>
 
 namespace hpp {
 namespace pinocchio {
@@ -504,7 +505,7 @@ void replaceGeometryByConvexHull(GeomModel& gmodel,
           dynamic_cast<fcl::BVHModelBase*>(go.geometry.get());
       assert(bvh != NULL);
       bvh->buildConvexHull(false, "Qx");
-      go.geometry = bvh->convex;
+      go.geometry = as_boost_shared_ptr(bvh->convex);
     }
   }
 #else
