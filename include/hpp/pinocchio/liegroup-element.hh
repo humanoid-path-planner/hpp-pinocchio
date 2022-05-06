@@ -219,8 +219,9 @@ vector_t operator-(const LiegroupElementConstBase<vector_type1>& e1,
 /// \return whether the configuration is normalized
 ///
 template <typename vector_type>
-bool checkNormalized(const LiegroupElementConstBase<vector_type>& e1,
-                  const value_type& eps = PINOCCHIO_DEFAULT_QUATERNION_NORM_TOLERANCE_VALUE);
+bool checkNormalized(
+    const LiegroupElementConstBase<vector_type>& e1,
+    const value_type& eps = PINOCCHIO_DEFAULT_QUATERNION_NORM_TOLERANCE_VALUE);
 /// \}
 
 /// Compute the log as a tangent vector of a Lie group element

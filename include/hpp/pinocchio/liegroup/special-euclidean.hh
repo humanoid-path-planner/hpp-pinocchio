@@ -82,7 +82,6 @@ struct SpecialEuclideanOperation
     const_cast<Eigen::MatrixBase<JacobianOut_t>&>(Jout) =
         Jin.template bottomLeftCorner<3, 3>();
   }
-
 };
 }  // namespace liegroup
 }  // namespace pinocchio

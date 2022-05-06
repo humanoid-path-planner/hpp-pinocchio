@@ -33,10 +33,10 @@
 #include <hpp/util/serialization.hh>
 
 #include "../src/addition-visitor.hh"
+#include "../src/is-normalized-visitor.hh"
 #include "../src/log-visitor.hh"
 #include "../src/size-visitor.hh"
 #include "../src/substraction-visitor.hh"
-#include "../src/is-normalized-visitor.hh"
 
 namespace hpp {
 namespace pinocchio {
@@ -115,7 +115,7 @@ template vector_t operator-(const LiegroupElementConstBase<vectorOut_t>& e1,
 
 template <typename vector_type>
 bool checkNormalized(const LiegroupElementConstBase<vector_type>& e1,
-                  const value_type& eps) {
+                     const value_type& eps) {
   bool result = true;
 
   liegroupType::IsNormalizedVisitor<vector_type> isNormalizedvisitor(
@@ -127,11 +127,11 @@ bool checkNormalized(const LiegroupElementConstBase<vector_type>& e1,
   return result;
 }
 
-template bool checkNormalized(const LiegroupElementConstBase<vector_t>&e1,
+template bool checkNormalized(const LiegroupElementConstBase<vector_t>& e1,
                               const value_type& eps);
-template bool checkNormalized(const LiegroupElementConstBase<vectorIn_t>&e1,
+template bool checkNormalized(const LiegroupElementConstBase<vectorIn_t>& e1,
                               const value_type& eps);
-template bool checkNormalized(const LiegroupElementConstBase<vectorOut_t>&e1,
+template bool checkNormalized(const LiegroupElementConstBase<vectorOut_t>& e1,
                               const value_type& eps);
 
 template <typename vector_type>

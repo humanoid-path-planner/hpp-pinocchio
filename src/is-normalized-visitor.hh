@@ -37,15 +37,12 @@ namespace liegroupType {
 /// Is Normalized visitor
 template <typename vector_type>
 struct IsNormalizedVisitor : public boost::static_visitor<> {
-  IsNormalizedVisitor(const vector_type& e1,
-                      const value_type& eps,
-                      bool& res)
+  IsNormalizedVisitor(const vector_type& e1, const value_type& eps, bool& res)
       : e1_(e1), iq_(0), eps_(eps), result(res) {}
   template <typename LiegroupType>
   void operator()(LiegroupType& op) {
     result &= op.isNormalized(
-                e1_.template segment<LiegroupType::NQ>(iq_, op.nq()),
-                eps_);
+        e1_.template segment<LiegroupType::NQ>(iq_, op.nq()), eps_);
 
     iq_ += op.nq();
   }
