@@ -31,6 +31,7 @@
 
 #include <hpp/pinocchio/deprecated.hh>
 #include <hpp/pinocchio/liegroup-space.hh>
+#include <pinocchio/math/quaternion.hpp>
 
 namespace hpp {
 namespace pinocchio {
@@ -203,13 +204,24 @@ LiegroupElement operator+(const LiegroupElementConstBase<vector_type>& e,
 /// Difference between two configurations
 ///
 /// \param e1, e2 elements of the Lie group,
-/// \return the velocity that integrated from e2 yiels e1
+/// \return the velocity that integrated from e2 yields e1
 ///
 /// By extension of the vector space case, we represent the integration
 /// of a constant velocity during unit time by an addition
 template <typename vector_type1, typename vector_type2>
 vector_t operator-(const LiegroupElementConstBase<vector_type1>& e1,
                    const LiegroupElementConstBase<vector_type2>& e2);
+
+/// Check if a configuration is normalized
+///
+/// \param e1 configuration to be checked
+/// \param eps the error threshold
+/// \return whether the configuration is normalized
+///
+template <typename vector_type>
+bool checkNormalized(
+    const LiegroupElementConstBase<vector_type>& e1,
+    const value_type& eps = PINOCCHIO_DEFAULT_QUATERNION_NORM_TOLERANCE_VALUE);
 /// \}
 
 /// Compute the log as a tangent vector of a Lie group element

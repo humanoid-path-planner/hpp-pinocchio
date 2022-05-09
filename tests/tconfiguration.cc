@@ -43,6 +43,7 @@
 #include <hpp/pinocchio/humanoid-robot.hh>
 #include <hpp/pinocchio/joint-collection.hh>
 #include <hpp/pinocchio/joint.hh>
+#include <hpp/pinocchio/liegroup-element.hh>
 #include <hpp/pinocchio/liegroup.hh>
 #include <hpp/pinocchio/simple-device.hh>
 #include <pinocchio/algorithm/joint-configuration.hpp>
@@ -130,25 +131,35 @@ BOOST_AUTO_TEST_CASE(is_valid_configuration) {
 
   Configuration_t q = robot->neutralConfiguration();
   BOOST_CHECK(isNormalized(robot, q, eps));
+  LiegroupElementConstRef P1(q, robot->configSpace());
+  BOOST_CHECK(checkNormalized(P1, eps));
 
   /// Set a quaternion of norm != 1
   q[3] = 1;
   q[4] = 1;
   BOOST_CHECK(!isNormalized(robot, q, eps));
+  LiegroupElementConstRef P2(q, robot->configSpace());
+  BOOST_CHECK(!checkNormalized(P2, eps));
 
   robot = unittest::makeDevice(unittest::CarLike);
 
   q = robot->neutralConfiguration();
   BOOST_CHECK(isNormalized(robot, q, eps));
+  LiegroupElementConstRef P3(q, robot->configSpace());
+  BOOST_CHECK(checkNormalized(P3, eps));
 
   /// Set a complex of norm != 1
   q.segment<2>(2) << 1, 1;
   BOOST_CHECK(!isNormalized(robot, q, eps));
+  LiegroupElementConstRef P4(q, robot->configSpace());
+  BOOST_CHECK(!checkNormalized(P4, eps));
 
   robot = unittest::makeDevice(unittest::CarLike);
 
   q = robot->neutralConfiguration();
   BOOST_CHECK(isNormalized(robot, q, eps));
+  LiegroupElementConstRef P5(q, robot->configSpace());
+  BOOST_CHECK(checkNormalized(P5, eps));
 }
 
 void test_difference_and_distance(DevicePtr_t robot) {
