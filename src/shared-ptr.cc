@@ -6,24 +6,19 @@
 namespace hpp {
 namespace pinocchio {
 
-std::shared_ptr<hpp::fcl::CollisionGeometry> as_std_shared_ptr(
-    boost::shared_ptr<hpp::fcl::CollisionGeometry> bp) {
-  if (!bp) return nullptr;
-  // a std shared pointer to boost shared ptr.  Yes.
-  auto pq = std::make_shared<boost::shared_ptr<hpp::fcl::CollisionGeometry>>(
-      std::move(bp));
-  // aliasing ctor.  Hide the double shared ptr.  Sneaky.
-  return std::shared_ptr<hpp::fcl::CollisionGeometry>(pq, pq.get()->get());
+using std_ptr = std::shared_ptr<hpp::fcl::CollisionGeometry>;
+using boost_ptr = boost::shared_ptr<hpp::fcl::CollisionGeometry>;
+
+std_ptr as_std_shared_ptr(boost_ptr ptr) {
+  if (!ptr) return nullptr;
+  auto pq = std::make_shared<boost_ptr>(std::move(ptr));
+  return std_ptr(pq, pq.get()->get());
 }
 
-boost::shared_ptr<hpp::fcl::CollisionGeometry> as_boost_shared_ptr(
-    std::shared_ptr<hpp::fcl::CollisionGeometry> bp) {
-  if (!bp) return nullptr;
-  // a std shared pointer to boost shared ptr.  Yes.
-  auto pq = boost::make_shared<std::shared_ptr<hpp::fcl::CollisionGeometry>>(
-      std::move(bp));
-  // aliasing ctor.  Hide the double shared ptr.  Sneaky.
-  return boost::shared_ptr<hpp::fcl::CollisionGeometry>(pq, pq.get()->get());
+boost_ptr as_boost_shared_ptr(std_ptr ptr) {
+  if (!ptr) return nullptr;
+  auto pq = boost::make_shared<std_ptr>(std::move(ptr));
+  return boost_ptr(pq, pq.get()->get());
 }
 
 }  // namespace pinocchio

@@ -1,10 +1,12 @@
 #ifndef HPP_PINOCCHIO_SHARED_PTR_HH
 #define HPP_PINOCCHIO_SHARED_PTR_HH
 
-#include <boost/make_shared.hpp>
 #include <hpp/fcl/fwd.hh>
 #include <pinocchio/fwd.hpp>
 #include <pinocchio/multibody/fcl.hpp>
+
+// include boost after pinocchio
+#include <boost/make_shared.hpp>
 
 namespace hpp {
 namespace pinocchio {
