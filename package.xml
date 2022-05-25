@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
  <package format='2'>
  <name>hpp-pinocchio</name>
- <version>4.12.0</version>
+ <version>4.13.0</version>
  <description>Wrapping of the kinematic/dynamic chain Pinocchio for HPP. </description>
 
  <maintainer email='hpp@laas.fr'>Joseph Mirabel</maintainer>
