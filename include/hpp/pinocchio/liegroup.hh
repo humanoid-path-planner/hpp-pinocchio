@@ -54,7 +54,7 @@ struct RnxSOnLieGroupMap {
   struct operation {};
 };
 /// \deprecated Use RnxSOnLieGroupMap
-typedef HPP_PINOCCHIO_DEPRECATED RnxSOnLieGroupMap LieGroupTpl;
+HPP_PINOCCHIO_DEPRECATED typedef RnxSOnLieGroupMap LieGroupTpl;
 
 /// This class maps at compile time a joint type to a lie group type.
 ///
