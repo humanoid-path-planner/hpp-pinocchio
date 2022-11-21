@@ -45,8 +45,8 @@
 #include "pinocchio/multibody/joint/joint-prismatic-unaligned.hpp"
 #include "pinocchio/multibody/joint/joint-revolute-unbounded.hpp"
 #include "pinocchio/multibody/joint/joint-revolute.hpp"
-//#include "pinocchio/multibody/joint/joint-spherical-ZYX.hpp"
-//#include "pinocchio/multibody/joint/joint-spherical.hpp"
+// #include "pinocchio/multibody/joint/joint-spherical-ZYX.hpp"
+// #include "pinocchio/multibody/joint/joint-spherical.hpp"
 #include "pinocchio/multibody/joint/joint-translation.hpp"
 
 namespace hpp {
