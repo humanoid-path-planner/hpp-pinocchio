@@ -44,7 +44,7 @@
 #include <pinocchio/multibody/geometry.hpp>
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/serialization/model.hpp>
-//#include <hpp/pinocchio/distance-result.hh>
+// #include <hpp/pinocchio/distance-result.hh>
 #include <hpp/pinocchio/body.hh>
 #include <hpp/pinocchio/collision-object.hh>
 #include <hpp/pinocchio/extra-config-space.hh>
