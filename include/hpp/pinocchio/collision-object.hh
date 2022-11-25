@@ -71,18 +71,6 @@ class HPP_PINOCCHIO_DLLAPI CollisionObject {
   /// Access to fcl object
   CollisionGeometryPtr_t geometry() const;
 
-  /// Access to fcl object
-  FclConstCollisionObjectPtr_t fcl(const GeomData& data) const;
-  FclCollisionObjectPtr_t fcl(GeomData& data) const;
-  FclConstCollisionObjectPtr_t fcl() const;
-  FclCollisionObjectPtr_t fcl();
-
-  /// Returns the FCL collision object.
-  /// \param d Ignored if this object represents an obstacle.
-  ///          Otherwise, a DeviceData for the internal device.
-  FclCollisionObjectPtr_t fcl(DeviceData& d) const;
-  FclConstCollisionObjectPtr_t fcl(const DeviceData& d) const;
-
   /// Get joint index
   const JointIndex& jointIndex() const { return jointIndex_; }
 
