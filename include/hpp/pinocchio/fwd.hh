@@ -38,7 +38,6 @@
 #include <hpp/fcl/collision_data.h>  // DistanceResult
 
 #include <Eigen/Core>
-#include <boost/shared_ptr.hpp>  // For the CollisionGeometry discrepancy
 #include <hpp/fcl/fwd.hh>
 #include <hpp/util/pointer.hh>
 #include <pinocchio/multibody/fwd.hpp>
@@ -116,7 +115,7 @@ using fcl::CollisionGeometry;
 // pinocchio headers. typedef decltype(GeomModel::geometry)
 // CollisionGeometryPtr_t;
 // TODO going as dirty as this.
-typedef boost::shared_ptr<CollisionGeometry> CollisionGeometryPtr_t;
+typedef shared_ptr<CollisionGeometry> CollisionGeometryPtr_t;
 typedef fcl::CollisionObject FclCollisionObject;
 typedef fcl::CollisionObject* FclCollisionObjectPtr_t;
 typedef const fcl::CollisionObject* FclConstCollisionObjectPtr_t;
