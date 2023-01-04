@@ -107,14 +107,7 @@ struct ObjectVector;
 typedef ObjectVector ObjectVector_t;
 typedef shared_ptr<Body> BodyPtr_t;
 typedef shared_ptr<const Body> BodyConstPtr_t;
-// typedef std::vector<BodyPtr_t> BodyVector_t;
 using fcl::CollisionGeometry;
-// TODO the line below does not work because of a discrepancy between hpp-fcl
-// and pinocchio using fcl::CollisionGeometryPtr_t;
-// TODO this would be a possible fix but that requires to always include
-// pinocchio headers. typedef decltype(GeomModel::geometry)
-// CollisionGeometryPtr_t;
-// TODO going as dirty as this.
 typedef shared_ptr<CollisionGeometry> CollisionGeometryPtr_t;
 typedef fcl::CollisionObject FclCollisionObject;
 typedef fcl::CollisionObject* FclCollisionObjectPtr_t;
