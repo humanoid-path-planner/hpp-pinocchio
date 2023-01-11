@@ -75,6 +75,32 @@ CollisionGeometryPtr_t CollisionObject::geometry() const {
   return pinocchio().geometry;
 }
 
+FclCollisionObjectPtr_t CollisionObject::fcl(GeomData& geomData) const {
+  return FclCollisionObjectPtr_t(new FclCollisionObject(
+      geometry(), toFclTransform3f(geomData.oMg[geomInModelIndex])));
+}
+
+FclConstCollisionObjectPtr_t CollisionObject::fcl(
+    const GeomData& geomData) const {
+  return FclCollisionObjectPtr_t(new FclCollisionObject(
+      geometry(), toFclTransform3f(geomData.oMg[geomInModelIndex])));
+}
+
+FclConstCollisionObjectPtr_t CollisionObject::fcl() const {
+  return fcl(geomData());
+}
+FclCollisionObjectPtr_t CollisionObject::fcl() { return fcl(geomData()); }
+
+FclCollisionObjectPtr_t CollisionObject::fcl(DeviceData& d) const {
+  return FclCollisionObjectPtr_t(new FclCollisionObject(
+      geometry(), toFclTransform3f(geomData(d).oMg[geomInModelIndex])));
+}
+
+FclConstCollisionObjectPtr_t CollisionObject::fcl(const DeviceData& d) const {
+  return FclCollisionObjectPtr_t(new FclCollisionObject(
+      geometry(), toFclTransform3f(geomData(d).oMg[geomInModelIndex])));
+}
+
 JointPtr_t CollisionObject::joint() {
   if (!devicePtr) return JointPtr_t();
   return Joint::create(devicePtr, jointIndex_);
