@@ -503,13 +503,8 @@ void replaceGeometryByConvexHull(GeomModel& gmodel,
       fcl::BVHModelBase* bvh =
           dynamic_cast<fcl::BVHModelBase*>(go.geometry.get());
       assert(bvh != NULL);
-      // TODO The following can't work because bvh->convex is a std::shared_ptr
-      // while go.geometry is a boost::shared_ptr
-      // bvh->buildConvexHull(false, "Qx");
-      // go.geometry = bvh->convex;
-      fcl::ConvexBase* convex = fcl::ConvexBase::convexHull(
-          bvh->vertices, bvh->num_vertices, false, "Qx");
-      go.geometry.reset(convex);
+      bvh->buildConvexHull(false, "Qx");
+      go.geometry = bvh->convex;
     }
   }
 #else
