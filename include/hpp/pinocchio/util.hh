@@ -185,6 +185,12 @@ struct HPP_PINOCCHIO_DLLAPI
     : prettyPrintEigen<Eigen::Ref<_PlainObjectType, _Options, _StrideType>,
                        Option> {};
 
+/// Pretty printer for Eigen::Transpose
+template <typename _PlainObjectType, int Option>
+struct HPP_PINOCCHIO_DLLAPI
+    prettyPrint<Eigen::Transpose<_PlainObjectType>, Option>
+    : prettyPrintEigen<Eigen::Transpose<_PlainObjectType>, Option> {};
+
 /// Pretty printer for Eigen::Quaternion
 template <typename _Scalar, int _Options, int Option>
 struct HPP_PINOCCHIO_DLLAPI
