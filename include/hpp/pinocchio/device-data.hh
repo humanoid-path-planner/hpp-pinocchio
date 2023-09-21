@@ -53,12 +53,14 @@ struct DeviceData {
   DeviceData(const DeviceData& other);
 
   inline void invalidate() {
-    upToDate_ = false;
+    dataUpToDate_ = 0;
     frameUpToDate_ = false;
     geomUpToDate_ = false;
   }
 
-  void computeForwardKinematics(const ModelPtr_t& m);
+  /// \param flag to customise the computation. This should be a bitwise OR
+  ///        between Computation_t values.
+  void computeForwardKinematics(const ModelPtr_t& m, int flag);
   void computeFramesForwardKinematics(const ModelPtr_t& m);
   void updateGeometryPlacements(const ModelPtr_t& m, const GeomModelPtr_t& gm);
 
@@ -69,7 +71,8 @@ struct DeviceData {
   Configuration_t currentConfiguration_;
   vector_t currentVelocity_;
   vector_t currentAcceleration_;
-  bool upToDate_, frameUpToDate_, geomUpToDate_;
+  int dataUpToDate_;
+  bool frameUpToDate_, geomUpToDate_;
   Computation_t computationFlag_;
   DeviceWkPtr_t devicePtr_;
 

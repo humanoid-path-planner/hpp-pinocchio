@@ -151,11 +151,15 @@ class HPP_PINOCCHIO_DLLAPI AbstractDevice {
   /// Select computation
   /// Optimize computation time by selecting only necessary values in
   /// method computeForwardKinematics.
-  virtual void controlComputation(const Computation_t& flag);
+  void controlComputation(const Computation_t& flag);
   /// Get computation flag
   Computation_t computationFlag() const { return d().computationFlag_; }
-  /// Compute forward kinematics
-  void computeForwardKinematics() { d().computeForwardKinematics(modelPtr()); }
+  /// Compute forward kinematics computing everything
+  void computeForwardKinematics() { d().computeForwardKinematics(modelPtr(), COMPUTE_ALL); }
+  /// Compute forward kinematics with custom computation flag
+  /// \param flag to customise the computation. This should be a bitwise OR
+  ///        between Computation_t values.
+  void computeForwardKinematics(int flag) { d().computeForwardKinematics(modelPtr(), flag); }
   /// Compute frame forward kinematics
   /// \note call AbstractDevice::computeForwardKinematics.
   void computeFramesForwardKinematics() {
@@ -190,7 +194,7 @@ class HPP_PINOCCHIO_DLLAPI AbstractDevice {
 /// // Acquires a lock on the device.
 /// DeviceSync deviceSync (device);
 /// deviceSync.currentConfiguration(q);
-/// deviceSync.computeForwardKinematics();
+/// deviceSync.computeForwardKinematics(JOINT_POSITION | JACOBIAN);
 ///
 /// JointPtr_t joint = ...;
 /// joint->currentTransformation (deviceSync.d());

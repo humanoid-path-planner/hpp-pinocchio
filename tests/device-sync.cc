@@ -83,7 +83,7 @@ typedef ::pinocchio::container::aligned_vector<SE3> SE3Vector_t;
 void compute_forward_kinematics(DevicePtr_t& device, const Configuration_t& q,
                                 SE3Vector_t& res) {
   device->currentConfiguration(q);
-  device->computeForwardKinematics();
+  device->computeForwardKinematics(JOINT_POSITION);
 
   res = device->data().oMi;
 }
@@ -93,7 +93,7 @@ void compute_forward_kinematics_thread_safe(DevicePtr_t& device,
                                             SE3Vector_t& res) {
   DeviceSync sync(device);
   sync.currentConfiguration(q);
-  sync.computeForwardKinematics();
+  sync.computeForwardKinematics(JOINT_POSITION);
 
   res = sync.data().oMi;
 }

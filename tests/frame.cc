@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(frame) {
   DevicePtr_t pinocchio = hppPinocchio();
   Configuration_t q = pinocchio->neutralConfiguration();
   pinocchio->currentConfiguration(q);
-  pinocchio->computeForwardKinematics();
+  pinocchio->computeForwardKinematics(JOINT_POSITION);
 
   Frame root = pinocchio->getFrameByName("root_joint");
   Frame waist = pinocchio->getFrameByName("waist");
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(frame) {
 
   Transform3f shift = Transform3f::Random();
   waist.positionInParentFrame(shift);
-  pinocchio->computeForwardKinematics();
+  pinocchio->computeForwardKinematics()JOINT_POSITION;
 
   CHECK_TRANSFORM(ImuTorsoAcc_F.positionInParentFrame(), ImuTorsoAcc_M);
   CHECK_TRANSFORM(ImuTorsoGyr_F.positionInParentFrame(), ImuTorsoGyr_M);

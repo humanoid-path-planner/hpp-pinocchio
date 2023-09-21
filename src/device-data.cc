@@ -50,7 +50,7 @@ DeviceData::DeviceData(const DeviceData& other)
       currentConfiguration_(other.currentConfiguration_),
       currentVelocity_(other.currentVelocity_),
       currentAcceleration_(other.currentAcceleration_),
-      upToDate_(other.upToDate_),
+      dataUpToDate_(other.dataUpToDate_),
       frameUpToDate_(other.frameUpToDate_),
       geomUpToDate_(other.geomUpToDate_),
       computationFlag_(other.computationFlag_),
@@ -58,22 +58,37 @@ DeviceData::DeviceData(const DeviceData& other)
       modelConf_(other.modelConf_.size()),
       jointJacobians_(other.jointJacobians_.size()) {}
 
-void DeviceData::computeForwardKinematics(const ModelPtr_t& mptr) {
-  if (upToDate_) return;
-  const Model& model = *mptr;
-
+void checkComputationFlag(int flag) {
+  // Turn off unused parameter compilation warning.
+  (void)flag;
   // a IMPLIES b === (b || ~a)
   // velocity IMPLIES position
-  assert((computationFlag_ & JOINT_POSITION) ||
-         (!(computationFlag_ & VELOCITY)));
+  assert((flag & JOINT_POSITION) || (!(flag & VELOCITY)));
   // acceleration IMPLIES velocity
-  assert((computationFlag_ & VELOCITY) || (!(computationFlag_ & ACCELERATION)));
+  assert((flag & VELOCITY) || (!(flag & ACCELERATION)));
   // com IMPLIES position
-  assert((computationFlag_ & JOINT_POSITION) || (!(computationFlag_ & COM)));
+  assert((flag & JOINT_POSITION) || (!(flag & COM)));
   // jacobian IMPLIES position
-  assert((computationFlag_ & JOINT_POSITION) ||
-         (!(computationFlag_ & JACOBIAN)));
+  assert((flag & JOINT_POSITION) || (!(flag & JACOBIAN)));
 
+}
+
+constexpr int FK_ACC = JOINT_POSITION | VELOCITY | ACCELERATION;
+constexpr int FK_VEL = JOINT_POSITION | VELOCITY;
+constexpr int FK_POS = JOINT_POSITION;
+// JCOM is different from JACOBIAN | COM
+// as one could do
+// computeForwardKinematics(JACOBIAN);
+// computeForwardKinematics(COM);
+// computeForwardKinematics(COM | JACOBIAN);
+// In the last call, if JCOM = COM | JACOBIAN, the COM Jacobian would not be
+// computed.
+constexpr int JCOM = COM << 1 | COM;
+
+void DeviceData::computeForwardKinematics(const ModelPtr_t& mptr, int flag) {
+  checkComputationFlag(flag);
+
+  const Model& model = *mptr;
   const size_type nq = model.nq;
   const size_type nv = model.nv;
 
@@ -81,35 +96,57 @@ void DeviceData::computeForwardKinematics(const ModelPtr_t& mptr) {
   // a reference. This line avoids dynamic memory allocation
   modelConf_ = currentConfiguration_.head(nq);
 
-  if (computationFlag_ & ACCELERATION)
-    ::pinocchio::forwardKinematics(model, *data_, modelConf_,
-                                   currentVelocity_.head(nv),
-                                   currentAcceleration_.head(nv));
-  else if (computationFlag_ & VELOCITY)
-    ::pinocchio::forwardKinematics(model, *data_, modelConf_,
-                                   currentVelocity_.head(nv));
-  else if (computationFlag_ & JOINT_POSITION)
-    ::pinocchio::forwardKinematics(model, *data_, modelConf_);
-
-  if (computationFlag_ & COM) {
-    if (computationFlag_ | JACOBIAN)
-      // TODO: Jcom should not recompute the kinematics (\sa pinocchio issue
-      // #219)
-      ::pinocchio::jacobianCenterOfMass(model, *data_, modelConf_, true);
-    else
-      // 0 means Compose Com position, but not velocity and acceleration.
-      ::pinocchio::centerOfMass(model, *data_, ::pinocchio::POSITION, true);
+  switch (flag & FK_ACC) {
+    case FK_ACC:
+      if (!(dataUpToDate_ & ACCELERATION)) {
+        ::pinocchio::forwardKinematics(model, *data_, modelConf_,
+                                       currentVelocity_.head(nv),
+                                       currentAcceleration_.head(nv));
+        dataUpToDate_ = dataUpToDate_ | FK_ACC;
+      }
+      break;
+    case FK_VEL:
+      if (!(dataUpToDate_ & VELOCITY)) {
+        ::pinocchio::forwardKinematics(model, *data_, modelConf_,
+                                       currentVelocity_.head(nv));
+        dataUpToDate_ = dataUpToDate_ | FK_VEL;
+      }
+      break;
+    case FK_POS:
+      if (!(dataUpToDate_ & JOINT_POSITION)) {
+        ::pinocchio::forwardKinematics(model, *data_, modelConf_);
+        dataUpToDate_ = dataUpToDate_ | FK_POS;
+      }
+      break;
+    default:
+      throw std::logic_error("Wrong computation flag.");
   }
 
-  if (computationFlag_ & JACOBIAN)
-    ::pinocchio::computeJointJacobians(model, *data_, modelConf_);
+  if (flag & COM) {
+    if (flag & JACOBIAN) {
+      if (!(dataUpToDate_ & JCOM)) {
+        ::pinocchio::jacobianCenterOfMass(model, *data_, modelConf_, true);
+        dataUpToDate_ = dataUpToDate_ | JCOM | COM;
+      }
+    } else {
+      if (!(dataUpToDate_ & COM)) {
+        ::pinocchio::centerOfMass(model, *data_, ::pinocchio::POSITION, true);
+        dataUpToDate_ = dataUpToDate_ | COM;
+      }
+    }
+  }
 
-  upToDate_ = true;
+  if (flag & JACOBIAN) {
+    if (!(dataUpToDate_ & JACOBIAN)) {
+      ::pinocchio::computeJointJacobians(model, *data_, modelConf_);
+      dataUpToDate_ = dataUpToDate_ | JACOBIAN;
+    }
+  }
 }
 
 void DeviceData::computeFramesForwardKinematics(const ModelPtr_t& mptr) {
   if (frameUpToDate_) return;
-  computeForwardKinematics(mptr);
+  computeForwardKinematics(mptr, JOINT_POSITION);
 
   ::pinocchio::updateFramePlacements(*mptr, *data_);
 
