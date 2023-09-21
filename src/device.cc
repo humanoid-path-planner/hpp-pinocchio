@@ -176,15 +176,6 @@ void Device::removeJoints(const std::vector<std::string>& jointNames,
   numberDeviceData(numberDeviceData());
 }
 
-void Device::controlComputation(const Computation_t& flag) {
-  AbstractDevice::controlComputation(flag);
-  // TODO this should not be done in controlComputation
-  // It should be done in another function (like controlComputations)
-  // as it might be a desired behaviour to have different computation options
-  // in different DeviceData.
-  numberDeviceData(numberDeviceData());
-}
-
 /* ---------------------------------------------------------------------- */
 /* --- JOINT ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */

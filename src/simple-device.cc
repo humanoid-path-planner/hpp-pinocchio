@@ -101,7 +101,7 @@ DevicePtr_t humanoidSimple(const std::string& name, Computation_t compFlags) {
   robot->createGeomData();
   robot->controlComputation(compFlags);
   robot->currentConfiguration(robot->neutralConfiguration());
-  robot->computeForwardKinematics();
+  robot->computeForwardKinematics(compFlags);
 
   const value_type max = std::numeric_limits<value_type>::max();
   const value_type min = -std::numeric_limits<value_type>::max();
