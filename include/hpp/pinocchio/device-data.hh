@@ -73,7 +73,6 @@ struct DeviceData {
   vector_t currentAcceleration_;
   int dataUpToDate_;
   bool frameUpToDate_, geomUpToDate_;
-  Computation_t computationFlag_;
   DeviceWkPtr_t devicePtr_;
 
   /// Temporary variable to avoid dynamic allocation

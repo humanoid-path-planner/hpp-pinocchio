@@ -39,8 +39,7 @@
 namespace hpp {
 namespace pinocchio {
 
-DeviceData::DeviceData()
-    : computationFlag_(Computation_t(JOINT_POSITION | JACOBIAN)) {
+DeviceData::DeviceData() {
   invalidate();
 }
 
@@ -53,7 +52,6 @@ DeviceData::DeviceData(const DeviceData& other)
       dataUpToDate_(other.dataUpToDate_),
       frameUpToDate_(other.frameUpToDate_),
       geomUpToDate_(other.geomUpToDate_),
-      computationFlag_(other.computationFlag_),
       devicePtr_(),
       modelConf_(other.modelConf_.size()),
       jointJacobians_(other.jointJacobians_.size()) {}

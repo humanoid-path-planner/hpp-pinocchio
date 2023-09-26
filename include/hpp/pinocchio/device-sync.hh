@@ -31,6 +31,7 @@
 #ifndef HPP_PINOCCHIO_DEVICE_SYNC_HH
 #define HPP_PINOCCHIO_DEVICE_SYNC_HH
 
+#include <hpp/pinocchio/deprecated.hh>
 #include <hpp/pinocchio/device-data.hh>
 #include <hpp/pinocchio/fwd.hh>
 
@@ -148,18 +149,21 @@ class HPP_PINOCCHIO_DLLAPI AbstractDevice {
   /// \name Forward kinematics
   /// \{
 
-  /// Select computation
-  /// Optimize computation time by selecting only necessary values in
-  /// method computeForwardKinematics.
-  void controlComputation(const Computation_t& flag);
-  /// Get computation flag
-  Computation_t computationFlag() const { return d().computationFlag_; }
+  /// \deprecated Use computeForwardKinematics(Computation_t) instead to select
+  /// what should be computed.
+  void controlComputation(const Computation_t& flag) HPP_PINOCCHIO_DEPRECATED {}
+  /// \deprecated returns COMPUTE_ALL
+  Computation_t computationFlag() const HPP_PINOCCHIO_DEPRECATED {
+    return COMPUTE_ALL;
+  }
   /// Compute forward kinematics computing everything
-  void computeForwardKinematics() { d().computeForwardKinematics(modelPtr(), COMPUTE_ALL); }
+  void computeForwardKinematics() { computeForwardKinematics(COMPUTE_ALL); }
   /// Compute forward kinematics with custom computation flag
   /// \param flag to customise the computation. This should be a bitwise OR
   ///        between Computation_t values.
-  void computeForwardKinematics(int flag) { d().computeForwardKinematics(modelPtr(), flag); }
+  void computeForwardKinematics(int flag) {
+    d().computeForwardKinematics(modelPtr(), flag);
+  }
   /// Compute frame forward kinematics
   /// \note call AbstractDevice::computeForwardKinematics.
   void computeFramesForwardKinematics() {
