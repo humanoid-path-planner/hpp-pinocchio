@@ -79,13 +79,6 @@ const ComJacobian_t& AbstractDevice::jacobianCenterOfMass() const {
   return data().Jcom;
 }
 
-void AbstractDevice::controlComputation(const Computation_t& flag) {
-  if (d().computationFlag_ != flag) {
-    d().computationFlag_ = flag;
-    d().invalidate();
-  }
-}
-
 AbstractDevice::AbstractDevice()
     : model_(new Model()), geomModel_(new GeomModel()) {}
 
