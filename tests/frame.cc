@@ -42,8 +42,7 @@
 using namespace hpp::pinocchio;
 
 typedef std::vector<std::string> Strings_t;
-void check_children(const Model& model, Frame& f,
-                    Strings_t expected_children) {
+void check_children(const Model& model, Frame& f, Strings_t expected_children) {
   const std::vector<FrameIndex>& children = f.children();
   BOOST_CHECK_EQUAL(children.size(), expected_children.size());
   for (std::size_t i = 0; i < children.size(); ++i) {

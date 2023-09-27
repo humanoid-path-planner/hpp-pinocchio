@@ -39,9 +39,7 @@
 namespace hpp {
 namespace pinocchio {
 
-DeviceData::DeviceData() {
-  invalidate();
-}
+DeviceData::DeviceData() { invalidate(); }
 
 DeviceData::DeviceData(const DeviceData& other)
     : data_(new Data(*other.data_)),
@@ -68,7 +66,6 @@ void checkComputationFlag(int flag) {
   assert((flag & JOINT_POSITION) || (!(flag & COM)));
   // jacobian IMPLIES position
   assert((flag & JOINT_POSITION) || (!(flag & JACOBIAN)));
-
 }
 
 constexpr int FK_ACC = JOINT_POSITION | VELOCITY | ACCELERATION;
