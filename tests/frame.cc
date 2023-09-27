@@ -42,10 +42,10 @@
 using namespace hpp::pinocchio;
 
 typedef std::vector<std::string> Strings_t;
-void check_children(const Model& model, const Frame& f,
+void check_children(const Model& model, Frame& f,
                     Strings_t expected_children) {
   const std::vector<FrameIndex>& children = f.children();
-  BOOST_CHECK(children.size() == expected_children.size());
+  BOOST_CHECK_EQUAL(children.size(), expected_children.size());
   for (std::size_t i = 0; i < children.size(); ++i) {
     std::string name = model.frames[children[i]].name;
     Strings_t::iterator _found =
@@ -75,25 +75,27 @@ BOOST_AUTO_TEST_CASE(frame) {
   Frame waist = pinocchio->getFrameByName("waist");
   BOOST_CHECK(!root.isFixed());
   BOOST_CHECK(waist.isFixed());
-  BOOST_CHECK(waist.parentFrame().name() == "root_joint");
-  BOOST_CHECK(!waist.parentFrame().isFixed());
+  BOOST_CHECK_EQUAL(waist.parentFrame().name(), "base_link");
+  BOOST_CHECK(waist.parentFrame().isFixed());
 
   Strings_t expected_children;
+  // The children a frame F we talk about here are the last frames of every
+  // chain of non-moving frames starting from the frame F.
   expected_children.push_back("ImuTorsoAccelerometer_frame");
   expected_children.push_back("ImuTorsoGyrometer_frame");
   expected_children.push_back("TrunkYaw");
   expected_children.push_back("LHipYaw");
   expected_children.push_back("RHipYaw");
-  expected_children.push_back("body");
 
   // Check that the children are properly set.
-  check_children(pinocchio->model(), waist, expected_children);
+  Frame body = pinocchio->getFrameByName("body");
+  check_children(pinocchio->model(), body, expected_children);
   check_children(pinocchio->model(), root, Strings_t());
 
   // Check position in parent frame.
   JointPtr_t root_j = waist.joint();
   BOOST_REQUIRE(root_j);
-  BOOST_CHECK(root_j->name() == "root_joint");
+  BOOST_CHECK_EQUAL(root_j->name(), "root_joint");
 
   Frame ImuTorsoAcc_F =
             pinocchio->getFrameByName("ImuTorsoAccelerometer_joint"),
@@ -110,7 +112,7 @@ BOOST_AUTO_TEST_CASE(frame) {
 
   Transform3f shift = Transform3f::Random();
   waist.positionInParentFrame(shift);
-  pinocchio->computeForwardKinematics()JOINT_POSITION;
+  pinocchio->computeForwardKinematics(JOINT_POSITION);
 
   CHECK_TRANSFORM(ImuTorsoAcc_F.positionInParentFrame(), ImuTorsoAcc_M);
   CHECK_TRANSFORM(ImuTorsoGyr_F.positionInParentFrame(), ImuTorsoGyr_M);
