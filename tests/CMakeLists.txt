@@ -49,9 +49,9 @@ endmacro(ADD_TESTCASE)
 # --- LIST OF TESTS ------------------------------------------------------------
 # --- LIST OF TESTS ------------------------------------------------------------
 
-if(ROMEO_DESCRIPTION_FOUND)
+if(example-robot-data_FOUND)
   add_testcase(frame)
-endif(ROMEO_DESCRIPTION_FOUND)
+endif(example-robot-data_FOUND)
 
 add_testcase(tconfiguration)
 add_testcase(device)
