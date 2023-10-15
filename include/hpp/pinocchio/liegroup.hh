@@ -53,8 +53,6 @@ struct RnxSOnLieGroupMap {
   template <typename JointModel>
   struct operation {};
 };
-/// \deprecated Use RnxSOnLieGroupMap
-HPP_PINOCCHIO_DEPRECATED typedef RnxSOnLieGroupMap LieGroupTpl;
 
 /// This class maps at compile time a joint type to a lie group type.
 ///
