@@ -151,7 +151,7 @@ class HPP_PINOCCHIO_DLLAPI AbstractDevice {
 
   /// \deprecated Use computeForwardKinematics(Computation_t) instead to select
   /// what should be computed.
-  void controlComputation(const Computation_t& flag) HPP_PINOCCHIO_DEPRECATED {}
+  void controlComputation(const Computation_t&) HPP_PINOCCHIO_DEPRECATED {}
   /// \deprecated returns COMPUTE_ALL
   Computation_t computationFlag() const HPP_PINOCCHIO_DEPRECATED {
     return COMPUTE_ALL;
