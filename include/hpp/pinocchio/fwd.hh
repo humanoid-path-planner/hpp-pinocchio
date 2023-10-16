@@ -43,6 +43,8 @@
 #include <pinocchio/multibody/fwd.hpp>
 #include <pinocchio/multibody/joint/fwd.hpp>
 #include <pinocchio/spatial/fwd.hpp>
+#include <hpp/pinocchio/deprecated.hh>
+
 #include <vector>
 
 namespace hpp {
@@ -88,7 +90,7 @@ typedef Eigen::Matrix<value_type, Eigen::Dynamic, 1> vector_t;
 typedef vector_t Configuration_t;
 typedef Eigen::Ref<const Configuration_t> ConfigurationIn_t;
 typedef Eigen::Ref<Configuration_t> ConfigurationOut_t;
-typedef shared_ptr<Configuration_t> ConfigurationPtr_t;
+typedef shared_ptr<Configuration_t> ConfigurationPtr_t HPP_PINOCCHIO_DEPRECATED;
 typedef Eigen::Ref<const vector_t> vectorIn_t;
 typedef Eigen::Ref<vector_t> vectorOut_t;
 typedef Eigen::Matrix<value_type, Eigen::Dynamic, Eigen::Dynamic> matrix_t;
