@@ -39,12 +39,11 @@
 
 #include <Eigen/Core>
 #include <hpp/fcl/fwd.hh>
+#include <hpp/pinocchio/deprecated.hh>
 #include <hpp/util/pointer.hh>
 #include <pinocchio/multibody/fwd.hpp>
 #include <pinocchio/multibody/joint/fwd.hpp>
 #include <pinocchio/spatial/fwd.hpp>
-#include <hpp/pinocchio/deprecated.hh>
-
 #include <vector>
 
 namespace hpp {
