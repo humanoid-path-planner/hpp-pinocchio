@@ -132,8 +132,7 @@ DevicePtr_t makeDevice(TestDeviceType type, const std::string& prefix) {
       return robot;
     case HumanoidRomeo:
       hrobot = HumanoidRobot::create("romeo");
-      urdf::loadRobotModel(hrobot, 0, prefix, "freeflyer",
-                           "example-robot-data/robots/romeo_description",
+      urdf::loadRobotModel(hrobot, 0, prefix, "freeflyer", "romeo_description",
                            "romeo", "_small", "_small");
       urdf::setupHumanoidRobot(hrobot, prefix);
       hrobot->model().lowerPositionLimit.head<3>().setConstant(-1);

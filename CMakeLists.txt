@@ -80,6 +80,10 @@ add_project_dependency(Eigen3 REQUIRED)
 add_project_dependency(example-robot-data)
 add_project_dependency(hpp-environments)
 
+if(BUILD_TESTING)
+  find_package(Boost REQUIRED COMPONENTS unit_test_framework)
+endif()
+
 # Set header files.
 set(${PROJECT_NAME}_HEADERS
     include/hpp/pinocchio/fwd.hh
@@ -137,15 +141,19 @@ set(${PROJECT_NAME}_SOURCES
 add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES}
                                    ${${PROJECT_NAME}_HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
-target_link_libraries(${PROJECT_NAME} PUBLIC hpp-util::hpp-util
-                                             pinocchio::pinocchio Boost::thread)
+target_link_libraries(
+  ${PROJECT_NAME}
+  PUBLIC hpp-util::hpp-util example-robot-data::example-robot-data
+         pinocchio::pinocchio Boost::thread)
 
 install(
   TARGETS ${PROJECT_NAME}
   EXPORT ${TARGETS_EXPORT_NAME}
   DESTINATION lib)
 
-add_subdirectory(tests)
+if(BUILD_TESTING)
+  add_subdirectory(tests)
+endif()
 
 pkg_config_append_libs(${PROJECT_NAME})
 pkg_config_append_boost_libs(thread)
