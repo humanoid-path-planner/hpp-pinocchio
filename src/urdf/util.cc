@@ -311,8 +311,7 @@ void _loadModel(const DevicePtr_t& robot, const FrameIndex& baseFrame,
     throw std::invalid_argument(
         "Failed to parse URDF. Use check_urdf command to know what's wrong.");
 
-  ModelPtr_t model =
-      (baseFrame == 0 ? robot->modelPtr() : ModelPtr_t(new Model));
+  ModelPtr_t model = ModelPtr_t(new Model);
   const JointIndex idFirstJoint = model->joints.size();
   const FrameIndex idFirstFrame = model->frames.size();
   if (rootType == "anchor")
@@ -354,16 +353,12 @@ void _loadModel(const DevicePtr_t& robot, const FrameIndex& baseFrame,
          (model->names[idFirstJoint] == prefix + "root_joint"));
   setRootJointBounds(*model, idFirstJoint, rootType);
 
-  if (baseFrame == 0)
-    ::pinocchio::appendGeometryModel(robot->geomModel(), geomModel);
-  else {
-    ModelPtr_t m(new Model);
-    GeomModelPtr_t gm(new GeomModel);
-    ::pinocchio::appendModel(robot->model(), *model, robot->geomModel(),
-                             geomModel, baseFrame, bMr, *m, *gm);
-    robot->setModel(m);
-    robot->setGeomModel(gm);
-  }
+  ModelPtr_t m(new Model);
+  GeomModelPtr_t gm(new GeomModel);
+  ::pinocchio::appendModel(robot->model(), *model, robot->geomModel(),
+                           geomModel, baseFrame, bMr, *m, *gm);
+  robot->setModel(m);
+  robot->setGeomModel(gm);
 
   if (!srdf.empty()) {
     _removeCollisionPairs<srdfAsXmlString>(robot->model(), robot->geomModel(),
