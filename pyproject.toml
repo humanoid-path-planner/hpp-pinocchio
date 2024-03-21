@@ -1,2 +1,26 @@
+[build-system]
+build-backend = "cmeel.build"
+requires = [
+  "cmeel-boost ~= 1.83.0",
+  "cmeel[build]",
+  "example-robot-data[build]",
+  "hpp-environments[build]",
+  "hpp-util[build]",
+  "pin[build]"
+]
+
+[project]
+dependencies = [
+  "cmeel-boost ~= 1.83.0",
+  "example-robot-data",
+  "hpp-environments",
+  "hpp-util",
+  "pin"
+]
+description = "Wrapping of the kinematic/dynamic chain Pinocchio for HPP."
+license = "BSD-2-Clause"
+name = "hpp-pinocchio"
+version = "5.0.0"
+
 [tool.isort]
 profile = "black"
