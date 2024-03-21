@@ -45,8 +45,10 @@ macro(ADD_TESTCASE NAME)
     example-robot-data::example-robot-data hpp-environments::hpp-environments)
   set_tests_properties(
     ${NAME}
-    PROPERTIES ENVIRONMENT
-               "ROS_PACKAGE_PATH=${hpp-environments_DIR}/../../../share")
+    PROPERTIES
+      ENVIRONMENT
+      "ROS_PACKAGE_PATH=${hpp-environments_DIR}/../../../share:${example-robot-data_DIR}/../../../share"
+  )
 endmacro(ADD_TESTCASE)
 
 # --- LIST OF TESTS ------------------------------------------------------------
