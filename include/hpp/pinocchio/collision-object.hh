@@ -126,7 +126,7 @@ class HPP_PINOCCHIO_DLLAPI CollisionObject {
   GeomDataPtr_t geomData_;
   JointIndex jointIndex_;
   GeomIndex geomInModelIndex;  // Index in global model list.
-};                             // class CollisionObject
+};  // class CollisionObject
 }  // namespace pinocchio
 }  // namespace hpp
 
