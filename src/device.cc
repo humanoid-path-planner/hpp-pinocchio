@@ -28,6 +28,10 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 
+#include <pinocchio/fwd.hpp>
+
+// include pinocchio first
+
 #include <hpp/fcl/BV/AABB.h>
 #include <hpp/fcl/BVH/BVH_model.h>
 

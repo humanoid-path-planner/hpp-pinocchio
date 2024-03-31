@@ -24,8 +24,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-find_package(Boost REQUIRED COMPONENTS unit_test_framework)
-
 # Make Boost.Test generates the main function in test cases.
 add_definitions(-DBOOST_TEST_DYN_LINK -DBOOST_TEST_MAIN)
 
@@ -42,31 +40,33 @@ add_definitions(-DTEST_DIRECTORY="${CMAKE_SOURCE_DIR}/tests/data")
 #
 macro(ADD_TESTCASE NAME)
   add_unit_test(${NAME} ${NAME}.cc)
-  target_link_libraries(${NAME} ${PROJECT_NAME} ${Boost_LIBRARIES})
+  target_link_libraries(
+    ${NAME} ${PROJECT_NAME} Boost::unit_test_framework
+    example-robot-data::example-robot-data hpp-environments::hpp-environments)
+  set_tests_properties(
+    ${NAME}
+    PROPERTIES
+      ENVIRONMENT
+      "ROS_PACKAGE_PATH=${hpp-environments_DIR}/../../../share:${example-robot-data_DIR}/../../../share"
+  )
 endmacro(ADD_TESTCASE)
 
 # --- LIST OF TESTS ------------------------------------------------------------
 # --- LIST OF TESTS ------------------------------------------------------------
 # --- LIST OF TESTS ------------------------------------------------------------
 
-if(example-robot-data_FOUND)
-  add_testcase(frame)
-endif(example-robot-data_FOUND)
-
+add_testcase(frame)
 add_testcase(tconfiguration)
 add_testcase(device)
 add_testcase(urdf)
 add_testcase(liegroup-element)
 add_testcase(print)
 add_testcase(joint-bounds)
-add_unit_test(serialization serialization.cc)
-target_link_libraries(
-  serialization PRIVATE hpp-util::hpp-util pinocchio::pinocchio Boost::thread
-                        ${Boost_LIBRARIES})
+add_testcase(serialization)
+add_testcase(pool)
 
 find_package(OpenMP)
 if(OPENMP_FOUND)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
   add_testcase(device-sync)
 endif()
-add_testcase(pool)

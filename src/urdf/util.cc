@@ -423,6 +423,8 @@ void loadModel(const DevicePtr_t& robot, const FrameIndex& baseFrame,
                const std::string& urdfPath, const std::string& srdfPath,
                const SE3& bMr) {
   std::vector<std::string> baseDirs = ::pinocchio::rosPaths();
+  baseDirs.push_back(EXAMPLE_ROBOT_DATA_MODEL_DIR);
+  baseDirs.push_back(EXAMPLE_ROBOT_DATA_MODEL_DIR "/../..");
 
   std::string urdfFileName =
       ::pinocchio::retrieveResourcePath(urdfPath, baseDirs);
