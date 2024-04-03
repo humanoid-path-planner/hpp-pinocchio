@@ -127,8 +127,9 @@ DevicePtr_t makeDevice(TestDeviceType type, const std::string& prefix) {
       return robot;
     case ManipulatorArm2:
       robot = Device::create("arm");
-      urdf::loadRobotModel(robot, 0, prefix, "anchor", "hpp_environments",
-                           "tests/baxter", "_simple", "_simple");
+      urdf::loadModel(robot, 0, prefix, "anchor",
+                      "package://example-robot-data/robots/baxter_description/urdf/baxter.urdf",
+                      "");
       return robot;
     case HumanoidRomeo:
       hrobot = HumanoidRobot::create("romeo");
