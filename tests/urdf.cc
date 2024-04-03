@@ -29,15 +29,15 @@
 #define BOOST_TEST_MODULE urdf
 
 #include <boost/test/unit_test.hpp>
+#include <hpp/pinocchio/device.hh>
+#include <hpp/pinocchio/joint-collection.hh>
+#include <hpp/pinocchio/joint.hh>
+#include <hpp/pinocchio/urdf/util.hh>
 #include <pinocchio/algorithm/frames.hpp>
 #include <pinocchio/algorithm/joint-configuration.hpp>
 #include <pinocchio/algorithm/kinematics.hpp>
 #include <pinocchio/multibody/data.hpp>
 #include <pinocchio/multibody/model.hpp>
-#include <hpp/pinocchio/device.hh>
-#include <hpp/pinocchio/joint-collection.hh>
-#include <hpp/pinocchio/joint.hh>
-#include <hpp/pinocchio/urdf/util.hh>
 
 using namespace hpp::pinocchio;
 
@@ -73,48 +73,52 @@ BOOST_AUTO_TEST_CASE(append_model) {
   FrameIndex baseFrame = 0;
   matrix3_t R;
   R << 0, -1, 0, 1, 0, 0, 0, 0, 1;
-  vector3_t t; t << 1, 2, 3;
-  ::pinocchio::SE3 wMr(R, t), Id; Id.setIdentity();
-  std::string urdfPath
-    ("package://example-robot-data/robots/ur_description/urdf/ur5_gripper.urdf");
-  std::string srdfPath
-    ("package://example-robot-data/robots/ur_description/srdf/ur5_gripper.srdf");
+  vector3_t t;
+  t << 1, 2, 3;
+  ::pinocchio::SE3 wMr(R, t), Id;
+  Id.setIdentity();
+  std::string urdfPath(
+      "package://example-robot-data/robots/ur_description/urdf/"
+      "ur5_gripper.urdf");
+  std::string srdfPath(
+      "package://example-robot-data/robots/ur_description/srdf/"
+      "ur5_gripper.srdf");
   std::string boxUrdf(
-     "<robot name='box'>"
-    "  <link name='base_link'>"
-    "    <inertial>"
-    "      <origin xyz='0.0 0.0 0.0' rpy='0 0 0' />"
-    "      <mass value='0.6'/>"
-    "      <inertia ixx='0.001' ixy='0.0' ixz='0.0'"
-    "	       iyy='0.001' iyz='0.0'"
-    "	       izz='0.001' />"
-    "    </inertial>"
-    "    <visual>"
-    "      <origin xyz='0 0 0' rpy='0 0 0' />"
-    "      <geometry>"
-    "        <box size='0.03 0.05 0.05'/>"
-    "      </geometry>"
-    "      <material name='white'>"
-    "        <color rgba='1 1 1 1'/>"
-    "      </material>"
-    "    </visual>"
-    "    <collision>"
-    "      <origin xyz='0 0 0' rpy='0 0 0' />"
-    "      <geometry>"
-    "        <box size='0.03 0.05 0.05'/>"
-    "      </geometry>"
-    "    </collision>"
-    "  </link>"
-    "</robot>");
+      "<robot name='box'>"
+      "  <link name='base_link'>"
+      "    <inertial>"
+      "      <origin xyz='0.0 0.0 0.0' rpy='0 0 0' />"
+      "      <mass value='0.6'/>"
+      "      <inertia ixx='0.001' ixy='0.0' ixz='0.0'"
+      "	       iyy='0.001' iyz='0.0'"
+      "	       izz='0.001' />"
+      "    </inertial>"
+      "    <visual>"
+      "      <origin xyz='0 0 0' rpy='0 0 0' />"
+      "      <geometry>"
+      "        <box size='0.03 0.05 0.05'/>"
+      "      </geometry>"
+      "      <material name='white'>"
+      "        <color rgba='1 1 1 1'/>"
+      "      </material>"
+      "    </visual>"
+      "    <collision>"
+      "      <origin xyz='0 0 0' rpy='0 0 0' />"
+      "      <geometry>"
+      "        <box size='0.03 0.05 0.05'/>"
+      "      </geometry>"
+      "    </collision>"
+      "  </link>"
+      "</robot>");
   std::string boxSrdf(
-    "<robot name='box'>"
-    "</robot>");
+      "<robot name='box'>"
+      "</robot>");
 
   // Load ur5
-  urdf::loadModel(robot, baseFrame, "ur5", "anchor", urdfPath, srdfPath,
-                  wMr);
+  urdf::loadModel(robot, baseFrame, "ur5", "anchor", urdfPath, srdfPath, wMr);
   // append box
-  urdf::loadModelFromString(robot, baseFrame, "box", "freeflyer", boxUrdf, boxSrdf, Id);
+  urdf::loadModelFromString(robot, baseFrame, "box", "freeflyer", boxUrdf,
+                            boxSrdf, Id);
 
   BOOST_CHECK_EQUAL(robot->model().names[1], "ur5/shoulder_pan_joint");
   BOOST_CHECK_EQUAL(robot->model().names[2], "ur5/shoulder_lift_joint");
