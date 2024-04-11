@@ -308,6 +308,12 @@ void Device::addJointConstraint(JointLinearConstraint constraint) {
 
 std::ostream& Device::print(std::ostream& os) const {
   os << model() << iendl;
+  // Print frame names
+  os << "Frames" << std::endl;
+  for (FrameIndex i=0; i<(FrameIndex)model().nframes; ++i) {
+    const ::pinocchio::Frame& frame(model().frames[i]);
+    os << frame.name << "\t parent:" << model().names[frame.parent] << std::endl;
+  }
   if (jointConstraints_.size() > 0)
     os << "Joint linear constraints:" << incindent;
   for (std::size_t i = 0; i < jointConstraints_.size(); ++i)
