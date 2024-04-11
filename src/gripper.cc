@@ -40,11 +40,16 @@ Gripper::Gripper(const std::string& name, const DeviceWkPtr_t& device)
     : name_(name), device_(device), clearance_(0) {
   DevicePtr_t d = this->device();
   fid_ = d->model().getFrameId(name);
+  hppDout(info, "Creating gripper " << name << " with frame id " << fid_);
   joint_ = Joint::create(d, d->model().frames[fid_].parent);
 }
 
 const Transform3f& Gripper::objectPositionInJoint() const {
-  return device()->model().frames[fid_].placement;
+  // Check that the rank of the gripper frame has not been modified after appending other
+  // models
+  const Model& model(this->device()->model());
+  if (model.frames[fid_].name != name_) fid_ = model.getFrameId(name_);
+  return model.frames[fid_].placement;
 }
 
 GripperPtr_t Gripper::clone() const { return Gripper::create(name_, device_); }
