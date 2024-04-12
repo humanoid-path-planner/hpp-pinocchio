@@ -45,8 +45,8 @@ Gripper::Gripper(const std::string& name, const DeviceWkPtr_t& device)
 }
 
 const Transform3f& Gripper::objectPositionInJoint() const {
-  // Check that the rank of the gripper frame has not been modified after appending other
-  // models
+  // Check that the rank of the gripper frame has not been modified after
+  // appending other models
   const Model& model(this->device()->model());
   if (model.frames[fid_].name != name_) fid_ = model.getFrameId(name_);
   return model.frames[fid_].placement;
