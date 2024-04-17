@@ -112,7 +112,7 @@ class HPP_PINOCCHIO_DLLAPI Gripper {
   DeviceWkPtr_t device_;
   /// Joint of the robot that holds handles.
   JointPtr_t joint_;
-  FrameIndex fid_;
+  mutable FrameIndex fid_;
   /// Clearance
   value_type clearance_;
   /// Weak pointer to itself
