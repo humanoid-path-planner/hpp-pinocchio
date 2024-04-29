@@ -99,7 +99,6 @@ DevicePtr_t humanoidSimple(const std::string& name, Computation_t compFlags) {
   humanoidRandom(robot->model());
   robot->createData();
   robot->createGeomData();
-  robot->controlComputation(compFlags);
   robot->currentConfiguration(robot->neutralConfiguration());
   robot->computeForwardKinematics(compFlags);
 
