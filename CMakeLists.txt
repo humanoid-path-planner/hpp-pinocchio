@@ -177,6 +177,8 @@ target_link_libraries(
   ${PROJECT_NAME}
   PUBLIC hpp-util::hpp-util example-robot-data::example-robot-data
          pinocchio::pinocchio Boost::thread)
+target_compile_definitions(${PROJECT_NAME}
+                           PUBLIC PINOCCHIO_ENABLE_COMPATIBILITY_WITH_VERSION_2)
 
 install(
   TARGETS ${PROJECT_NAME}
