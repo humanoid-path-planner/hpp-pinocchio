@@ -579,10 +579,6 @@ struct ConfigSpaceVisitor : public ::pinocchio::fusion::JointUnaryVisitorBase<
     space *= LiegroupSpace::create(LG_t());
   }
 
-  static void _algo(const JointModelComposite& jmodel, LiegroupSpace& space) {
-    ::pinocchio::details::Dispatch<ConfigSpaceVisitor>::run(
-        jmodel, ConfigSpaceVisitor::ArgsType(space));
-  }
 };
 
 LiegroupSpacePtr_t Joint::configurationSpace() const {

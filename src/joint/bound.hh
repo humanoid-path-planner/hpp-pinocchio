@@ -45,12 +45,5 @@ struct SetBoundStep
   }
 };
 
-template <>
-void SetBoundStep::algo<JointModelComposite>(
-    const ::pinocchio::JointModelBase<JointModelComposite>& jmodel,
-    ConfigurationIn_t bounds, Configuration_t& out) {
-  ::pinocchio::details::Dispatch<SetBoundStep>::run(jmodel.derived(),
-                                                    ArgsType(bounds, out));
-}
 }  // namespace pinocchio
 }  // namespace hpp

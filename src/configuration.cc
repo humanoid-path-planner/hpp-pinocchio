@@ -225,14 +225,6 @@ struct IsNormalizedStep
   }
 };
 
-template <>
-void IsNormalizedStep::algo<JointModelComposite>(
-    const ::pinocchio::JointModelBase<JointModelComposite>& jmodel,
-    ConfigurationIn_t q, const value_type& eps, bool& ret) {
-  ::pinocchio::details::Dispatch<IsNormalizedStep>::run(
-      jmodel.derived(), IsNormalizedStep::ArgsType(q, eps, ret));
-}
-
 bool isNormalized(const DevicePtr_t& robot, ConfigurationIn_t q,
                   const value_type& eps) {
   bool ret = true;
