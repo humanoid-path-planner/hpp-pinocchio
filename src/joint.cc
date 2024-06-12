@@ -541,7 +541,8 @@ std::ostream& Joint::display(std::ostream& os) const {
   os << "Joint " << jointIndex << "(nq=" << configSize()
      << ",nv=" << numberDof() << ")" << std::endl;
 
-  os << "\"" << name() << "\"" << "[shape=box label=\"" << name() << "\\n";
+  os << "\"" << name() << "\""
+     << "[shape=box label=\"" << name() << "\\n";
   if (configSize() != 0)
     os << "Rank in configuration: " << rankInConfiguration() << "\\n";
   else
