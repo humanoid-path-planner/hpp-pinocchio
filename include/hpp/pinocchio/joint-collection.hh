@@ -37,10 +37,10 @@
 #include "pinocchio/multibody/joint/fwd.hpp"
 #include "pinocchio/multibody/joint/joint-free-flyer.hpp"
 #include "pinocchio/multibody/joint/joint-planar.hpp"
+#include "pinocchio/multibody/joint/joint-prismatic-unaligned.hpp"
 #include "pinocchio/multibody/joint/joint-prismatic.hpp"
 #include "pinocchio/multibody/joint/joint-revolute-unaligned.hpp"
 #include "pinocchio/multibody/joint/joint-revolute-unbounded-unaligned.hpp"
-#include "pinocchio/multibody/joint/joint-prismatic-unaligned.hpp"
 #include "pinocchio/multibody/joint/joint-revolute-unbounded.hpp"
 #include "pinocchio/multibody/joint/joint-revolute.hpp"
 // #include "pinocchio/multibody/joint/joint-spherical-ZYX.hpp"
@@ -106,16 +106,13 @@ struct JointCollectionTpl {
 
   typedef boost::variant<
       JointModelRX, JointModelRY, JointModelRZ, JointModelFreeFlyer,
-      JointModelPlanar, JointModelRevoluteUnaligned
-      ,
+      JointModelPlanar, JointModelRevoluteUnaligned,
 #if PINOCCHIO_VERSION_AT_LEAST(3, 0, 0)
-      JointModelSpherical,
-      JointModelSphericalZYX,
+      JointModelSpherical, JointModelSphericalZYX,
 #endif
-      JointModelRevoluteUnboundedUnaligned
-      ,
-      JointModelPX, JointModelPY, JointModelPZ, JointModelPrismaticUnaligned,
-      JointModelTranslation, JointModelRUBX, JointModelRUBY, JointModelRUBZ>
+      JointModelRevoluteUnboundedUnaligned, JointModelPX, JointModelPY,
+      JointModelPZ, JointModelPrismaticUnaligned, JointModelTranslation,
+      JointModelRUBX, JointModelRUBY, JointModelRUBZ>
       JointModelVariant;
 
   // Joint Revolute
@@ -175,16 +172,13 @@ struct JointCollectionTpl {
   typedef boost::variant<
       //    JointDataVoid
       JointDataRX, JointDataRY, JointDataRZ, JointDataFreeFlyer,
-      JointDataPlanar, JointDataRevoluteUnaligned
-      ,
+      JointDataPlanar, JointDataRevoluteUnaligned,
 #if PINOCCHIO_VERSION_AT_LEAST(3, 0, 0)
-      JointDataSpherical,
-      JointDataSphericalZYX,
+      JointDataSpherical, JointDataSphericalZYX,
 #endif
-      JointDataRevoluteUnboundedUnaligned
-      ,
-      JointDataPX, JointDataPY, JointDataPZ, JointDataPrismaticUnaligned,
-      JointDataTranslation, JointDataRUBX, JointDataRUBY, JointDataRUBZ>
+      JointDataRevoluteUnboundedUnaligned, JointDataPX, JointDataPY,
+      JointDataPZ, JointDataPrismaticUnaligned, JointDataTranslation,
+      JointDataRUBX, JointDataRUBY, JointDataRUBZ>
       JointDataVariant;
 };
 

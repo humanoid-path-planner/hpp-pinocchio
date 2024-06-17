@@ -29,13 +29,12 @@
 #ifndef HPP_PINOCCHIO_LIEGROUP_HH
 #define HPP_PINOCCHIO_LIEGROUP_HH
 
-#include <pinocchio/multibody/joint/joints.hpp>
-
 #include <hpp/pinocchio/deprecated.hh>
 #include <hpp/pinocchio/liegroup/cartesian-product.hh>
 #include <hpp/pinocchio/liegroup/special-euclidean.hh>
 #include <hpp/pinocchio/liegroup/special-orthogonal.hh>
 #include <hpp/pinocchio/liegroup/vector-space.hh>
+#include <pinocchio/multibody/joint/joints.hpp>
 
 namespace hpp {
 namespace pinocchio {
