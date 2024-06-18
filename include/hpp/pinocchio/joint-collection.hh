@@ -37,12 +37,10 @@
 #include "pinocchio/multibody/joint/fwd.hpp"
 #include "pinocchio/multibody/joint/joint-free-flyer.hpp"
 #include "pinocchio/multibody/joint/joint-planar.hpp"
+#include "pinocchio/multibody/joint/joint-prismatic-unaligned.hpp"
 #include "pinocchio/multibody/joint/joint-prismatic.hpp"
 #include "pinocchio/multibody/joint/joint-revolute-unaligned.hpp"
-#if PINOCCHIO_VERSION_AT_LEAST(2, 1, 5)
 #include "pinocchio/multibody/joint/joint-revolute-unbounded-unaligned.hpp"
-#endif
-#include "pinocchio/multibody/joint/joint-prismatic-unaligned.hpp"
 #include "pinocchio/multibody/joint/joint-revolute-unbounded.hpp"
 #include "pinocchio/multibody/joint/joint-revolute.hpp"
 // #include "pinocchio/multibody/joint/joint-spherical-ZYX.hpp"
@@ -74,11 +72,9 @@ struct JointCollectionTpl {
   typedef ::pinocchio::JointModelRevoluteUnboundedTpl<Scalar, Options, 2>
       JointModelRUBZ;
 
-#if PINOCCHIO_VERSION_AT_LEAST(2, 1, 5)
   // Joint Revolute Unbounded Unaligned
   typedef ::pinocchio::JointModelRevoluteUnboundedUnalignedTpl<Scalar, Options>
       JointModelRevoluteUnboundedUnaligned;
-#endif
 
   // Joint Prismatic
   typedef ::pinocchio::JointModelPrismaticTpl<Scalar, Options, 0> JointModelPX;
@@ -108,22 +104,15 @@ struct JointCollectionTpl {
   // Joint Planar
   typedef ::pinocchio::JointModelPlanarTpl<Scalar, Options> JointModelPlanar;
 
-  // Joint Composite
-  typedef ::pinocchio::JointModelCompositeTpl<Scalar, Options,
-                                              pinocchio::JointCollectionTpl>
-      JointModelComposite;
-
   typedef boost::variant<
-      //    JointModelVoid,
       JointModelRX, JointModelRY, JointModelRZ, JointModelFreeFlyer,
-      JointModelPlanar, JointModelRevoluteUnaligned
-#if PINOCCHIO_VERSION_AT_LEAST(2, 1, 5)
-      ,
-      JointModelRevoluteUnboundedUnaligned
+      JointModelPlanar, JointModelRevoluteUnaligned,
+#if PINOCCHIO_VERSION_AT_LEAST(3, 0, 0)
+      JointModelSpherical, JointModelSphericalZYX,
 #endif
-      ,
-      JointModelPX, JointModelPY, JointModelPZ, JointModelPrismaticUnaligned,
-      JointModelTranslation, JointModelRUBX, JointModelRUBY, JointModelRUBZ>
+      JointModelRevoluteUnboundedUnaligned, JointModelPX, JointModelPY,
+      JointModelPZ, JointModelPrismaticUnaligned, JointModelTranslation,
+      JointModelRUBX, JointModelRUBY, JointModelRUBZ>
       JointModelVariant;
 
   // Joint Revolute
@@ -143,11 +132,9 @@ struct JointCollectionTpl {
   typedef ::pinocchio::JointDataRevoluteUnboundedTpl<Scalar, Options, 2>
       JointDataRUBZ;
 
-#if PINOCCHIO_VERSION_AT_LEAST(2, 1, 5)
   // Joint Revolute Unbounded Unaligned
   typedef ::pinocchio::JointDataRevoluteUnboundedUnalignedTpl<Scalar, Options>
       JointDataRevoluteUnboundedUnaligned;
-#endif
 
   // Joint Prismatic
   typedef ::pinocchio::JointDataPrismaticTpl<Scalar, Options, 0> JointDataPX;
@@ -185,14 +172,13 @@ struct JointCollectionTpl {
   typedef boost::variant<
       //    JointDataVoid
       JointDataRX, JointDataRY, JointDataRZ, JointDataFreeFlyer,
-      JointDataPlanar, JointDataRevoluteUnaligned
-#if PINOCCHIO_VERSION_AT_LEAST(2, 1, 5)
-      ,
-      JointDataRevoluteUnboundedUnaligned
+      JointDataPlanar, JointDataRevoluteUnaligned,
+#if PINOCCHIO_VERSION_AT_LEAST(3, 0, 0)
+      JointDataSpherical, JointDataSphericalZYX,
 #endif
-      ,
-      JointDataPX, JointDataPY, JointDataPZ, JointDataPrismaticUnaligned,
-      JointDataTranslation, JointDataRUBX, JointDataRUBY, JointDataRUBZ>
+      JointDataRevoluteUnboundedUnaligned, JointDataPX, JointDataPY,
+      JointDataPZ, JointDataPrismaticUnaligned, JointDataTranslation,
+      JointDataRUBX, JointDataRUBY, JointDataRUBZ>
       JointDataVariant;
 };
 

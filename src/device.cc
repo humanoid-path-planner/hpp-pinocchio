@@ -388,13 +388,13 @@ struct AABBStep : public ::pinocchio::fusion::JointUnaryVisitorBase<AABBStep> {
         jmodel.jointConfigSelector(model.lowerPositionLimit)
             .template head<LG_t::NT>();
     jmodel.calc(data, q);
-    vector3_t min = data.M.translation();
+    vector3_t min = data.M_accessor().translation();
     // Set configuration to upper bound.
     jmodel.jointConfigSelector(q).template head<LG_t::NT>() =
         jmodel.jointConfigSelector(model.upperPositionLimit)
             .template head<LG_t::NT>();
     jmodel.calc(data, q);
-    vector3_t max = data.M.translation();
+    vector3_t max = data.M_accessor().translation();
 
     // This should not be required as it should be done in
     // AABB::operator+=(Vec3f) for(int i = 0; i < 3; ++i) { if (min[i] > max[i])
@@ -409,24 +409,6 @@ struct AABBStep : public ::pinocchio::fusion::JointUnaryVisitorBase<AABBStep> {
     aabb += max;
   }
 };
-
-template <>
-void AABBStep::algo<JointModelComposite>(
-    const ::pinocchio::JointModelBase<JointModelComposite>& jmodel,
-    const Model& model, Configuration_t q, bool initializeAABB,
-    fcl::AABB& aabb) {
-  // TODO this should for but I did not test it.
-  hppDout(warning,
-          "Computing AABB of JointModelComposite should work but has never "
-          "been tested");
-  if (initializeAABB) {
-    JointModelComposite::JointDataDerived data = jmodel.createData();
-    jmodel.calc(data, q);
-    aabb = fcl::AABB(data.M.translation());
-  }
-  ::pinocchio::details::Dispatch<AABBStep>::run(
-      jmodel.derived(), AABBStep::ArgsType(model, q, false, aabb));
-}
 
 fcl::AABB Device::computeAABB() const {
   // TODO check that user has called
