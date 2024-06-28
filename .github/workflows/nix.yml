@@ -17,4 +17,4 @@ jobs:
             trusted-substituters = https://gepetto.cachix.org
             trusted-public-keys = gepetto.cachix.org-1:toswMl31VewC0jGkN6+gOelO2Yom0SOHzPwJMY2XiDY=
       - uses: DeterminateSystems/magic-nix-cache-action@main
-      - run: nix build
+      - run: nix build --accept-flake-config
