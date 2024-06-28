@@ -1,5 +1,5 @@
 {
-  description = "Description for the project";
+  description = "Wrapping of Pinocchio library into HPP";
 
   nixConfig = {
     extra-substituters = [ "https://gepetto.cachix.org" ];
