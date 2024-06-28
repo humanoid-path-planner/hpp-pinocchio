@@ -2,7 +2,9 @@
   "nodes": {
     "flake-parts": {
       "inputs": {
-        "nixpkgs-lib": "nixpkgs-lib"
+        "nixpkgs-lib": [
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1717285511,
@@ -15,6 +17,54 @@
       "original": {
         "owner": "hercules-ci",
         "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "hpp-environments": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1719580427,
+        "narHash": "sha256-T76zgTJrGm7maKBPwgX+FgQ7MPN7NoLvdZvzARPo9V0=",
+        "owner": "humanoid-path-planner",
+        "repo": "hpp-environments",
+        "rev": "1c727bcc85145a1f5236357fa73df5a183a31f04",
+        "type": "github"
+      },
+      "original": {
+        "owner": "humanoid-path-planner",
+        "ref": "release/5.1.0",
+        "repo": "hpp-environments",
+        "type": "github"
+      }
+    },
+    "hpp-util": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1719580825,
+        "narHash": "sha256-trfl8A+P7a1gnACnTXNK98TYWWDAOM3PKfkXxpC3X/8=",
+        "owner": "humanoid-path-planner",
+        "repo": "hpp-util",
+        "rev": "0504f15818a92c7a257cd6b60cd8b6092bd6dbfa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "humanoid-path-planner",
+        "ref": "release/5.1.0",
+        "repo": "hpp-util",
         "type": "github"
       }
     },
@@ -34,21 +84,11 @@
         "type": "github"
       }
     },
-    "nixpkgs-lib": {
-      "locked": {
-        "lastModified": 1717284937,
-        "narHash": "sha256-lIbdfCsf8LMFloheeE6N31+BMIeixqyQWbSr2vk79EQ=",
-        "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/eb9ceca17df2ea50a250b6b27f7bf6ab0186f198.tar.gz"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/eb9ceca17df2ea50a250b6b27f7bf6ab0186f198.tar.gz"
-      }
-    },
     "root": {
       "inputs": {
         "flake-parts": "flake-parts",
+        "hpp-environments": "hpp-environments",
+        "hpp-util": "hpp-util",
         "nixpkgs": "nixpkgs"
       }
     }
