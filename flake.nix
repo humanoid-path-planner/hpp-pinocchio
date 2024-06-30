@@ -37,14 +37,17 @@
       perSystem =
         {
           self',
-          system,
           pkgs,
+          system,
           ...
         }:
         {
-          packages.default = pkgs.callPackage ./. {
-            hpp-environments = inputs.hpp-environments.packages.${system}.default;
-            hpp-util = inputs.hpp-util.packages.${system}.default;
+          packages = {
+            inherit (pkgs) cachix;
+            default = pkgs.callPackage ./. {
+              hpp-environments = inputs.hpp-environments.packages.${system}.default;
+              hpp-util = inputs.hpp-util.packages.${system}.default;
+            };
           };
           devShells.default = pkgs.mkShell { inputsFrom = [ self'.packages.default ]; };
         };
