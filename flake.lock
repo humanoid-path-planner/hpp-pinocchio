@@ -1,0 +1,96 @@
+{
+  "nodes": {
+    "flake-parts": {
+      "inputs": {
+        "nixpkgs-lib": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1719877454,
+        "narHash": "sha256-g5N1yyOSsPNiOlFfkuI/wcUjmtah+nxdImJqrSATjOU=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "4e3583423212f9303aa1a6337f8dffb415920e4f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "hpp-environments": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1719769478,
+        "narHash": "sha256-ajfsBa57ORnkhtLgolKT+GQNQJ7IQWwDGsadidrm9sY=",
+        "owner": "humanoid-path-planner",
+        "repo": "hpp-environments",
+        "rev": "f603465de459b8b830043ea22a1402f9d5e006bf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "humanoid-path-planner",
+        "repo": "hpp-environments",
+        "type": "github"
+      }
+    },
+    "hpp-util": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1719769497,
+        "narHash": "sha256-cYONa7WTagNZCITtocdII+WcfdzZnvznFUyb7YLodIw=",
+        "owner": "humanoid-path-planner",
+        "repo": "hpp-util",
+        "rev": "8811dcadeec6b1e52b4cd59da39ad2e170f17ad7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "humanoid-path-planner",
+        "repo": "hpp-util",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1719674427,
+        "narHash": "sha256-z2hCpVyfnmYTA5iabf1SW4peFV9itE1JJcXNBKIFkDg=",
+        "owner": "nim65s",
+        "repo": "nixpkgs",
+        "rev": "b81610d293fac26c2ec6a81718a979bc25f8c155",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nim65s",
+        "ref": "gepetto",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "flake-parts": "flake-parts",
+        "hpp-environments": "hpp-environments",
+        "hpp-util": "hpp-util",
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
