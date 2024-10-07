@@ -126,32 +126,32 @@ std::ostream& operator<<(std::ostream& os, const PrettyPrint<T, Option> pp) {
 
 /// Generic implementation for Eigen objects
 template <typename Derived, int Option>
-struct HPP_PINOCCHIO_DLLAPI prettyPrintEigen {
-  static inline std::ostream& run(std::ostream& os, const Derived& M) {
-    enum {
-      Condensed = ((Option & OutputFormatBits) == OneLineOutput) ||
-                  ((Option & OutputFormatBits) == CondensedOutput)
-    };
-    static const Eigen::IOFormat mfmt_py =
-        eigen_format<Condensed, true, false>::run();
-    static const Eigen::IOFormat vfmt_py =
-        eigen_format<Condensed, true, true>::run();
-    static const Eigen::IOFormat mfmt_raw =
-        eigen_format<Condensed, false, false>::run();
-    static const Eigen::IOFormat vfmt_raw =
-        eigen_format<Condensed, false, true>::run();
-    bool use_py_fmt = (getpythonformat(os) != 0);
-    const Eigen::IOFormat& fmt =
-        (Derived::IsVectorAtCompileTime ? (use_py_fmt ? vfmt_py : vfmt_raw)
-                                        : (use_py_fmt ? mfmt_py : mfmt_raw));
-    bool transpose = (Derived::ColsAtCompileTime == 1);
+struct HPP_PINOCCHIO_DLLAPI prettyPrintEigen{
+    static inline std::ostream &
+    run(std::ostream & os, const Derived& M){
+        enum {Condensed = ((Option & OutputFormatBits) == OneLineOutput) ||
+                          ((Option & OutputFormatBits) == CondensedOutput)};
+static const Eigen::IOFormat mfmt_py =
+    eigen_format<Condensed, true, false>::run();
+static const Eigen::IOFormat vfmt_py =
+    eigen_format<Condensed, true, true>::run();
+static const Eigen::IOFormat mfmt_raw =
+    eigen_format<Condensed, false, false>::run();
+static const Eigen::IOFormat vfmt_raw =
+    eigen_format<Condensed, false, true>::run();
+bool use_py_fmt = (getpythonformat(os) != 0);
+const Eigen::IOFormat& fmt =
+    (Derived::IsVectorAtCompileTime ? (use_py_fmt ? vfmt_py : vfmt_raw)
+                                    : (use_py_fmt ? mfmt_py : mfmt_raw));
+bool transpose = (Derived::ColsAtCompileTime == 1);
 
-    if (transpose)
-      return os << M.transpose().format(fmt);
-    else
-      return os << M.format(fmt);
-  }
-};
+if (transpose)
+  return os << M.transpose().format(fmt);
+else
+  return os << M.format(fmt);
+}  // namespace hpp
+}
+;
 /// FIXME All eigen object must be manually specialized as follow...
 
 /// Pretty printer for Eigen::Matrix
