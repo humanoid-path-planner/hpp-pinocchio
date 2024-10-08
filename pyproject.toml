@@ -20,7 +20,7 @@ dependencies = [
 description = "Wrapping of the kinematic/dynamic chain Pinocchio for HPP."
 license = "BSD-2-Clause"
 name = "hpp-pinocchio"
-version = "5.1.0"
+version = "5.2.0"
 
 [tool.ruff]
 extend-exclude = ["cmake"]
