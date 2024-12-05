@@ -45,7 +45,7 @@ namespace hpp {
 namespace pinocchio {
 typedef ::pinocchio::GeometryObject GeometryObject;
 
-/// Specialization of fcl::CollisionObject to add a name to objects
+/// Specialization of coal::CollisionObject to add a name to objects
 ///
 /// Objects moved by a robot joint. They can collide each other and
 /// distance computation can be computed between them.
@@ -68,10 +68,10 @@ class HPP_PINOCCHIO_DLLAPI CollisionObject {
   const GeometryObject& pinocchio() const;
   GeometryObject& pinocchio();
 
-  /// Access to fcl object
+  /// Access to coal object
   CollisionGeometryPtr_t geometry() const;
 
-  /// Access to fcl object
+  /// Access to coal object
   FclConstCollisionObjectPtr_t fcl(const GeomData& data) const;
   FclCollisionObjectPtr_t fcl(GeomData& data) const;
   FclConstCollisionObjectPtr_t fcl() const;
@@ -93,12 +93,12 @@ class HPP_PINOCCHIO_DLLAPI CollisionObject {
   /// Return the position in the joint frame
   const Transform3f& positionInJointFrame() const;
 
-  /// Return transform of the fcl object
+  /// Return transform of the coal object
   /// \warning If joint linked object -as a robot body- and the robot is
   /// manually moved, this will return the non-update transform.
   /// \note If object is not attached to a joint, use move() to update
-  /// transform between hpp and fcl.
-  fcl::Transform3f getFclTransform() const;
+  /// transform between hpp and coal.
+  coal::Transform3f getFclTransform() const;
   const Transform3f& getTransform() const;
   const Transform3f& getTransform(const DeviceData& d) const;
 

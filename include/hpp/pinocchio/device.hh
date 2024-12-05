@@ -312,7 +312,7 @@ class HPP_PINOCCHIO_DLLAPI Device : public AbstractDevice {
   ///     each bodies attach its subtree.
   ///   - sum the two.
   /// - sum all the BB obtained.
-  fcl::AABB computeAABB() const;
+  coal::AABB computeAABB() const;
 
  protected:
   /// \brief Constructor

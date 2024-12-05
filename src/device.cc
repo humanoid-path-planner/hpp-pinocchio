@@ -32,8 +32,8 @@
 
 // include pinocchio first
 
-#include <hpp/fcl/BV/AABB.h>
-#include <hpp/fcl/BVH/BVH_model.h>
+#include <coal/BV/AABB.h>
+#include <coal/BVH/BVH_model.h>
 
 #include <Eigen/Core>
 #include <boost/foreach.hpp>
@@ -367,13 +367,14 @@ const DistanceResults_t& Device::distanceResults() const {
 /* ---------------------------------------------------------------------- */
 
 struct AABBStep : public ::pinocchio::fusion::JointUnaryVisitorBase<AABBStep> {
-  typedef boost::fusion::vector<const Model&, Configuration_t, bool, fcl::AABB&>
+  typedef boost::fusion::vector<const Model&, Configuration_t, bool,
+                                coal::AABB&>
       ArgsType;
 
   template <typename JointModel>
   static void algo(const ::pinocchio::JointModelBase<JointModel>& jmodel,
                    const Model& model, Configuration_t q, bool initializeAABB,
-                   fcl::AABB& aabb) {
+                   coal::AABB& aabb) {
     typedef typename RnxSOnLieGroupMap::operation<JointModel>::type LG_t;
     /*
     if (LG_t::NT == 0) {
@@ -403,14 +404,14 @@ struct AABBStep : public ::pinocchio::fusion::JointUnaryVisitorBase<AABBStep> {
     // aabb.min_ = min;
     // aabb.max_ = max;
     if (initializeAABB)
-      aabb = fcl::AABB(min);
+      aabb = coal::AABB(min);
     else
       aabb += min;
     aabb += max;
   }
 };
 
-fcl::AABB Device::computeAABB() const {
+coal::AABB Device::computeAABB() const {
   // TODO check that user has called
 
   const Model& m(model());
@@ -448,17 +449,17 @@ fcl::AABB Device::computeAABB() const {
 
   // Compute AABB
   Configuration_t q(neutralConfiguration());
-  fcl::AABB aabb;
+  coal::AABB aabb;
   for (std::size_t k = 0; k < rootIdxs.size(); ++k) {
     JointIndex i = rootIdxs[k];
     value_type radius = maxRadius[k];
 
-    fcl::AABB aabb_subtree;
+    coal::AABB aabb_subtree;
     AABBStep::run(m.joints[i], AABBStep::ArgsType(m, q, true, aabb_subtree));
 
     // Move AABB
-    fcl::rotate(aabb_subtree, m.jointPlacements[i].rotation());
-    fcl::translate(aabb_subtree, m.jointPlacements[i].translation());
+    coal::rotate(aabb_subtree, m.jointPlacements[i].rotation());
+    coal::translate(aabb_subtree, m.jointPlacements[i].translation());
 
     // Add radius
     aabb_subtree.min_.array() -= radius;
@@ -475,7 +476,6 @@ fcl::AABB Device::computeAABB() const {
 
 void replaceGeometryByConvexHull(GeomModel& gmodel,
                                  const std::vector<std::string>& gnames) {
-#if HPP_FCL_VERSION_AT_LEAST(1, 4, 5)
   for (std::size_t i = 0; i < gnames.size(); ++i) {
     if (!gmodel.existGeometryName(gnames[i]))
       throw std::invalid_argument("Geometry " + gnames[i] +
@@ -483,19 +483,14 @@ void replaceGeometryByConvexHull(GeomModel& gmodel,
                                   "exist.");
     GeomIndex gid = gmodel.getGeometryId(gnames[i]);
     GeometryObject& go = gmodel.geometryObjects[gid];
-    if (go.geometry->getObjectType() == fcl::OT_BVH) {
-      fcl::BVHModelBase* bvh =
-          dynamic_cast<fcl::BVHModelBase*>(go.geometry.get());
+    if (go.geometry->getObjectType() == coal::OT_BVH) {
+      coal::BVHModelBase* bvh =
+          dynamic_cast<coal::BVHModelBase*>(go.geometry.get());
       assert(bvh != NULL);
       bvh->buildConvexHull(false, "Qx");
       go.geometry = bvh->convex;
     }
   }
-#else
-  throw std::logic_error(
-      "hpp-fcl version is below 1.4.5 does not support "
-      "the generation of convex hulls.");
-#endif
 }
 
 template <typename To, typename Ti, typename UnaryOp>

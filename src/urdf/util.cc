@@ -26,7 +26,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 
-#include <hpp/fcl/mesh_loader/loader.h>
+#include <coal/mesh_loader/loader.h>
 #include <urdf_parser/urdf_parser.h>
 
 #include <hpp/pinocchio/device.hh>
@@ -325,7 +325,8 @@ void _loadModel(const DevicePtr_t& robot, const FrameIndex& baseFrame,
   GeomModel geomModel;
 
   std::vector<std::string> baseDirs = ::pinocchio::rosPaths();
-  static fcl::MeshLoaderPtr loader(new fcl::CachedMeshLoader(fcl::BV_OBBRSS));
+  static coal::MeshLoaderPtr loader(
+      new coal::CachedMeshLoader(coal::BV_OBBRSS));
   ::pinocchio::urdf::buildGeom(*model, urdfStream, ::pinocchio::COLLISION,
                                geomModel, baseDirs, loader);
   geomModel.addAllCollisionPairs();

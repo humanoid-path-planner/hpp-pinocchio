@@ -30,7 +30,7 @@
  <build_depend>urdfdom</build_depend>
  <exec_depend>urdfdom</exec_depend>
  <build_export_depend>urdfdom</build_export_depend>
- <build_depend>hpp-fcl</build_depend>
- <exec_depend>hpp-fcl</exec_depend>
- <build_export_depend>hpp-fcl</build_export_depend>
+ <build_depend>coal</build_depend>
+ <exec_depend>coal</exec_depend>
+ <build_export_depend>coal</build_export_depend>
  </package>

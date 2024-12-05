@@ -48,7 +48,7 @@
 
 using namespace hpp::pinocchio;
 
-void displayAABB(const hpp::fcl::AABB& aabb) {
+void displayAABB(const coal::AABB& aabb) {
   BOOST_TEST_MESSAGE("Bounding box is\n"
                      << aabb.min_.transpose() << '\n'
                      << aabb.max_.transpose());
@@ -60,17 +60,17 @@ BOOST_AUTO_TEST_CASE(computeAABB) {
 
   robot->rootJoint()->lowerBounds(vector3_t::Constant(-0));
   robot->rootJoint()->upperBounds(vector3_t::Constant(0));
-  hpp::fcl::AABB aabb0 = robot->computeAABB();
+  coal::AABB aabb0 = robot->computeAABB();
   displayAABB(aabb0);
 
   robot->rootJoint()->lowerBounds(vector3_t(-1, -1, 0));
   robot->rootJoint()->upperBounds(vector3_t(1, 1, 0));
-  hpp::fcl::AABB aabb1 = robot->computeAABB();
+  coal::AABB aabb1 = robot->computeAABB();
   displayAABB(aabb1);
 
   robot->rootJoint()->lowerBounds(vector3_t(-2, -2, 0));
   robot->rootJoint()->upperBounds(vector3_t(-1, -1, 0));
-  hpp::fcl::AABB aabb2 = robot->computeAABB();
+  coal::AABB aabb2 = robot->computeAABB();
   displayAABB(aabb2);
 }
 /* -------------------------------------------------------------------------- */

@@ -35,10 +35,10 @@
 #error "hpp-fcl support in Pinocchio is mandatory."
 #endif
 
-#include <hpp/fcl/collision_data.h>  // DistanceResult
+#include <coal/collision_data.h>  // DistanceResult
 
 #include <Eigen/Core>
-#include <hpp/fcl/fwd.hh>
+#include <coal/fwd.hh>
 #include <hpp/pinocchio/deprecated.hh>
 #include <hpp/util/pointer.hh>
 #include <pinocchio/multibody/fwd.hpp>
@@ -108,16 +108,16 @@ struct ObjectVector;
 typedef ObjectVector ObjectVector_t;
 typedef shared_ptr<Body> BodyPtr_t;
 typedef shared_ptr<const Body> BodyConstPtr_t;
-using fcl::CollisionGeometry;
+using coal::CollisionGeometry;
 typedef shared_ptr<CollisionGeometry> CollisionGeometryPtr_t;
-typedef fcl::CollisionObject FclCollisionObject;
-typedef fcl::CollisionObject* FclCollisionObjectPtr_t;
-typedef const fcl::CollisionObject* FclConstCollisionObjectPtr_t;
+typedef coal::CollisionObject FclCollisionObject;
+typedef coal::CollisionObject* FclCollisionObjectPtr_t;
+typedef const coal::CollisionObject* FclConstCollisionObjectPtr_t;
 typedef shared_ptr<CollisionObject> CollisionObjectPtr_t;
 typedef shared_ptr<const CollisionObject> CollisionObjectConstPtr_t;
 typedef shared_ptr<Device> DevicePtr_t;
 typedef shared_ptr<const Device> DeviceConstPtr_t;
-typedef std::vector<fcl::DistanceResult> DistanceResults_t;
+typedef std::vector<coal::DistanceResult> DistanceResults_t;
 typedef shared_ptr<HumanoidRobot> HumanoidRobotPtr_t;
 typedef shared_ptr<CenterOfMassComputation> CenterOfMassComputationPtr_t;
 typedef shared_ptr<Joint> JointPtr_t;

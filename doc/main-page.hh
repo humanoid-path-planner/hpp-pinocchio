@@ -5,7 +5,7 @@
     planning in the Humanoid Path Planner platform.
 
     Kinematic and dynamic computations are performed by package pinocchio,
-    while collision avoidance in performed by package hpp-fcl.
+    while collision avoidance in performed by package coal.
 
     \defgroup liegroup Lie group
 
