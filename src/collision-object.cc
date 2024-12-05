@@ -111,21 +111,21 @@ JointConstPtr_t CollisionObject::joint() const {
   return Joint::create(devicePtr, jointIndex_);
 }
 
-const Transform3f& CollisionObject::positionInJointFrame() const {
+const Transform3s& CollisionObject::positionInJointFrame() const {
   return pinocchio().placement;
 }
 
-fcl::Transform3f CollisionObject::getFclTransform() const {
+fcl::Transform3s CollisionObject::getFclTransform() const {
   return ::pinocchio::toFclTransform3f(geomData().oMg[geomInModelIndex]);
 }
-const Transform3f& CollisionObject::getTransform() const {
+const Transform3s& CollisionObject::getTransform() const {
   return geomData().oMg[geomInModelIndex];
 }
-const Transform3f& CollisionObject::getTransform(const DeviceData& d) const {
+const Transform3s& CollisionObject::getTransform(const DeviceData& d) const {
   return geomData(d).oMg[geomInModelIndex];
 }
 
-void CollisionObject::move(const Transform3f& position) {
+void CollisionObject::move(const Transform3s& position) {
   // move does not work but for object attached to the universe (joint 0)
   assert(jointIndex_ == 0);
   geomData().oMg[geomInModelIndex] = position;

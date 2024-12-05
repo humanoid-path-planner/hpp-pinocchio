@@ -78,7 +78,7 @@ typedef ::pinocchio::ModelTpl<value_type, 0, JointCollectionTpl> Model;
 typedef ::pinocchio::DataTpl<value_type, 0, JointCollectionTpl> Data;
 typedef ::pinocchio::GeometryModel GeomModel;
 typedef ::pinocchio::GeometryData GeomData;
-typedef ::pinocchio::SE3 Transform3f;
+typedef ::pinocchio::SE3 Transform3s;
 typedef ::pinocchio::SE3 SE3;
 typedef ::pinocchio::JointModelTpl<value_type, 0, JointCollectionTpl>
     JointModel;

@@ -16,8 +16,8 @@ bool isPermutation(const Eigen::MatrixBase<D>& R) {
 /* Frames in hpp::model are "permuted" (i.e. combination of PI/2 Cartesian
  * rotation) so check here that the two placements fits, under this permutation.
  */
-bool isApproxPermutation(hpp::model::Transform3f Mm,
-                         hpp::pinocchio::Transform3f Mp) {
+bool isApproxPermutation(hpp::model::Transform3s Mm,
+                         hpp::pinocchio::Transform3s Mp) {
   return Mm.getTranslation().isApprox(Mp.translation()) &&
          isPermutation(
              Eigen::Matrix3d(Mp.rotation().transpose() * Mm.getRotation()));

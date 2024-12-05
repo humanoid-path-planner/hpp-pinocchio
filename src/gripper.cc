@@ -44,7 +44,7 @@ Gripper::Gripper(const std::string& name, const DeviceWkPtr_t& device)
   joint_ = Joint::create(d, d->model().frames[fid_].parent);
 }
 
-const Transform3f& Gripper::objectPositionInJoint() const {
+const Transform3s& Gripper::objectPositionInJoint() const {
   // Check that the rank of the gripper frame has not been modified after
   // appending other models
   const Model& model(this->device()->model());

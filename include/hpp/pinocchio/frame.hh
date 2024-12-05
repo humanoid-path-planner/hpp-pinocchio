@@ -65,10 +65,10 @@ class HPP_PINOCCHIO_DLLAPI Frame {
   /// \{
 
   /// Frame transformation
-  Transform3f currentTransformation() const;
+  Transform3s currentTransformation() const;
 
   /// Frame transformation
-  Transform3f currentTransformation(const DeviceData& data) const;
+  Transform3s currentTransformation(const DeviceData& data) const;
 
   /// Get const reference to Jacobian
   ///
@@ -102,13 +102,13 @@ class HPP_PINOCCHIO_DLLAPI Frame {
   }
 
   /// Get (constant) placement of frame in parent joint
-  const Transform3f& positionInParentJoint() const;
+  const Transform3s& positionInParentJoint() const;
 
   /// Get (constant) placement of frame in parent frame
-  Transform3f positionInParentFrame() const;
+  Transform3s positionInParentFrame() const;
 
   /// Set position of frame in parent frame
-  void positionInParentFrame(const Transform3f& p);
+  void positionInParentFrame(const Transform3s& p);
   ///\}
 
  public:

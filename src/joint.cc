@@ -109,7 +109,7 @@ const std::string& Joint::name() const {
   return model().names[jointIndex];
 }
 
-const Transform3f& Joint::currentTransformation(const DeviceData& d) const {
+const Transform3s& Joint::currentTransformation(const DeviceData& d) const {
   selfAssert();
   return d.data_->oMi[jointIndex];
 }
@@ -142,7 +142,7 @@ JointPtr_t Joint::childJoint(std::size_t rank) const {
   return JointPtr_t(new Joint(devicePtr, children[rank]));
 }
 
-const Transform3f& Joint::positionInParentFrame() const {
+const Transform3s& Joint::positionInParentFrame() const {
   selfAssert();
   return model().jointPlacements[jointIndex];
 }

@@ -103,13 +103,13 @@ BOOST_AUTO_TEST_CASE(frame) {
         LHipYaw_F = pinocchio->getFrameByName("LHipYaw"),
         RHipYaw_F = pinocchio->getFrameByName("RHipYaw");
 
-  Transform3f ImuTorsoAcc_M = ImuTorsoAcc_F.positionInParentFrame(),
+  Transform3s ImuTorsoAcc_M = ImuTorsoAcc_F.positionInParentFrame(),
               ImuTorsoGyr_M = ImuTorsoGyr_F.positionInParentFrame(),
               TrunkYaw_M = TrunkYaw_F.positionInParentFrame(),
               LHipYaw_M = LHipYaw_F.positionInParentFrame(),
               RHipYaw_M = RHipYaw_F.positionInParentFrame();
 
-  Transform3f shift = Transform3f::Random();
+  Transform3s shift = Transform3s::Random();
   waist.positionInParentFrame(shift);
   pinocchio->computeForwardKinematics(JOINT_POSITION);
 

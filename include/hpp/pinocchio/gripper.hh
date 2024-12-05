@@ -74,7 +74,7 @@ class HPP_PINOCCHIO_DLLAPI Gripper {
   const FrameIndex& frameId() const { return fid_; }
 
   /// Get handle position in the the Grippering joint
-  const Transform3f& objectPositionInJoint() const;
+  const Transform3s& objectPositionInJoint() const;
 
   /// get name
   const std::string& name() const { return name_; }

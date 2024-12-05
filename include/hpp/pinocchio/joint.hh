@@ -88,12 +88,12 @@ class HPP_PINOCCHIO_DLLAPI Joint {
   /// \{
 
   /// Joint transformation
-  const Transform3f& currentTransformation() const {
+  const Transform3s& currentTransformation() const {
     return currentTransformation(data());
   }
 
   /// Joint transformation
-  const Transform3f& currentTransformation(const DeviceData& data) const;
+  const Transform3s& currentTransformation(const DeviceData& data) const;
 
   ///\}
   // -----------------------------------------------------------------------
@@ -128,7 +128,7 @@ class HPP_PINOCCHIO_DLLAPI Joint {
 
   /// Get (constant) placement of joint in parent frame, i.e.
   /// model.jointPlacement[idx]
-  const Transform3f& positionInParentFrame() const;
+  const Transform3s& positionInParentFrame() const;
 
   ///\}
   // -----------------------------------------------------------------------

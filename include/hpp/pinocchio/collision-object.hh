@@ -91,16 +91,16 @@ class HPP_PINOCCHIO_DLLAPI CollisionObject {
   JointConstPtr_t joint() const;
 
   /// Return the position in the joint frame
-  const Transform3f& positionInJointFrame() const;
+  const Transform3s& positionInJointFrame() const;
 
   /// Return transform of the coal object
   /// \warning If joint linked object -as a robot body- and the robot is
   /// manually moved, this will return the non-update transform.
   /// \note If object is not attached to a joint, use move() to update
   /// transform between hpp and coal.
-  coal::Transform3f getFclTransform() const;
-  const Transform3f& getTransform() const;
-  const Transform3f& getTransform(const DeviceData& d) const;
+  coal::Transform3s getFclTransform() const;
+  const Transform3s& getTransform() const;
+  const Transform3s& getTransform(const DeviceData& d) const;
 
   const GeomIndex& indexInModel() const { return geomInModelIndex; }
 
@@ -108,7 +108,7 @@ class HPP_PINOCCHIO_DLLAPI CollisionObject {
   /// \note This method should only be executed on objects not attached
   /// to a robot body (ie attached to the "universe", joint 0). This statement
   /// is asserted.
-  void move(const Transform3f& position);
+  void move(const Transform3s& position);
 
  protected:
   /// Assert that the members of the struct are valid (no null pointer, etc).

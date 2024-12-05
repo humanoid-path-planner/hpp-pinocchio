@@ -40,9 +40,9 @@ namespace hpp {
 namespace pinocchio {
 namespace {
 void moveFrame(Model& model, GeomModel& geomModel, const FrameIndex& pF,
-               const Transform3f& new_jMf) {
+               const Transform3s& new_jMf) {
   ::pinocchio::Frame& f = model.frames[pF];
-  const Transform3f old_fMj = f.placement.inverse();
+  const Transform3s old_fMj = f.placement.inverse();
   for (GeomIndex i = 0; i < geomModel.geometryObjects.size(); ++i) {
     ::pinocchio::GeometryObject& go = geomModel.geometryObjects[i];
     if (go.parentFrame == pF) go.placement = new_jMf * old_fMj * go.placement;
@@ -100,11 +100,11 @@ const std::string& Frame::name() const {
   return pinocchio().name;
 }
 
-Transform3f Frame::currentTransformation() const {
+Transform3s Frame::currentTransformation() const {
   return currentTransformation(data());
 }
 
-Transform3f Frame::currentTransformation(const DeviceData& d) const {
+Transform3s Frame::currentTransformation(const DeviceData& d) const {
   selfAssert();
   const ::pinocchio::Frame f = model().frames[frameIndex_];
   if (f.type == ::pinocchio::JOINT)
@@ -159,11 +159,11 @@ void Frame::setChildList() {
   }
 }
 
-const Transform3f& Frame::positionInParentJoint() const {
+const Transform3s& Frame::positionInParentJoint() const {
   return pinocchio().placement;
 }
 
-Transform3f Frame::positionInParentFrame() const {
+Transform3s Frame::positionInParentFrame() const {
   selfAssert();
   const Model& m = model();
   const ::pinocchio::Frame f = m.frames[index()];
@@ -172,7 +172,7 @@ Transform3f Frame::positionInParentFrame() const {
                                                : m.jointPlacements[f.parent]);
 }
 
-void Frame::positionInParentFrame(const Transform3f& p) {
+void Frame::positionInParentFrame(const Transform3s& p) {
   selfAssert();
   setChildList();
 
@@ -181,7 +181,7 @@ void Frame::positionInParentFrame(const Transform3f& p) {
   GeomModel& geomModel = devicePtr_.lock()->geomModel();
   ::pinocchio::Frame& me = pinocchio();
   bool isJoint = (me.type == ::pinocchio::JOINT);
-  Transform3f fMj = (isJoint ? m.jointPlacements[me.parent].inverse()
+  Transform3s fMj = (isJoint ? m.jointPlacements[me.parent].inverse()
                              : me.placement.inverse());
   if (isJoint)
     m.jointPlacements[me.parent] = m.frames[me.previousFrame].placement * p;
