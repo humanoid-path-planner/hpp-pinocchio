@@ -104,7 +104,7 @@ endif(CMAKE_BUILD_TYPE MATCHES "DEBUG")
 add_project_dependency(Boost REQUIRED COMPONENTS thread)
 
 # Search for dependecies.
-add_project_dependency(hpp-util 5.0.0 REQUIRED)
+add_project_dependency(hpp-util REQUIRED)
 add_project_dependency(pinocchio REQUIRED)
 add_project_dependency(Eigen3 REQUIRED)
 
