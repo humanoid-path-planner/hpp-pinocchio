@@ -516,11 +516,6 @@ value_type Joint::upperBoundAngularVelocity() const {
 
 JointJacobian_t& Joint::jacobian(DeviceData& d, const bool local) const {
   selfAssert();
-  if (robot()->computationFlag() & JACOBIAN) {
-    std::logic_error(
-        "Robot computation flag should contain JACOBIAN in "
-        "order to retrieve the joint jacobians");
-  }
   assert(jointIndex > 0 && jointIndex - 1 < d.jointJacobians_.size());
   JointJacobian_t& jacobian(d.jointJacobians_[jointIndex - 1]);
   if (jacobian.cols() != model().nv)
