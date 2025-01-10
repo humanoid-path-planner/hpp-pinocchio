@@ -29,7 +29,6 @@
 #include <hpp/pinocchio/body.hh>
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/frame.hh>
-#include <hpp/pinocchio/joint-collection.hh>
 #include <hpp/pinocchio/joint.hh>
 #include <pinocchio/algorithm/frames.hpp>
 #include <pinocchio/algorithm/jacobian.hpp>

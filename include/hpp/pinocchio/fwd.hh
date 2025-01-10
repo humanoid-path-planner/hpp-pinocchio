@@ -67,20 +67,18 @@ enum Request_t { COLLISION, DISTANCE };
 enum InOutType { INNER, OUTER };
 
 // Pinocchio typedefs
-template <typename _Scalar, int _Options>
-struct JointCollectionTpl;
-typedef JointCollectionTpl<value_type, 0> JointCollection;
 
+typedef ::pinocchio::JointCollectionDefaultTpl<value_type, 0> JointCollection;
 typedef ::pinocchio::JointIndex JointIndex;
 typedef ::pinocchio::FrameIndex FrameIndex;
 typedef ::pinocchio::GeomIndex GeomIndex;
-typedef ::pinocchio::ModelTpl<value_type, 0, JointCollectionTpl> Model;
-typedef ::pinocchio::DataTpl<value_type, 0, JointCollectionTpl> Data;
+typedef ::pinocchio::ModelTpl<value_type, 0, ::pinocchio::JointCollectionDefaultTpl> Model;
+typedef ::pinocchio::DataTpl<value_type, 0, ::pinocchio::JointCollectionDefaultTpl> Data;
 typedef ::pinocchio::GeometryModel GeomModel;
 typedef ::pinocchio::GeometryData GeomData;
 typedef ::pinocchio::SE3 Transform3s;
 typedef ::pinocchio::SE3 SE3;
-typedef ::pinocchio::JointModelTpl<value_type, 0, JointCollectionTpl>
+typedef ::pinocchio::JointModelTpl<value_type, 0, ::pinocchio::JointCollectionDefaultTpl>
     JointModel;
 
 typedef Eigen::Array<bool, Eigen::Dynamic, 1> ArrayXb;

@@ -33,7 +33,6 @@
 #include <hpp/pinocchio/device-data.hh>
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/frame.hh>
-#include <hpp/pinocchio/joint-collection.hh>
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/liegroup-space.hh>
 #include <hpp/pinocchio/serialization.hh>

@@ -31,7 +31,6 @@
 #include <algorithm>
 #include <boost/foreach.hpp>
 #include <boost/serialization/vector.hpp>
-#include <hpp/pinocchio/joint-collection.hh>
 #include <hpp/util/exception-factory.hh>
 #include <hpp/util/serialization.hh>
 #include <pinocchio/algorithm/center-of-mass.hpp>
@@ -93,7 +92,7 @@ void CenterOfMassComputation::compute(DeviceData& d,
   // TODO as of now, it is not possible to access the template parameter
   // JointCollectionTpl of Model so we use the default one.
   typedef ::pinocchio::JacobianCenterOfMassBackwardStep<
-      Model::Scalar, Model::Options, JointCollectionTpl
+      Model::Scalar, Model::Options, ::pinocchio::JointCollectionDefaultTpl
 #if PINOCCHIO_VERSION_AT_LEAST(2, 1, 6)
       ,
       Data::Matrix3x
