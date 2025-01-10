@@ -41,7 +41,7 @@ Gripper::Gripper(const std::string& name, const DeviceWkPtr_t& device)
   DevicePtr_t d = this->device();
   fid_ = d->model().getFrameId(name);
   hppDout(info, "Creating gripper " << name << " with frame id " << fid_);
-  joint_ = Joint::create(d, d->model().frames[fid_].parent);
+  joint_ = Joint::create(d, d->model().frames[fid_].parentJoint);
 }
 
 const Transform3s& Gripper::objectPositionInJoint() const {
