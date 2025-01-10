@@ -28,7 +28,6 @@
 
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/humanoid-robot.hh>
-#include <hpp/pinocchio/joint-collection.hh>
 #include <hpp/pinocchio/simple-device.hh>
 #include <hpp/pinocchio/urdf/util.hh>
 #include <pinocchio/parsers/sample-models.hpp>

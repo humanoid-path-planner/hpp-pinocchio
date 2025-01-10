@@ -40,7 +40,6 @@
 #include <boost/serialization/export.hpp>
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/fwd.hh>
-#include <hpp/pinocchio/joint-collection.hh>
 #include <hpp/util/serialization.hh>
 #include <pinocchio/algorithm/geometry.hpp>
 #include <pinocchio/algorithm/joint-configuration.hpp>  // ::pinocchio::details::Dispatch

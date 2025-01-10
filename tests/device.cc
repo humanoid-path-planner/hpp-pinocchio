@@ -35,7 +35,6 @@
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/fwd.hh>
 #include <hpp/pinocchio/humanoid-robot.hh>
-#include <hpp/pinocchio/joint-collection.hh>
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/liegroup-space.hh>
 #include <hpp/pinocchio/serialization.hh>

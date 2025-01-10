@@ -27,7 +27,6 @@
 // DAMAGE.
 
 #include <hpp/pinocchio/device-data.hh>
-#include <hpp/pinocchio/joint-collection.hh>
 #include <pinocchio/algorithm/center-of-mass.hpp>
 #include <pinocchio/algorithm/frames.hpp>
 #include <pinocchio/algorithm/geometry.hpp>

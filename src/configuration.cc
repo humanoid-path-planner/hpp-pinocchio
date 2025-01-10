@@ -28,7 +28,6 @@
 
 #include <hpp/pinocchio/configuration.hh>
 #include <hpp/pinocchio/device.hh>
-#include <hpp/pinocchio/joint-collection.hh>
 #include <hpp/pinocchio/liegroup.hh>
 #include <hpp/pinocchio/util.hh>
 #include <hpp/util/indent.hh>
@@ -212,29 +211,9 @@ void normalize(const DevicePtr_t& robot, Configuration_t& q) {
   ::pinocchio::normalize(robot->model(), q);
 }
 
-struct IsNormalizedStep
-    : public ::pinocchio::fusion::JointUnaryVisitorBase<IsNormalizedStep> {
-  typedef boost::fusion::vector<ConfigurationIn_t, const value_type&, bool&>
-      ArgsType;
-
-  template <typename JointModel>
-  static void algo(const ::pinocchio::JointModelBase<JointModel>& jmodel,
-                   ConfigurationIn_t q, const value_type& eps, bool& ret) {
-    typedef typename RnxSOnLieGroupMap::operation<JointModel>::type LG_t;
-    ret = ret && LG_t::isNormalized(jmodel.jointConfigSelector(q), eps);
-  }
-};
-
 bool isNormalized(const DevicePtr_t& robot, ConfigurationIn_t q,
                   const value_type& eps) {
-  bool ret = true;
-  const Model& model = robot->model();
-  for (std::size_t i = 1; i < (std::size_t)model.njoints; ++i) {
-    IsNormalizedStep::run(model.joints[i],
-                          IsNormalizedStep::ArgsType(q, eps, ret));
-    if (!ret) return false;
-  }
-  return true;
+  return ::pinocchio::isNormalized(robot->model(), q, eps);
 }
 
 std::ostream& display(std::ostream& os, const SE3& m) {

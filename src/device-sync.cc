@@ -31,7 +31,6 @@
 #include <boost/thread/locks.hpp>
 #include <hpp/pinocchio/device-sync.hh>
 #include <hpp/pinocchio/device.hh>
-#include <hpp/pinocchio/joint-collection.hh>
 #include <pinocchio/multibody/data.hpp>
 #include <pinocchio/multibody/geometry.hpp>
 #include <pinocchio/multibody/model.hpp>

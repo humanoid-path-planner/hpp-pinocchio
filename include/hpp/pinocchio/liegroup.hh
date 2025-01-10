@@ -133,6 +133,42 @@ struct RnxSOnLieGroupMap::operation<
       type;
 };
 
+// New in pinocchio 3
+// JointModelMimic
+template <typename OtherJointType>
+struct RnxSOnLieGroupMap::operation<::pinocchio::JointModelMimic<OtherJointType> > {
+  typedef typename RnxSOnLieGroupMap::operation<OtherJointType>::type type;
+};
+
+// JointModelHelical
+  template <typename Scalar, int Options, int _axis>
+struct RnxSOnLieGroupMap::operation<
+    ::pinocchio::JointModelHelicalTpl<Scalar, Options, _axis> > {
+    typedef liegroup::VectorSpaceOperation<1, true> type;
+};
+
+// JointModelHelicalUnaligned
+template <typename Scalar, int Options>
+struct RnxSOnLieGroupMap::operation<
+    ::pinocchio::JointModelHelicalUnalignedTpl<Scalar, Options> > {
+  typedef liegroup::VectorSpaceOperation<1, true> type;
+};
+
+// JointModelUniversal
+template <typename Scalar, int Options>
+struct RnxSOnLieGroupMap::operation<
+    ::pinocchio::JointModelUniversalTpl<Scalar, Options> > {
+  typedef liegroup::VectorSpaceOperation<::pinocchio::JointModelUniversalTpl<Scalar, Options>::NQ,
+    false> type;
+};
+
+// JointModelComposite (not implemented returns vector space of variable dimension)
+  template <typename Scalar, int Options, template<typename S, int O> class JointCollectionTpl>
+struct RnxSOnLieGroupMap::operation<
+    ::pinocchio::JointModelCompositeTpl<Scalar, Options, JointCollectionTpl> > {
+    typedef liegroup::VectorSpaceOperation<Eigen::Dynamic, false> type;
+};
+
 //---------------- DefaultLieGroupMap ------------------------------------//
 
 // JointModelRevolute, JointModelRevoluteUnbounded, JointModelRevoluteUnaligned,
@@ -197,6 +233,42 @@ template <typename Scalar, int Options>
 struct DefaultLieGroupMap::operation<
     ::pinocchio::JointModelPlanarTpl<Scalar, Options> > {
   typedef liegroup::SpecialEuclideanOperation<2> type;
+};
+
+// New in pinocchio 3
+// JointModelMimic
+template <typename OtherJointType>
+struct DefaultLieGroupMap::operation<::pinocchio::JointModelMimic<OtherJointType> > {
+  typedef typename DefaultLieGroupMap::operation<OtherJointType>::type type;
+};
+
+// JointModelHelical
+  template <typename Scalar, int Options, int _axis>
+struct DefaultLieGroupMap::operation<
+    ::pinocchio::JointModelHelicalTpl<Scalar, Options, _axis> > {
+  typedef liegroup::VectorSpaceOperation<1, true> type;
+};
+
+// JointModelHelicalUnaligned
+template <typename Scalar, int Options>
+struct DefaultLieGroupMap::operation<
+    ::pinocchio::JointModelHelicalUnalignedTpl<Scalar, Options> > {
+  typedef liegroup::VectorSpaceOperation<1, true> type;
+};
+
+// JointModelUniversal
+template <typename Scalar, int Options>
+struct DefaultLieGroupMap::operation<
+    ::pinocchio::JointModelUniversalTpl<Scalar, Options> > {
+  typedef liegroup::VectorSpaceOperation<::pinocchio::JointModelUniversalTpl<Scalar, Options>::NQ,
+    false> type;
+};
+
+// JointModelComposite (not implemented returns vector space of variable dimension)
+  template <typename Scalar, int Options, template<typename S, int O> class JointCollectionTpl>
+struct DefaultLieGroupMap::operation<
+    ::pinocchio::JointModelCompositeTpl<Scalar, Options, JointCollectionTpl> > {
+  typedef liegroup::VectorSpaceOperation<Eigen::Dynamic, false> type;
 };
 
 /// \endcond

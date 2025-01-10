@@ -31,7 +31,6 @@
 
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/humanoid-robot.hh>
-#include <hpp/pinocchio/joint-collection.hh>
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/urdf/util.hh>
 #include <hpp/util/debug.hh>
@@ -204,7 +203,7 @@ void fillGaze(const HumanoidRobotPtr_t robot) {
   robot->gaze(dir, origin);
 }
 
-JointModelVariant buildJoint(const std::string& type) {
+JointCollection::JointModelVariant buildJoint(const std::string& type) {
   if (type == "freeflyer")
     return JointCollection::JointModelFreeFlyer();
   else if (type == "planar")
