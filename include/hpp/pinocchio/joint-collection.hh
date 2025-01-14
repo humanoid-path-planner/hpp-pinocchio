@@ -31,6 +31,7 @@
 #ifndef HPP_PINOCCHIO_JOINT_COLLECTION_HH
 #define HPP_PINOCCHIO_JOINT_COLLECTION_HH
 
-#warning "This header is deprecated and has become useless. Do not include it anymore."
+#warning \
+    "This header is deprecated and has become useless. Do not include it anymore."
 
 #endif  // HPP_PINOCCHIO_JOINT_COLLECTION_HH
