@@ -135,12 +135,14 @@ struct RnxSOnLieGroupMap::operation<
 
 // New in pinocchio 3
 // JointModelMimic
+// Not yet supported: this code is here only to make compilation pass.
 template <typename OtherJointType>
 struct RnxSOnLieGroupMap::operation<::pinocchio::JointModelMimic<OtherJointType> > {
   typedef typename RnxSOnLieGroupMap::operation<OtherJointType>::type type;
 };
 
 // JointModelHelical
+// Not yet supported: this code is here only to make compilation pass.
   template <typename Scalar, int Options, int _axis>
 struct RnxSOnLieGroupMap::operation<
     ::pinocchio::JointModelHelicalTpl<Scalar, Options, _axis> > {
