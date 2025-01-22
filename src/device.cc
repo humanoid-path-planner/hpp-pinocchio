@@ -568,7 +568,8 @@ void Device::load(Archive& ar, const unsigned int version) {
       grippers_.reserve(grippers.size());
       std::transform(grippers.begin(), grippers.end(), grippers_.begin(),
                      [this](FrameIndex i) -> GripperPtr_t {
-                       return Gripper::create(model_->frames[i].name, weakPtr_.lock());
+                       return Gripper::create(model_->frames[i].name,
+                                              weakPtr_.lock());
                      });
       createData();
       createGeomData();

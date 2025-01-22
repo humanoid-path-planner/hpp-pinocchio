@@ -52,7 +52,9 @@ const Transform3s& Gripper::objectPositionInJoint() const {
   return model.frames[fid_].placement;
 }
 
-GripperPtr_t Gripper::clone() const { return Gripper::create(name_, device_.lock()); }
+GripperPtr_t Gripper::clone() const {
+  return Gripper::create(name_, device_.lock());
+}
 
 std::ostream& Gripper::print(std::ostream& os) const {
   os << "name :" << name() << std::endl;
