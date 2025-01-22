@@ -128,7 +128,7 @@ void Device::initCopy(const DeviceWkPtr_t& weakPtr, const Device& other) {
   init(weakPtr);
   grippers_.resize(other.grippers_.size());
   for (std::size_t i = 0; i < grippers_.size(); ++i)
-    grippers_[i] = Gripper::createCopy(other.grippers_[i], weakPtr);
+    grippers_[i] = Gripper::createCopy(other.grippers_[i], weakPtr.lock());
 }
 
 void Device::createData() {
@@ -169,7 +169,7 @@ void Device::removeJoints(const std::vector<std::string>& jointNames,
   // update the grippers
   std::transform(grippers_.begin(), grippers_.end(), grippers_.begin(),
                  [this](GripperPtr_t g) {
-                   return Gripper::create(g->name(), this->weakPtr_);
+                   return Gripper::create(g->name(), this->weakPtr_.lock());
                  });
 
   invalidate();
@@ -568,7 +568,7 @@ void Device::load(Archive& ar, const unsigned int version) {
       grippers_.reserve(grippers.size());
       std::transform(grippers.begin(), grippers.end(), grippers_.begin(),
                      [this](FrameIndex i) -> GripperPtr_t {
-                       return Gripper::create(model_->frames[i].name, weakPtr_);
+                       return Gripper::create(model_->frames[i].name, weakPtr_.lock());
                      });
       createData();
       createGeomData();

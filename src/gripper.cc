@@ -36,7 +36,7 @@
 
 namespace hpp {
 namespace pinocchio {
-Gripper::Gripper(const std::string& name, const DeviceWkPtr_t& device)
+Gripper::Gripper(const std::string& name, const DevicePtr_t& device)
     : name_(name), device_(device), clearance_(0) {
   DevicePtr_t d = this->device();
   fid_ = d->model().getFrameId(name);
@@ -52,7 +52,7 @@ const Transform3s& Gripper::objectPositionInJoint() const {
   return model.frames[fid_].placement;
 }
 
-GripperPtr_t Gripper::clone() const { return Gripper::create(name_, device_); }
+GripperPtr_t Gripper::clone() const { return Gripper::create(name_, device_.lock()); }
 
 std::ostream& Gripper::print(std::ostream& os) const {
   os << "name :" << name() << std::endl;
