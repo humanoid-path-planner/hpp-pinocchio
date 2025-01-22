@@ -51,7 +51,7 @@ class HPP_PINOCCHIO_DLLAPI Gripper {
   /// \param name of the gripper in the device,
   /// \param device
   static GripperPtr_t create(const std::string& name,
-                             const DeviceWkPtr_t& device) {
+                             const DevicePtr_t& device) {
     Gripper* ptr = new Gripper(name, device);
     GripperPtr_t shPtr(ptr);
     ptr->init(shPtr);
@@ -59,7 +59,7 @@ class HPP_PINOCCHIO_DLLAPI Gripper {
   }
 
   static GripperPtr_t createCopy(const GripperPtr_t& gripper,
-                                 const DeviceWkPtr_t& otherDevice) {
+                                 const DevicePtr_t& otherDevice) {
     Gripper* ptr = new Gripper(gripper->name(), otherDevice);
     ptr->clearance(gripper->clearance());
     GripperPtr_t shPtr(ptr);
@@ -101,7 +101,7 @@ class HPP_PINOCCHIO_DLLAPI Gripper {
   /// \param device
   /// \todo device should be of type DeviceConstPtr_t but the constructor of
   /// JointPtr_t needs a DevicePtr_t.
-  Gripper(const std::string& name, const DeviceWkPtr_t& device);
+  Gripper(const std::string& name, const DevicePtr_t& device);
 
   void init(GripperWkPtr_t weakPtr) { weakPtr_ = weakPtr; }
 
