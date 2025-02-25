@@ -1,36 +1,37 @@
-<?xml version='1.0'?>
- <package format='2'>
- <name>hpp-pinocchio</name>
- <version>6.0.0</version>
- <description>Wrapping of the kinematic/dynamic chain Pinocchio for HPP. </description>
+<?xml version="1.0"?>
+<package format="3">
+  <name>hpp-pinocchio</name>
+  <version>6.0.0</version>
+  <description>Wrapping of the kinematic/dynamic chain Pinocchio for HPP. </description>
 
- <maintainer email='hpp@laas.fr'>Joseph Mirabel</maintainer>
- <license>LGPL</license>
+  <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
 
- <!-- <url type='website'>https://github.com/humanoid-path-planner/hpp-pinocchio </url> -->
+  <author>Joseph Mirabel</author>
+  <author>Florent Lamiraux et al.</author>
 
- <author>Joseph Mirabel</author>
- <author>Florent Lamiraux et al.</author>
+  <license>BSD-2</license>
 
- <buildtool_depend>catkin</buildtool_depend>
- <build_depend>hpp-util</build_depend>
- <exec_depend>hpp-util</exec_depend>
- <build_export_depend>hpp-util</build_export_depend>
- <build_depend>pinocchio</build_depend>
- <exec_depend>pinocchio</exec_depend>
- <build_export_depend>pinocchio</build_export_depend>
- <build_depend>Eigen3</build_depend>
- <exec_depend>Eigen3</exec_depend>
- <build_export_depend>Eigen3</build_export_depend>
- <test_depend>example-robot-data</test_depend>
- <test_depend>hpp-environments</test_depend>
- <build_depend>eigen3</build_depend>
- <exec_depend>eigen3</exec_depend>
- <build_export_depend>eigen3</build_export_depend>
- <build_depend>urdfdom</build_depend>
- <exec_depend>urdfdom</exec_depend>
- <build_export_depend>urdfdom</build_export_depend>
- <build_depend>coal</build_depend>
- <exec_depend>coal</exec_depend>
- <build_export_depend>coal</build_export_depend>
- </package>
+  <url type="website">https://github.com/humanoid-path-planner/hpp-pinocchio</url>
+  <url type="repository">https://github.com/humanoid-path-planner/hpp-pinocchio</url>
+  <url type="bugtracker">https://github.com/humanoid-path-planner/hpp-pinocchio/issues</url>
+
+  <buildtool_depend condition="$ROS_VERSION == 1">catkin</buildtool_depend>
+  <buildtool_depend condition="$ROS_VERSION == 2">ament_cmake</buildtool_depend>
+  <buildtool_depend>cmake</buildtool_depend>
+
+  <build_depend>doxygen</build_depend>
+
+  <depend>coal</depend>
+  <depend>boost</depend>
+  <depend>eigen</depend>
+  <depend>example-robot-data</depend>
+  <depend>hpp-environments</depend>
+  <depend>hpp-util</depend>
+  <depend>pinocchio</depend>
+  <depend>urdfdom</depend>
+
+
+  <export>
+    <build_type>cmake</build_type>
+  </export>
+</package>
