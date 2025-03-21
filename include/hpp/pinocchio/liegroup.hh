@@ -139,7 +139,7 @@ struct RnxSOnLieGroupMap::operation<
 // Not yet supported: this code is here only to make compilation pass.
 template <typename Scalar, int Options>
 struct RnxSOnLieGroupMap::operation<
-  ::pinocchio::JointModelMimicTpl<Scalar, Options>> {
+    ::pinocchio::JointModelMimicTpl<Scalar, Options>> {
   typedef liegroup::VectorSpaceOperation<1, true> type;
 };
 #else
@@ -255,7 +255,7 @@ struct DefaultLieGroupMap::operation<
 // JointModelMimic
 template <typename Scalar, int Options>
 struct DefaultLieGroupMap::operation<
-  ::pinocchio::JointModelMimicTpl<Scalar, Options>> {
+    ::pinocchio::JointModelMimicTpl<Scalar, Options>> {
   typedef liegroup::VectorSpaceOperation<1, true> type;
 };
 #else
