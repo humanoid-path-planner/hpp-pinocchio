@@ -134,6 +134,15 @@ struct RnxSOnLieGroupMap::operation<
 };
 
 // New in pinocchio 3
+#if PINOCCHIO_VERSION_AT_LEAST(3, 4, 1)
+// JointModelMimic
+// Not yet supported: this code is here only to make compilation pass.
+template <typename Scalar, int Options>
+struct RnxSOnLieGroupMap::operation<
+  ::pinocchio::JointModelMimicTpl<Scalar, Options>> {
+  typedef liegroup::VectorSpaceOperation<1, true> type;
+};
+#else
 // JointModelMimic
 // Not yet supported: this code is here only to make compilation pass.
 template <typename OtherJointType>
@@ -141,7 +150,7 @@ struct RnxSOnLieGroupMap::operation<
     ::pinocchio::JointModelMimic<OtherJointType>> {
   typedef typename RnxSOnLieGroupMap::operation<OtherJointType>::type type;
 };
-
+#endif
 // JointModelHelical
 // Not yet supported: this code is here only to make compilation pass.
 template <typename Scalar, int Options, int _axis>
@@ -242,13 +251,21 @@ struct DefaultLieGroupMap::operation<
 };
 
 // New in pinocchio 3
+#if PINOCCHIO_VERSION_AT_LEAST(3, 4, 1)
+// JointModelMimic
+template <typename Scalar, int Options>
+struct DefaultLieGroupMap::operation<
+  ::pinocchio::JointModelMimicTpl<Scalar, Options>> {
+  typedef liegroup::VectorSpaceOperation<1, true> type;
+};
+#else
 // JointModelMimic
 template <typename OtherJointType>
 struct DefaultLieGroupMap::operation<
     ::pinocchio::JointModelMimic<OtherJointType>> {
   typedef typename DefaultLieGroupMap::operation<OtherJointType>::type type;
 };
-
+#endif
 // JointModelHelical
 template <typename Scalar, int Options, int _axis>
 struct DefaultLieGroupMap::operation<
