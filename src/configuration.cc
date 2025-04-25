@@ -213,7 +213,9 @@ void normalize(const DevicePtr_t& robot, Configuration_t& q) {
 
 bool isNormalized(const DevicePtr_t& robot, ConfigurationIn_t q,
                   const value_type& eps) {
-  return ::pinocchio::isNormalized(robot->model(), q, eps);
+  size_type decs(robot->extraConfigSpace().dimension());
+  return ::pinocchio::isNormalized(
+      robot->model(), q.segment(0, robot->configSize() - decs), eps);
 }
 
 std::ostream& display(std::ostream& os, const SE3& m) {
