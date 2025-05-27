@@ -99,9 +99,8 @@ template <bool saturateConfig, typename LieGroup>
 void integrate(const DevicePtr_t& robot, ConfigurationIn_t configuration,
                vectorIn_t velocity, ConfigurationOut_t result) {
   const Model& model = robot->model();
-  result.head(model.nq) =
-      ::pinocchio::integrate<LieGroup>(model, configuration.head(model.nq),
-                                       velocity.head(model.nv));
+  result.head(model.nq) = ::pinocchio::integrate<LieGroup>(
+      model, configuration.head(model.nq), velocity.head(model.nv));
   const size_type& dim = robot->extraConfigSpace().dimension();
   result.tail(dim) = configuration.tail(dim) + velocity.tail(dim);
   if (saturateConfig) saturate(robot, result);
