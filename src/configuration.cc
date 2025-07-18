@@ -129,8 +129,8 @@ void interpolate(const DevicePtr_t& robot, ConfigurationIn_t q0,
                  ConfigurationIn_t q1, const value_type& u,
                  ConfigurationOut_t result) {
   const Model& model = robot->model();
-  result.head(model.nq) = ::pinocchio::interpolate<LieGroup>(model, q0.head(model.nq),
-                                                             q1.head(model.nq), u);
+  result.head(model.nq) = ::pinocchio::interpolate<LieGroup>(
+      model, q0.head(model.nq), q1.head(model.nq), u);
   const size_type& dim = robot->extraConfigSpace().dimension();
   result.tail(dim) = u * q1.tail(dim) + (1 - u) * q0.tail(dim);
 }
