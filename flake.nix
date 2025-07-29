@@ -26,6 +26,7 @@
           packages = {
             default = self'.packages.hpp-pinocchio;
             hpp-pinocchio = pkgs.hpp-pinocchio.overrideAttrs {
+              patches = [ ]; # TODO: remove on next release
               src = lib.fileset.toSource {
                 root = ./.;
                 fileset = lib.fileset.unions [
