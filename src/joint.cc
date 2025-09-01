@@ -276,11 +276,10 @@ value_type computeMaximalDistanceToParent(
     const Model& model,
     const ::pinocchio::JointModelPrismaticTpl<Scalar, Options, Axis>& jmodel,
     const SE3& jointPlacement) {
-  return computeMaximalDistanceToParentForAlignedTranslation < Axis == 0,
-         Axis == 1,
-         Axis == 2 > (model.lowerPositionLimit.segment<1>(jmodel.idx_q()),
-                      model.upperPositionLimit.segment<1>(jmodel.idx_q()),
-                      jointPlacement);
+  return computeMaximalDistanceToParentForAlignedTranslation<
+      Axis == 0, Axis == 1, Axis == 2>(
+      model.lowerPositionLimit.segment<1>(jmodel.idx_q()),
+      model.upperPositionLimit.segment<1>(jmodel.idx_q()), jointPlacement);
 }
 
 template <typename Scalar, int Options>
