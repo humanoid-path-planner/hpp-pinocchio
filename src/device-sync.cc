@@ -79,13 +79,14 @@ const ComJacobian_t& AbstractDevice::jacobianCenterOfMass() const {
 }
 
 AbstractDevice::AbstractDevice()
-    : model_(new Model()), geomModel_(new GeomModel()) {}
+  : model_(new Model()), geomModel_(new GeomModel()), visualModel_(new GeomModel()) {}
 
-AbstractDevice::AbstractDevice(const ModelPtr_t& m, const GeomModelPtr_t& gm)
-    : model_(m), geomModel_(gm) {}
+AbstractDevice::AbstractDevice(const ModelPtr_t& m, const GeomModelPtr_t& gm,
+			       const GeomModelPtr_t& vm)
+  : model_(m), geomModel_(gm), visualModel_(vm) {}
 
 DeviceSync::DeviceSync(const DevicePtr_t& d, bool acquireLock)
-    : AbstractDevice(d->modelPtr(), d->geomModelPtr()), device_(d), d_(NULL) {
+  : AbstractDevice(d->modelPtr(), d->geomModelPtr(), d->visualModelPtr()), device_(d), d_(NULL) {
   if (acquireLock) lock();
 }
 

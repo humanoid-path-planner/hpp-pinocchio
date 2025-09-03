@@ -58,19 +58,34 @@ class HPP_PINOCCHIO_DLLAPI AbstractDevice {
     return *model_;
   }
 
-  /// Access to pinocchio geomModel
+  /// Access to pinocchio collision model
   GeomModelConstPtr_t geomModelPtr() const { return geomModel_; }
-  /// Access to pinocchio geomModel
+  /// Access to pinocchio collision model
   GeomModelPtr_t geomModelPtr() { return geomModel_; }
-  /// Access to pinocchio geomModel
+  /// Access to pinocchio collision model
   const GeomModel& geomModel() const {
     assert(geomModel_);
     return *geomModel_;
   }
-  /// Access to pinocchio geomModel
+  /// Access to pinocchio collision model
   GeomModel& geomModel() {
     assert(geomModel_);
     return *geomModel_;
+  }
+
+  /// Access to pinocchio visual model
+  GeomModelConstPtr_t visualModelPtr() const { return visualModel_; }
+  /// Access to pinocchio visual model
+  GeomModelPtr_t visualModelPtr() { return visualModel_; }
+  /// Access to pinocchio visual model
+  const GeomModel& visualModel() const {
+    assert(visualModel_);
+    return *visualModel_;
+  }
+  /// Access to pinocchio visual model
+  GeomModel& visualModel() {
+    assert(visualModel_);
+    return *visualModel_;
   }
 
   /// Access to Pinocchio data/
@@ -177,14 +192,14 @@ class HPP_PINOCCHIO_DLLAPI AbstractDevice {
   // -----------------------------------------------------------------------
  protected:
   AbstractDevice();
-  AbstractDevice(const ModelPtr_t& m, const GeomModelPtr_t& gm);
+  AbstractDevice(const ModelPtr_t& m, const GeomModelPtr_t& gm, const GeomModelPtr_t& vm);
 
   virtual DeviceData& d() = 0;
   virtual DeviceData const& d() const = 0;
 
   // Pinocchio objects
   ModelPtr_t model_;
-  GeomModelPtr_t geomModel_;
+  GeomModelPtr_t geomModel_, visualModel_;
 };  // class AbstractDevice
 
 /// A thread-safe access to a Device.

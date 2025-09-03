@@ -25,6 +25,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
+#include <iostream>
 
 #include <coal/mesh_loader/loader.h>
 #include <urdf_parser/urdf_parser.h>
@@ -220,6 +221,7 @@ JointCollection::JointModelVariant buildJoint(const std::string& type) {
 }
 
 void setPrefix(const std::string& prefix, Model& model, GeomModel& geomModel,
+	       GeomModel& visualModel,
                const JointIndex& idFirstJoint, const FrameIndex& idFirstFrame) {
   for (JointIndex i = idFirstJoint; i < model.joints.size(); ++i) {
     model.names[i] = prefix + model.names[i];
@@ -229,6 +231,8 @@ void setPrefix(const std::string& prefix, Model& model, GeomModel& geomModel,
     f.name = prefix + f.name;
   }
   for (::pinocchio::GeometryObject& go : geomModel.geometryObjects)
+    go.name = prefix + go.name;
+  for (::pinocchio::GeometryObject& go : visualModel.geometryObjects)
     go.name = prefix + go.name;
 }
 
@@ -305,7 +309,7 @@ template <bool srdfAsXmlString>
 void _loadModel(const DevicePtr_t& robot, const FrameIndex& baseFrame,
                 const SE3& bMr, std::string prefix, const std::string& rootType,
                 const ::urdf::ModelInterfaceSharedPtr urdfTree,
-                const std::istream& urdfStream, const std::string& srdf) {
+                std::istream& urdfStream, const std::string& srdf) {
   if (!urdfTree)
     throw std::invalid_argument(
         "Failed to parse URDF. Use check_urdf command to know what's wrong.");
@@ -321,13 +325,18 @@ void _loadModel(const DevicePtr_t& robot, const FrameIndex& baseFrame,
 
   hppDout(notice, "Finished parsing URDF file.");
 
-  GeomModel geomModel;
+  GeomModel geomModel, visualModel;
 
   std::vector<std::string> baseDirs = ::pinocchio::rosPaths();
   static coal::MeshLoaderPtr loader(
       new coal::CachedMeshLoader(coal::BV_OBBRSS));
   ::pinocchio::urdf::buildGeom(*model, urdfStream, ::pinocchio::COLLISION,
                                geomModel, baseDirs, loader);
+  urdfStream.clear();
+  urdfStream.seekg(0);
+  // TODO: use a fake loader to avoid load visual meshes
+  ::pinocchio::urdf::buildGeom(*model, urdfStream, ::pinocchio::VISUAL,
+                               visualModel, baseDirs, loader);
   geomModel.addAllCollisionPairs();
 
   if (!srdf.empty()) {
@@ -345,7 +354,7 @@ void _loadModel(const DevicePtr_t& robot, const FrameIndex& baseFrame,
 
   if (!prefix.empty()) {
     if (*prefix.rbegin() != '/') prefix += "/";
-    setPrefix(prefix, *model, geomModel, idFirstJoint, idFirstFrame);
+    setPrefix(prefix, *model, geomModel, visualModel, idFirstJoint, idFirstFrame);
   }
 
   // Update root joint bounds
@@ -355,10 +364,16 @@ void _loadModel(const DevicePtr_t& robot, const FrameIndex& baseFrame,
 
   ModelPtr_t m(new Model);
   GeomModelPtr_t gm(new GeomModel);
+  GeomModelPtr_t vm(new GeomModel);
   ::pinocchio::appendModel(robot->model(), *model, robot->geomModel(),
                            geomModel, baseFrame, bMr, *m, *gm);
+  // Reset resulting model before calling the same function again
+  m = ModelPtr_t(new Model);
+  ::pinocchio::appendModel(robot->model(), *model, robot->visualModel(),
+                           visualModel, baseFrame, bMr, *m, *vm);
   robot->setModel(m);
   robot->setGeomModel(gm);
+  robot->setVisualModel(vm);
 
   if (!srdf.empty()) {
     _removeCollisionPairs<srdfAsXmlString>(robot->model(), robot->geomModel(),
