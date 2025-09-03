@@ -72,7 +72,7 @@ Device::Device(const std::string& name)
 }
 
 Device::Device(const Device& other)
-    : AbstractDevice(other.model_, other.geomModel_),
+  : AbstractDevice(other.model_, other.geomModel_, other.visualModel_),
       d_(other.d_),
       name_(other.name_),
       grippers_(),
