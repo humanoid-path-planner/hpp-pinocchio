@@ -192,7 +192,8 @@ class HPP_PINOCCHIO_DLLAPI AbstractDevice {
   // -----------------------------------------------------------------------
  protected:
   AbstractDevice();
-  AbstractDevice(const ModelPtr_t& m, const GeomModelPtr_t& gm, const GeomModelPtr_t& vm);
+  AbstractDevice(const ModelPtr_t& m, const GeomModelPtr_t& gm,
+                 const GeomModelPtr_t& vm);
 
   virtual DeviceData& d() = 0;
   virtual DeviceData const& d() const = 0;
