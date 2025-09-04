@@ -115,7 +115,9 @@ class HPP_PINOCCHIO_DLLAPI Device : public AbstractDevice {
   void setGeomModel(GeomModelPtr_t geomModelPtr) { geomModel_ = geomModelPtr; }
 
   /// Set pinocchio visual model.
-  void setVisualModel(GeomModelPtr_t visualModelPtr) { visualModel_ = visualModelPtr; }
+  void setVisualModel(GeomModelPtr_t visualModelPtr) {
+    visualModel_ = visualModelPtr;
+  }
 
   /// Set Pinocchio data corresponding to model
   void setData(DataPtr_t dataPtr) {

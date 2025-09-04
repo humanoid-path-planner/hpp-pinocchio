@@ -25,8 +25,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
-#include <iostream>
-
 #include <coal/BVH/BVH_model.h>
 #include <coal/mesh_loader/loader.h>
 #include <urdf_parser/urdf_parser.h>
@@ -36,6 +34,7 @@
 #include <hpp/pinocchio/joint.hh>
 #include <hpp/pinocchio/urdf/util.hh>
 #include <hpp/util/debug.hh>
+#include <iostream>
 #include <pinocchio/algorithm/geometry.hpp>
 #include <pinocchio/algorithm/model.hpp>
 #include <pinocchio/multibody/geometry.hpp>
@@ -222,8 +221,8 @@ JointCollection::JointModelVariant buildJoint(const std::string& type) {
 }
 
 void setPrefix(const std::string& prefix, Model& model, GeomModel& geomModel,
-	       GeomModel& visualModel,
-               const JointIndex& idFirstJoint, const FrameIndex& idFirstFrame) {
+               GeomModel& visualModel, const JointIndex& idFirstJoint,
+               const FrameIndex& idFirstFrame) {
   for (JointIndex i = idFirstJoint; i < model.joints.size(); ++i) {
     model.names[i] = prefix + model.names[i];
   }
@@ -307,10 +306,9 @@ void addMimicJoints(const std::map<std::string, JointPtrType>& joints,
 }
 
 // This struct is used to avoid loading meshes for visual models.
-struct Loader :public coal::MeshLoader {
+struct Loader : public coal::MeshLoader {
   typedef std::shared_ptr<Loader> Ptr_t;
-  coal::BVHModelPtr_t load(const std::string&,
-                           const coal::Vec3s&) {
+  coal::BVHModelPtr_t load(const std::string&, const coal::Vec3s&) {
     return coal::BVHModelPtr_t(new coal::BVHModel<coal::OBBRSS>);
   }
 };
@@ -346,7 +344,8 @@ void _loadModel(const DevicePtr_t& robot, const FrameIndex& baseFrame,
   urdfStream.seekg(0);
   // Create a fake loader to avoid load visual meshes
   ::pinocchio::urdf::buildGeom(*model, urdfStream, ::pinocchio::VISUAL,
-                               visualModel, baseDirs, Loader::Ptr_t(new Loader));
+                               visualModel, baseDirs,
+                               Loader::Ptr_t(new Loader));
   geomModel.addAllCollisionPairs();
 
   if (!srdf.empty()) {
@@ -364,7 +363,8 @@ void _loadModel(const DevicePtr_t& robot, const FrameIndex& baseFrame,
 
   if (!prefix.empty()) {
     if (*prefix.rbegin() != '/') prefix += "/";
-    setPrefix(prefix, *model, geomModel, visualModel, idFirstJoint, idFirstFrame);
+    setPrefix(prefix, *model, geomModel, visualModel, idFirstJoint,
+              idFirstFrame);
   }
 
   // Update root joint bounds
