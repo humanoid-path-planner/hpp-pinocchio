@@ -27,6 +27,7 @@
 // DAMAGE.
 #include <iostream>
 
+#include <coal/BVH/BVH_model.h>
 #include <coal/mesh_loader/loader.h>
 #include <urdf_parser/urdf_parser.h>
 
@@ -305,6 +306,15 @@ void addMimicJoints(const std::map<std::string, JointPtrType>& joints,
   }
 }
 
+// This struct is used to avoid loading meshes for visual models.
+struct Loader :public coal::MeshLoader {
+  typedef std::shared_ptr<Loader> Ptr_t;
+  coal::BVHModelPtr_t load(const std::string&,
+                           const coal::Vec3s&) {
+    return coal::BVHModelPtr_t(new coal::BVHModel<coal::OBBRSS>);
+  }
+};
+
 template <bool srdfAsXmlString>
 void _loadModel(const DevicePtr_t& robot, const FrameIndex& baseFrame,
                 const SE3& bMr, std::string prefix, const std::string& rootType,
@@ -334,9 +344,9 @@ void _loadModel(const DevicePtr_t& robot, const FrameIndex& baseFrame,
                                geomModel, baseDirs, loader);
   urdfStream.clear();
   urdfStream.seekg(0);
-  // TODO: use a fake loader to avoid load visual meshes
+  // Create a fake loader to avoid load visual meshes
   ::pinocchio::urdf::buildGeom(*model, urdfStream, ::pinocchio::VISUAL,
-                               visualModel, baseDirs, loader);
+                               visualModel, baseDirs, Loader::Ptr_t(new Loader));
   geomModel.addAllCollisionPairs();
 
   if (!srdf.empty()) {
