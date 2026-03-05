@@ -115,7 +115,6 @@ set(${PROJECT_NAME}_HEADERS
     include/hpp/pinocchio/device-sync.hh
     include/hpp/pinocchio/humanoid-robot.hh
     include/hpp/pinocchio/joint.hh
-    include/hpp/pinocchio/joint-collection.hh
     include/hpp/pinocchio/frame.hh
     include/hpp/pinocchio/body.hh
     include/hpp/pinocchio/gripper.hh
