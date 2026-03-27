@@ -82,14 +82,14 @@ inline ::pinocchio::Frame& Frame::pinocchio() {
 DeviceData& Frame::data() const { return devicePtr_.lock()->d(); }
 
 Frame Frame::parentFrame() const {
-  FrameIndex idParent = model().frames[frameIndex_].previousFrame;
+  FrameIndex idParent = model().frames[frameIndex_].parentFrame;
   return Frame(devicePtr_, idParent);
 }
 
 bool Frame::isFixed() const { return pinocchio().type != ::pinocchio::JOINT; }
 
 JointPtr_t Frame::joint() const {
-  return Joint::create(devicePtr_, pinocchio().parent);
+  return Joint::create(devicePtr_, pinocchio().parentJoint);
 }
 
 bool Frame::isRootFrame() const { return index() == 0; }
@@ -107,9 +107,9 @@ Transform3s Frame::currentTransformation(const DeviceData& d) const {
   selfAssert();
   const ::pinocchio::Frame f = model().frames[frameIndex_];
   if (f.type == ::pinocchio::JOINT)
-    return d.data_->oMi[f.parent];
+    return d.data_->oMi[f.parentJoint];
   else
-    return d.data_->oMi[f.parent] * f.placement;
+    return d.data_->oMi[f.parentJoint] * f.placement;
 }
 
 JointJacobian_t Frame::jacobian(const DeviceData& d) const {
@@ -133,14 +133,14 @@ void Frame::setChildList() {
   FrameIndex k = frameIndex_;
   while (k > 0) {
     visited[k] = true;
-    k = m.frames[k].previousFrame;
+    k = m.frames[k].parentFrame;
   }
   visited[0] = true;
 
   for (FrameIndex i = m.frames.size() - 1; i > 0; --i) {
     if (visited[i]) continue;
     visited[i] = true;
-    k = m.frames[i].previousFrame;
+    k = m.frames[i].parentFrame;
     while (m.frames[k].type != ::pinocchio::JOINT) {
       if (k == frameIndex_ || k == 0) break;
       // if (visited[k]) {
@@ -152,7 +152,7 @@ void Frame::setChildList() {
       // break;
       // }
       visited[k] = true;
-      k = m.frames[k].previousFrame;
+      k = m.frames[k].parentFrame;
     }
     if (k == frameIndex_) children_.push_back(i);
   }
@@ -166,9 +166,10 @@ Transform3s Frame::positionInParentFrame() const {
   selfAssert();
   const Model& m = model();
   const ::pinocchio::Frame f = m.frames[index()];
-  return m.frames[f.previousFrame].placement.inverse() *
-         ((f.type == ::pinocchio::FIXED_JOINT) ? f.placement
-                                               : m.jointPlacements[f.parent]);
+  return m.frames[f.parentFrame].placement.inverse() *
+         ((f.type == ::pinocchio::FIXED_JOINT)
+              ? f.placement
+              : m.jointPlacements[f.parentJoint]);
 }
 
 void Frame::positionInParentFrame(const Transform3s& p) {
@@ -180,22 +181,22 @@ void Frame::positionInParentFrame(const Transform3s& p) {
   GeomModel& geomModel = devicePtr_.lock()->geomModel();
   ::pinocchio::Frame& me = pinocchio();
   bool isJoint = (me.type == ::pinocchio::JOINT);
-  Transform3s fMj = (isJoint ? m.jointPlacements[me.parent].inverse()
+  Transform3s fMj = (isJoint ? m.jointPlacements[me.parentJoint].inverse()
                              : me.placement.inverse());
   if (isJoint)
-    m.jointPlacements[me.parent] = m.frames[me.previousFrame].placement * p;
+    m.jointPlacements[me.parentJoint] = m.frames[me.parentFrame].placement * p;
   else
-    me.placement = m.frames[me.previousFrame].placement * p;
+    me.placement = m.frames[me.parentFrame].placement * p;
 
   std::vector<bool> visited(m.frames.size(), false);
   for (std::size_t i = 0; i < children_.size(); ++i) {
     FrameIndex k = children_[i];
-    if (m.frames[k].type == ::pinocchio::JOINT) k = m.frames[k].previousFrame;
+    if (m.frames[k].type == ::pinocchio::JOINT) k = m.frames[k].parentFrame;
     while (k != frameIndex_) {
       if (visited[k]) break;
       visited[k] = true;
       moveFrame(m, geomModel, k, me.placement * fMj * m.frames[k].placement);
-      k = m.frames[k].previousFrame;
+      k = m.frames[k].parentFrame;
     }
   }
 
@@ -204,8 +205,8 @@ void Frame::positionInParentFrame(const Transform3s& p) {
     FrameIndex k = children_[i];
     const ::pinocchio::Frame f = m.frames[k];
     if (f.type == ::pinocchio::JOINT) {
-      m.jointPlacements[f.parent] =
-          me.placement * fMj * m.jointPlacements[f.parent];
+      m.jointPlacements[f.parentJoint] =
+          me.placement * fMj * m.jointPlacements[f.parentJoint];
     }
   }
 }
