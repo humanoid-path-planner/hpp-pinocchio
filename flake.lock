@@ -329,6 +329,10 @@
           "gepetto",
           "flake-parts"
         ],
+        "flakoboros": [
+          "gepetto",
+          "flakoboros"
+        ],
         "gazebros2nix": [
           "gepetto",
           "gazebros2nix"
