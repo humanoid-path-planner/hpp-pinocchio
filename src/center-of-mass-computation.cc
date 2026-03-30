@@ -92,12 +92,8 @@ void CenterOfMassComputation::compute(DeviceData& d,
   // TODO as of now, it is not possible to access the template parameter
   // JointCollectionTpl of Model so we use the default one.
   typedef ::pinocchio::JacobianCenterOfMassBackwardStep<
-      Model::Scalar, Model::Options, ::pinocchio::JointCollectionDefaultTpl
-#if PINOCCHIO_VERSION_AT_LEAST(2, 1, 6)
-      ,
-      Data::Matrix3x
-#endif
-      >
+      Model::Scalar, Model::Options, ::pinocchio::JointCollectionDefaultTpl,
+      Data::Matrix3x>
       Pass;
 
   // Assume root is sorted from smallest id.
@@ -110,11 +106,7 @@ void CenterOfMassComputation::compute(DeviceData& d,
          --jid) {
       if (computeJac)
         Pass::run(model.joints[jid], data.joints[jid],
-                  Pass::ArgsType(model, data,
-#if PINOCCHIO_VERSION_AT_LEAST(2, 1, 6)
-                                 data.Jcom,
-#endif
-                                 false));
+                  Pass::ArgsType(model, data, data.Jcom, false));
       else {
         assert(computeCOM);
         const JointIndex& parent = model.parents[jid];
@@ -136,11 +128,7 @@ void CenterOfMassComputation::compute(DeviceData& d,
       const JointIndex& parent = model.parents[jid];
       if (computeJac)
         Pass::run(model.joints[jid], data.joints[jid],
-                  Pass::ArgsType(model, data,
-#if PINOCCHIO_VERSION_AT_LEAST(2, 1, 6)
-                                 data.Jcom,
-#endif
-                                 false));
+                  Pass::ArgsType(model, data, data.Jcom, false));
       else {
         assert(computeCOM);
         data.com[parent] += data.com[jid];

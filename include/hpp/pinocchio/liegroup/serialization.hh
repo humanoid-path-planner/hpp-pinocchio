@@ -58,16 +58,8 @@ inline void serialize(
         lg,
     const unsigned int version) {
   (void)version;
-#if PINOCCHIO_VERSION_AT_LEAST(2, 4, 5)
   ar& make_nvp("lg1", lg.lg1);
   ar& make_nvp("lg2", lg.lg2);
-#else
-  (void)ar;
-  (void)lg;
-  throw std::logic_error(
-      "Pinocchio version is too low for serializing "
-      "hpp::pinocchio::liegroup::CartesianProductOperation");
-#endif
 }
 
 template <class Archive, int N>
