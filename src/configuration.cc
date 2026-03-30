@@ -147,11 +147,11 @@ template void interpolate<RnxSOnLieGroupMap>(const DevicePtr_t& robot,
                                              ConfigurationOut_t result);
 
 // TODO remove me. This is kept for backward compatibility
-template void interpolate< ::pinocchio::LieGroupMap>(const DevicePtr_t& robot,
-                                                     ConfigurationIn_t q0,
-                                                     ConfigurationIn_t q1,
-                                                     const value_type& u,
-                                                     ConfigurationOut_t result);
+template void interpolate<::pinocchio::LieGroupMap>(const DevicePtr_t& robot,
+                                                    ConfigurationIn_t q0,
+                                                    ConfigurationIn_t q1,
+                                                    const value_type& u,
+                                                    ConfigurationOut_t result);
 
 void interpolate(const DevicePtr_t& robot, ConfigurationIn_t q0,
                  ConfigurationIn_t q1, const value_type& u,
@@ -173,10 +173,10 @@ template void difference<DefaultLieGroupMap>(const DevicePtr_t& robot,
                                              ConfigurationIn_t q2,
                                              vectorOut_t result);
 // TODO remove me. This is kept for backward compatibility
-template void difference< ::pinocchio::LieGroupMap>(const DevicePtr_t& robot,
-                                                    ConfigurationIn_t q1,
-                                                    ConfigurationIn_t q2,
-                                                    vectorOut_t result);
+template void difference<::pinocchio::LieGroupMap>(const DevicePtr_t& robot,
+                                                   ConfigurationIn_t q1,
+                                                   ConfigurationIn_t q2,
+                                                   vectorOut_t result);
 
 template void difference<RnxSOnLieGroupMap>(const DevicePtr_t& robot,
                                             ConfigurationIn_t q1,
@@ -190,8 +190,7 @@ void difference(const DevicePtr_t& robot, ConfigurationIn_t q1,
 
 bool isApprox(const DevicePtr_t& robot, ConfigurationIn_t q1,
               ConfigurationIn_t q2, value_type eps) {
-  if (!::pinocchio::isSameConfiguration< ::pinocchio::LieGroupMap>(
-          robot->model(), q1, q2, eps))
+  if (!::pinocchio::isSameConfiguration(robot->model(), q1, q2, eps))
     return false;
   const size_type& dim = robot->extraConfigSpace().dimension();
   return q2.tail(dim).isApprox(q1.tail(dim), eps);
@@ -199,8 +198,7 @@ bool isApprox(const DevicePtr_t& robot, ConfigurationIn_t q1,
 
 value_type distance(const DevicePtr_t& robot, ConfigurationIn_t q1,
                     ConfigurationIn_t q2) {
-  vector_t dist = ::pinocchio::squaredDistance< ::pinocchio::LieGroupMap>(
-      robot->model(), q1, q2);
+  vector_t dist = ::pinocchio::squaredDistance(robot->model(), q1, q2);
   const size_type& dim = robot->extraConfigSpace().dimension();
   if (dim == 0)
     return sqrt(dist.sum());

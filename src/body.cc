@@ -69,7 +69,7 @@ void Body::searchFrameIndex() const {
   if (frameIndexSet) return;
   frameIndex = 0;
   BOOST_FOREACH (const ::pinocchio::Frame& frame, model().frames) {
-    if ((::pinocchio::BODY == frame.type) && (frame.parent == jointIndex))
+    if ((::pinocchio::BODY == frame.type) && (frame.parentJoint == jointIndex))
       break;
     frameIndex++;
   }
