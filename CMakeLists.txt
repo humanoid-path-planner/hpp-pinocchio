@@ -29,7 +29,8 @@ cmake_minimum_required(VERSION 3.22)
 set(CXX_DISABLE_WERROR TRUE)
 set(PROJECT_NAME hpp-pinocchio)
 set(PROJECT_DESCRIPTION
-    "Wrapping of the kinematic/dynamic chain Pinocchio for HPP.")
+    "Wrapping of the kinematic/dynamic chain Pinocchio for HPP."
+)
 
 option(INSTALL_DOCUMENTATION "Generate and install the documentation" ON)
 set(PROJECT_USE_CMAKE_EXPORT TRUE)
@@ -37,24 +38,32 @@ set(PROJECT_USE_CMAKE_EXPORT TRUE)
 # Check if the submodule cmake have been initialized
 set(JRL_CMAKE_MODULES "${CMAKE_CURRENT_LIST_DIR}/cmake")
 if(EXISTS "${JRL_CMAKE_MODULES}/base.cmake")
-  message(STATUS "JRL cmakemodules found in 'cmake/' git submodule")
+    message(STATUS "JRL cmakemodules found in 'cmake/' git submodule")
 else()
-  find_package(jrl-cmakemodules QUIET CONFIG)
-  if(jrl-cmakemodules_FOUND)
-    get_property(
-      JRL_CMAKE_MODULES
-      TARGET jrl-cmakemodules::jrl-cmakemodules
-      PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
-    message(STATUS "JRL cmakemodules found on system at ${JRL_CMAKE_MODULES}")
-  else()
-    message(STATUS "JRL cmakemodules not found. Let's fetch it.")
-    include(FetchContent)
-    FetchContent_Declare(
-      "jrl-cmakemodules"
-      GIT_REPOSITORY "https://github.com/jrl-umi3218/jrl-cmakemodules.git")
-    FetchContent_MakeAvailable("jrl-cmakemodules")
-    FetchContent_GetProperties("jrl-cmakemodules" SOURCE_DIR JRL_CMAKE_MODULES)
-  endif()
+    find_package(jrl-cmakemodules QUIET CONFIG)
+    if(jrl-cmakemodules_FOUND)
+        get_property(
+            JRL_CMAKE_MODULES
+            TARGET jrl-cmakemodules::jrl-cmakemodules
+            PROPERTY INTERFACE_INCLUDE_DIRECTORIES
+        )
+        message(
+            STATUS
+            "JRL cmakemodules found on system at ${JRL_CMAKE_MODULES}"
+        )
+    else()
+        message(STATUS "JRL cmakemodules not found. Let's fetch it.")
+        include(FetchContent)
+        FetchContent_Declare(
+            "jrl-cmakemodules"
+            GIT_REPOSITORY "https://github.com/jrl-umi3218/jrl-cmakemodules.git"
+        )
+        FetchContent_MakeAvailable("jrl-cmakemodules")
+        FetchContent_GetProperties(
+            "jrl-cmakemodules"
+            SOURCE_DIR JRL_CMAKE_MODULES
+        )
+    endif()
 endif()
 
 include("${JRL_CMAKE_MODULES}/hpp.cmake")
@@ -67,29 +76,25 @@ check_minimal_cxx_standard(11 REQUIRED)
 
 # Handle APPLE Cmake policy
 if(APPLE)
-  apply_default_apple_configuration()
+    apply_default_apple_configuration()
 endif(APPLE)
 
 # Activate hpp-util logging if requested
-set(HPP_DEBUG
-    FALSE
-    CACHE BOOL "trigger hpp-util debug output")
+set(HPP_DEBUG FALSE CACHE BOOL "trigger hpp-util debug output")
 if(HPP_DEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHPP_DEBUG")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHPP_DEBUG")
 endif()
-set(HPP_BENCHMARK
-    FALSE
-    CACHE BOOL "trigger hpp-util benchmarking output")
+set(HPP_BENCHMARK FALSE CACHE BOOL "trigger hpp-util benchmarking output")
 if(HPP_BENCHMARK)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHPP_ENABLE_BENCHMARK")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHPP_ENABLE_BENCHMARK")
 endif()
 
 # Profiling flags when building with DEBUG
 # -----------------------------------------
 if(CMAKE_BUILD_TYPE MATCHES "DEBUG")
-  if(CMAKE_COMPILER_IS_GNUCXX)
-    set(${PROJECT_NAME}_CXXFLAGS "-ggdb3 ${${PROJECT_NAME}_CXXFLAGS}")
-  endif(CMAKE_COMPILER_IS_GNUCXX)
+    if(CMAKE_COMPILER_IS_GNUCXX)
+        set(${PROJECT_NAME}_CXXFLAGS "-ggdb3 ${${PROJECT_NAME}_CXXFLAGS}")
+    endif(CMAKE_COMPILER_IS_GNUCXX)
 endif(CMAKE_BUILD_TYPE MATCHES "DEBUG")
 
 # Search for Boost.
@@ -104,7 +109,7 @@ add_project_dependency(example-robot-data)
 add_project_dependency(hpp-environments)
 
 if(BUILD_TESTING)
-  find_package(Boost REQUIRED COMPONENTS unit_test_framework)
+    find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 endif()
 
 # Set header files.
@@ -134,7 +139,8 @@ set(${PROJECT_NAME}_HEADERS
     include/hpp/pinocchio/liegroup/special-euclidean.hh
     include/hpp/pinocchio/liegroup/special-orthogonal.hh
     include/hpp/pinocchio/liegroup/serialization.hh
-    include/hpp/pinocchio/urdf/util.hh)
+    include/hpp/pinocchio/urdf/util.hh
+)
 
 set(${PROJECT_NAME}_SOURCES
     src/addition-visitor.hh
@@ -158,26 +164,36 @@ set(${PROJECT_NAME}_SOURCES
     src/size-visitor.hh
     src/substraction-visitor.hh
     src/urdf/util.cc
-    src/util.cc)
+    src/util.cc
+)
 
-add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES}
-                                   ${${PROJECT_NAME}_HEADERS})
+add_library(
+    ${PROJECT_NAME}
+    SHARED
+    ${${PROJECT_NAME}_SOURCES}
+    ${${PROJECT_NAME}_HEADERS}
+)
 target_include_directories(
-  ${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+    ${PROJECT_NAME}
+    PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 target_link_libraries(
-  ${PROJECT_NAME}
-  PUBLIC hpp-util::hpp-util example-robot-data::example-robot-data
-         pinocchio::pinocchio Boost::thread)
-target_compile_definitions(${PROJECT_NAME}
-                           PUBLIC PINOCCHIO_ENABLE_COMPATIBILITY_WITH_VERSION_2)
+    ${PROJECT_NAME}
+    PUBLIC
+        hpp-util::hpp-util
+        example-robot-data::example-robot-data
+        pinocchio::pinocchio
+        Boost::thread
+)
+target_compile_definitions(
+    ${PROJECT_NAME}
+    PUBLIC PINOCCHIO_ENABLE_COMPATIBILITY_WITH_VERSION_2
+)
 
-install(
-  TARGETS ${PROJECT_NAME}
-  EXPORT ${TARGETS_EXPORT_NAME}
-  DESTINATION lib)
+install(TARGETS ${PROJECT_NAME} EXPORT ${TARGETS_EXPORT_NAME} DESTINATION lib)
 
 if(BUILD_TESTING)
-  add_subdirectory(tests)
+    add_subdirectory(tests)
 endif()
 
 pkg_config_append_libs(${PROJECT_NAME})

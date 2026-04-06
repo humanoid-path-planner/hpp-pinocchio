@@ -39,16 +39,20 @@ add_definitions(-DTEST_DIRECTORY="${CMAKE_SOURCE_DIR}/tests/data")
 # it to the test suite.
 #
 macro(ADD_TESTCASE NAME)
-  add_unit_test(${NAME} ${NAME}.cc)
-  target_link_libraries(
-    ${NAME} ${PROJECT_NAME} Boost::unit_test_framework
-    example-robot-data::example-robot-data hpp-environments::hpp-environments)
-  set_tests_properties(
-    ${NAME}
-    PROPERTIES
-      ENVIRONMENT
-      "ROS_PACKAGE_PATH=${hpp-environments_DIR}/../../../share:${example-robot-data_DIR}/../../../share"
-  )
+    add_unit_test(${NAME} ${NAME}.cc)
+    target_link_libraries(
+        ${NAME}
+        ${PROJECT_NAME}
+        Boost::unit_test_framework
+        example-robot-data::example-robot-data
+        hpp-environments::hpp-environments
+    )
+    set_tests_properties(
+        ${NAME}
+        PROPERTIES
+            ENVIRONMENT
+                "ROS_PACKAGE_PATH=${hpp-environments_DIR}/../../../share:${example-robot-data_DIR}/../../../share"
+    )
 endmacro(ADD_TESTCASE)
 
 # --- LIST OF TESTS ------------------------------------------------------------
@@ -67,6 +71,6 @@ add_testcase(pool)
 
 find_package(OpenMP)
 if(OPENMP_FOUND)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-  add_testcase(device-sync)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    add_testcase(device-sync)
 endif()
