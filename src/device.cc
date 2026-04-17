@@ -235,7 +235,7 @@ JointPtr_t Device::getJointByBodyName(const std::string& name) const {
   if (model().existFrame(name)) {
     FrameIndex bodyId = model().getFrameId(name);
     if (model().frames[bodyId].type == ::pinocchio::BODY) {
-      JointIndex jointId = model().frames[bodyId].parent;
+      JointIndex jointId = model().frames[bodyId].parentJoint;
       // assert(jointId>=0);
       assert((std::size_t)jointId < model().joints.size());
       return Joint::create(weakPtr_.lock(), jointId);
@@ -311,7 +311,7 @@ std::ostream& Device::print(std::ostream& os) const {
   os << "Frames" << std::endl;
   for (FrameIndex i = 0; i < (FrameIndex)model().nframes; ++i) {
     const ::pinocchio::Frame& frame(model().frames[i]);
-    os << frame.name << "\t parent:" << model().names[frame.parent]
+    os << frame.name << "\t parent:" << model().names[frame.parentJoint]
        << std::endl;
   }
   if (jointConstraints_.size() > 0)

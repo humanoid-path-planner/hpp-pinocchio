@@ -33,9 +33,9 @@
 #include <hpp/pinocchio/collision-object.hh>
 #include <hpp/pinocchio/device.hh>
 #include <hpp/pinocchio/joint.hh>
+#include <pinocchio/collision/fcl-pinocchio-conversions.hpp>
 #include <pinocchio/multibody/geometry.hpp>
 #include <pinocchio/multibody/model.hpp>
-#include <pinocchio/spatial/fcl-pinocchio-conversions.hpp>
 
 namespace hpp {
 namespace pinocchio {
@@ -69,7 +69,7 @@ void Body::searchFrameIndex() const {
   if (frameIndexSet) return;
   frameIndex = 0;
   BOOST_FOREACH (const ::pinocchio::Frame& frame, model().frames) {
-    if ((::pinocchio::BODY == frame.type) && (frame.parent == jointIndex))
+    if ((::pinocchio::BODY == frame.type) && (frame.parentJoint == jointIndex))
       break;
     frameIndex++;
   }

@@ -30,7 +30,7 @@
 #include <hpp/pinocchio/humanoid-robot.hh>
 #include <hpp/pinocchio/simple-device.hh>
 #include <hpp/pinocchio/urdf/util.hh>
-#include <pinocchio/parsers/sample-models.hpp>
+#include <pinocchio/multibody/sample-models.hpp>
 
 namespace hpp {
 namespace pinocchio {

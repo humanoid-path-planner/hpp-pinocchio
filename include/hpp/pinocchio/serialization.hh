@@ -37,6 +37,7 @@
 #include <hpp/pinocchio/fwd.hh>
 #include <hpp/pinocchio/humanoid-robot.hh>
 #include <hpp/util/serialization.hh>
+#include <pinocchio/config.hpp>
 #include <pinocchio/fwd.hpp>
 #include <pinocchio/serialization/eigen.hpp>
 #include <set>
@@ -87,6 +88,7 @@ inline void load(Archive& ar, hpp::pinocchio::HumanoidRobotWkPtr_t& d,
             ->self();
 }
 
+#if PINOCCHIO_VERSION_AT_MOST(3, 90, 0)
 template <class Archive, typename _Scalar, int _Rows, int _Cols, int _Options,
           int _MaxRows, int _MaxCols>
 inline void serialize(
@@ -101,6 +103,7 @@ inline void serialize(
   if (m.size() > 0)
     ar& make_nvp("data", make_array(m.data(), (size_t)m.size()));
 }
+#endif
 
 }  // namespace serialization
 }  // namespace boost
