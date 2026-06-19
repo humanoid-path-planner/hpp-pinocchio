@@ -114,7 +114,7 @@ const Transform3s& CollisionObject::positionInJointFrame() const {
   return pinocchio().placement;
 }
 
-fcl::Transform3s CollisionObject::getFclTransform() const {
+coal::Transform3s CollisionObject::getFclTransform() const {
   return ::pinocchio::toFclTransform3f(geomData().oMg[geomInModelIndex]);
 }
 const Transform3s& CollisionObject::getTransform() const {
