@@ -16,7 +16,7 @@
   <depend>coal</depend>
   <depend>boost</depend>
   <depend>eigen</depend>
-  <depend>example-robot-data</depend>
+  <depend>example_robot_data</depend>
   <depend>hpp_environments</depend>
   <depend>hpp_util</depend>
   <depend>pinocchio</depend>
