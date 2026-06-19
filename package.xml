@@ -1,35 +1,30 @@
-<?xml version="1.0"?>
-<package format="3">
-  <name>hpp-pinocchio</name>
+<?xml version='1.0'?>
+<package format='3'>
+  <name>hpp_pinocchio</name>
   <version>8.0.0</version>
-  <description>Wrapping of the kinematic/dynamic chain Pinocchio for HPP. </description>
-
-  <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
-
+  <description>Wrapping of the kinematic/dynamic chain Pinocchio for HPP</description>
   <author>Joseph Mirabel</author>
-  <author>Florent Lamiraux et al.</author>
+  <author>Florent Lamiraux</author>
+  <maintainer email='guilhem.saurel@laas.fr'>Guilhem Saurel</maintainer>
 
-  <license>BSD-2</license>
+  <license>BSD-2-Clause</license>
 
   <url type="website">https://github.com/humanoid-path-planner/hpp-pinocchio</url>
   <url type="repository">https://github.com/humanoid-path-planner/hpp-pinocchio</url>
   <url type="bugtracker">https://github.com/humanoid-path-planner/hpp-pinocchio/issues</url>
 
-  <buildtool_depend condition="$ROS_VERSION == 1">catkin</buildtool_depend>
-  <buildtool_depend condition="$ROS_VERSION == 2">ament_cmake</buildtool_depend>
-  <buildtool_depend>cmake</buildtool_depend>
-
-  <build_depend>doxygen</build_depend>
-
   <depend>coal</depend>
   <depend>boost</depend>
   <depend>eigen</depend>
   <depend>example-robot-data</depend>
-  <depend>hpp-environments</depend>
-  <depend>hpp-util</depend>
+  <depend>hpp_environments</depend>
+  <depend>hpp_util</depend>
   <depend>pinocchio</depend>
   <depend>urdfdom</depend>
 
+  <buildtool_depend>cmake</buildtool_depend>
+  <build_depend>doxygen</build_depend>
+  <build_depend>jrl_cmakemodules</build_depend>
 
   <export>
     <build_type>cmake</build_type>
