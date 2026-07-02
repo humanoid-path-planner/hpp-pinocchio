@@ -1,0 +1,17 @@
+[example-robot-data]
+configure_args = ["-DBUILD_PYTHON_INTERFACE:BOOL=ON"]
+src_deps = ["pinocchio"]
+url = "github:gepetto"
+
+[hpp-environments]
+url = "github:humanoid-path-planner"
+
+[hpp-pinocchio]
+src_deps = ["hpp-environments", "hpp-util", "pinocchio"]
+url = "."
+
+[hpp-util]
+url = "github:humanoid-path-planner"
+
+[pinocchio]
+url = "github:stack-of-tasks"
