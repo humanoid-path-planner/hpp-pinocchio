@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <package format='3'>
   <name>hpp_pinocchio</name>
-  <version>8.0.0</version>
+  <version>9.0.0</version>
   <description>Wrapping of the kinematic/dynamic chain Pinocchio for HPP</description>
   <author>Joseph Mirabel</author>
   <author>Florent Lamiraux</author>
