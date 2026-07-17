@@ -23,9 +23,6 @@ name = "hpp-pinocchio"
 requires-python = ">= 3.10"
 version = "9.0.0"
 
-[tool.ruff]
-extend-exclude = ["cmake"]
-
 [tool.ruff.lint]
 extend-select = ["I", "NPY", "RUF", "UP", "W"]
 
