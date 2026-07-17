@@ -55,7 +55,6 @@ else()
 endif()
 
 include("${JRL_CMAKE_MODULES}/hpp.cmake")
-include("${JRL_CMAKE_MODULES}/boost.cmake")
 include("${JRL_CMAKE_MODULES}/apple.cmake")
 
 compute_project_args(PROJECT_ARGS LANGUAGES CXX)
@@ -85,20 +84,20 @@ if(CMAKE_BUILD_TYPE MATCHES "DEBUG")
     endif(CMAKE_COMPILER_IS_GNUCXX)
 endif(CMAKE_BUILD_TYPE MATCHES "DEBUG")
 
-# Search for Boost.
-add_project_dependency(Boost REQUIRED COMPONENTS thread)
-
 # Search for dependecies.
+set(BOOST_COMPONENTS thread)
+if(BUILD_TESTING)
+    set(BOOST_COMPONENTS ${BOOST_COMPONENTS} unit_test_framework)
+endif()
+
+add_project_dependency(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
+
 add_project_dependency(hpp-util REQUIRED)
 add_project_dependency(pinocchio REQUIRED)
 add_project_dependency(Eigen3 REQUIRED)
 
 add_project_dependency(example-robot-data)
 add_project_dependency(hpp-environments)
-
-if(BUILD_TESTING)
-    find_package(Boost REQUIRED COMPONENTS unit_test_framework)
-endif()
 
 # Set header files.
 set(${PROJECT_NAME}_HEADERS
@@ -183,6 +182,3 @@ install(TARGETS ${PROJECT_NAME} EXPORT ${TARGETS_EXPORT_NAME} DESTINATION lib)
 if(BUILD_TESTING)
     add_subdirectory(tests)
 endif()
-
-pkg_config_append_libs(${PROJECT_NAME})
-pkg_config_append_boost_libs(thread)
