@@ -69,11 +69,11 @@ Joint::Joint(DeviceWkPtr_t device, JointIndex indexInJointList)
 void Joint::setChildList() {
   assert(robot()->modelPtr());
   assert(robot()->dataPtr());
-  const Data& data = robot()->data();
   children.clear();
-  for (JointIndex child = jointIndex + 1;
-       int(child) <= data.lastChild[jointIndex]; ++child)
-    if (model().parents[child] == jointIndex) children.push_back(child);
+  if (!model().children[jointIndex].empty())
+    for (JointIndex child = jointIndex + 1;
+         child <= model().children[jointIndex].back(); ++child)
+      if (model().parents[child] == jointIndex) children.push_back(child);
 }
 
 inline void Joint::selfAssert() const {
@@ -240,9 +240,9 @@ value_type computeMaximalDistanceToParent(
     const SE3& jointPlacement) {
   const size_type& i = jmodel.idx_q();
   return computeMaximalDistanceToParentForAlignedTranslation<true, true, true>(
-      model.lowerPositionLimit.segment< ::pinocchio::JointModelTranslation::NQ>(
+      model.lowerPositionLimit.segment<::pinocchio::JointModelTranslation::NQ>(
           i),
-      model.upperPositionLimit.segment< ::pinocchio::JointModelTranslation::NQ>(
+      model.upperPositionLimit.segment<::pinocchio::JointModelTranslation::NQ>(
           i),
       jointPlacement);
 }
@@ -321,9 +321,9 @@ value_type computeMaximalDistanceToParent(
     const SE3& jointPlacement) {
   const size_type& i = jmodel.idx_q();
   return computeMaximalDistanceToParentForAlignedTranslation<true, true, true>(
-      model.lowerPositionLimit.segment< ::pinocchio::JointModelTranslation::NQ>(
+      model.lowerPositionLimit.segment<::pinocchio::JointModelTranslation::NQ>(
           i),
-      model.upperPositionLimit.segment< ::pinocchio::JointModelTranslation::NQ>(
+      model.upperPositionLimit.segment<::pinocchio::JointModelTranslation::NQ>(
           i),
       jointPlacement);
 }
@@ -557,7 +557,7 @@ std::ostream& Joint::display(std::ostream& os) const {
 
 template <typename LieGroupMap_t>
 struct ConfigSpaceVisitor : public ::pinocchio::fusion::JointUnaryVisitorBase<
-                                ConfigSpaceVisitor<LieGroupMap_t> > {
+                                ConfigSpaceVisitor<LieGroupMap_t>> {
   typedef boost::fusion::vector<LiegroupSpace&> ArgsType;
 
   template <typename JointModel>
