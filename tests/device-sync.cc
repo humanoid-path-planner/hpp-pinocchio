@@ -32,6 +32,7 @@
 #include <boost/test/unit_test.hpp>
 #include <ctime>
 #include <pinocchio/fwd.hpp>
+#include <vector>
 
 namespace bpt = boost::posix_time;
 
@@ -77,7 +78,7 @@ BOOST_AUTO_TEST_CASE(single_thread) {
   delete d2;
 }
 
-typedef ::pinocchio::container::aligned_vector<SE3> SE3Vector_t;
+typedef std::vector<SE3> SE3Vector_t;
 
 void compute_forward_kinematics(DevicePtr_t& device, const Configuration_t& q,
                                 SE3Vector_t& res) {
