@@ -21,7 +21,7 @@ description = "Wrapping of the kinematic/dynamic chain Pinocchio for HPP"
 license = "BSD-2-Clause"
 name = "hpp-pinocchio"
 requires-python = ">= 3.10"
-version = "9.0.0"
+version = "9.0.2"
 
 [tool.ruff.lint]
 extend-select = ["I", "NPY", "RUF", "UP", "W"]
