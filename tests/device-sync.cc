@@ -26,7 +26,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 
-#define BOOST_TEST_MODULE tdevice - sync
+#define BOOST_TEST_MODULE tdevice_sync
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/test/unit_test.hpp>
