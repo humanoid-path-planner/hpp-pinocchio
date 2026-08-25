@@ -175,6 +175,9 @@ BOOST_AUTO_TEST_CASE(serialization) {
 
   BOOST_TEST_MESSAGE(ss.str());
 
+  // TODO: deserialization of infinity is not supported by boost
+  // https://github.com/boostorg/serialization/issues/386
+  /*
   DevicePtr_t device2;
   JointPtr_t joint2;
   {
@@ -187,4 +190,5 @@ BOOST_AUTO_TEST_CASE(serialization) {
 
   BOOST_CHECK(device == device2);
   BOOST_CHECK(joint2->robot() == device2);
+  */
 }
