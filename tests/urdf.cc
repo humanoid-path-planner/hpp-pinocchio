@@ -26,7 +26,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 
-#define BOOST_TEST_MODULE urdf
+#define BOOST_TEST_MODULE turdf
 
 #include <boost/test/unit_test.hpp>
 #include <hpp/pinocchio/device.hh>

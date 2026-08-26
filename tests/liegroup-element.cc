@@ -26,7 +26,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 // DAMAGE.
 
-#define BOOST_TEST_MODULE tframe
+#define BOOST_TEST_MODULE tliegroup_element
 
 // Specific to CLANG to remove bad C99-extensions warning
 #if __clang__

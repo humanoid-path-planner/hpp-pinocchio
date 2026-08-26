@@ -31,7 +31,7 @@
 // This test
 //   - sets bounds and checks that they are stored correctly
 
-#define BOOST_TEST_MODULE joint - bounds
+#define BOOST_TEST_MODULE joint_bounds
 
 #include <boost/test/unit_test.hpp>
 #include <hpp/pinocchio/device.hh>
