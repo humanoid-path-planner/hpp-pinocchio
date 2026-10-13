@@ -76,7 +76,7 @@ void CenterOfMassComputation::compute(DeviceData& d,
   std::size_t rootId = roots_[root];
   for (std::size_t jid = 1; jid < model.joints.size(); ++jid) {
     if (jid == rootId) {
-      jid = (std::size_t)model.children[rootId].back();
+      jid = (std::size_t)model.subtrees[rootId].back();
       root++;
       if (root < roots_.size())
         rootId = roots_[root];
@@ -102,7 +102,7 @@ void CenterOfMassComputation::compute(DeviceData& d,
     std::size_t rootId = roots_[(std::size_t)root];
 
     // Backward loop on descendents of joint rootId.
-    for (JointIndex jid = (JointIndex)model.children[rootId].back();
+    for (JointIndex jid = (JointIndex)model.subtrees[rootId].back();
          jid >= rootId; --jid) {
       if (computeJac)
         Pass::run(model.joints[jid], data.joints[jid],
@@ -153,13 +153,13 @@ void CenterOfMassComputation::add(const JointPtr_t& j) {
   BOOST_FOREACH (const JointIndex rootId, roots_) {
     assert(std::size_t(rootId) < robot_->model().joints.size());
     // Assert that the new root is not in already-recorded subtrees.
-    if ((jid >= rootId) && (robot_->model().children[rootId].back() >= jid))
+    if ((jid >= rootId) && (robot_->model().subtrees[rootId].back() >= jid))
       // We are doing something stupid. Should we throw an error
       // or just return silently ?
       HPP_THROW(std::invalid_argument,
                 "Joint " << j->name() << " (" << jid
                          << ") is already in a subtree [" << rootId << ", "
-                         << robot_->model().children[rootId].back() << "]");
+                         << robot_->model().subtrees[rootId].back() << "]");
   }
 
   roots_.push_back(jid);
