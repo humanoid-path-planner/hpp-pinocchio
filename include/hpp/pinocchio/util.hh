@@ -130,7 +130,7 @@ struct HPP_PINOCCHIO_DLLAPI prettyPrintEigen {
   static inline std::ostream& run(std::ostream& os, const Derived& M) {
     enum {
       Condensed = ((Option & OutputFormatBits) == OneLineOutput) ||
-                  ((Option & OutputFormatBits) == CondensedOutput)
+      ((Option & OutputFormatBits) == CondensedOutput)
     };
     static const Eigen::IOFormat mfmt_py =
         eigen_format<Condensed, true, false>::run();
