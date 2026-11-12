@@ -10,6 +10,10 @@ requires = [
 ]
 
 [project]
+authors = [
+  {name = "Florent Lamiraux"},
+  {name = "Joseph Mirabel"}
+]
 dependencies = [
   "cmeel-boost ~= 1.90.0",
   "example-robot-data",
@@ -19,9 +23,17 @@ dependencies = [
 ]
 description = "Wrapping of the kinematic/dynamic chain Pinocchio for HPP"
 license = "BSD-2-Clause"
+maintainers = [
+  {email = "guilhem.saurel@laas.fr", name = "Guilhem Saurel"}
+]
 name = "hpp-pinocchio"
 requires-python = ">= 3.10"
 version = "9.0.2"
+
+[project.urls]
+homepage = "https://github.com/humanoid-path-planner/hpp-pinocchio"
+issues = "https://github.com/humanoid-path-planner/hpp-pinocchio/issues"
+repository = "https://github.com/humanoid-path-planner/hpp-pinocchio"
 
 [tool.ruff.lint]
 extend-select = ["I", "NPY", "RUF", "UP", "W"]

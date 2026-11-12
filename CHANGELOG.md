@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 - [CenterOfMassComputation] Fix subtree range: use the last joint of the subtree, not the last direct child
+- [pyproject] Add authors, maintainers and project URLs
 
 ## [9.0.2] - 2026-07-24
 
