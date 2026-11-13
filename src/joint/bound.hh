@@ -41,7 +41,7 @@ struct SetBoundStep
   static void algo(const ::pinocchio::JointModelBase<JointModel>& jmodel,
                    ConfigurationIn_t bounds, Configuration_t& out) {
     ::hpp::pinocchio::RnxSOnLieGroupMap::template operation<
-        JointModel>::type ::setBound(bounds, jmodel.jointConfigSelector(out));
+        JointModel>::type::setBound(bounds, jmodel.jointConfigSelector(out));
   }
 };
 
