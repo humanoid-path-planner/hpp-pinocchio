@@ -15,7 +15,6 @@ jobs:
       UPSTREAM_WORKSPACE: |
         github:humanoid-path-planner/hpp-environments#devel
         github:humanoid-path-planner/hpp-util#devel
-        github:gepetto/example-robot-data#devel
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
